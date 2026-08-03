@@ -1,16 +1,24 @@
 {
   "name": "moneymog",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Fee-aware Polymarket structural-arbitrage scanner and paper-execution engine.",
+  "description": "Paper-first Polymarket structural-arbitrage dashboard and scanner.",
   "engines": {
-    "node": ">=20.10"
+    "node": ">=20.9"
   },
   "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "check": "npm test",
     "scan": "node src/cli.js scan",
     "paper:once": "node src/cli.js paper-once",
     "test": "node --test tests/*.test.js"
+  },
+  "dependencies": {
+    "next": "16.2.11",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   }
 }
