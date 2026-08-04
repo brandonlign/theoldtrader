@@ -46,6 +46,22 @@ export class HostedPaperStore {
     };
   }
 
+  async acquireCycleLock(owner, ttlMs = 240_000) {
+    const nowMs = Date.now();
+    const result = await this.db.prepare(`
+      INSERT INTO hosted_locks (name, owner, expires_at, updated_at)
+      VALUES ('cycle', ?1, ?2, ?3)
+      ON CONFLICT(name) DO UPDATE SET
+        owner = excluded.owner, expires_at = excluded.expires_at, updated_at = excluded.updated_at
+      WHERE hosted_locks.expires_at < ?4
+    `).bind(String(owner), nowMs + Math.max(30_000, finite(ttlMs, 240_000)), new Date(nowMs).toISOString(), nowMs).run();
+    return finite(result?.meta?.changes, 0) > 0;
+  }
+
+  async releaseCycleLock(owner) {
+    await this.db.prepare("DELETE FROM hosted_locks WHERE name = 'cycle' AND owner = ?1").bind(String(owner)).run();
+  }
+
   async rotation() {
     const row = await this.db.prepare("SELECT value_json FROM hosted_state WHERE key = 'rotation'").first();
     return parseJson(row?.value_json, { marketOffset: 0, eventOffset: 0, run: 0 });
