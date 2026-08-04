@@ -23,7 +23,7 @@ export function validateMultiOutcomeEvent(event, options = {}) {
   const reasons = [];
   const markets = event?.markets ?? [];
   if (!event?.negRisk) reasons.push("event-not-negative-risk");
-  if (event?.negRiskAugmented || event?.enableNegRisk) reasons.push("augmented-negative-risk-disabled");
+  if (event?.negRiskAugmented) reasons.push("augmented-negative-risk-disabled");
   if (event?.active === false || event?.closed === true) reasons.push("event-not-active");
   if (markets.length < 3) reasons.push("fewer-than-three-outcomes");
   const groupIds = new Set();
