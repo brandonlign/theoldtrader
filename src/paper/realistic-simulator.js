@@ -156,12 +156,13 @@ export function simulateCompleteSetExecution(input, options = {}) {
   }
 
   const hasExposure = openInventory.some((item) => item.shares.gt(0));
+  const hasAnyFill = (first?.filledShares ?? D(0)).gt(0) || (second?.filledShares ?? D(0)).gt(0);
   const status = reasons.includes("stale-execution-book") || reasons.includes("execution-delay-not-elapsed")
     ? "REJECTED"
-    : pairedShares.lte(0)
-      ? "FAILED"
-      : hasExposure || pairedRatio.lt(1)
-        ? "PARTIAL_EXPOSURE"
+    : hasExposure || (hasAnyFill && pairedRatio.lt(1))
+      ? "PARTIAL_EXPOSURE"
+      : pairedShares.lte(0)
+        ? "FAILED"
         : "FILLED";
 
   return {
