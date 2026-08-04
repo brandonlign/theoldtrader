@@ -1,7 +1,9 @@
 import { ClobClient } from "../src/clients/clob.js";
 import { DataApiClient } from "../src/clients/data-api.js";
+import { attachHealth } from "../src/monitoring/health.js";
 import { WhaleMonitor } from "../src/whales/monitor.js";
 import { D1WhaleStore } from "./d1-store.js";
+import { D1ResearchStore } from "./research-store.js";
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -65,15 +67,23 @@ async function runMonitor(env) {
   if (!wallets.length) return { skipped: true, reason: "no-wallets-configured" };
 
   const startedAt = new Date().toISOString();
-  const store = new D1WhaleStore(env.DB);
-  const state = await store.load(wallets);
+  const whaleStore = new D1WhaleStore(env.DB);
+  const researchStore = new D1ResearchStore(env.DB);
+  const state = await whaleStore.load(wallets);
   const monitor = new WhaleMonitor({
     dataApi: new DataApiClient(env.DATA_API_BASE_URL ?? "https://data-api.polymarket.com", number(env.REQUEST_TIMEOUT_MS, 10_000)),
     clob: new ClobClient(env.CLOB_BASE_URL ?? "https://clob.polymarket.com", number(env.REQUEST_TIMEOUT_MS, 10_000)),
     config: monitorConfig(env)
   });
-  const result = await monitor.observeOnce(wallets, state);
-  const runId = await store.save(result, startedAt);
+  const rawResult = await monitor.observeOnce(wallets, state);
+  const runId = await whaleStore.save(rawResult, startedAt);
+  const result = attachHealth(rawResult, startedAt, {
+    persistenceSucceeded: true,
+    maxSourceLagSeconds: number(env.MAX_SOURCE_LAG_SECONDS, 600),
+    maxDurationMs: number(env.MAX_RUN_DURATION_MS, 50_000)
+  });
+  await researchStore.saveHealth(runId, result.health);
+
   return {
     runId,
     observedAt: result.observedAt,
@@ -82,7 +92,8 @@ async function runMonitor(env) {
     newTrades: result.newTrades,
     copyCandidates: result.signals.filter((signal) => signal.decision === "COPY_CANDIDATE").length,
     rejected: result.signals.filter((signal) => signal.decision === "REJECTED").length,
-    errors: result.errors
+    errors: result.errors,
+    health: result.health
   };
 }
 
@@ -100,12 +111,14 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/health") {
-      const store = new D1WhaleStore(env.DB);
+      const whaleStore = new D1WhaleStore(env.DB);
+      const researchStore = new D1ResearchStore(env.DB);
       return json({
         ok: true,
         enabled: bool(env.MONITOR_ENABLED),
         configuredWallets: parseWallets(env.WHALE_WALLETS).length,
-        ...(await store.status())
+        ...(await whaleStore.status()),
+        health: await researchStore.latestHealth()
       });
     }
 

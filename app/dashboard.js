@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const DEFAULT_SETTINGS = {
   maxMarkets: 120,
+  maxMultiOutcomeEvents: 30,
   maxShares: 1000,
   minNetProfitUsd: 0.05,
   minRoiBps: 5,
@@ -41,8 +42,14 @@ function timeLabel(value) {
   }).format(new Date(value));
 }
 
-function directionLabel(direction) {
-  return direction === "BUY_AND_MERGE" ? "Buy both → merge" : "Split → sell both";
+function directionLabel(item) {
+  if (item.routeLabel) return item.routeLabel;
+  if (item.direction === "BUY_ALL_YES") return "Buy every outcome";
+  return item.direction === "BUY_AND_MERGE" ? "Buy both → merge" : "Split → sell both";
+}
+
+function strategyLabel(item) {
+  return item.strategy === "MULTI_OUTCOME_COMPLETE_SET" ? `${item.outcomeCount} outcomes` : "Binary set";
 }
 
 function shortenWallet(wallet) {
@@ -77,6 +84,11 @@ export default function Dashboard() {
     () => opportunities.reduce((sum, item) => sum + Number(item.netProfit ?? 0), 0),
     [opportunities]
   );
+  const healthLabel = workerStatus.health?.status
+    ? workerStatus.health.status.toLowerCase()
+    : workerStatus.enabled
+      ? "observing"
+      : "paused";
 
   useEffect(() => {
     let cancelled = false;
@@ -155,7 +167,7 @@ export default function Dashboard() {
           <p className="eyebrow">Prediction-market research desk</p>
           <h1>Find the gap.<br />Follow the signal.</h1>
           <p className="hero-copy">
-            Scan complete-set pricing errors and rank consistently skilled public wallets.
+            Scan binary and multi-outcome complete sets, then rank consistently skilled public wallets.
             Everything remains read-only until the paper simulation is deliberately enabled.
           </p>
         </div>
@@ -173,9 +185,14 @@ export default function Dashboard() {
       {showSettings && (
         <section className="settings-sheet" aria-label="Scan settings">
           <label>
-            <span>Markets checked</span>
+            <span>Binary markets</span>
             <input type="number" min="25" max="250" value={settings.maxMarkets}
               onChange={(event) => updateSetting("maxMarkets", event.target.value)} />
+          </label>
+          <label>
+            <span>Multi-outcome events</span>
+            <input type="number" min="1" max="60" value={settings.maxMultiOutcomeEvents}
+              onChange={(event) => updateSetting("maxMultiOutcomeEvents", event.target.value)} />
           </label>
           <label>
             <span>Maximum shares</span>
@@ -211,7 +228,9 @@ export default function Dashboard() {
         <article className="metric-card">
           <span>Qualified gaps</span>
           <strong>{opportunities.length}</strong>
-          <small>{result ? `${result.marketsDiscovered} markets reviewed` : "Awaiting first scan"}</small>
+          <small>{result
+            ? `${result.binaryMarketsDiscovered ?? 0} binary · ${result.multiOutcomeEventsDiscovered ?? 0} events`
+            : "Awaiting first scan"}</small>
         </article>
         <article className="metric-card">
           <span>Ranked whales</span>
@@ -219,8 +238,8 @@ export default function Dashboard() {
           <small>{whaleRanking ? `${whaleRanking.candidatesEvaluated} candidates tested` : "Not ranked yet"}</small>
         </article>
         <article className="metric-card">
-          <span>Monitor status</span>
-          <strong className="metric-time">{workerStatus.enabled ? "Observing" : "Paused"}</strong>
+          <span>Monitor health</span>
+          <strong className="metric-time">{healthLabel}</strong>
           <small>{workerStatus.configured ? `${workerStatus.configuredWallets ?? 0} wallets configured` : "Free worker not connected"}</small>
         </article>
       </section>
@@ -252,9 +271,9 @@ export default function Dashboard() {
                     <tr key={item.id}>
                       <td>
                         <strong>{item.question}</strong>
-                        <span>{item.slug || item.conditionId}</span>
+                        <span>{strategyLabel(item)} · {item.slug || item.conditionId}</span>
                       </td>
-                      <td><span className="route-tag">{directionLabel(item.direction)}</span></td>
+                      <td><span className="route-tag">{directionLabel(item)}</span></td>
                       <td>{number(item.shares, 0)}</td>
                       <td className="positive">{money(item.netProfit, 3)}</td>
                       <td>{number(Number(item.roiBps) / 100, 2)}%</td>
@@ -277,8 +296,8 @@ export default function Dashboard() {
         <aside className="side-stack">
           <article className="ledger-card strategy-card">
             <div className="strategy-title"><StrategyMark /><span>Research engines</span></div>
-            <h2>Two independent edges</h2>
-            <p>Structural arbitrage handles mathematical pricing gaps. Whale watch studies repeatable directional skill.</p>
+            <h2>Three independent edges</h2>
+            <p>Binary complete sets, stable multi-outcome sets, and skill-weighted whale signals are tested separately.</p>
             <dl>
               <div><dt>Execution</dt><dd>Disabled</dd></div>
               <div><dt>Wallet</dt><dd>Not connected</dd></div>
@@ -294,7 +313,8 @@ export default function Dashboard() {
                 {Object.entries(result.skipped ?? {}).map(([reason, count]) => (
                   <li key={reason}><span>{reason.replaceAll("-", " ")}</span><strong>{count}</strong></li>
                 ))}
-                <li><span>markets with books</span><strong>{result.marketsWithBooks}</strong></li>
+                <li><span>binary books loaded</span><strong>{result.marketsWithBooks}</strong></li>
+                <li><span>stable events validated</span><strong>{result.multiOutcomeEventsValidated ?? 0}</strong></li>
               </ul>
             ) : (
               <p className="muted-copy">Filter counts will appear after the first scan.</p>
@@ -325,25 +345,28 @@ export default function Dashboard() {
                     <th>Wallet</th>
                     <th>Score</th>
                     <th>Resolved</th>
-                    <th>ROI</th>
-                    <th>Robust P&amp;L</th>
+                    <th>Historical ROI</th>
+                    <th>Forward ROI</th>
                     <th>Specialties</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rankedWallets.map((wallet) => (
-                    <tr key={wallet.wallet}>
-                      <td>
-                        <strong>{wallet.userName || shortenWallet(wallet.wallet)}</strong>
-                        <span>{shortenWallet(wallet.wallet)}</span>
-                      </td>
-                      <td><span className="score-stamp">{number(wallet.score, 0)}</span></td>
-                      <td>{number(wallet.sampleSize, 0)}</td>
-                      <td className={wallet.roi > 0 ? "positive" : ""}>{percent(wallet.roi)}</td>
-                      <td className={wallet.robustPnl > 0 ? "positive" : ""}>{money(wallet.robustPnl, 0)}</td>
-                      <td><span className="category-line">{(wallet.categories ?? []).join(" · ") || "Overall"}</span></td>
-                    </tr>
-                  ))}
+                  {rankedWallets.map((wallet) => {
+                    const forward = wallet.walkForward?.OVERALL;
+                    return (
+                      <tr key={wallet.wallet}>
+                        <td>
+                          <strong>{wallet.userName || shortenWallet(wallet.wallet)}</strong>
+                          <span>{shortenWallet(wallet.wallet)}</span>
+                        </td>
+                        <td><span className="score-stamp">{number(wallet.score, 0)}</span></td>
+                        <td>{number(wallet.sampleSize, 0)}</td>
+                        <td className={wallet.roi > 0 ? "positive" : ""}>{percent(wallet.roi)}</td>
+                        <td className={forward?.forwardRoi > 0 ? "positive" : ""}>{forward ? percent(forward.forwardRoi) : "—"}</td>
+                        <td><span className="category-line">{(wallet.categories ?? []).join(" · ") || "Overall"}</span></td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -351,7 +374,7 @@ export default function Dashboard() {
             <div className="empty-ledger whale-empty">
               <div className="empty-lines" aria-hidden="true"><span /><span /><span /></div>
               <h3>No wallets selected yet</h3>
-              <p>MoneyMog removes one-hit wonders by checking resolved-market count, ROI, drawdown, concentration, and profit after the wallet’s largest win is removed.</p>
+              <p>MoneyMog tests whether a wallet kept winning after it would historically have qualified, rather than trusting a leaderboard snapshot.</p>
             </div>
           )}
         </article>
@@ -359,9 +382,9 @@ export default function Dashboard() {
         <aside className="side-stack whale-side">
           <article className="ledger-card strategy-card">
             <p className="eyebrow">Free monitor</p>
-            <h2>{workerStatus.configured ? (workerStatus.enabled ? "Observation active" : "Connected, paused") : "Not connected yet"}</h2>
+            <h2>{workerStatus.configured ? healthLabel : "Not connected yet"}</h2>
             <p>
-              The repository includes a free Cloudflare Worker + D1 monitor. It is disabled by default and polls small wallet batches for paper testing.
+              The repository includes a free Cloudflare Worker + D1 monitor. It records coverage, API errors, source lag, runtime, and persistent-state health.
             </p>
             <dl>
               <div><dt>Hosting</dt><dd>Cloudflare free</dd></div>

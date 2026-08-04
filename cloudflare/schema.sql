@@ -53,3 +53,51 @@ CREATE TABLE IF NOT EXISTS whale_runs (
   error_count INTEGER NOT NULL,
   errors_json TEXT NOT NULL DEFAULT '[]'
 );
+
+CREATE TABLE IF NOT EXISTS monitor_health (
+  run_id TEXT PRIMARY KEY,
+  status TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT NOT NULL,
+  duration_ms INTEGER NOT NULL,
+  wallets_expected INTEGER NOT NULL,
+  wallets_checked INTEGER NOT NULL,
+  coverage REAL NOT NULL,
+  error_count INTEGER NOT NULL,
+  source_lag_seconds REAL,
+  signals_generated INTEGER NOT NULL,
+  copy_candidates INTEGER NOT NULL,
+  persistence_succeeded INTEGER NOT NULL,
+  reasons_json TEXT NOT NULL DEFAULT '[]'
+);
+
+CREATE INDEX IF NOT EXISTS monitor_health_finished_at_idx ON monitor_health(finished_at DESC);
+
+CREATE TABLE IF NOT EXISTS paper_portfolios (
+  id TEXT PRIMARY KEY,
+  state_json TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS wallet_walk_forward (
+  wallet TEXT NOT NULL,
+  category TEXT NOT NULL,
+  score REAL NOT NULL,
+  eligible INTEGER NOT NULL,
+  evaluated_at TEXT NOT NULL,
+  metrics_json TEXT NOT NULL,
+  PRIMARY KEY (wallet, category)
+);
+
+CREATE TABLE IF NOT EXISTS strategy_opportunities (
+  id TEXT PRIMARY KEY,
+  strategy TEXT NOT NULL,
+  detected_at TEXT NOT NULL,
+  question TEXT,
+  slug TEXT,
+  net_profit REAL NOT NULL,
+  roi_bps REAL NOT NULL,
+  payload_json TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS strategy_opportunities_detected_at_idx ON strategy_opportunities(detected_at DESC);
