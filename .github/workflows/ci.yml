@@ -23,5 +23,7 @@ jobs:
         run: npm install
       - name: Run strategy tests
         run: npm test
+      - name: Check Worker syntax
+        run: node --check cloudflare/worker.js && node --check cloudflare/hosted-store.js
       - name: Build dashboard
         run: npm run build
