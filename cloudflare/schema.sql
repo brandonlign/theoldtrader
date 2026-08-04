@@ -207,3 +207,10 @@ CREATE TABLE IF NOT EXISTS hosted_state (
   value_json TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS hosted_locks (
+  name TEXT PRIMARY KEY,
+  owner TEXT NOT NULL,
+  expires_at INTEGER NOT NULL,
+  updated_at TEXT NOT NULL
+);
