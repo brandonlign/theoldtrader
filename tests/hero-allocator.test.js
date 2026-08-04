@@ -7,6 +7,7 @@ const portfolio = { startingCash: 10_000, cash: 10_000 };
 test("prioritizes structural arbitrage and caps whale allocation", () => {
   const result = allocateHero({
     portfolio,
+    config: { maxSelectedPerRun: 3 },
     candidates: [
       { id: "whale", strategy: "WHALE_COPY", asset: "a", estimatedCost: 500, decision: "COPY_CANDIDATE", walletScore: 82, walkForward: { eligible: true, forwardRoi: 0.12, profitableFoldRate: 0.8 }, detectionDelaySeconds: 20, slippageBps: 20, availableLiquidityUsd: 5000, price: 0.55 },
       { id: "binary", strategy: "BINARY_COMPLETE_SET", conditionId: "b", capitalRequired: 500, netProfit: 3, roiBps: 60 },
@@ -49,4 +50,18 @@ test("preserves cash reserve through run budget", () => {
   }));
   const result = allocateHero({ portfolio, candidates });
   assert.ok(result.structuralAllocated + result.whaleAllocated <= 1200 + 1e-9);
+});
+
+test("limits each hosted cycle to two selected opportunities by default", () => {
+  const candidates = Array.from({ length: 4 }, (_, index) => ({
+    id: `limit-${index}`,
+    strategy: "BINARY_COMPLETE_SET",
+    conditionId: `limit-market-${index}`,
+    capitalRequired: 100,
+    netProfit: 2,
+    roiBps: 50
+  }));
+  const result = allocateHero({ portfolio, candidates });
+  assert.equal(result.decisions.filter((item) => item.selected).length, 2);
+  assert.ok(result.decisions.slice(2).every((item) => item.reasons.includes("run-selection-limit")));
 });
