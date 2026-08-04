@@ -1,0 +1,24 @@
+name = "moneymog-whale-monitor"
+main = "cloudflare/worker.js"
+compatibility_date = "2026-08-03"
+
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "moneymog"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+[vars]
+MONITOR_ENABLED = "false"
+WHALE_BATCH_SIZE = "5"
+WHALE_WALLETS = "[]"
+WHALE_MIN_SCORE = "60"
+WHALE_MIN_TRADE_USD = "100"
+WHALE_MAX_DELAY_SECONDS = "300"
+WHALE_MAX_PRICE_MOVE = "0.02"
+WHALE_COPY_FRACTION = "0.02"
+WHALE_MIN_COPY_USD = "10"
+WHALE_MAX_COPY_USD = "100"
+WHALE_REQUIRED_CONSENSUS = "1"
