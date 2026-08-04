@@ -1,9 +1,12 @@
-name = "moneymog-whale-monitor"
-main = "cloudflare/worker.js"
-compatibility_date = "2026-08-03"
+name = "moneymog-paper-worker"
+main = "cloudflare/entry.js"
+compatibility_date = "2026-08-04"
+compatibility_flags = ["nodejs_compat"]
 
+# Five-minute batches are intentionally conservative. This is not a claim that
+# the free tier can scan every market every minute.
 [triggers]
-crons = ["* * * * *"]
+crons = ["*/5 * * * *"]
 
 [[d1_databases]]
 binding = "DB"
@@ -11,14 +14,61 @@ database_name = "moneymog"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 
 [vars]
-MONITOR_ENABLED = "false"
-WHALE_BATCH_SIZE = "5"
+# Master safety switch. Leave false through the initial deployment and checks.
+PAPER_SIMULATION_ENABLED = "false"
+PAPER_STARTING_CASH = "10000"
+
+# Rotating free-tier-sized batches.
+MARKET_BATCH_SIZE = "30"
+EVENT_BATCH_SIZE = "5"
+WHALE_BATCH_SIZE = "2"
+MARKET_ROTATION_WINDOW = "600"
+EVENT_ROTATION_WINDOW = "100"
+BOOK_BATCH_SIZE = "80"
+REQUEST_TIMEOUT_MS = "10000"
+CYCLE_LOCK_TTL_MS = "240000"
+
+# Structural strategy thresholds.
+MAX_SHARES = "500"
+MIN_NET_PROFIT_USD = "0.05"
+MIN_ROI_BPS = "8"
+SAFETY_BUFFER_BPS = "15"
+MAX_BOOK_AGE_MS = "15000"
+FIXED_COST_USD = "0"
+
+# Realistic delayed paper execution.
+PAPER_EXECUTION_DELAY_MS = "2000"
+PAPER_LIQUIDITY_HAIRCUT = "0.75"
+PAPER_MIN_PAIRED_FILL_RATIO = "0.92"
+
+# Risk-first Hero allocator.
+HERO_MAX_RUN_ALLOCATION_PCT = "0.12"
+HERO_STRUCTURAL_BUDGET_SHARE = "0.90"
+HERO_WHALE_BUDGET_SHARE = "0.10"
+HERO_MAX_OPPORTUNITY_PCT = "0.04"
+HERO_MAX_MARKET_EXPOSURE_PCT = "0.08"
+HERO_MAX_CATEGORY_EXPOSURE_PCT = "0.12"
+HERO_MAX_WHALE_TRADE_PCT = "0.0075"
+HERO_MAX_WHALE_TOTAL_EXPOSURE_PCT = "0.025"
+
+# Whale research remains separately disabled until qualified wallets are added.
+WHALE_MONITOR_ENABLED = "false"
 WHALE_WALLETS = "[]"
-WHALE_MIN_SCORE = "60"
+WHALE_TRADE_LOOKBACK = "80"
+WHALE_MAX_NEW_TRADES = "3"
+WHALE_MIN_SCORE = "70"
 WHALE_MIN_TRADE_USD = "100"
-WHALE_MAX_DELAY_SECONDS = "300"
-WHALE_MAX_PRICE_MOVE = "0.02"
-WHALE_COPY_FRACTION = "0.02"
+WHALE_MIN_RELATIVE_SIZE = "0.5"
+WHALE_MAX_DELAY_SECONDS = "180"
+WHALE_MAX_CHURN = "0.45"
+WHALE_COPY_FRACTION = "0.01"
 WHALE_MIN_COPY_USD = "10"
-WHALE_MAX_COPY_USD = "100"
+WHALE_MAX_COPY_USD = "75"
+WHALE_MAX_PRICE_MOVE = "0.015"
+WHALE_MAX_ENTRY_PRICE = "0.85"
+WHALE_MAX_SLIPPAGE_BPS = "125"
+WHALE_MIN_LIQUIDITY_USD = "50"
+WHALE_MIN_LIQUIDITY_COVERAGE = "2"
+WHALE_MIN_FORWARD_ROI = "0"
+WHALE_MIN_PROFITABLE_FOLD_RATE = "0.60"
 WHALE_REQUIRED_CONSENSUS = "1"

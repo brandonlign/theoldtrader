@@ -1,133 +1,267 @@
 # MoneyMog
 
-MoneyMog is a **paper-first Polymarket research dashboard** with three separate engines:
+MoneyMog is one **hosted, paper-only Polymarket research system**:
 
-- **Binary complete sets:** buys YES + NO below $1 or models splitting and selling both above $1.
-- **Multi-outcome complete sets:** buys every stable negative-risk outcome when their executable total is below $1.
-- **Whale watch:** ranks public wallets for repeatable forecasting skill and evaluates new trades after delay, liquidity, slippage, position, and churn checks.
+- **Vercel** serves the paper-ledger dashboard.
+- **Cloudflare Worker** rotates small scheduled market and wallet batches.
+- **Cloudflare D1** is the shared source of truth for cash, positions, executions, opportunities, whale signals, Hero decisions, and Worker health.
 
-No simulated or real trades start automatically.
+There are no wallet keys, signing functions, approvals, or real-order endpoints anywhere in the project.
 
-## Dashboard
+## Research engines
 
-The Next.js dashboard uses a minimalist paper-ledger design and is ready for Vercel.
+1. **Binary complete-set arbitrage** — evaluates executable YES + NO complete sets after depth, fees, safety buffers, stale-book checks, and delayed re-fetches.
+2. **Stable multi-outcome complete-set arbitrage** — only accepts non-augmented negative-risk groups with at least three active outcomes, no `Other` outcome, consistent grouping, and complete live books.
+3. **Conservative whale-copy simulation** — only considers new public BUY trades from pre-qualified wallets after score, walk-forward, delay, churn, price, slippage, current-position, and liquidity checks.
+4. **Hero allocator** — prioritizes structural opportunities, limits per-market and per-category concentration, reserves most cash each cycle, blocks duplicates, and caps directional whale paper exposure.
+
+Every candidate is persisted with a selected or rejected decision and its reasons.
+
+## Conservative hosted defaults
+
+- Worker cron: every 5 minutes.
+- Binary batch: 30 markets per cycle, rotated through a bounded window.
+- Multi-outcome batch: 5 events per cycle, also rotated.
+- Whale batch: 2 configured wallets per cycle.
+- Maximum capital considered per cycle: 12% of account equity.
+- Structural share of that cycle budget: 90%.
+- Maximum whale allocation: 0.75% per trade and 2.5% total account exposure.
+- Execution delay: 2 seconds, followed by fresh order-book requests.
+- Available depth haircut: 25%.
+- Minimum paired multi-leg fill: 92%.
+
+These settings intentionally do **not** pretend a free Worker can scan every market every minute.
+
+## Local validation
 
 ```bash
 npm install
-npm run dev
+npm test
+npm run build
 ```
 
-Then open `http://localhost:3000`.
-
-Read-only features require no wallet, private key, or API key.
-
-## Commands
+Useful read-only commands:
 
 ```bash
-npm test              # all deterministic tests
-npm run build         # production dashboard build
-npm run scan          # binary complete-set scan
-npm run scan:multi    # stable multi-outcome scan
-npm run scan:all      # both arbitrage scanners
-npm run whales:rank   # walk-forward public-wallet ranking
+npm run scan
+npm run scan:multi
+npm run scan:all
+npm run whales:rank
 ```
 
-Observation remains locked until explicitly enabled:
+The local JSON paper runner is separate from the hosted D1 portfolio and remains disabled unless `MONEYMOG_PAPER_ENABLED=true`.
+
+# Beginner hosted setup
+
+## 1. Create the Cloudflare D1 database
+
+Install dependencies and log in:
 
 ```bash
-MONEYMOG_WHALE_MONITOR_ENABLED=true npm run whales:observe
+npm install
+npx wrangler@latest login
 ```
 
-The first pass establishes a baseline so old trades are not mistaken for new signals.
-
-The realistic paper runner also remains locked:
+Create the database:
 
 ```bash
-MONEYMOG_PAPER_ENABLED=true npm run paper:once
+npx wrangler@latest d1 create moneymog
 ```
 
-When enabled later, it detects opportunities, waits for the configured delay, fetches fresh order books, applies a liquidity haircut, models partial fills and failed later legs, enforces bankroll limits, and atomically saves the portfolio. It still cannot place real orders.
+Cloudflare prints a `database_id`. Copy the Worker example:
 
-## Realistic simulation
+```bash
+cp wrangler.toml.example wrangler.toml
+```
 
-The simulator records:
-
-- detection and execution timestamps
-- configurable execution delay
-- fresh execution-time order books
-- available depth after a liquidity haircut
-- fees and fixed costs
-- partial fills and unpaired exposure
-- persistent cash, positions, realized profit, and execution IDs
-- duplicate protection across restarts
-
-Local state defaults to `.moneymog/paper-state.json`. Cloudflare D1 tables are also included for hosted persistence.
-
-## Walk-forward whale selection
-
-MoneyMog does not select wallets using their full history and then claim that same history as proof. It repeatedly:
-
-1. scores only the earlier resolved markets;
-2. decides whether the wallet would have qualified then;
-3. evaluates the following unseen markets;
-4. aggregates forward ROI, profitable-fold rate, and concentration.
-
-Wallets with impressive historical results but poor later performance are rejected. Category-specific forward records are retained when enough observations exist.
-
-## Monitoring health
-
-Every monitor run can report:
-
-- wallets expected versus successfully checked
-- API and order-book errors
-- source-data lag
-- runtime
-- signals and copy candidates produced
-- whether state was persisted successfully
-
-Health is classified as `HEALTHY`, `DEGRADED`, or `UNHEALTHY` and is exposed through the Cloudflare `/health` endpoint and dashboard.
-
-## Multi-outcome safety
-
-MoneyMog only evaluates event groups explicitly marked as negative-risk and containing at least three active order-book markets from the same group. It walks every YES book, includes each leg’s fees, and requires sufficient depth across the entire set.
-
-It deliberately rejects:
-
-- augmented negative-risk events
-- any event containing an `Other` outcome
-- mixed negative-risk groups
-- deploying or inactive markets
-- stale or incomplete books
-
-This conservative filter avoids treating a changing or incomplete outcome list as a guaranteed $1 complete set.
-
-## Vercel and free worker
-
-Vercel remains the long-term dashboard. Continuous monitoring runs separately.
-
-The repository includes a disabled-by-default **Cloudflare Worker + D1** implementation:
-
-- `cloudflare/worker.js`
-- `cloudflare/schema.sql`
-- `cloudflare/research-store.js`
-- `wrangler.toml.example`
-
-After deploying it, connect Vercel using server-side environment variables:
+Open `wrangler.toml` and replace:
 
 ```text
-MONEYMOG_WORKER_URL
-MONEYMOG_WORKER_API_TOKEN
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
 ```
 
-## Safety boundary
+with the ID Cloudflare printed.
 
-- No wallet credentials, private keys, signing, or real-order code exist.
-- Dashboard scans and wallet ranking are read-only.
-- Whale observation only records signals.
-- Paper execution is disabled by default.
-- Real-money execution is not implemented.
-- Multi-outcome scanning does not perform negative-risk conversions or submit trades.
+Create the tables in the remote D1 database:
 
-## Remaining limits
+```bash
+npx wrangler@latest d1 execute moneymog --remote --file=cloudflare/schema.sql
+```
 
-Paper results are still estimates. Live markets may move between requests, public wallet attribution may be delayed, and a real multi-leg transaction is not atomic. The simulator records these risks rather than calling every detected spread guaranteed profit.
+## 2. Add the Worker API secret
+
+Generate a long random token:
+
+```bash
+openssl rand -hex 32
+```
+
+Copy the output somewhere private, then store it in Cloudflare:
+
+```bash
+npx wrangler@latest secret put API_TOKEN
+```
+
+Paste the random token when prompted. The same token will later be added to Vercel.
+
+Do not add this token to `wrangler.toml`, GitHub, or a browser-exposed variable.
+
+## 3. Deploy the Worker while simulation is paused
+
+Confirm this remains in `wrangler.toml`:
+
+```toml
+PAPER_SIMULATION_ENABLED = "false"
+```
+
+Deploy:
+
+```bash
+npx wrangler@latest deploy
+```
+
+Wrangler prints a URL similar to:
+
+```text
+https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev
+```
+
+Test the public service check:
+
+```bash
+curl https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev/health
+```
+
+Then test the authenticated shared snapshot:
+
+```bash
+curl -H "Authorization: Bearer YOUR_RANDOM_TOKEN" \
+  https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/snapshot
+```
+
+At this point it should report a paused paper portfolio with a $10,000 starting balance.
+
+## 4. Optional: configure qualified whale wallets
+
+Keep this disabled initially:
+
+```toml
+WHALE_MONITOR_ENABLED = "false"
+WHALE_WALLETS = "[]"
+```
+
+After running `npm run whales:rank` and freezing qualified wallets, use JSON like:
+
+```toml
+WHALE_MONITOR_ENABLED = "true"
+WHALE_WALLETS = '[{"wallet":"0xREPLACE_WITH_40_HEX_CHARACTERS","score":80,"walkForward":{"OVERALL":{"eligible":true,"forwardRoi":0.08,"profitableFoldRate":0.70}}}]'
+```
+
+A high historical score alone is not enough. The Hero allocator rejects whale signals without eligible forward evidence, positive forward ROI, and sufficient profitable-fold consistency.
+
+Redeploy after editing Worker variables:
+
+```bash
+npx wrangler@latest deploy
+```
+
+## 5. Import the repository into Vercel
+
+1. Open the Vercel dashboard.
+2. Choose **Add New → Project**.
+3. Import `brandonlign/moneymog` from GitHub.
+4. Keep the detected framework as **Next.js**.
+5. Keep the root directory as the repository root.
+6. Do not change the build command.
+
+## 6. Add Vercel environment variables
+
+In the Vercel project, open **Settings → Environment Variables** and add:
+
+```text
+MONEYMOG_WORKER_URL=https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev
+MONEYMOG_WORKER_API_TOKEN=YOUR_RANDOM_TOKEN
+```
+
+Add them to Production, Preview, and Development if you want every Vercel environment to show the same D1 paper account. Redeploy the Vercel project after saving them.
+
+These variables are server-side. Never rename them with a `NEXT_PUBLIC_` prefix.
+
+## 7. Verify the dashboard connection before enabling simulation
+
+Open the Vercel deployment. It should show:
+
+- status `PAUSED`;
+- paper balance `$10,000.00`;
+- zero positions and executions;
+- a real Worker run timestamp after the scheduled trigger fires;
+- no Worker connection warning.
+
+You can create a paused run immediately instead of waiting for cron:
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer YOUR_RANDOM_TOKEN" \
+  https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/run
+```
+
+## 8. Enable the hosted paper simulation
+
+Only after the paused snapshot and Vercel dashboard both work, change this in `wrangler.toml`:
+
+```toml
+PAPER_SIMULATION_ENABLED = "true"
+```
+
+Deploy again:
+
+```bash
+npx wrangler@latest deploy
+```
+
+This enables **paper simulation only**. It does not enable real trading because no real execution code exists.
+
+## 9. Verify automatic updates
+
+Trigger one cycle manually:
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer YOUR_RANDOM_TOKEN" \
+  https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/run
+```
+
+Refresh the Vercel dashboard. Confirm:
+
+1. Worker status is `HEALTHY` or, when one source failed, `DEGRADED` with an error count.
+2. The last-run time changed.
+3. Opportunities and Hero decisions appear even when all candidates were rejected.
+4. Any accepted execution appears in the execution ledger.
+5. Cash, realized paper P&L, and open positions match `/api/snapshot`.
+6. The page updates on its own within about 15 seconds while open.
+
+Scheduled cycles then continue every five minutes.
+
+# Worker APIs
+
+All portfolio data APIs require `Authorization: Bearer <API_TOKEN>`:
+
+```text
+GET  /api/snapshot
+GET  /api/portfolio
+GET  /api/executions
+GET  /api/opportunities
+GET  /api/signals
+GET  /api/health
+POST /api/run
+```
+
+`GET /health` is only a minimal unauthenticated service check and does not expose portfolio state.
+
+# Resetting the paper account
+
+Changing `PAPER_STARTING_CASH` does not overwrite an existing D1 portfolio. This protects results from accidental resets. To restart from scratch, delete and recreate the D1 database, then rerun `cloudflare/schema.sql`.
+
+# Modeling limits
+
+Paper fills remain estimates. Public wallet data can arrive late, books can move between calls, fee behavior can change, and real multi-leg execution would not be atomic. MoneyMog records delayed books, partial fills, failed later legs, stale data, fees, concentration limits, and rejection reasons rather than calling detected spreads guaranteed profit.
