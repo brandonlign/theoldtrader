@@ -1,6 +1,3 @@
-import "./globals.css";
-import "./whales.css";
-import "./readiness.css";
 import "./hosted.css";
 
 export const metadata = {
