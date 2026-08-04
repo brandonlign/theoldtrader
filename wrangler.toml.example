@@ -1,5 +1,5 @@
 name = "moneymog-paper-worker"
-main = "cloudflare/worker.js"
+main = "cloudflare/entry.js"
 compatibility_date = "2026-08-04"
 compatibility_flags = ["nodejs_compat"]
 
@@ -26,6 +26,7 @@ MARKET_ROTATION_WINDOW = "600"
 EVENT_ROTATION_WINDOW = "100"
 BOOK_BATCH_SIZE = "80"
 REQUEST_TIMEOUT_MS = "10000"
+CYCLE_LOCK_TTL_MS = "240000"
 
 # Structural strategy thresholds.
 MAX_SHARES = "500"
