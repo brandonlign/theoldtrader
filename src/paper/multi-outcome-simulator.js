@@ -79,12 +79,13 @@ export function simulateMultiOutcomeExecution(input, options = {}) {
   }
 
   const rejected = reasons.includes("execution-delay-not-elapsed") || reasons.includes("stale-execution-book") || reasons.includes("incomplete-outcome-set");
+  const hasAnyFill = quotes.some((leg) => (leg.quote?.filledShares ?? D(0)).gt(0));
   const status = rejected
     ? "REJECTED"
-    : pairedShares.lte(0)
-      ? "FAILED"
-      : openInventory.length || pairedFillRatio.lt(1)
-        ? "PARTIAL_EXPOSURE"
+    : openInventory.length || (hasAnyFill && pairedFillRatio.lt(1))
+      ? "PARTIAL_EXPOSURE"
+      : pairedShares.lte(0)
+        ? "FAILED"
         : "FILLED";
 
   return {
