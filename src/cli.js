@@ -3,7 +3,7 @@ import { DataApiClient } from "./clients/data-api.js";
 import { loadConfig } from "./config.js";
 import { MultiOutcomeScanner } from "./multi-outcome-scanner.js";
 import { attachHealth } from "./monitoring/health.js";
-import { PaperBroker } from "./paper/paper-broker.js";
+import { PaperSimulationRunner } from "./paper/runner.js";
 import { StructuralArbitrageScanner } from "./scanner.js";
 import { loadWhaleConfig } from "./whales/config.js";
 import { discoverWhales } from "./whales/discovery.js";
@@ -72,22 +72,13 @@ async function main() {
     console.log(JSON.stringify({ binary, multiOutcome }, null, 2));
     return;
   }
-
-  const scanner = new StructuralArbitrageScanner(config);
-  if (command === "scan") {
-    console.log(JSON.stringify(await scanner.scan(), null, 2));
+  if (command === "paper-once") {
+    console.log(JSON.stringify(await new PaperSimulationRunner(config).runOnce(), null, 2));
     return;
   }
-  if (command === "paper-once") {
-    if (!config.paperEnabled) {
-      throw new Error("Paper execution is disabled. Set MONEYMOG_PAPER_ENABLED=true only when you are ready to begin the simulation.");
-    }
-    const result = await scanner.scan();
-    const broker = new PaperBroker(config.paperStartingCash);
-    for (const opportunity of result.opportunities) {
-      try { broker.execute(opportunity); } catch { /* bankroll or duplicate guard */ }
-    }
-    console.log(JSON.stringify({ scan: result, portfolio: broker.snapshot() }, null, 2));
+
+  if (command === "scan") {
+    console.log(JSON.stringify(await new StructuralArbitrageScanner(config).scan(), null, 2));
     return;
   }
 
