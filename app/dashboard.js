@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const DEFAULT_SETTINGS = {
   maxMarkets: 120,
@@ -11,13 +11,13 @@ const DEFAULT_SETTINGS = {
 };
 
 function money(value, digits = 2) {
-  const number = Number(value ?? 0);
+  const parsed = Number(value ?? 0);
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: digits,
     maximumFractionDigits: digits
-  }).format(Number.isFinite(number) ? number : 0);
+  }).format(Number.isFinite(parsed) ? parsed : 0);
 }
 
 function number(value, digits = 2) {
@@ -26,6 +26,10 @@ function number(value, digits = 2) {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits
   }) : "0";
+}
+
+function percent(value, digits = 1) {
+  return `${number(Number(value ?? 0) * 100, digits)}%`;
 }
 
 function timeLabel(value) {
@@ -39,6 +43,11 @@ function timeLabel(value) {
 
 function directionLabel(direction) {
   return direction === "BUY_AND_MERGE" ? "Buy both → merge" : "Split → sell both";
+}
+
+function shortenWallet(wallet) {
+  if (!wallet) return "Unknown";
+  return `${wallet.slice(0, 6)}…${wallet.slice(-4)}`;
 }
 
 function StrategyMark() {
@@ -56,12 +65,31 @@ export default function Dashboard() {
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState("");
   const [showSettings, setShowSettings] = useState(false);
+  const [whaleRanking, setWhaleRanking] = useState(null);
+  const [rankingWhales, setRankingWhales] = useState(false);
+  const [whaleError, setWhaleError] = useState("");
+  const [workerStatus, setWorkerStatus] = useState({ configured: false, enabled: false });
+  const [whaleSignals, setWhaleSignals] = useState([]);
 
   const opportunities = result?.opportunities ?? [];
+  const rankedWallets = whaleRanking?.recommended ?? [];
   const totalEdge = useMemo(
     () => opportunities.reduce((sum, item) => sum + Number(item.netProfit ?? 0), 0),
     [opportunities]
   );
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      fetch("/api/whales/status", { cache: "no-store" }).then((response) => response.json()),
+      fetch("/api/whales/signals?limit=8", { cache: "no-store" }).then((response) => response.json())
+    ]).then(([status, signals]) => {
+      if (cancelled) return;
+      setWorkerStatus(status);
+      setWhaleSignals(signals.signals ?? []);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   async function runScan() {
     setScanning(true);
@@ -82,6 +110,25 @@ export default function Dashboard() {
     }
   }
 
+  async function rankPublicWallets() {
+    setRankingWhales(true);
+    setWhaleError("");
+    try {
+      const response = await fetch("/api/whales/rank", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ recommendedCount: 10 })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Wallet ranking failed.");
+      setWhaleRanking(payload);
+    } catch (rankingError) {
+      setWhaleError(rankingError instanceof Error ? rankingError.message : "Wallet ranking failed.");
+    } finally {
+      setRankingWhales(false);
+    }
+  }
+
   function updateSetting(name, value) {
     setSettings((current) => ({ ...current, [name]: value }));
   }
@@ -96,16 +143,20 @@ export default function Dashboard() {
             <small>paper trading desk</small>
           </span>
         </a>
+        <nav className="desk-nav" aria-label="Dashboard sections">
+          <a href="#arbitrage">Arbitrage</a>
+          <a href="#whales">Whales</a>
+        </nav>
         <div className="mode-pill"><span /> Paper mode · paused</div>
       </header>
 
       <section className="hero" id="top">
         <div>
-          <p className="eyebrow">Structural arbitrage monitor</p>
-          <h1>Find the gap.<br />Risk nothing yet.</h1>
+          <p className="eyebrow">Prediction-market research desk</p>
+          <h1>Find the gap.<br />Follow the signal.</h1>
           <p className="hero-copy">
-            Scan Polymarket order books for complete-set pricing errors. Review the
-            executable edge before a single simulated dollar moves.
+            Scan complete-set pricing errors and rank consistently skilled public wallets.
+            Everything remains read-only until the paper simulation is deliberately enabled.
           </p>
         </div>
         <div className="hero-actions">
@@ -115,7 +166,7 @@ export default function Dashboard() {
           <button className="text-button" onClick={() => setShowSettings((value) => !value)}>
             {showSettings ? "Close settings" : "Scan settings"}
           </button>
-          <p>Read-only. No paper trades or real orders are placed.</p>
+          <p>No wallet, private key, simulated fill, or real order is active.</p>
         </div>
       </section>
 
@@ -163,18 +214,18 @@ export default function Dashboard() {
           <small>{result ? `${result.marketsDiscovered} markets reviewed` : "Awaiting first scan"}</small>
         </article>
         <article className="metric-card">
-          <span>Modeled net edge</span>
-          <strong>{money(totalEdge)}</strong>
-          <small>Across the current scan only</small>
+          <span>Ranked whales</span>
+          <strong>{rankedWallets.length}</strong>
+          <small>{whaleRanking ? `${whaleRanking.candidatesEvaluated} candidates tested` : "Not ranked yet"}</small>
         </article>
         <article className="metric-card">
-          <span>Last scan</span>
-          <strong className="metric-time">{timeLabel(result?.scannedAt)}</strong>
-          <small>{scanning ? "Working…" : "Manual scans only"}</small>
+          <span>Monitor status</span>
+          <strong className="metric-time">{workerStatus.enabled ? "Observing" : "Paused"}</strong>
+          <small>{workerStatus.configured ? `${workerStatus.configuredWallets ?? 0} wallets configured` : "Free worker not connected"}</small>
         </article>
       </section>
 
-      <section className="desk-grid">
+      <section className="desk-grid" id="arbitrage">
         <article className="ledger-card opportunity-card">
           <div className="section-heading">
             <div>
@@ -225,9 +276,9 @@ export default function Dashboard() {
 
         <aside className="side-stack">
           <article className="ledger-card strategy-card">
-            <div className="strategy-title"><StrategyMark /><span>Active strategy</span></div>
-            <h2>Complete-set arbitrage</h2>
-            <p>Buy YES + NO below $1, or split $1 and sell both above $1, after fees and depth.</p>
+            <div className="strategy-title"><StrategyMark /><span>Research engines</span></div>
+            <h2>Two independent edges</h2>
+            <p>Structural arbitrage handles mathematical pricing gaps. Whale watch studies repeatable directional skill.</p>
             <dl>
               <div><dt>Execution</dt><dd>Disabled</dd></div>
               <div><dt>Wallet</dt><dd>Not connected</dd></div>
@@ -252,9 +303,100 @@ export default function Dashboard() {
         </aside>
       </section>
 
+      <section className="whale-desk" id="whales">
+        <article className="ledger-card whale-rank-card">
+          <div className="section-heading whale-heading">
+            <div>
+              <p className="eyebrow">Whale watch</p>
+              <h2>Skill-weighted public wallets</h2>
+            </div>
+            <button className="ink-button" onClick={rankPublicWallets} disabled={rankingWhales}>
+              {rankingWhales ? "Testing histories…" : "Rank public wallets"}
+            </button>
+          </div>
+
+          {whaleError && <div className="inline-error" role="alert">{whaleError}</div>}
+
+          {rankedWallets.length > 0 ? (
+            <div className="table-wrap">
+              <table className="whale-table">
+                <thead>
+                  <tr>
+                    <th>Wallet</th>
+                    <th>Score</th>
+                    <th>Resolved</th>
+                    <th>ROI</th>
+                    <th>Robust P&amp;L</th>
+                    <th>Specialties</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rankedWallets.map((wallet) => (
+                    <tr key={wallet.wallet}>
+                      <td>
+                        <strong>{wallet.userName || shortenWallet(wallet.wallet)}</strong>
+                        <span>{shortenWallet(wallet.wallet)}</span>
+                      </td>
+                      <td><span className="score-stamp">{number(wallet.score, 0)}</span></td>
+                      <td>{number(wallet.sampleSize, 0)}</td>
+                      <td className={wallet.roi > 0 ? "positive" : ""}>{percent(wallet.roi)}</td>
+                      <td className={wallet.robustPnl > 0 ? "positive" : ""}>{money(wallet.robustPnl, 0)}</td>
+                      <td><span className="category-line">{(wallet.categories ?? []).join(" · ") || "Overall"}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="empty-ledger whale-empty">
+              <div className="empty-lines" aria-hidden="true"><span /><span /><span /></div>
+              <h3>No wallets selected yet</h3>
+              <p>MoneyMog removes one-hit wonders by checking resolved-market count, ROI, drawdown, concentration, and profit after the wallet’s largest win is removed.</p>
+            </div>
+          )}
+        </article>
+
+        <aside className="side-stack whale-side">
+          <article className="ledger-card strategy-card">
+            <p className="eyebrow">Free monitor</p>
+            <h2>{workerStatus.configured ? (workerStatus.enabled ? "Observation active" : "Connected, paused") : "Not connected yet"}</h2>
+            <p>
+              The repository includes a free Cloudflare Worker + D1 monitor. It is disabled by default and polls small wallet batches for paper testing.
+            </p>
+            <dl>
+              <div><dt>Hosting</dt><dd>Cloudflare free</dd></div>
+              <div><dt>Simulation</dt><dd>Paused</dd></div>
+              <div><dt>Real money</dt><dd>Unavailable</dd></div>
+            </dl>
+          </article>
+
+          <article className="ledger-card signal-card">
+            <p className="eyebrow">Recent observations</p>
+            <h2>Copy decisions</h2>
+            {whaleSignals.length > 0 ? (
+              <ul className="signal-list">
+                {whaleSignals.slice(0, 6).map((signal) => (
+                  <li key={signal.id}>
+                    <div>
+                      <strong>{signal.title || signal.slug || "Market signal"}</strong>
+                      <span>{signal.walletName || shortenWallet(signal.wallet)} · {signal.outcome}</span>
+                    </div>
+                    <em className={signal.decision === "COPY_CANDIDATE" ? "candidate" : "rejected"}>
+                      {signal.decision === "COPY_CANDIDATE" ? "candidate" : "rejected"}
+                    </em>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="muted-copy">No monitoring has started, so there are no copied or rejected signals.</p>
+            )}
+          </article>
+        </aside>
+      </section>
+
       <footer>
         <span>MoneyMog / paper desk</span>
-        <span>Read-only structural-arbitrage research</span>
+        <span>Read-only research · simulation paused</span>
       </footer>
     </main>
   );
