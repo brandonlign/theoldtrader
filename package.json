@@ -1,6 +1,6 @@
 {
   "name": "moneymog",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "type": "module",
   "description": "Paper-first Polymarket structural-arbitrage, multi-outcome, and whale-monitoring dashboard.",
@@ -16,6 +16,7 @@
     "scan:multi": "node src/cli.js multi-scan",
     "scan:all": "node src/cli.js scan-all",
     "paper:once": "node src/cli.js paper-once",
+    "paper:run": "node src/paper-loop.js",
     "whales:rank": "node src/cli.js whales-rank",
     "whales:observe": "node src/cli.js whales-observe",
     "test": "node --test tests/*.test.js"
