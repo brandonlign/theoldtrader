@@ -1,3 +1,5 @@
+import { walkForwardByCategory } from "./walk-forward.js";
+
 function clamp(value, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
@@ -51,6 +53,8 @@ export function scoreWallet({ wallet, leaderboardEntries = [], closedPositions =
     ? [...bestRanks.values()].reduce((sum, entry) => sum + clamp(1 - (entry.rank - 1) / 50), 0) / bestRanks.size
     : 0;
 
+  const walkForward = walkForwardByCategory(positions, { minTrain: 6, testSize: 3, maxFolds: 8 });
+  const forward = walkForward.OVERALL;
   const sampleScore = clamp(Math.log1p(sampleSize) / Math.log1p(60));
   const roiScore = clamp((roi + 0.03) / 0.28);
   const winScore = clamp((winRate - 0.38) / 0.32);
@@ -60,13 +64,14 @@ export function scoreWallet({ wallet, leaderboardEntries = [], closedPositions =
   const concentrationPenalty = clamp((topWinShare - 0.35) / 0.45);
 
   let score = 100 * (
-    0.20 * sampleScore +
-    0.22 * roiScore +
-    0.12 * winScore +
-    0.18 * robustScore +
-    0.10 * profitFactorScore +
-    0.10 * drawdownScore +
-    0.08 * categoryStrength
+    0.16 * sampleScore +
+    0.18 * roiScore +
+    0.10 * winScore +
+    0.14 * robustScore +
+    0.08 * profitFactorScore +
+    0.08 * drawdownScore +
+    0.06 * categoryStrength +
+    0.20 * clamp(forward.score / 100)
   );
   score -= 22 * concentrationPenalty;
   score = clamp(score, 0, 100);
@@ -77,6 +82,9 @@ export function scoreWallet({ wallet, leaderboardEntries = [], closedPositions =
   if (robustPnl <= 0) rejectionReasons.push("profit-depends-on-best-win");
   if (roi <= 0) rejectionReasons.push("non-positive-roi");
   if (topWinShare > 0.75) rejectionReasons.push("one-hit-concentration");
+  if (!forward.eligible) {
+    rejectionReasons.push(...forward.rejectionReasons.map((reason) => `walk-forward:${reason}`));
+  }
 
   return {
     wallet: String(wallet).toLowerCase(),
@@ -98,6 +106,7 @@ export function scoreWallet({ wallet, leaderboardEntries = [], closedPositions =
     maxDrawdown: drawdown,
     drawdownRatio,
     categoryRanks,
-    categories: [...bestRanks.keys()]
+    categories: [...bestRanks.keys()],
+    walkForward
   };
 }
