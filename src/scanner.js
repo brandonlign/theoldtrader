@@ -11,7 +11,8 @@ export class StructuralArbitrageScanner {
     const tokenIds = markets.flatMap((market) => [market.yesTokenId, market.noTokenId]);
     const books = await this.clob.getOrderBooks(tokenIds, this.config.bookBatchSize);
     const skipped = {}; const skip = (reason) => { skipped[reason] = (skipped[reason] ?? 0) + 1; };
-    const opportunities = []; let marketsWithBooks = 0;
+    const opportunities = []; let marketsWithBooks = 0; let feeLookups = 0;
+    const maxFeeLookups = Math.max(0, Math.trunc(this.config.maxFeeLookupsPerScan ?? 6));
     for (const market of markets) {
       const yesBook = books.get(market.yesTokenId); const noBook = books.get(market.noTokenId);
       if (!yesBook || !noBook) { skip("missing-book"); continue; }
@@ -19,6 +20,9 @@ export class StructuralArbitrageScanner {
       const buyGrossEdge = yesBook.asks[0] && noBook.asks[0] ? new Dec(1).minus(yesBook.asks[0].price.plus(noBook.asks[0].price)) : new Dec(-1);
       const sellGrossEdge = yesBook.bids[0] && noBook.bids[0] ? yesBook.bids[0].price.plus(noBook.bids[0].price).minus(1) : new Dec(-1);
       if (buyGrossEdge.lte(0) && sellGrossEdge.lte(0)) { skip("no-gross-edge"); continue; }
+      const needsFeeLookup = market.feesEnabled && !market.feeSchedule;
+      if (needsFeeLookup && feeLookups >= maxFeeLookups) { skip("fee-request-budget"); continue; }
+      if (needsFeeLookup) feeLookups += 1;
       let feeSchedule;
       try { feeSchedule = await this.resolveFeeSchedule(market); }
       catch { skip("fee-schedule-error"); continue; }
@@ -31,10 +35,11 @@ export class StructuralArbitrageScanner {
       opportunities.push(...found);
     }
     opportunities.sort((a, b) => b.netProfit.comparedTo(a.netProfit));
-    return { scannedAt: new Date(nowMs).toISOString(), marketStartOffset: this.config.marketStartOffset ?? 0, marketsDiscovered: markets.length, marketsWithBooks, opportunities, skipped };
+    return { scannedAt: new Date(nowMs).toISOString(), marketStartOffset: this.config.marketStartOffset ?? 0, marketsDiscovered: markets.length, marketsWithBooks, feeLookups, opportunities, skipped };
   }
   async resolveFeeSchedule(market) {
-    try { return await this.clob.getFeeSchedule(market.conditionId); }
-    catch (error) { if (market.feeSchedule) return market.feeSchedule; if (!market.feesEnabled) return { rate: new Dec(0), exponent: 2, takerOnly: true }; throw error; }
+    if (market.feeSchedule) return market.feeSchedule;
+    if (!market.feesEnabled) return { rate: new Dec(0), exponent: 2, takerOnly: true };
+    return this.clob.getFeeSchedule(market.conditionId);
   }
 }
