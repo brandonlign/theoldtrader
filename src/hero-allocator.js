@@ -74,6 +74,7 @@ function whaleQualificationReasons(candidate, config) {
 export function defaultHeroConfig(overrides = {}) {
   return {
     maxRunAllocationPct: 0.12,
+    maxSelectedPerRun: 2,
     structuralBudgetShare: 0.9,
     whaleBudgetShare: 0.1,
     maxOpportunityPct: 0.04,
@@ -136,6 +137,7 @@ export function allocateHero(input = {}) {
   });
 
   const decisions = [];
+  let selectedCount = 0;
   for (const candidate of candidates) {
     const type = strategyType(candidate);
     const id = candidateId(candidate);
@@ -146,6 +148,7 @@ export function allocateHero(input = {}) {
     const reasons = [];
 
     if (seen.has(key)) reasons.push("duplicate-opportunity");
+    if (selectedCount >= config.maxSelectedPerRun) reasons.push("run-selection-limit");
     if (requested <= 0) reasons.push("capital-required-missing");
     if (type !== "WHALE_COPY") {
       if (finite(candidate.netProfit, 0) < config.minStructuralNetProfitUsd) reasons.push("net-profit-below-threshold");
@@ -178,6 +181,7 @@ export function allocateHero(input = {}) {
       seen.add(key);
       marketExposure.set(market, (marketExposure.get(market) ?? 0) + allocatedCapital);
       categoryExposure.set(category, (categoryExposure.get(category) ?? 0) + allocatedCapital);
+      selectedCount += 1;
       if (type === "WHALE_COPY") {
         whaleUsed += allocatedCapital;
         whaleExposure += allocatedCapital;
