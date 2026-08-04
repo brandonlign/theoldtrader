@@ -1,9 +1,10 @@
 # MoneyMog
 
-MoneyMog is a **paper-first Polymarket research dashboard** with two independent engines:
+MoneyMog is a **paper-first Polymarket research dashboard** with three separate engines:
 
-- **Structural arbitrage:** finds executable binary complete sets priced below or above their $1 collateral value after depth, fees, and safety buffers.
-- **Whale watch:** ranks public wallets for repeatable forecasting skill and evaluates new public trades against delay, liquidity, slippage, position state, and churn.
+- **Binary complete sets:** buys YES + NO below $1 or models splitting and selling both above $1.
+- **Multi-outcome complete sets:** buys every stable negative-risk outcome when their executable total is below $1.
+- **Whale watch:** ranks public wallets for repeatable forecasting skill and evaluates new trades after delay, liquidity, slippage, position, and churn checks.
 
 No simulated or real trades start automatically.
 
@@ -18,84 +19,100 @@ npm run dev
 
 Then open `http://localhost:3000`.
 
-It provides:
-
-- manual read-only structural-arbitrage scans
-- public-wallet ranking with one-hit-wonder filters
-- fee-, depth-, and safety-adjusted opportunity tables
-- optional status and signal views for the hosted whale monitor
-- clear paused states for paper and real execution
-- responsive desktop and mobile layouts
-
-No API key, wallet, or private key is required for the read-only features.
+Read-only features require no wallet, private key, or API key.
 
 ## Commands
 
 ```bash
-npm test              # deterministic strategy and whale-monitor tests
+npm test              # all deterministic tests
 npm run build         # production dashboard build
-npm run scan          # read-only structural-arbitrage scan
-npm run whales:rank   # read-only public-wallet ranking
+npm run scan          # binary complete-set scan
+npm run scan:multi    # stable multi-outcome scan
+npm run scan:all      # both arbitrage scanners
+npm run whales:rank   # walk-forward public-wallet ranking
 ```
 
-Local whale observation is deliberately locked:
+Observation remains locked until explicitly enabled:
 
 ```bash
 MONEYMOG_WHALE_MONITOR_ENABLED=true npm run whales:observe
 ```
 
-The first observation pass only establishes a baseline, preventing old trades from being mistaken for new signals. Later passes record `COPY_CANDIDATE` or `REJECTED` decisions without changing a portfolio.
+The first pass establishes a baseline so old trades are not mistaken for new signals.
 
-The existing one-pass structural paper accountant is also locked:
+The realistic paper runner also remains locked:
 
 ```bash
 MONEYMOG_PAPER_ENABLED=true npm run paper:once
 ```
 
-Neither command submits real orders.
+When enabled later, it detects opportunities, waits for the configured delay, fetches fresh order books, applies a liquidity haircut, models partial fills and failed later legs, enforces bankroll limits, and atomically saves the portfolio. It still cannot place real orders.
 
-## Whale selection and monitoring
+## Realistic simulation
 
-Wallets are not selected by leaderboard profit alone. MoneyMog checks:
+The simulator records:
 
-- resolved-market sample size
-- approximate return on deployed capital
-- win rate and profit factor
-- maximum drawdown
-- category-specific leaderboard strength
-- concentration in the largest win
-- profitability after removing the largest win
+- detection and execution timestamps
+- configurable execution delay
+- fresh execution-time order books
+- available depth after a liquidity haircut
+- fees and fixed costs
+- partial fills and unpaired exposure
+- persistent cash, positions, realized profit, and execution IDs
+- duplicate protection across restarts
 
-For each newly observed public BUY, the monitor checks:
+Local state defaults to `.moneymog/paper-state.json`. Cloudflare D1 tables are also included for hosted persistence.
 
-- whether the wallet still holds a directional position
-- trade size relative to that wallet's normal activity
-- two-sided churn suggesting market-making or hedging
-- detection delay
-- current executable ask and order-book depth
-- fee schedule and expected copy cost
-- price deterioration from the whale's fill
-- optional agreement from multiple ranked wallets
+## Walk-forward whale selection
 
-See [`docs/whale-monitor.md`](docs/whale-monitor.md) for the full setup and safety model.
+MoneyMog does not select wallets using their full history and then claim that same history as proof. It repeatedly:
 
-## Vercel
+1. scores only the earlier resolved markets;
+2. decides whether the wallet would have qualified then;
+3. evaluates the following unseen markets;
+4. aggregates forward ROI, profitable-fold rate, and concentration.
 
-Import `brandonlign/moneymog` into Vercel and use the default Next.js settings. No environment variables are required for the initial read-only dashboard.
+Wallets with impressive historical results but poor later performance are rejected. Category-specific forward records are retained when enough observations exist.
 
-Vercel remains the long-term dashboard. Continuous monitoring should run separately and report back to it.
+## Monitoring health
 
-## Free hosted monitor
+Every monitor run can report:
 
-The repository includes an optional **Cloudflare Worker + D1** implementation:
+- wallets expected versus successfully checked
+- API and order-book errors
+- source-data lag
+- runtime
+- signals and copy candidates produced
+- whether state was persisted successfully
+
+Health is classified as `HEALTHY`, `DEGRADED`, or `UNHEALTHY` and is exposed through the Cloudflare `/health` endpoint and dashboard.
+
+## Multi-outcome safety
+
+MoneyMog only evaluates event groups explicitly marked as negative-risk and containing at least three active order-book markets from the same group. It walks every YES book, includes each leg’s fees, and requires sufficient depth across the entire set.
+
+It deliberately rejects:
+
+- augmented negative-risk events
+- any event containing an `Other` outcome
+- mixed negative-risk groups
+- deploying or inactive markets
+- stale or incomplete books
+
+This conservative filter avoids treating a changing or incomplete outcome list as a guaranteed $1 complete set.
+
+## Vercel and free worker
+
+Vercel remains the long-term dashboard. Continuous monitoring runs separately.
+
+The repository includes a disabled-by-default **Cloudflare Worker + D1** implementation:
 
 - `cloudflare/worker.js`
 - `cloudflare/schema.sql`
+- `cloudflare/research-store.js`
 - `wrangler.toml.example`
 
-It is disabled by default. The example cron rotates through small wallet batches, stores only observation state and signals, and is intended for free paper testing—not latency-sensitive real-money execution.
-
-After deployment, connect it to Vercel with server-side environment variables:
+After deploying it, connect Vercel using server-side environment variables:
 
 ```text
 MONEYMOG_WORKER_URL
@@ -104,22 +121,13 @@ MONEYMOG_WORKER_API_TOKEN
 
 ## Safety boundary
 
-- No wallet credentials, private keys, or signing code exist.
+- No wallet credentials, private keys, signing, or real-order code exist.
 - Dashboard scans and wallet ranking are read-only.
-- Whale observation records signals only.
+- Whale observation only records signals.
 - Paper execution is disabled by default.
 - Real-money execution is not implemented.
-- Multi-outcome negative-risk arbitrage is not enabled.
+- Multi-outcome scanning does not perform negative-risk conversions or submit trades.
 
-## Modeling limits
+## Remaining limits
 
-A valid signal is not proof of future profitability:
-
-- public wallet attribution can arrive after the original fill
-- the copied price may be materially worse
-- public positions may be part of an external hedge
-- order-book depth can disappear before execution
-- two-leg arbitrage is not atomic
-- fees and protocol behavior can change
-
-Paper results should eventually include measured detection delay, partial fills, rejected orders, book movement, and realistic bankroll constraints before real-money use is considered.
+Paper results are still estimates. Live markets may move between requests, public wallet attribution may be delayed, and a real multi-leg transaction is not atomic. The simulator records these risks rather than calling every detected spread guaranteed profit.
