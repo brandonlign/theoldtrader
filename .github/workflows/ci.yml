@@ -24,6 +24,13 @@ jobs:
       - name: Run strategy tests
         run: npm test
       - name: Check Worker syntax
-        run: node --check cloudflare/entry.js && node --check cloudflare/worker.js && node --check cloudflare/hosted-store.js
+        run: >-
+          node --check cloudflare/entry.js &&
+          node --check cloudflare/worker.js &&
+          node --check cloudflare/hosted-store.js &&
+          node --check cloudflare/crypto-engine.js &&
+          node --check cloudflare/crypto-store.js &&
+          node --check src/crypto/coinbase-public.js &&
+          node --check src/crypto/strategy.js
       - name: Build dashboard
         run: npm run build

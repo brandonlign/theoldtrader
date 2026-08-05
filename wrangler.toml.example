@@ -14,11 +14,11 @@ database_name = "moneymog"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 
 [vars]
-# Master safety switch. Leave false through the initial deployment and checks.
+# Polymarket paper desk.
 PAPER_SIMULATION_ENABLED = "false"
 PAPER_STARTING_CASH = "10000"
 
-# Rotating free-tier-sized batches.
+# Rotating free-tier-sized Polymarket batches.
 MARKET_BATCH_SIZE = "30"
 EVENT_BATCH_SIZE = "5"
 WHALE_BATCH_SIZE = "2"
@@ -36,7 +36,7 @@ SAFETY_BUFFER_BPS = "15"
 MAX_BOOK_AGE_MS = "15000"
 FIXED_COST_USD = "0"
 
-# Realistic delayed paper execution.
+# Realistic delayed Polymarket paper execution.
 PAPER_EXECUTION_DELAY_MS = "2000"
 PAPER_LIQUIDITY_HAIRCUT = "0.75"
 PAPER_MIN_PAIRED_FILL_RATIO = "0.92"
@@ -72,3 +72,37 @@ WHALE_MIN_LIQUIDITY_COVERAGE = "2"
 WHALE_MIN_FORWARD_ROI = "0"
 WHALE_MIN_PROFITABLE_FOLD_RATE = "0.60"
 WHALE_REQUIRED_CONSENSUS = "1"
+
+# Separate 24/7 crypto paper desk. This is paper-only and needs no exchange key.
+CRYPTO_SIMULATION_ENABLED = "true"
+CRYPTO_STARTING_CASH = "10000"
+CRYPTO_PRODUCTS = "BTC-USD,ETH-USD,SOL-USD"
+COINBASE_EXCHANGE_BASE_URL = "https://api.exchange.coinbase.com"
+CRYPTO_CANDLE_SECONDS = "300"
+
+# Trend + momentum signal settings.
+CRYPTO_FAST_EMA = "12"
+CRYPTO_SLOW_EMA = "36"
+CRYPTO_MOMENTUM_PERIOD = "12"
+CRYPTO_RSI_PERIOD = "14"
+CRYPTO_MIN_TREND = "0.0015"
+CRYPTO_MIN_MOMENTUM = "0.0025"
+CRYPTO_MIN_RSI = "52"
+CRYPTO_MAX_RSI = "72"
+CRYPTO_EXIT_RSI = "47"
+CRYPTO_MAX_ATR_PCT = "0.035"
+CRYPTO_MIN_VOLUME_RATIO = "0.85"
+CRYPTO_REQUIRED_CHECKS = "6"
+
+# Crypto risk and paper-fill assumptions.
+CRYPTO_POSITION_PCT = "0.20"
+CRYPTO_MAX_EXPOSURE_PCT = "0.60"
+CRYPTO_CASH_RESERVE_PCT = "0.15"
+CRYPTO_MIN_TRADE_USD = "25"
+CRYPTO_MAX_TRADE_USD = "2000"
+CRYPTO_FEE_BPS = "60"
+CRYPTO_SLIPPAGE_BPS = "5"
+CRYPTO_MAX_SPREAD_BPS = "35"
+CRYPTO_STOP_LOSS_PCT = "0.025"
+CRYPTO_TAKE_PROFIT_PCT = "0.05"
+CRYPTO_TRAILING_STOP_PCT = "0.02"

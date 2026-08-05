@@ -1,0 +1,135 @@
+.desk-tabs {
+  max-width: 1320px;
+  margin: 22px auto 0;
+  padding: 5px;
+  display: inline-flex;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  gap: 5px;
+  border: 1px solid #bfb8a8;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .28);
+}
+.desk-tabs button {
+  min-width: 210px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #5f5d55;
+  cursor: pointer;
+  font-weight: 730;
+  text-align: left;
+}
+.desk-tabs button span {
+  display: block;
+  margin-bottom: 3px;
+  color: #898478;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.desk-tabs button.active {
+  background: #252820;
+  color: #f5f1e7;
+  box-shadow: 0 5px 14px rgba(47, 42, 31, .16);
+}
+.desk-tabs button.active span { color: #c9c4b7; }
+.compact-hero { padding-top: 48px; }
+.equal-grid { grid-template-columns: 1fr 1fr !important; }
+.scan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid #cbc4b5;
+}
+.scan-grid > div {
+  min-height: 132px;
+  padding: 23px;
+  border-right: 1px solid #d2ccbe;
+  display: flex;
+  flex-direction: column;
+}
+.scan-grid > div:last-child { border-right: 0; }
+.scan-grid span {
+  color: #77736a;
+  font-size: 11px;
+  font-weight: 760;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.scan-grid strong {
+  margin-top: 15px;
+  font-family: Georgia, serif;
+  font-size: 34px;
+  font-weight: 500;
+}
+.scan-grid small { margin-top: auto; color: #77736a; }
+.skip-ledger { padding: 6px 22px 18px; }
+.skip-ledger > div { padding: 16px 0; border-bottom: 1px solid #d2ccbe; }
+.skip-ledger > div:last-child { border-bottom: 0; }
+.skip-ledger strong { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; }
+.skip-ledger p { margin: 8px 0 0; color: #706d64; line-height: 1.55; }
+.signal-cards {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.signal-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #c6bfae;
+  border-radius: 7px;
+  background: rgba(242, 238, 226, .72);
+}
+.signal-card > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.signal-card > div:first-child strong { font-family: Georgia, serif; font-size: 20px; font-weight: 500; }
+.signal-card > div:first-child span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #ddd8cc;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+.signal-card.signal-buy { border-top: 4px solid #4f7d55; }
+.signal-card.signal-buy > div:first-child span { background: #d8e7d7; color: #315e36; }
+.signal-card.signal-sell { border-top: 4px solid #a45b50; }
+.signal-card.signal-sell > div:first-child span { background: #efd7d2; color: #873a31; }
+.signal-card.signal-hold { border-top: 4px solid #a99665; }
+.signal-card.signal-hold > div:first-child span { background: #e9e0c7; color: #715c27; }
+.signal-card > b { display: block; margin-top: 13px; font-family: Georgia, serif; font-size: 27px; font-weight: 500; }
+.signal-card dl { margin: 17px 0 0; }
+.signal-card dl div { padding: 8px 0; display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid #d7d0c1; }
+.signal-card dl div:last-child { border-bottom: 0; }
+.signal-card dt { color: #77736a; font-size: 11px; }
+.signal-card dd { margin: 0; font-size: 11px; font-weight: 700; text-align: right; }
+.signal-card > small { display: block; margin-top: 13px; color: #77736a; line-height: 1.5; }
+.note-copy { padding: 24px; color: #626057; line-height: 1.65; }
+.note-copy p { margin: 0; }
+.note-copy ul { margin: 18px 0 0; padding-left: 18px; }
+.note-copy li { margin: 8px 0; }
+.decision-list > div.exit { border-left: 4px solid #a45b50; }
+.decision-list > div.neutral-decision { border-left: 4px solid #a99665; }
+.execution-buy { background: #d9e7d8; color: #315e36; }
+.execution-sell { background: #efd7d2; color: #873a31; }
+.desk-note { align-self: stretch; }
+
+@media (max-width: 1050px) {
+  .signal-cards { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 950px) {
+  .equal-grid { grid-template-columns: 1fr !important; }
+  .scan-grid { grid-template-columns: 1fr; }
+  .scan-grid > div { border-right: 0; border-bottom: 1px solid #d2ccbe; }
+  .scan-grid > div:last-child { border-bottom: 0; }
+}
+
+@media (max-width: 650px) {
+  .desk-tabs { width: 100%; }
+  .desk-tabs button { min-width: 0; flex: 1; padding: 10px 12px; }
+  .signal-cards { grid-template-columns: 1fr; }
+}

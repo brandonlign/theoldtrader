@@ -1,8 +1,9 @@
 import "./hosted.css";
+import "./desks.css";
 
 export const metadata = {
-  title: "MoneyMog — Hosted Paper Trading Desk",
-  description: "A shared Cloudflare-backed paper portfolio for conservative prediction-market research."
+  title: "MoneyMog — Polymarket + Crypto Paper Desks",
+  description: "Two separate Cloudflare-backed paper-trading desks for prediction markets and 24/7 crypto research."
 };
 
 export default function RootLayout({ children }) {
