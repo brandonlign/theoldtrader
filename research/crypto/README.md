@@ -23,18 +23,63 @@ Ordinary branch pushes run validation only. The untouched Coinbase final holdout
 
 ## Trial 2 — funding/basis carry
 
-`manifests/funding-carry-v1.json` freezes a separate market-neutral BTC spot / BTCUSDT perpetual carry experiment. `prepare-carry-data.py` builds checksum-verified synchronized Binance inputs with no forward-looking interpolation; `carry-evaluate.js` independently marks spot/perpetual legs, funding, fees, margin and gap stress.
+`manifests/funding-carry-v1.json` freezes a separate market-neutral BTC spot / BTCUSDT perpetual carry experiment. **No Trial 2 carry P&L has been observed.**
 
-When compute with outbound internet is available:
+The frozen hedge is unambiguous: spend 15% of starting equity on BTC spot, then short exactly those BTC units in the USD-M BTCUSDT perpetual. The perpetual dollar notional is determined by the contemporaneous contract price rather than independently forced to 15%. Twenty percent of starting equity is reserved as futures collateral. There is no rebalancing, leverage optimization, funding threshold, sign filter, entry-date selection, or regime timing.
 
-```bash
-python3 research/crypto/prepare-carry-data.py
-node research/crypto/carry-evaluate.js \
-  research/crypto/manifests/funding-carry-v1.json \
-  research/crypto/data-cache/funding-carry-v1-synchronized.csv
+`prepare-carry-data.py` builds a checksum-verified exact 8-hour grid from four official Binance Vision series:
+
+- **spot:** daily BTCUSDT 8h kline open;
+- **perpetual execution reference:** monthly USD-M BTCUSDT standard contract 8h kline open;
+- **perpetual valuation reference:** monthly USD-M BTCUSDT markPrice 8h kline open;
+- **funding:** monthly USD-M BTCUSDT fundingRate archive.
+
+The standard contract and mark price have deliberately different roles. Entry/exit execution friction is applied around the standard contract open. Mark price is used for unrealized short P&L, funding notional, maintenance margin and stress. Treating mark price as if it were the historical executable contract price is prohibited.
+
+Funding archives use raw `calc_time`, which may differ by milliseconds from the scheduled kline boundary. The raw funding timestamp and skew are preserved and mapped to the nearest 00:00/08:00/16:00 UTC boundary only if absolute skew is <=60 seconds. Any larger skew, collision, failed official `.CHECKSUM`, missing scheduled funding payment, or missing exact spot/contract/mark open aborts data preparation. No interpolation or forward-fill is permitted.
+
+The frozen 2021-05-01 through 2026-03-01 window contains exactly **5,295** scheduled observations. Both preprocessing and `carry-evaluate.js` independently require the complete 5,295-row grid. The synchronized CSV contains:
+
+```text
+timestamp,raw_funding_timestamp,funding_timestamp_skew_ms,spot_price,perp_exec_price,perp_mark_price,funding_rate
 ```
 
-Do not introduce a funding threshold, sign filter, leverage change, entry-date selection or rebalancing rule under trial 2 after seeing its result. The carry workflow is manual-only and refuses to overwrite an observed result.
+The evaluator skips funding at the entry boundary, accrues later funding on contemporaneous mark notional, marks margin on mark price, opens/closes the perpetual against the standard contract execution reference with frozen costs, checks the historical maintenance-margin rule and +25%/+50%/+100% mark-gap stresses, and compares against cash plus an identical 15%-spot buy-and-hold leg.
+
+It also emits a daily audit path. `carry-report.js` converts the frozen result into:
+
+- `REPORT.md`
+- `comparison-metrics.csv`
+- `daily-diagnostics.csv`
+- `equity-curve.svg`
+- `drawdown.svg`
+- `cumulative-funding.svg`
+- `basis.svg`
+- `margin-excess.svg`
+
+The one-time manual carry workflow runs deterministic Python and Node tests first, downloads/checksums the official archives, evaluates the frozen candidate once, generates the full evidence bundle, and commits the synchronized data/source provenance plus all result files atomically. It refuses to overwrite an observed Trial 2 result.
+
+When compute with outbound internet is available, the equivalent manual commands are:
+
+```bash
+python3 research/crypto/prepare-carry-data.py \
+  research/crypto/manifests/funding-carry-v1.json \
+  research/crypto/data-cache/funding-carry-v1-synchronized.csv \
+  research/crypto/data-cache/funding-carry-v1-sources.json
+
+node research/crypto/carry-evaluate.js \
+  research/crypto/manifests/funding-carry-v1.json \
+  research/crypto/data-cache/funding-carry-v1-synchronized.csv \
+  > research/crypto/results/funding-carry-v1/summary.json
+
+node research/crypto/carry-report.js \
+  research/crypto/results/funding-carry-v1/summary.json \
+  research/crypto/results/funding-carry-v1
+```
+
+`CARRY_DATA_AUDIT.md` records why a secondary premium/basis dataset cannot be forward-filled into this experiment. `CARRY_PRECHECK.md` is only an order-of-magnitude funding-scale sanity check and must never be presented as Trial 2 performance.
+
+Do not introduce a funding threshold, sign filter, leverage/allocation change, entry-date selection or rebalancing rule under Trial 2 after seeing its result. Any such change is a new numbered trial.
 
 ## Execution E1 — forward Coinbase maker-fill research
 
