@@ -1,0 +1,86 @@
+{
+  "experimentId": "crypto-oos-v1",
+  "createdAt": "2026-08-12T15:04:00Z",
+  "status": "FROZEN_BEFORE_FIRST_FINAL_EVALUATION",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "researchQuestion": "Can a simple cost-aware 24-hour expected-return forecaster outperform frozen MoneyMog crypto v2 out of sample after the same conservative trading frictions?",
+  "data": {
+    "source": "Coinbase Exchange public REST candles",
+    "products": ["BTC-USD", "ETH-USD", "SOL-USD"],
+    "granularitySeconds": 900,
+    "start": "2025-01-01T00:00:00Z",
+    "end": "2026-08-01T00:00:00Z",
+    "notes": "Coinbase warns historical candles may have gaps. The runner records missing-bar diagnostics and hashes the exact normalized dataset used."
+  },
+  "costModel": {
+    "feeBpsPerSide": 60,
+    "slippageBpsPerSide": 5,
+    "historicalSpreadBpsRoundTrip": 10,
+    "spreadStressBpsRoundTrip": [0, 10, 35],
+    "reason": "Historical top-of-book snapshots are unavailable from the candle endpoint. A fixed 10 bps round-trip spread is used for the primary comparison, with 0 and 35 bps sensitivity."
+  },
+  "portfolio": {
+    "startingCash": 10000,
+    "maxSinglePositionPct": 0.15,
+    "maxTotalCryptoExposurePct": 0.45,
+    "cashReservePct": 0.25
+  },
+  "validation": {
+    "developmentEnd": "2026-02-28T23:59:59Z",
+    "finalHoldoutStart": "2026-03-01T00:00:00Z",
+    "finalHoldoutEnd": "2026-08-01T00:00:00Z",
+    "walkForwardTrainMinDays": 180,
+    "walkForwardTestDays": 60,
+    "embargoHours": 24,
+    "finalHoldoutMayBeEvaluatedOncePerFrozenSpecification": true
+  },
+  "candidate": {
+    "name": "ridge24_cost_gate",
+    "model": "pooled ridge regression",
+    "target": "forward 24-hour log return",
+    "sampling": "one decision per UTC day per asset",
+    "ridgeLambda": 10,
+    "labelHorizonBars": 96,
+    "embargoBars": 96,
+    "entryRule": "enter/hold long only when predicted 24h gross return exceeds the modeled round-trip cost; otherwise remain/exit flat",
+    "sizingRule": "15% of current equity per active asset, no discretionary leverage, maximum three assets / 45% total exposure",
+    "features": [
+      "1h log return",
+      "4h log return",
+      "24h log return",
+      "7d log return",
+      "30d log return",
+      "24h realized volatility",
+      "7d realized volatility",
+      "24h average high-low range",
+      "24h volume / trailing-7d average volume",
+      "cross-asset mean 24h return",
+      "cross-asset 24h return dispersion"
+    ]
+  },
+  "comparators": [
+    "cash",
+    "BTC buy-and-hold at 45% crypto exposure",
+    "equal-weight BTC/ETH/SOL buy-and-hold at 45% total crypto exposure",
+    "simple 30-day time-series trend sign baseline at matching 15% per-asset cap",
+    "frozen MoneyMog crypto v2 simulated from the unmodified live deriveCryptoSignal implementation"
+  ],
+  "promotionCriteria": {
+    "required": [
+      "positive final-holdout net return",
+      "final-holdout Sharpe greater than frozen v2",
+      "final-holdout max drawdown no worse than frozen v2 by more than 20% relative",
+      "development walk-forward median fold Sharpe positive",
+      "positive net return in a majority of development folds",
+      "no single asset contributes more than 70% of total realized profit",
+      "primary result remains economically viable at 35 bps round-trip spread stress"
+    ],
+    "note": "Failure of any required criterion blocks promotion. No threshold/model rescue is allowed after holdout inspection; a changed method must receive a new experiment ID and manifest."
+  },
+  "multipleTesting": {
+    "seriousCandidateConfigurationsAttemptedBeforeThisEvaluation": 1,
+    "allFutureAttemptsMustIncrementGlobalTrialLedger": true,
+    "deflatedSharpeReportedWhenAtLeastTwoSeriousCandidateConfigurationsExist": true
+  }
+}
