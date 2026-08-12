@@ -1,6 +1,7 @@
 import csv
 import importlib.util
 import io
+import sys
 import unittest
 import zipfile
 from datetime import datetime, timezone
@@ -10,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "research" / "crypto" / "prepare-carry-data.py"
 spec = importlib.util.spec_from_file_location("prepare_carry_data", SCRIPT)
 module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
 spec.loader.exec_module(module)
 
 
