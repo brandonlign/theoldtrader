@@ -25,6 +25,11 @@
       "at": "2026-08-12T18:12:00Z",
       "beforeAnyCarryEvaluation": true,
       "change": "Separated perpetual execution-price and valuation-price roles before any carry P&L was observed. Standard USD-M BTCUSDT contract 8h kline opens are now the frozen entry/exit executable-price proxy to which modeled spread/slippage are applied. USD-M markPrice 8h kline opens remain the source for funding notional, unrealized short P&L, maintenance margin, and gap stress. This avoids treating a non-executable mark price as if it were the traded futures price. Strategy, allocation, costs, dates, funding rates, and no-rebalancing rule are unchanged."
+    },
+    {
+      "at": "2026-08-12T18:18:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Resolved an internal sizing ambiguity before any carry P&L was observed. The 15% account allocation applies to the spot purchase only; BTC units are determined from that spot execution and the perpetual short uses exactly the same BTC units. There is no separate 15% perpetual-notional target because exact delta-unit matching and exact equal USD notionals cannot both hold when spot and futures prices differ. No leverage or outcome-driven sizing choice was introduced."
     }
   ],
   "strategyFamily": "market-neutral spot/perpetual funding and basis carry",
@@ -81,12 +86,12 @@
     "reason": "Use the entire common historical interval motivated before any carry P&L was observed rather than selecting favorable subperiods. Whole-sample funding summary statistics were already visible, so this is robustness/development evidence only."
   },
   "candidate": {
-    "position": "long BTC spot and short equal BTC units of BTCUSDT perpetual",
+    "position": "long BTC spot and short exactly equal BTC units of BTCUSDT perpetual",
     "entryRule": "enter once at the beginning of the frozen historical robustness window; no forecast threshold and no funding-sign timing",
     "exitRule": "exit both legs at the end of the frozen historical robustness window",
-    "rebalancing": "none; keep equal BTC units on both legs so first-order BTC delta remains offset",
+    "rebalancing": "none; keep the original equal BTC units on both legs so first-order BTC delta remains offset",
     "spotNotionalPctAtEntry": 0.15,
-    "perpetualShortNotionalPctAtEntry": 0.15,
+    "perpetualShortSizingRule": "short exactly the BTC units purchased by the 15%-of-starting-equity spot leg; resulting perpetual USD notional is determined by the contemporaneous contract price and is not independently targeted",
     "futuresCollateralReservePct": 0.20,
     "fundingAccounting": "after entry, at each later normalized scheduled funding boundary, short receives positive funding and pays negative funding on BTC units times contemporaneous perpetual mark price times the realized rate; no payment at the entry boundary is credited",
     "basisAccounting": "open/close the perpetual short against the standard contract execution-price proxy with modeled friction, mark it through time using mark price, and mark the spot leg independently; do not assume perfect price cancellation or convergence"
