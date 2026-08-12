@@ -25,11 +25,23 @@ function pausedSnapshot(message) {
   };
 }
 
+function envPresence(baseUrl, token) {
+  return {
+    workerUrlPresent: Boolean(baseUrl),
+    workerTokenPresent: Boolean(token)
+  };
+}
+
 export async function GET(request) {
   const baseUrl = process.env.MONEYMOG_WORKER_URL;
   const token = process.env.MONEYMOG_WORKER_API_TOKEN;
+  const diagnostics = envPresence(baseUrl, token);
+
   if (!baseUrl || !token) {
-    return Response.json(pausedSnapshot("Cloudflare Worker is not connected yet."), {
+    return Response.json({
+      ...pausedSnapshot("Cloudflare Worker is not connected yet."),
+      diagnostics
+    }, {
       headers: { "cache-control": "no-store" }
     });
   }
@@ -44,13 +56,14 @@ export async function GET(request) {
     });
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error ?? `Worker returned ${response.status}`);
-    return Response.json({ configured: true, ...payload }, {
+    return Response.json({ configured: true, diagnostics, ...payload }, {
       headers: { "cache-control": "no-store" }
     });
   } catch (error) {
     return Response.json({
       ...pausedSnapshot("The dashboard could not reach the Cloudflare Worker."),
       configured: true,
+      diagnostics,
       health: { status: "DEGRADED", health: "DEGRADED", simulationEnabled: false },
       crypto: {
         ...pausedSnapshot("").crypto,
