@@ -1,0 +1,61 @@
+{
+  "experimentId": "funding-carry-v1",
+  "trialNumber": 2,
+  "createdAt": "2026-08-12T16:18:00Z",
+  "status": "FROZEN_DATA_ACQUISITION_PENDING",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "strategyFamily": "market-neutral spot/perpetual funding and basis carry",
+  "motivation": "Evaluate a genuinely different, low-turnover return source after the directional ridge robustness failure. This is not a rescue or parameter modification of trial 1.",
+  "dataRequirements": {
+    "venue": "Binance",
+    "symbol": "BTCUSDT",
+    "requiredSeries": [
+      "spot price at entry, every funding timestamp, and exit",
+      "USD-M perpetual mark or executable price at entry, every funding timestamp, and exit",
+      "realized 8-hour funding rate at every payment timestamp"
+    ],
+    "preferredPrimarySource": "Binance public data archive / official funding-rate endpoint",
+    "secondaryIntegrityCheck": "Torch-Trade BTCUSDT 8h funding dataset sourced from Binance Data Collection",
+    "rejectEvaluationIf": [
+      "spot and perpetual timestamps cannot be synchronized without forward-looking interpolation",
+      "funding observations are missing around an open position",
+      "perpetual mark/executable prices are unavailable for basis P&L and margin stress",
+      "the exact downloaded inputs cannot be hashed"
+    ]
+  },
+  "candidate": {
+    "position": "long BTC spot and short equal BTC units of BTCUSDT perpetual",
+    "entryRule": "enter once at the beginning of an evaluation window; no forecast threshold and no funding-sign timing",
+    "exitRule": "exit both legs at the end of the evaluation window",
+    "rebalancing": "none; keep equal BTC units on both legs so first-order BTC delta remains offset",
+    "spotNotionalPctAtEntry": 0.15,
+    "perpetualShortNotionalPctAtEntry": 0.15,
+    "futuresCollateralReservePct": 0.20,
+    "fundingAccounting": "for each realized funding timestamp, short receives positive funding and pays negative funding on contemporaneous perpetual notional",
+    "basisAccounting": "mark both legs independently; net price P&L must include spot/perpetual entry and exit basis rather than assuming convergence or perfect cancellation"
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 60,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 60,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10,
+    "note": "The same conservative MoneyMog friction is applied to both legs for the first research pass rather than assuming institutional futures fees or perfect maker fills."
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "liquidationRule": "fail the strategy at the first timestamp where futures collateral plus accumulated futures P&L and funding falls below maintenance margin",
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "evaluation": {
+    "headlineMetrics": ["netReturn", "annualizedReturn", "Sharpe", "Sortino", "maxDrawdown", "Calmar", "totalFunding", "basisPnL", "fees", "feeDrag", "capitalUtilization", "liquidationOrMarginBreach"],
+    "comparators": ["cash", "BTC spot buy-and-hold at 15% exposure"],
+    "doNotCombinePerformanceWithDirectionalStrategies": true,
+    "historicalHoldoutIntegrity": "Any historical result using the Torch-Trade series is development/robustness evidence, not pristine validation, because whole-sample summary statistics were viewed before this manifest was frozen.",
+    "promotionRequires": "a later untouched forward or independently sealed evaluation in addition to positive net-of-cost historical robustness"
+  },
+  "antiRescueRule": "No funding threshold, sign filter, leverage change, entry date selection, or rebalancing rule may be introduced after seeing this candidate's first result under trial 2. Any such change is a new numbered trial."
+}
