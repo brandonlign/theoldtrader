@@ -42,19 +42,23 @@ Do not introduce a funding threshold, sign filter, leverage change, entry-date s
 
 `manifests/coinbase-maker-execution-v1.json` freezes a **non-alpha** forward-data experiment for measuring post-only maker execution economics. It uses only public Coinbase market data; it neither authenticates to an account nor submits orders.
 
-The recorder requires a Node runtime with the standards-based `WebSocket` global (Node 22+ recommended). A one-hour run is only an engineering pilot:
+The recorder requires a Node runtime with the standards-based `WebSocket` global (Node 22+ recommended). Coinbase recommends distributing high-volume subscriptions across connections, so E1 records BTC, ETH and SOL on three independent public WebSockets/files. Launch all three together with:
 
 ```bash
-node research/crypto/record-coinbase-microstructure.mjs --duration-minutes=60
+node research/crypto/record-coinbase-microstructure-all.mjs --duration-minutes=60
 ```
 
-Analyze a completed recording with:
+A one-hour run is only an engineering pilot. The eventual scientific run uses `--duration-minutes=10080` (seven days) and all three product files must independently pass the frozen coverage checks.
+
+Analyze each completed product recording separately:
 
 ```bash
 node research/crypto/analyze-coinbase-maker-execution.mjs \
-  research/crypto/data-cache/coinbase-microstructure-<timestamp>.ndjson.gz
+  research/crypto/data-cache/coinbase-microstructure-BTC-USD-<timestamp>.ndjson.gz
 ```
 
 The analyzer reconstructs the level-2 book, places frozen hypothetical orders at the best bid/ask every 15 minutes, assumes the order joins the back of displayed queue, credits **no queue-ahead cancellations**, requires observed maker-side trade volume to consume queue ahead plus order size (or a trade-through), and measures 1m/5m/15m/60m signed midpoint markouts.
 
-A scientific E1 report requires at least 168 hours plus the frozen data-quality coverage rules. Reconnect-spanning orders are discarded and the book must be rebuilt from a fresh snapshot before new hypothetical orders are allowed. A future change to placement price, TTL, queue model, cancellation treatment, order sizes or maker/taker switching rule requires a new execution experiment number.
+A scientific E1 report requires each product recording to cover at least 168 hours with at least 98% connected time, no individual disconnect longer than five minutes, zero parse errors and zero detected forward level2 sequence gaps. Reconnect-spanning orders are discarded and the book must be rebuilt from a fresh snapshot before new hypothetical orders are allowed. Raw gzip recordings and SHA-256 files are preserved independently by product.
+
+A future change to placement price, TTL, queue model, cancellation treatment, order sizes or maker/taker switching rule requires a new execution experiment number.
