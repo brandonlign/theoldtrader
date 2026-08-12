@@ -10,6 +10,11 @@
       "at": "2026-08-12T17:20:00Z",
       "beforeAnyLiveRecording": true,
       "change": "Replaced the impractical zero-reconnect scientific requirement with frozen coverage rules: reconnect-spanning orders are discarded, fresh snapshots must restore the book, connected-time coverage must be at least 98%, no disconnect may exceed five minutes, and any detected forward level2 sequence gap blocks scientific classification."
+    },
+    {
+      "at": "2026-08-12T17:31:00Z",
+      "beforeAnyLiveRecording": true,
+      "change": "Changed data acquisition to one independent public WebSocket/recording per product, following Coinbase guidance to spread high-volume subscriptions across connections. The hypothetical placement, queue, fill, TTL, notional and markout rules are unchanged."
     }
   ],
   "purpose": "Measure whether post-only maker execution can reduce MoneyMog implementation cost after fill probability, queue competition, spread capture, and adverse selection. This is execution research, not alpha research and not a change to frozen crypto v2.",
@@ -18,7 +23,9 @@
     "products": ["BTC-USD", "ETH-USD", "SOL-USD"],
     "marketDataEndpoint": "wss://advanced-trade-ws.coinbase.com",
     "channels": ["level2", "market_trades", "heartbeats"],
-    "authenticationRequired": false
+    "authenticationRequired": false,
+    "connectionArchitecture": "one independent WebSocket and raw recording per product",
+    "allProductsMustIndividuallyPassScientificWindow": true
   },
   "recording": {
     "engineeringPilotMinutes": 60,
@@ -31,8 +38,8 @@
     "sha256EveryCompletedRecording": true,
     "rejectIntervalsWithBookDesynchronization": true,
     "forwardLevel2SequenceGapBlocksScientificClassification": true,
-    "reconnectPolicy": "A reconnect does not invalidate the whole recording by itself. All open hypothetical orders spanning the disconnect are marked DATA_GAP and excluded. No new order may be placed until a fresh level2 snapshot reconstructs that product book.",
-    "notes": "A one-hour run is only an engineering check. The first scientific report requires at least seven calendar days, at least 98% connected-time coverage, no single disconnect longer than five minutes, zero parse errors, and zero detected forward level2 sequence gaps."
+    "reconnectPolicy": "A reconnect does not invalidate the whole product recording by itself. All open hypothetical orders spanning the disconnect are marked DATA_GAP and excluded. No new order may be placed until a fresh level2 snapshot reconstructs that product book.",
+    "notes": "A one-hour run is only an engineering check. The first scientific report requires three concurrent product recordings, each covering at least seven calendar days, at least 98% connected-time coverage, no single disconnect longer than five minutes, zero parse errors, and zero detected forward level2 sequence gaps."
   },
   "hypotheticalOrders": {
     "placementCadenceMinutes": 15,
@@ -53,7 +60,7 @@
   "costComparison": {
     "makerFeeBpsPerSide": 40,
     "takerFeeBpsPerSide": 60,
-    "feeTierAssumption": "Coinbase Exchange lowest published volume tier; report separately from account-specific realized fees",
+    "feeTierAssumption": "Coinbase Exchange lowest published volume tier; report separately from account-specific realized Advanced fees",
     "doNotAssumeMakerSlippageIsZero": true,
     "report": [
       "fillRate",
