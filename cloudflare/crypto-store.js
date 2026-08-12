@@ -81,6 +81,7 @@ export class CryptoPaperStore {
       this.db.prepare("CREATE INDEX IF NOT EXISTS crypto_signals_created_idx ON crypto_signals(created_at DESC)"),
       this.db.prepare("CREATE INDEX IF NOT EXISTS crypto_signals_product_idx ON crypto_signals(product_id, created_at DESC)"),
       this.db.prepare("CREATE INDEX IF NOT EXISTS crypto_executions_time_idx ON crypto_executions(executed_at DESC)"),
+      this.db.prepare("CREATE INDEX IF NOT EXISTS crypto_executions_product_idx ON crypto_executions(product_id, executed_at DESC)"),
       this.db.prepare("CREATE INDEX IF NOT EXISTS crypto_runs_started_idx ON crypto_runs(started_at DESC)")
     ]);
   }
@@ -124,6 +125,13 @@ export class CryptoPaperStore {
       last_price AS lastPrice, market_value AS marketValue, highest_price AS highestPrice,
       opened_at AS openedAt, updated_at AS updatedAt
       FROM crypto_positions WHERE product_id = ?1`).bind(String(productId)).first();
+  }
+
+  async loadLastExit(productId) {
+    return this.db.prepare(`SELECT id, product_id AS productId, realized_pnl AS realizedPnl,
+      executed_at AS executedAt FROM crypto_executions
+      WHERE product_id = ?1 AND side = 'SELL' AND status = 'FILLED'
+      ORDER BY executed_at DESC LIMIT 1`).bind(String(productId)).first();
   }
 
   async updateMark(productId, price) {
@@ -245,10 +253,40 @@ export class CryptoPaperStore {
     return { id, status: "FILLED", applied: true, side: "SELL", units, fillPrice, notional: gross, fee, cashDelta: proceeds, realizedPnl: realized };
   }
 
+  async performanceSummary() {
+    await this.ensureSchema();
+    const row = await this.db.prepare(`SELECT
+      COUNT(*) AS execution_count,
+      COALESCE(SUM(fee), 0) AS total_fees,
+      COALESCE(SUM(CASE WHEN side = 'SELL' THEN 1 ELSE 0 END), 0) AS closed_trades,
+      COALESCE(SUM(CASE WHEN side = 'SELL' AND realized_pnl > 0 THEN 1 ELSE 0 END), 0) AS winners,
+      COALESCE(SUM(CASE WHEN side = 'SELL' AND realized_pnl < 0 THEN 1 ELSE 0 END), 0) AS losers,
+      COALESCE(SUM(CASE WHEN side = 'SELL' THEN realized_pnl ELSE 0 END), 0) AS realized_pnl,
+      COALESCE(AVG(CASE WHEN side = 'SELL' THEN realized_pnl END), 0) AS average_closed_pnl,
+      COALESCE(MAX(CASE WHEN side = 'SELL' THEN realized_pnl END), 0) AS best_trade,
+      COALESCE(MIN(CASE WHEN side = 'SELL' THEN realized_pnl END), 0) AS worst_trade
+      FROM crypto_executions WHERE status = 'FILLED'`).first();
+    const closedTrades = finite(row?.closed_trades);
+    const winners = finite(row?.winners);
+    return {
+      executionCount: finite(row?.execution_count),
+      totalFees: finite(row?.total_fees),
+      closedTrades,
+      winners,
+      losers: finite(row?.losers),
+      winRate: closedTrades > 0 ? winners / closedTrades : 0,
+      realizedPnl: finite(row?.realized_pnl),
+      averageClosedPnl: finite(row?.average_closed_pnl),
+      bestTrade: finite(row?.best_trade),
+      worstTrade: finite(row?.worst_trade)
+    };
+  }
+
   async snapshot(options = {}) {
     const limit = rowLimit(options.limit, 50, 100);
+    const historyLimit = rowLimit(options.historyLimit, 96, 200);
     const startingCash = finite(options.startingCash, 10_000);
-    const [portfolio, signals, executions, run] = await Promise.all([
+    const [portfolio, signals, executions, run, historyRows, performance] = await Promise.all([
       this.loadPortfolio(startingCash),
       this.db.prepare(`SELECT id, run_id AS runId, product_id AS productId, candle_time AS candleTime,
         action, score, price, reasons_json AS reasonsJson, metrics_json AS metricsJson, created_at AS createdAt
@@ -258,17 +296,33 @@ export class CryptoPaperStore {
         cash_delta AS cashDelta, realized_pnl AS realizedPnl, status,
         reasons_json AS reasonsJson, executed_at AS executedAt
         FROM crypto_executions ORDER BY executed_at DESC LIMIT ?1`).bind(limit).all(),
-      this.db.prepare("SELECT * FROM crypto_runs ORDER BY started_at DESC LIMIT 1").first()
+      this.db.prepare("SELECT * FROM crypto_runs ORDER BY started_at DESC LIMIT 1").first(),
+      this.db.prepare(`SELECT started_at AS startedAt, finished_at AS finishedAt, summary_json AS summaryJson
+        FROM crypto_runs WHERE finished_at IS NOT NULL ORDER BY started_at DESC LIMIT ?1`).bind(historyLimit).all(),
+      this.performanceSummary()
     ]);
     const parseRows = (rows) => (rows.results ?? []).map((item) => ({
       ...item,
       reasons: parseJson(item.reasonsJson, []),
       metrics: parseJson(item.metricsJson, {})
     }));
+    const history = (historyRows.results ?? []).map((item) => {
+      const summary = parseJson(item.summaryJson, {});
+      return {
+        startedAt: item.startedAt,
+        finishedAt: item.finishedAt,
+        equity: finite(summary.portfolio?.equity, NaN),
+        cash: finite(summary.portfolio?.cash, NaN),
+        openPositionValue: finite(summary.portfolio?.openPositionValue, NaN),
+        realizedPnl: finite(summary.portfolio?.realizedPnl, NaN)
+      };
+    }).filter((item) => Number.isFinite(item.equity)).reverse();
     return {
       portfolio,
       signals: parseRows(signals),
       executions: parseRows(executions),
+      performance,
+      history,
       health: run ? {
         runId: run.id,
         status: run.status,
