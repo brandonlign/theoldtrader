@@ -1,10 +1,9 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 
-// Research-only evaluator for funding-carry-v1.
-// Input CSV must be synchronized WITHOUT forward-looking interpolation and contain:
-// timestamp,spot_price,perp_price,funding_rate
-// funding_rate is the realized decimal payment at that timestamp (0.0001 = 1 bp).
+// Research-only evaluator for frozen funding-carry-v1.
+// Required synchronized columns are produced by prepare-carry-data.py and contain
+// separate historical execution and valuation references. No interpolation is allowed.
 
 const manifestPath = process.argv[2] ?? 'research/crypto/manifests/funding-carry-v1.json';
 const dataPath = process.argv[3];
@@ -22,12 +21,29 @@ const raw = fs.readFileSync(dataPath);
 const sha256 = crypto.createHash('sha256').update(raw).digest('hex');
 const startMs = Date.parse(manifest.historicalRobustnessWindow.startInclusive);
 const endMs = Date.parse(manifest.historicalRobustnessWindow.endExclusive);
+const eightHoursMs = 8 * 60 * 60 * 1000;
+const fundingSkewToleranceMs = Number(manifest.dataRequirements?.fundingTimestampNormalization?.maximumAbsoluteSkewMs);
 if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) throw new Error('Invalid frozen carry window');
+if (!Number.isFinite(fundingSkewToleranceMs) || fundingSkewToleranceMs < 0) throw new Error('Invalid frozen funding timestamp tolerance');
+if ((endMs - startMs) % eightHoursMs !== 0) throw new Error('Frozen carry window is not an exact 8-hour grid');
+const expectedRows = (endMs - startMs) / eightHoursMs;
+
+function nearestFundingBoundary(rawTimestamp) {
+  return Math.round(rawTimestamp / eightHoursMs) * eightHoursMs;
+}
 
 function parseCsv(buffer) {
   const lines = buffer.toString('utf8').trim().split(/\r?\n/);
   const header = lines[0].split(',').map((value) => value.trim());
-  const required = ['timestamp', 'spot_price', 'perp_price', 'funding_rate'];
+  const required = [
+    'timestamp',
+    'raw_funding_timestamp',
+    'funding_timestamp_skew_ms',
+    'spot_price',
+    'perp_exec_price',
+    'perp_mark_price',
+    'funding_rate'
+  ];
   for (const column of required) if (!header.includes(column)) throw new Error(`Missing required column ${column}`);
   const indexes = Object.fromEntries(header.map((name, i) => [name, i]));
   const parsed = [];
@@ -35,18 +51,47 @@ function parseCsv(buffer) {
     if (!line.trim()) continue;
     const cells = line.split(',');
     const timestamp = Date.parse(cells[indexes.timestamp]);
+    const rawFundingTimestamp = Date.parse(cells[indexes.raw_funding_timestamp]);
+    const fundingTimestampSkewMs = Number(cells[indexes.funding_timestamp_skew_ms]);
     const spot = Number(cells[indexes.spot_price]);
-    const perp = Number(cells[indexes.perp_price]);
+    const perpExec = Number(cells[indexes.perp_exec_price]);
+    const perpMark = Number(cells[indexes.perp_mark_price]);
     const funding = Number(cells[indexes.funding_rate]);
-    if (!Number.isFinite(timestamp) || !Number.isFinite(spot) || !Number.isFinite(perp) || !Number.isFinite(funding) || spot <= 0 || perp <= 0) {
-      throw new Error(`Invalid synchronized row: ${line.slice(0, 160)}`);
+    const validNumbers = [timestamp, rawFundingTimestamp, fundingTimestampSkewMs, spot, perpExec, perpMark, funding].every(Number.isFinite);
+    if (!validNumbers || spot <= 0 || perpExec <= 0 || perpMark <= 0) {
+      throw new Error(`Invalid synchronized row: ${line.slice(0, 220)}`);
     }
-    if (timestamp >= startMs && timestamp < endMs) parsed.push({ timestamp, spot, perp, funding });
+    const observedSkew = rawFundingTimestamp - timestamp;
+    if (Math.abs(observedSkew - fundingTimestampSkewMs) > 0.5) {
+      throw new Error(`Funding timestamp skew provenance mismatch at ${cells[indexes.timestamp]}`);
+    }
+    if (Math.abs(fundingTimestampSkewMs) > fundingSkewToleranceMs) {
+      throw new Error(`Funding timestamp exceeds frozen skew tolerance at ${cells[indexes.timestamp]}`);
+    }
+    if (nearestFundingBoundary(rawFundingTimestamp) !== timestamp) {
+      throw new Error(`Raw funding timestamp does not map to scheduled boundary at ${cells[indexes.timestamp]}`);
+    }
+    if (timestamp >= startMs && timestamp < endMs) {
+      parsed.push({
+        timestamp,
+        rawFundingTimestamp,
+        fundingTimestampSkewMs,
+        spot,
+        perpExec,
+        perpMark,
+        funding
+      });
+    }
   }
   parsed.sort((a, b) => a.timestamp - b.timestamp);
-  if (parsed.length < 2) throw new Error('Need at least two synchronized observations inside the frozen window');
+  if (parsed.length !== expectedRows) throw new Error(`Expected ${expectedRows} frozen rows, found ${parsed.length}`);
+  if (parsed[0].timestamp !== startMs || parsed.at(-1).timestamp !== endMs - eightHoursMs) {
+    throw new Error('Synchronized input does not cover the exact frozen carry window');
+  }
   for (let i = 1; i < parsed.length; i += 1) {
-    if (parsed[i].timestamp <= parsed[i - 1].timestamp) throw new Error('Duplicate/non-increasing timestamps');
+    if (parsed[i].timestamp - parsed[i - 1].timestamp !== eightHoursMs) {
+      throw new Error(`Missing/duplicate normalized funding boundary near ${new Date(parsed[i].timestamp).toISOString()}`);
+    }
   }
   return parsed;
 }
@@ -121,7 +166,9 @@ const last = rows.at(-1);
 const spotEntryFill = fill(first.spot, 'buy', spotCost);
 const units = spotNotional / spotEntryFill;
 const spotEntryFee = spotNotional * spotCost.feeBpsPerSide / 10_000;
-const perpEntryFill = fill(first.perp, 'sell', perpCost);
+
+// Equal BTC units are the frozen hedge. The short's USD notional is not independently targeted.
+const perpEntryFill = fill(first.perpExec, 'sell', perpCost);
 const perpEntryNotional = units * perpEntryFill;
 const perpEntryFee = perpEntryNotional * perpCost.feeBpsPerSide / 10_000;
 const freeCash = startingCash - spotNotional - spotEntryFee - collateral - perpEntryFee;
@@ -131,32 +178,44 @@ let fundingPnl = 0;
 let fees = spotEntryFee + perpEntryFee;
 let marginBreach = null;
 const equitySeries = [];
-const gapStress = Object.fromEntries(manifest.marginStress.additionalGapStressPct.map((gap) => [String(gap), { breached: false, minimumExcessMargin: Infinity }]));
+const gapStress = Object.fromEntries(
+  manifest.marginStress.additionalGapStressPct.map((gap) => [String(gap), { breached: false, minimumExcessMargin: Infinity }])
+);
 
 for (let index = 0; index < rows.length; index += 1) {
   const row = rows[index];
-  // The first row establishes the position. Its contemporaneous funding payment was not earned.
-  if (index > 0) fundingPnl += units * row.perp * row.funding;
+  // Funding uses mark notional. The first payment is not earned because the position is opened at this boundary.
+  if (index > 0) fundingPnl += units * row.perpMark * row.funding;
+
   const spotValue = units * row.spot;
-  const perpUnrealizedPnl = units * (perpEntryFill - row.perp);
+  const perpUnrealizedPnl = units * (perpEntryFill - row.perpMark);
   const futuresEquity = collateral + perpUnrealizedPnl + fundingPnl;
-  const maintenance = units * row.perp * manifest.marginStress.maintenanceMarginPctOfPerpetualNotional;
+  const maintenance = units * row.perpMark * manifest.marginStress.maintenanceMarginPctOfPerpetualNotional;
   if (!marginBreach && futuresEquity < maintenance) {
-    marginBreach = { timestamp: new Date(row.timestamp).toISOString(), futuresEquity, maintenance };
+    marginBreach = {
+      timestamp: new Date(row.timestamp).toISOString(),
+      futuresEquity,
+      maintenance,
+      perpMark: row.perpMark
+    };
   }
+
   for (const gap of manifest.marginStress.additionalGapStressPct) {
-    const stressedPerp = row.perp * (1 + gap);
-    const stressedPnl = units * (perpEntryFill - stressedPerp);
+    const stressedMark = row.perpMark * (1 + gap);
+    const stressedPnl = units * (perpEntryFill - stressedMark);
     const stressedEquity = collateral + stressedPnl + fundingPnl;
-    const stressedMaintenance = units * stressedPerp * manifest.marginStress.maintenanceMarginPctOfPerpetualNotional;
+    const stressedMaintenance = units * stressedMark * manifest.marginStress.maintenanceMarginPctOfPerpetualNotional;
     const excess = stressedEquity - stressedMaintenance;
     gapStress[String(gap)].minimumExcessMargin = Math.min(gapStress[String(gap)].minimumExcessMargin, excess);
     if (excess < 0) gapStress[String(gap)].breached = true;
   }
+
   equitySeries.push({
     time: row.timestamp,
     equity: freeCash + spotValue + futuresEquity,
     spotValue,
+    perpExecutionReference: row.perpExec,
+    perpMark: row.perpMark,
     perpUnrealizedPnl,
     fundingPnl,
     futuresEquity,
@@ -165,7 +224,7 @@ for (let index = 0; index < rows.length; index += 1) {
 }
 
 const spotExitFill = fill(last.spot, 'sell', spotCost);
-const perpExitFill = fill(last.perp, 'buy', perpCost);
+const perpExitFill = fill(last.perpExec, 'buy', perpCost);
 const spotExitGross = units * spotExitFill;
 const spotExitFee = spotExitGross * spotCost.feeBpsPerSide / 10_000;
 const perpExitNotional = units * perpExitFill;
@@ -175,7 +234,7 @@ const realizedPerpPnl = units * (perpEntryFill - perpExitFill);
 const finalEquity = freeCash + (spotExitGross - spotExitFee) + collateral + realizedPerpPnl + fundingPnl - perpExitFee;
 equitySeries.push({ time: last.timestamp + 1, equity: finalEquity });
 
-// Comparator: identical 15% spot allocation, same conservative spot friction, no futures/funding leg.
+// Comparator: identical spot units/costs but no futures or funding leg.
 const buyHoldFreeCash = startingCash - spotNotional - spotEntryFee;
 const buyHoldFinalEquity = buyHoldFreeCash + spotExitGross - spotExitFee;
 const buyHoldSeries = [
@@ -194,6 +253,7 @@ const carryMetrics = metrics(equitySeries, startingCash, fees, first.timestamp);
 const buyHoldMetrics = metrics(buyHoldSeries, startingCash, spotEntryFee + spotExitFee, first.timestamp);
 const cashMetrics = metrics(cashSeries, startingCash, 0, first.timestamp);
 
+const maxFundingTimestampSkewMs = Math.max(...rows.map((row) => Math.abs(row.fundingTimestampSkewMs)));
 const result = {
   experimentId: manifest.experimentId,
   trialNumber: manifest.trialNumber,
@@ -204,19 +264,37 @@ const result = {
     path: dataPath,
     sha256,
     rows: rows.length,
+    expectedRows,
     frozenWindowStart: manifest.historicalRobustnessWindow.startInclusive,
     frozenWindowEndExclusive: manifest.historicalRobustnessWindow.endExclusive,
     firstSynchronizedTimestamp: new Date(first.timestamp).toISOString(),
-    lastSynchronizedTimestamp: new Date(last.timestamp).toISOString()
+    lastSynchronizedTimestamp: new Date(last.timestamp).toISOString(),
+    firstRawFundingTimestamp: new Date(first.rawFundingTimestamp).toISOString(),
+    lastRawFundingTimestamp: new Date(last.rawFundingTimestamp).toISOString(),
+    maxAbsoluteFundingTimestampSkewMs: maxFundingTimestampSkewMs,
+    fundingTimestampToleranceMs: fundingSkewToleranceMs,
+    exactEightHourGridVerified: true
   },
   frozenPosition: {
     btcUnits: units,
+    spotEntryReference: first.spot,
     spotEntryFill,
+    perpEntryExecutionReference: first.perpExec,
+    perpEntryMark: first.perpMark,
     perpEntryFill,
     spotEntryNotional: spotNotional,
     perpEntryNotional,
+    perpEntryNotionalPctOfStartingEquity: perpEntryNotional / startingCash,
     futuresCollateral: collateral,
     initialCapitalCommittedPct: (spotNotional + collateral + spotEntryFee + perpEntryFee) / startingCash
+  },
+  basisDiagnostics: {
+    entryContractVsSpotPct: first.perpExec / first.spot - 1,
+    entryMarkVsSpotPct: first.perpMark / first.spot - 1,
+    exitContractVsSpotPct: last.perpExec / last.spot - 1,
+    exitMarkVsSpotPct: last.perpMark / last.spot - 1,
+    entryMarkVsContractPct: first.perpMark / first.perpExec - 1,
+    exitMarkVsContractPct: last.perpMark / last.perpExec - 1
   },
   pnlDecomposition: {
     fundingPnl,
@@ -228,6 +306,7 @@ const result = {
   },
   margin: {
     breached: Boolean(marginBreach),
+    strategyValidWithoutHistoricalMarginBreach: !marginBreach,
     firstBreach: marginBreach,
     gapStress
   },
@@ -236,7 +315,9 @@ const result = {
     btcSpotBuyHold15: buyHoldMetrics,
     cash: cashMetrics
   },
-  interpretationConstraint: manifest.evaluation.historicalHoldoutIntegrity,
+  interpretationConstraint: marginBreach
+    ? `${manifest.evaluation.historicalHoldoutIntegrity} Historical margin threshold was breached; post-breach return metrics are descriptive path diagnostics only and the candidate fails the frozen margin requirement.`
+    : manifest.evaluation.historicalHoldoutIntegrity,
   antiRescueRule: manifest.antiRescueRule
 };
 
