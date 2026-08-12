@@ -5,8 +5,7 @@ on:
     branches: [research/crypto-oos-v1]
     paths:
       - 'research/crypto/**'
-      - 'tests/crypto-research*.test.js'
-      - 'tests/crypto-maker-execution.test.js'
+      - 'tests/crypto-*.test.js'
       - '.github/workflows/crypto-research.yml'
   workflow_dispatch:
 
