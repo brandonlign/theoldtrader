@@ -51,7 +51,7 @@ test('carry evaluator separates contract execution price from mark valuation pri
   assert.equal(output.frozenPosition.perpEntryExecutionReference, 101);
   assert.equal(output.frozenPosition.perpEntryMark, 100.5);
   assert.notEqual(output.frozenPosition.perpEntryFill, output.frozenPosition.perpEntryMark);
-  assert.equal(output.basisDiagnostics.entryContractVsSpotPct, 0.01);
+  assert.ok(Math.abs(output.basisDiagnostics.entryContractVsSpotPct - 0.01) < 1e-12);
   assert.equal(output.margin.strategyValidWithoutHistoricalMarginBreach, true);
   assert.ok(output.pnlDecomposition.fundingPnl > 0);
 });
