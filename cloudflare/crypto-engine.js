@@ -36,16 +36,16 @@ function strategyConfig(env, costs = {}) {
     minRsi: v2Number(env, "MIN_RSI", 53),
     maxRsi: v2Number(env, "MAX_RSI", 68),
     exitRsi: v2Number(env, "EXIT_RSI", 46),
-    minRegimeSlope: finite(env.CRYPTO_MIN_REGIME_SLOPE, 0.0008),
+    minRegimeSlope: v2Number(env, "MIN_REGIME_SLOPE", 0.0008),
     maxEntryVolatility: v2Number(env, "MAX_ATR_PCT", 0.03),
     stopLossPct: v2Number(env, "STOP_LOSS_PCT", 0.035),
     takeProfitPct: v2Number(env, "TAKE_PROFIT_PCT", 0.075),
     trailingStopPct: v2Number(env, "TRAILING_STOP_PCT", 0.028),
     minVolumeRatio: v2Number(env, "MIN_VOLUME_RATIO", 0.9),
     requiredChecks: v2Number(env, "REQUIRED_CHECKS", 7),
-    minEdgeToCost: finite(env.CRYPTO_MIN_EDGE_TO_COST, 2),
-    minProjectedEdge: finite(env.CRYPTO_MIN_PROJECTED_EDGE, 0.01),
-    minHoldMinutes: finite(env.CRYPTO_MIN_HOLD_MINUTES, 180),
+    minEdgeToCost: v2Number(env, "MIN_EDGE_TO_COST", 2),
+    minProjectedEdge: v2Number(env, "MIN_PROJECTED_EDGE", 0.01),
+    minHoldMinutes: v2Number(env, "MIN_HOLD_MINUTES", 180),
     roundTripCostPct: finite(costs.roundTripCostPct),
     exitCostPct: finite(costs.exitCostPct)
   };
@@ -62,7 +62,7 @@ function executionConfig(env) {
     feeBps: Math.max(0, finite(env.CRYPTO_FEE_BPS, 60)),
     slippageBps: Math.max(0, finite(env.CRYPTO_SLIPPAGE_BPS, 5)),
     maxSpreadBps: Math.max(1, finite(env.CRYPTO_MAX_SPREAD_BPS, 35)),
-    cooldownMinutes: Math.max(0, finite(env.CRYPTO_COOLDOWN_MINUTES, 360))
+    cooldownMinutes: Math.max(0, v2Number(env, "COOLDOWN_MINUTES", 360))
   };
 }
 
@@ -86,9 +86,15 @@ export async function runCryptoCycle(env, options = {}) {
   await store.ensurePortfolio(startingCash);
   await store.startRun({ id: runId, enabled });
 
+  const coinbaseMaxRetries = Math.max(0, Math.min(4, Math.trunc(finite(env.COINBASE_PUBLIC_MAX_RETRIES, 2))));
+  const coinbaseRetryBaseMs = Math.max(100, finite(env.COINBASE_PUBLIC_RETRY_BASE_MS, 750));
+  const coinbaseRequestIntervalMs = Math.max(0, finite(env.COINBASE_PUBLIC_REQUEST_INTERVAL_MS, 300));
   const client = new CoinbasePublicClient({
     baseUrl: env.COINBASE_EXCHANGE_BASE_URL ?? "https://api.exchange.coinbase.com",
-    timeoutMs: finite(env.REQUEST_TIMEOUT_MS, 10_000)
+    timeoutMs: finite(env.REQUEST_TIMEOUT_MS, 10_000),
+    maxRetries: coinbaseMaxRetries,
+    retryBaseMs: coinbaseRetryBaseMs,
+    minRequestIntervalMs: coinbaseRequestIntervalMs
   });
   const list = products(env.CRYPTO_PRODUCTS);
   const config = executionConfig(env);
@@ -99,12 +105,12 @@ export async function runCryptoCycle(env, options = {}) {
 
   for (const productId of list) {
     try {
-      const [candles, book, position, lastExit] = await Promise.all([
-        client.getCandles(productId, { granularity: candleSeconds }),
-        client.getBook(productId),
+      const [position, lastExit] = await Promise.all([
         store.loadPosition(productId),
         store.loadLastExit(productId)
       ]);
+      const candles = await client.getCandles(productId, { granularity: candleSeconds });
+      const book = await client.getBook(productId);
       const currentSpreadBps = spreadBps(book);
       const costs = {
         roundTripCostPct: estimateRoundTripCostPct({
@@ -179,7 +185,12 @@ export async function runCryptoCycle(env, options = {}) {
   const sellSignals = signals.filter((item) => item.action === "SELL").length;
   const holdSignals = signals.filter((item) => item.action === "HOLD").length;
   const appliedExecutions = executions.filter((item) => item.applied).length;
-  const status = errors.length === 0 ? "HEALTHY" : errors.length < Math.max(1, list.length) ? "DEGRADED" : "UNHEALTHY";
+  const transientRateLimitOnly = errors.length > 0 && errors.every((message) => /rate limit|too many requests/i.test(message));
+  const status = errors.length === 0
+    ? "HEALTHY"
+    : transientRateLimitOnly || errors.length < Math.max(1, list.length)
+      ? "DEGRADED"
+      : "UNHEALTHY";
   const [portfolio, performance] = await Promise.all([
     store.loadPortfolio(startingCash),
     store.performanceSummary()
@@ -210,7 +221,9 @@ export async function runCryptoCycle(env, options = {}) {
       maxPositionPct: config.maxPositionPct,
       maxExposurePct: config.maxExposurePct,
       cooldownMinutes: config.cooldownMinutes,
-      minEdgeToCost: finite(env.CRYPTO_MIN_EDGE_TO_COST, 2)
+      minEdgeToCost: v2Number(env, "MIN_EDGE_TO_COST", 2),
+      coinbaseMaxRetries,
+      coinbaseRequestIntervalMs
     }
   };
   await store.finishRun(runId, summary);
