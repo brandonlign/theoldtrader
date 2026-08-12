@@ -8,6 +8,10 @@ function finite(value, fallback = 0) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function v2Number(env, name, fallback) {
+  return finite(env[`CRYPTO_V2_${name}`], fallback);
+}
+
 function bool(value, fallback = false) {
   if (value === undefined || value === null || value === "") return fallback;
   return value === true || ["1", "true", "yes", "on"].includes(String(value).toLowerCase());
@@ -27,18 +31,18 @@ function strategyConfig(env, costs = {}) {
     regimeLookback: finite(env.CRYPTO_REGIME_LOOKBACK, 8),
     momentumPeriod: finite(env.CRYPTO_MOMENTUM_PERIOD, 12),
     rsiPeriod: finite(env.CRYPTO_RSI_PERIOD, 14),
-    minTrend: finite(env.CRYPTO_MIN_TREND, 0.0018),
-    minMomentum: finite(env.CRYPTO_MIN_MOMENTUM, 0.004),
-    minRsi: finite(env.CRYPTO_MIN_RSI, 53),
-    maxRsi: finite(env.CRYPTO_MAX_RSI, 68),
-    exitRsi: finite(env.CRYPTO_EXIT_RSI, 46),
+    minTrend: v2Number(env, "MIN_TREND", 0.0018),
+    minMomentum: v2Number(env, "MIN_MOMENTUM", 0.004),
+    minRsi: v2Number(env, "MIN_RSI", 53),
+    maxRsi: v2Number(env, "MAX_RSI", 68),
+    exitRsi: v2Number(env, "EXIT_RSI", 46),
     minRegimeSlope: finite(env.CRYPTO_MIN_REGIME_SLOPE, 0.0008),
-    maxEntryVolatility: finite(env.CRYPTO_MAX_ATR_PCT, 0.03),
-    stopLossPct: finite(env.CRYPTO_STOP_LOSS_PCT, 0.035),
-    takeProfitPct: finite(env.CRYPTO_TAKE_PROFIT_PCT, 0.075),
-    trailingStopPct: finite(env.CRYPTO_TRAILING_STOP_PCT, 0.028),
-    minVolumeRatio: finite(env.CRYPTO_MIN_VOLUME_RATIO, 0.9),
-    requiredChecks: finite(env.CRYPTO_REQUIRED_CHECKS, 7),
+    maxEntryVolatility: v2Number(env, "MAX_ATR_PCT", 0.03),
+    stopLossPct: v2Number(env, "STOP_LOSS_PCT", 0.035),
+    takeProfitPct: v2Number(env, "TAKE_PROFIT_PCT", 0.075),
+    trailingStopPct: v2Number(env, "TRAILING_STOP_PCT", 0.028),
+    minVolumeRatio: v2Number(env, "MIN_VOLUME_RATIO", 0.9),
+    requiredChecks: v2Number(env, "REQUIRED_CHECKS", 7),
     minEdgeToCost: finite(env.CRYPTO_MIN_EDGE_TO_COST, 2),
     minProjectedEdge: finite(env.CRYPTO_MIN_PROJECTED_EDGE, 0.01),
     minHoldMinutes: finite(env.CRYPTO_MIN_HOLD_MINUTES, 180),
@@ -51,8 +55,8 @@ function executionConfig(env) {
   return {
     riskPct: Math.max(0.001, Math.min(0.02, finite(env.CRYPTO_RISK_PCT, 0.004))),
     maxPositionPct: Math.max(0.02, Math.min(0.4, finite(env.CRYPTO_MAX_POSITION_PCT, 0.15))),
-    maxExposurePct: Math.max(0.1, Math.min(0.9, finite(env.CRYPTO_MAX_EXPOSURE_PCT, 0.45))),
-    cashReservePct: Math.max(0.05, Math.min(0.6, finite(env.CRYPTO_CASH_RESERVE_PCT, 0.25))),
+    maxExposurePct: Math.max(0.1, Math.min(0.9, v2Number(env, "MAX_EXPOSURE_PCT", 0.45))),
+    cashReservePct: Math.max(0.05, Math.min(0.6, v2Number(env, "CASH_RESERVE_PCT", 0.25))),
     minTradeUsd: Math.max(5, finite(env.CRYPTO_MIN_TRADE_USD, 25)),
     maxTradeUsd: Math.max(25, finite(env.CRYPTO_MAX_TRADE_USD, 2_000)),
     feeBps: Math.max(0, finite(env.CRYPTO_FEE_BPS, 60)),
@@ -88,6 +92,7 @@ export async function runCryptoCycle(env, options = {}) {
   });
   const list = products(env.CRYPTO_PRODUCTS);
   const config = executionConfig(env);
+  const candleSeconds = v2Number(env, "CANDLE_SECONDS", 900);
   const errors = [];
   const signals = [];
   const executions = [];
@@ -95,7 +100,7 @@ export async function runCryptoCycle(env, options = {}) {
   for (const productId of list) {
     try {
       const [candles, book, position, lastExit] = await Promise.all([
-        client.getCandles(productId, { granularity: finite(env.CRYPTO_CANDLE_SECONDS, 900) }),
+        client.getCandles(productId, { granularity: candleSeconds }),
         client.getBook(productId),
         store.loadPosition(productId),
         store.loadLastExit(productId)
@@ -198,7 +203,7 @@ export async function runCryptoCycle(env, options = {}) {
     },
     performance,
     config: {
-      candleSeconds: finite(env.CRYPTO_CANDLE_SECONDS, 900),
+      candleSeconds,
       feeBps: config.feeBps,
       slippageBps: config.slippageBps,
       riskPct: config.riskPct,
