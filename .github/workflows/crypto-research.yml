@@ -8,7 +8,7 @@ on:
       - 'research/crypto/lib/**'
       - 'research/crypto/manifests/**'
       - 'research/crypto/LITERATURE.md'
-      - 'tests/crypto-research.test.js'
+      - 'tests/crypto-research*.test.js'
       - '.github/workflows/crypto-research.yml'
   workflow_dispatch:
 
@@ -46,6 +46,7 @@ jobs:
           node --check research/crypto/run.js &&
           node --check research/crypto/lib/core.js &&
           node --check research/crypto/lib/data.js &&
+          node --check research/crypto/lib/metrics.js &&
           node --check research/crypto/lib/report.js &&
           node --check research/crypto/lib/v2-backtest.js
 
