@@ -10,6 +10,11 @@
       "at": "2026-08-12T16:42:00Z",
       "beforeAnyCarryEvaluation": true,
       "change": "Frozen the full historical robustness window to 2021-05-01 through 2026-03-01 and clarified that the funding payment timestamp coincident with entry is not earned. No result had been observed."
+    },
+    {
+      "at": "2026-08-12T16:55:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Changed spot-price provenance from monthly to checksum-verified daily Binance Vision 8h klines after identifying open Binance public-data issue #475, where some monthly spot archives disagree with daily archives/API. Strategy, dates, costs, sizing, and evaluation rules are unchanged."
     }
   ],
   "strategyFamily": "market-neutral spot/perpetual funding and basis carry",
@@ -22,13 +27,19 @@
       "USD-M perpetual mark or executable price at entry, every funding timestamp, and exit",
       "realized 8-hour funding rate at every payment timestamp"
     ],
-    "preferredPrimarySource": "Binance public data archive / official funding-rate endpoint",
+    "primarySources": {
+      "spot": "checksum-verified Binance Vision DAILY BTCUSDT 8h spot klines; use the exact kline open at each funding timestamp",
+      "perpetualMark": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT 8h markPriceKlines",
+      "funding": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT fundingRate archives"
+    },
+    "spotDailyReason": "Binance public-data issue #475 reports historical monthly SPOT kline disagreements where daily archives match API/uiKlines. Daily spot archives are therefore frozen as the primary source before any carry result is observed.",
     "secondaryIntegrityCheck": "Torch-Trade BTCUSDT 8h funding dataset sourced from Binance Data Collection",
     "rejectEvaluationIf": [
-      "spot and perpetual timestamps cannot be synchronized without forward-looking interpolation",
-      "funding observations are missing around an open position",
+      "spot and perpetual timestamps cannot be synchronized exactly without forward-looking interpolation",
+      "funding observations are missing around an open position or the realized series is not a complete 8-hour grid",
       "perpetual mark/executable prices are unavailable for basis P&L and margin stress",
-      "the exact downloaded inputs cannot be hashed"
+      "any downloaded archive fails its official Binance .CHECKSUM verification",
+      "the exact synchronized input cannot be hashed"
     ]
   },
   "historicalRobustnessWindow": {
@@ -36,6 +47,7 @@
     "endExclusive": "2026-03-01T00:00:00Z",
     "entryTimestampRule": "use the first synchronized observation at or after startInclusive",
     "exitTimestampRule": "use the final synchronized observation strictly before endExclusive",
+    "priceTimestampRule": "use the exact 8-hour kline open at the realized funding timestamp; do not use that bar's close/high/low or any later observation",
     "fundingAtEntry": "not earned; the first synchronized row establishes the position and mark only",
     "fundingAfterEntry": "accrue only realized funding payments on later synchronized timestamps",
     "reason": "Use the entire common historical interval motivated before any carry P&L was observed rather than selecting favorable subperiods. Whole-sample funding summary statistics were already visible, so this is robustness/development evidence only."
