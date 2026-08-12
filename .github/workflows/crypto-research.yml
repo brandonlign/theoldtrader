@@ -51,6 +51,7 @@ jobs:
           node --check research/crypto/record-coinbase-microstructure.mjs &&
           node --check research/crypto/record-coinbase-microstructure-all.mjs &&
           node --check research/crypto/analyze-coinbase-maker-execution.mjs &&
+          node --check research/crypto/audit-coinbase-execution-integrity.mjs &&
           node --check research/crypto/validate-coinbase-maker-window.mjs
 
   evaluate-primary-coinbase-holdout:
