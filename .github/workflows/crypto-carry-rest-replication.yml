@@ -1,0 +1,99 @@
+name: MoneyMog Crypto Carry REST Replication 2R
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-carry-rest-replication-v1R-api
+  cancel-in-progress: false
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out frozen research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refuse to overwrite canonical 2R result
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f research/crypto/results/funding-carry-v1R-api/summary.json ]; then
+            echo 'Canonical funding-carry-v1R-api result already exists; refusing a second reproduction.' >&2
+            exit 1
+          fi
+
+      - name: Validate frozen carry and replication code
+        run: |
+          python -m py_compile research/crypto/prepare-carry-rest-api.py
+          node --check research/crypto/carry-evaluate.js
+          node --check research/crypto/carry-evaluate-replication.js
+          node --check research/crypto/carry-report.js
+          node --check research/crypto/carry-report-replication.js
+          python -m unittest tests/test_prepare_carry_data.py
+          node --test tests/crypto-carry-evaluate.test.js
+
+      - name: Acquire exact official REST replication data
+        run: >-
+          python research/crypto/prepare-carry-rest-api.py
+          research/crypto/manifests/funding-carry-v1R-api.json
+          research/crypto/data-cache/funding-carry-v1R-api-synchronized.csv
+          research/crypto/data-cache/funding-carry-v1R-api-sources.json
+          research/crypto/data-cache/funding-carry-v1R-api-pages
+
+      - name: Evaluate exact frozen Trial 2 economics through canonical engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p research/crypto/results/funding-carry-v1R-api
+          node research/crypto/carry-evaluate-replication.js \
+            research/crypto/manifests/funding-carry-v1R-api.json \
+            research/crypto/data-cache/funding-carry-v1R-api-synchronized.csv \
+            > research/crypto/results/funding-carry-v1R-api/summary.json
+
+      - name: Build replication tables and plots
+        run: >-
+          node research/crypto/carry-report-replication.js
+          research/crypto/results/funding-carry-v1R-api/summary.json
+          research/crypto/results/funding-carry-v1R-api
+
+      - name: Preserve canonical data hashes and result bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'moneymog-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add \
+            research/crypto/data-cache/funding-carry-v1R-api-synchronized.csv \
+            research/crypto/data-cache/funding-carry-v1R-api-sources.json \
+            research/crypto/results/funding-carry-v1R-api
+          git commit -m 'Record canonical funding-carry-v1R-api reproduction'
+          git push origin HEAD:research/crypto-oos-v1
+
+      - name: Upload raw REST pages and canonical evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-carry-v1R-api-evidence
+          path: |
+            research/crypto/data-cache/funding-carry-v1R-api-pages
+            research/crypto/data-cache/funding-carry-v1R-api-synchronized.csv
+            research/crypto/data-cache/funding-carry-v1R-api-sources.json
+            research/crypto/results/funding-carry-v1R-api
+          if-no-files-found: error
