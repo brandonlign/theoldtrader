@@ -5,6 +5,13 @@
   "status": "FROZEN_DATA_ACQUISITION_PENDING",
   "paperOnly": true,
   "livePromotionAllowed": false,
+  "revisionLog": [
+    {
+      "at": "2026-08-12T16:42:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Frozen the full historical robustness window to 2021-05-01 through 2026-03-01 and clarified that the funding payment timestamp coincident with entry is not earned. No result had been observed."
+    }
+  ],
   "strategyFamily": "market-neutral spot/perpetual funding and basis carry",
   "motivation": "Evaluate a genuinely different, low-turnover return source after the directional ridge robustness failure. This is not a rescue or parameter modification of trial 1.",
   "dataRequirements": {
@@ -24,15 +31,24 @@
       "the exact downloaded inputs cannot be hashed"
     ]
   },
+  "historicalRobustnessWindow": {
+    "startInclusive": "2021-05-01T00:00:00Z",
+    "endExclusive": "2026-03-01T00:00:00Z",
+    "entryTimestampRule": "use the first synchronized observation at or after startInclusive",
+    "exitTimestampRule": "use the final synchronized observation strictly before endExclusive",
+    "fundingAtEntry": "not earned; the first synchronized row establishes the position and mark only",
+    "fundingAfterEntry": "accrue only realized funding payments on later synchronized timestamps",
+    "reason": "Use the entire common historical interval motivated before any carry P&L was observed rather than selecting favorable subperiods. Whole-sample funding summary statistics were already visible, so this is robustness/development evidence only."
+  },
   "candidate": {
     "position": "long BTC spot and short equal BTC units of BTCUSDT perpetual",
-    "entryRule": "enter once at the beginning of an evaluation window; no forecast threshold and no funding-sign timing",
-    "exitRule": "exit both legs at the end of the evaluation window",
+    "entryRule": "enter once at the beginning of the frozen historical robustness window; no forecast threshold and no funding-sign timing",
+    "exitRule": "exit both legs at the end of the frozen historical robustness window",
     "rebalancing": "none; keep equal BTC units on both legs so first-order BTC delta remains offset",
     "spotNotionalPctAtEntry": 0.15,
     "perpetualShortNotionalPctAtEntry": 0.15,
     "futuresCollateralReservePct": 0.20,
-    "fundingAccounting": "for each realized funding timestamp, short receives positive funding and pays negative funding on contemporaneous perpetual notional",
+    "fundingAccounting": "after entry, at each later realized funding timestamp, short receives positive funding and pays negative funding on contemporaneous perpetual notional; no payment at the entry timestamp is credited",
     "basisAccounting": "mark both legs independently; net price P&L must include spot/perpetual entry and exit basis rather than assuming convergence or perfect cancellation"
   },
   "costModel": {
@@ -54,7 +70,7 @@
     "headlineMetrics": ["netReturn", "annualizedReturn", "Sharpe", "Sortino", "maxDrawdown", "Calmar", "totalFunding", "basisPnL", "fees", "feeDrag", "capitalUtilization", "liquidationOrMarginBreach"],
     "comparators": ["cash", "BTC spot buy-and-hold at 15% exposure"],
     "doNotCombinePerformanceWithDirectionalStrategies": true,
-    "historicalHoldoutIntegrity": "Any historical result using the Torch-Trade series is development/robustness evidence, not pristine validation, because whole-sample summary statistics were viewed before this manifest was frozen.",
+    "historicalHoldoutIntegrity": "Any historical result using the frozen 2021-05-01 through 2026-03-01 window is development/robustness evidence, not pristine validation, because whole-sample funding summary statistics were viewed before this manifest was frozen.",
     "promotionRequires": "a later untouched forward or independently sealed evaluation in addition to positive net-of-cost historical robustness"
   },
   "antiRescueRule": "No funding threshold, sign filter, leverage change, entry date selection, or rebalancing rule may be introduced after seeing this candidate's first result under trial 2. Any such change is a new numbered trial."
