@@ -5,10 +5,11 @@ Scientific safeguards:
 - checksum every downloaded archive against Binance's adjacent .CHECKSUM file;
 - use DAILY spot 8h archives because open Binance public-data issue #475 reports
   cases where monthly spot archives disagree with daily archives/API;
+- use standard USD-M contract 8h opens as perpetual execution references and
+  separate USD-M markPrice 8h opens for valuation/funding/margin;
 - preserve each raw funding calc_time, but map it to the nearest scheduled 8h UTC
-  boundary only when the absolute skew is <= the frozen 60-second tolerance;
-- use only the exact 8h kline OPEN at that scheduled boundary, never that bar's
-  close/high/low or a forward-filled/interpolated price;
+  boundary only when absolute skew is <= the frozen 60-second tolerance;
+- never forward-fill/interpolate a required price or funding observation;
 - retain the first funding boundary for entry/marking but do not credit its payment;
 - require the normalized BTCUSDT funding stream to be a complete 8-hour grid.
 """
@@ -76,11 +77,6 @@ def iso_ms(timestamp_ms: int) -> str:
 
 
 def scheduled_funding_boundary(raw_timestamp_ms: int, tolerance_ms: int = FUNDING_SKEW_TOLERANCE_MS):
-    """Map calc_time to the nearest frozen 8h UTC boundary or reject it.
-
-    Integer arithmetic avoids floating-point rounding. The returned skew preserves
-    the raw event timing for provenance; it is never used to move a price forward.
-    """
     scheduled = ((raw_timestamp_ms + EIGHT_HOURS_MS // 2) // EIGHT_HOURS_MS) * EIGHT_HOURS_MS
     skew = raw_timestamp_ms - scheduled
     if abs(skew) > tolerance_ms:
@@ -111,6 +107,8 @@ def day_range(start_ms: int, end_ms: int):
 def urls(kind: str, period: str):
     if kind == "spot_daily":
         relative = f"data/spot/daily/klines/{SYMBOL}/{INTERVAL}/{SYMBOL}-{INTERVAL}-{period}.zip"
+    elif kind == "perp_monthly":
+        relative = f"data/futures/um/monthly/klines/{SYMBOL}/{INTERVAL}/{SYMBOL}-{INTERVAL}-{period}.zip"
     elif kind == "mark_monthly":
         relative = f"data/futures/um/monthly/markPriceKlines/{SYMBOL}/{INTERVAL}/{SYMBOL}-{INTERVAL}-{period}.zip"
     elif kind == "funding_monthly":
@@ -239,10 +237,11 @@ def parse_funding(payload: bytes, start_ms: int, end_ms: int, tolerance_ms: int)
 
 def download_period(kind: str, period: str, start_ms: int, end_ms: int, funding_tolerance_ms: int):
     payload, metadata = verified_zip(kind, period)
-    if kind == "funding_monthly":
-        values = parse_funding(payload, start_ms, end_ms, funding_tolerance_ms)
-    else:
-        values = parse_kline_opens(payload, start_ms, end_ms)
+    values = (
+        parse_funding(payload, start_ms, end_ms, funding_tolerance_ms)
+        if kind == "funding_monthly"
+        else parse_kline_opens(payload, start_ms, end_ms)
+    )
     return values, metadata
 
 
@@ -257,7 +256,6 @@ def download_many(kind: str, periods, start_ms: int, end_ms: int, funding_tolera
         }
         completed = 0
         for future in as_completed(futures):
-            period = futures[future]
             parsed, source = future.result()
             for timestamp, value in parsed.items():
                 if timestamp in values:
@@ -280,16 +278,18 @@ def write_csv(path: Path, rows):
             "raw_funding_timestamp",
             "funding_timestamp_skew_ms",
             "spot_price",
-            "perp_price",
+            "perp_exec_price",
+            "perp_mark_price",
             "funding_rate",
         ])
-        for scheduled, observation, spot, mark in rows:
+        for scheduled, observation, spot, perp_exec, perp_mark in rows:
             writer.writerow([
                 iso_ms(scheduled),
                 iso_ms(observation.raw_timestamp_ms),
                 observation.skew_ms,
                 f"{spot:.10f}",
-                f"{mark:.10f}",
+                f"{perp_exec:.10f}",
+                f"{perp_mark:.10f}",
                 f"{observation.rate:.12f}",
             ])
 
@@ -313,16 +313,18 @@ def main():
     start_ms = int(datetime.fromisoformat(window["startInclusive"].replace("Z", "+00:00")).timestamp() * 1000)
     end_ms = int(datetime.fromisoformat(window["endExclusive"].replace("Z", "+00:00")).timestamp() * 1000)
 
-    # Daily spot is deliberate: public-data issue #475 documents monthly spot
-    # discrepancies where daily archive values match the Binance API/uiKlines.
     spot, spot_sources = download_many(
         "spot_daily", day_range(start_ms, end_ms), start_ms, end_ms, funding_tolerance_ms
     )
-    mark, mark_sources = download_many(
-        "mark_monthly", month_range(start_ms, end_ms), start_ms, end_ms, funding_tolerance_ms
+    months = list(month_range(start_ms, end_ms))
+    perp_exec, perp_exec_sources = download_many(
+        "perp_monthly", months, start_ms, end_ms, funding_tolerance_ms
+    )
+    perp_mark, mark_sources = download_many(
+        "mark_monthly", months, start_ms, end_ms, funding_tolerance_ms
     )
     funding, funding_sources = download_many(
-        "funding_monthly", month_range(start_ms, end_ms), start_ms, end_ms, funding_tolerance_ms
+        "funding_monthly", months, start_ms, end_ms, funding_tolerance_ms
     )
 
     funding_times = sorted(funding)
@@ -339,23 +341,26 @@ def main():
 
     expected_first = start_ms
     expected_last = end_ms - EIGHT_HOURS_MS
-    if funding_times[0] != expected_first or funding_times[-1] != expected_last:
+    expected_rows = (end_ms - start_ms) // EIGHT_HOURS_MS
+    if funding_times[0] != expected_first or funding_times[-1] != expected_last or len(funding_times) != expected_rows:
         raise RuntimeError(
             "Normalized funding grid does not cover the entire frozen window: "
+            f"rows={len(funding_times)}, expected_rows={expected_rows}, "
             f"first={iso_ms(funding_times[0])}, expected_first={iso_ms(expected_first)}, "
             f"last={iso_ms(funding_times[-1])}, expected_last={iso_ms(expected_last)}"
         )
 
     missing_spot = [timestamp for timestamp in funding_times if timestamp not in spot]
-    missing_mark = [timestamp for timestamp in funding_times if timestamp not in mark]
-    if missing_spot or missing_mark:
+    missing_perp_exec = [timestamp for timestamp in funding_times if timestamp not in perp_exec]
+    missing_perp_mark = [timestamp for timestamp in funding_times if timestamp not in perp_mark]
+    if missing_spot or missing_perp_exec or missing_perp_mark:
         raise RuntimeError(
             "Exact scheduled-boundary synchronization failed; no interpolation is permitted. "
-            f"missing spot={len(missing_spot)}, mark={len(missing_mark)}"
+            f"missing spot={len(missing_spot)}, perp_exec={len(missing_perp_exec)}, perp_mark={len(missing_perp_mark)}"
         )
 
     synchronized = [
-        (timestamp, funding[timestamp], spot[timestamp], mark[timestamp])
+        (timestamp, funding[timestamp], spot[timestamp], perp_exec[timestamp], perp_mark[timestamp])
         for timestamp in funding_times
     ]
     write_csv(out_path, synchronized)
@@ -363,7 +368,7 @@ def main():
 
     skews = [observation.skew_ms for observation in funding.values()]
     abs_skews = [abs(value) for value in skews]
-    sources = spot_sources + mark_sources + funding_sources
+    sources = spot_sources + perp_exec_sources + mark_sources + funding_sources
     source_manifest = {
         "experimentId": manifest["experimentId"],
         "generatedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
@@ -371,10 +376,15 @@ def main():
         "symbol": SYMBOL,
         "interval": INTERVAL,
         "frozenWindow": window,
-        "spotSource": "daily Binance Vision 8h klines",
-        "perpetualSource": "monthly Binance Vision USD-M 8h markPriceKlines",
+        "spotSource": "daily Binance Vision 8h spot klines",
+        "perpetualExecutionSource": "monthly Binance Vision USD-M standard 8h klines",
+        "perpetualMarkSource": "monthly Binance Vision USD-M 8h markPriceKlines",
         "fundingSource": "monthly Binance Vision USD-M fundingRate",
         "spotMonthlyArchiveAvoidedBecause": "open binance/binance-public-data issue #475 documents monthly SPOT archive discrepancies versus daily/API",
+        "perpetualPriceRoles": {
+            "execution": "standard contract 8h open at entry/exit before modeled friction",
+            "valuation": "markPrice 8h open at each scheduled boundary for unrealized P&L, funding notional, margin and stress",
+        },
         "fundingTimestampRule": {
             "rawField": "calc_time",
             "scheduledIntervalMs": EIGHT_HOURS_MS,
@@ -385,9 +395,10 @@ def main():
             "maximumSkewMs": max(skews),
             "maximumAbsoluteObservedSkewMs": max(abs_skews),
         },
-        "priceTimestampRule": "exact 8h kline open at normalized scheduled funding boundary; no interpolation or later-bar data",
+        "priceTimestampRule": "exact 8h kline opens at normalized scheduled funding boundary; no interpolation or later-bar data",
         "fundingAtEntryCredited": False,
         "synchronizedRows": len(synchronized),
+        "expectedSynchronizedRows": expected_rows,
         "firstTimestamp": iso_ms(funding_times[0]),
         "lastTimestamp": iso_ms(funding_times[-1]),
         "firstRawFundingTimestamp": iso_ms(funding[funding_times[0]].raw_timestamp_ms),
@@ -401,6 +412,7 @@ def main():
     source_manifest_path.write_text(json.dumps(source_manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({
         "rows": len(synchronized),
+        "expectedRows": expected_rows,
         "first": source_manifest["firstTimestamp"],
         "last": source_manifest["lastTimestamp"],
         "maxAbsFundingTimestampSkewMs": max(abs_skews),
