@@ -10,7 +10,6 @@ import {
   coefficientStability,
   foldRanges,
   median,
-  performanceMetrics,
   regimeByDay,
   regimePerformance,
   ridgePolicy,
@@ -18,6 +17,7 @@ import {
   walkForwardPredictions
 } from './lib/core.js';
 import { datasetHash, loadOrFetchDataset, missingBarDiagnostics } from './lib/data.js';
+import { performanceMetrics } from './lib/metrics.js';
 import { backtestFrozenV2 } from './lib/v2-backtest.js';
 import { writeReports } from './lib/report.js';
 
@@ -61,9 +61,13 @@ function assetContribution(state) {
   return { pnl, totalRealizedPnl: total, maxProfitContributionShare: maxShare };
 }
 
+function metrics(state) {
+  return performanceMetrics(state, manifest.portfolio.startingCash);
+}
+
 function summarize(state, regimes) {
   return {
-    ...performanceMetrics(state),
+    ...metrics(state),
     assetContribution: assetContribution(state),
     regimePerformance: regimePerformance(state, regimes)
   };
@@ -124,7 +128,7 @@ const primaryStates = {
   ridge24_cost_gate: ridgeState,
   frozen_v2: v2State,
   trend30: trendState,
-  btc_buy_hold_45pct: btcState,
+  btc_buy_hold_15pct: btcState,
   equal_weight_buy_hold_45pct: equalState,
   cash: cashState
 };
@@ -140,8 +144,8 @@ for (const range of foldRanges(manifest)) {
   developmentFolds.push({
     start,
     end,
-    candidate: performanceMetrics(candidate),
-    v2: performanceMetrics(v2)
+    candidate: metrics(candidate),
+    v2: metrics(v2)
   });
 }
 
@@ -156,7 +160,7 @@ for (const spread of manifest.costModel.spreadStressBpsRoundTrip) {
     end: holdoutEnd,
     policy: ridgePolicy(predictions, stressManifest)
   });
-  spreadStress[String(spread)] = performanceMetrics(state);
+  spreadStress[String(spread)] = metrics(state);
 }
 
 const candidate = primaryMetrics.ridge24_cost_gate;
@@ -221,11 +225,11 @@ const summary = {
   finalHoldout: {
     start: holdoutStart,
     end: holdoutEnd,
-    strategies: Object.fromEntries(Object.entries(primaryMetrics).map(([name, metrics]) => {
-      const { regimePerformance: _regimes, ...rest } = metrics;
+    strategies: Object.fromEntries(Object.entries(primaryMetrics).map(([name, strategyMetrics]) => {
+      const { regimePerformance: _regimes, ...rest } = strategyMetrics;
       return [name, rest];
     })),
-    regimes: Object.fromEntries(Object.entries(primaryMetrics).map(([name, metrics]) => [name, metrics.regimePerformance]))
+    regimes: Object.fromEntries(Object.entries(primaryMetrics).map(([name, strategyMetrics]) => [name, strategyMetrics.regimePerformance]))
   },
   developmentFolds,
   spreadStress,
