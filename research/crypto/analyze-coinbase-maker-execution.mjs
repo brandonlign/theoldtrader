@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import readline from 'node:readline';
+import crypto from 'node:crypto';
 
 const inputPath = process.argv[2];
 const manifestPath = process.argv[3] ?? 'research/crypto/manifests/coinbase-maker-execution-v1.json';
@@ -66,6 +67,8 @@ let disconnectedSince = null;
 let totalDisconnectMs = 0;
 let maxDisconnectMs = 0;
 let connectionIsOpen = false;
+let recordingProduct = null;
+let productMismatchMessages = 0;
 
 function recomputeBest(levels, side) {
   let best = null;
@@ -265,7 +268,10 @@ function sequenceState(record, payload, event) {
   return 'OK';
 }
 
-const input = fs.createReadStream(inputPath).pipe(zlib.createGunzip());
+const rawHash = crypto.createHash('sha256');
+const rawStream = fs.createReadStream(inputPath);
+rawStream.on('data', (chunk) => rawHash.update(chunk));
+const input = rawStream.pipe(zlib.createGunzip());
 const rl = readline.createInterface({ input, crlfDelay: Infinity });
 for await (const line of rl) {
   if (!line.trim()) continue;
@@ -281,6 +287,13 @@ for await (const line of rl) {
   if (Number.isFinite(received)) {
     if (firstReceived === null) firstReceived = received;
     lastReceived = received;
+  }
+  if (record.kind === 'recorder_start' && record.product) {
+    if (recordingProduct === null) recordingProduct = String(record.product);
+    else if (recordingProduct !== String(record.product)) {
+      productMismatchMessages += 1;
+      parseErrors += 1;
+    }
   }
   if (record.kind === 'parse_error') parseErrors += 1;
   if (record.kind === 'reconnect_scheduled') reconnects += 1;
@@ -316,6 +329,11 @@ for await (const line of rl) {
     for (const event of payload.events ?? []) {
       const product = event.product_id;
       if (!products.has(product)) continue;
+      if (recordingProduct !== null && product !== recordingProduct) {
+        productMismatchMessages += 1;
+        parseErrors += 1;
+        continue;
+      }
       const book = books.get(product);
       const sequence = sequenceState(record, payload, event);
       if (sequence === 'STALE') continue;
@@ -337,8 +355,27 @@ for await (const line of rl) {
     }
   } else if (channel === 'market_trades') {
     for (const event of payload.events ?? []) {
-      for (const trade of event.trades ?? []) processTrade(trade);
+      for (const trade of event.trades ?? []) {
+        if (recordingProduct !== null && trade.product_id !== recordingProduct) {
+          productMismatchMessages += 1;
+          parseErrors += 1;
+          continue;
+        }
+        processTrade(trade);
+      }
     }
+  }
+}
+
+const rawSha256 = rawHash.digest('hex');
+const checksumPath = `${inputPath}.sha256`;
+let expectedRawSha256 = null;
+let rawHashVerified = false;
+if (fs.existsSync(checksumPath)) {
+  const token = fs.readFileSync(checksumPath, 'utf8').trim().split(/\s+/)[0]?.toLowerCase();
+  if (/^[0-9a-f]{64}$/.test(token)) {
+    expectedRawSha256 = token;
+    rawHashVerified = token === rawSha256;
   }
 }
 
@@ -397,7 +434,10 @@ const durationHours = Number.isFinite(firstReceived) && Number.isFinite(lastRece
 const wallDurationMs = Math.max(0, (lastReceived ?? 0) - (firstReceived ?? 0));
 const connectedCoveragePct = wallDurationMs > 0 ? Math.max(0, 1 - totalDisconnectMs / wallDurationMs) : 0;
 const scientificWindow = durationHours >= manifest.recording.minimumScientificHours
+  && products.has(recordingProduct)
   && parseErrors === 0
+  && productMismatchMessages === 0
+  && rawHashVerified
   && l2SequenceGaps === 0
   && connectedCoveragePct >= manifest.recording.minimumConnectedCoveragePct
   && maxDisconnectMs <= manifest.recording.maximumSingleDisconnectSeconds * 1000;
@@ -406,7 +446,14 @@ const result = {
   generatedAt: new Date().toISOString(),
   paperOnly: true,
   strategyTrial: false,
-  input: path.resolve(inputPath),
+  input: {
+    path: path.resolve(inputPath),
+    product: recordingProduct,
+    rawSha256,
+    checksumPath: fs.existsSync(checksumPath) ? path.resolve(checksumPath) : null,
+    expectedRawSha256,
+    rawHashVerified
+  },
   recording: {
     firstReceived: firstReceived ? new Date(firstReceived).toISOString() : null,
     lastReceived: lastReceived ? new Date(lastReceived).toISOString() : null,
@@ -418,12 +465,13 @@ const result = {
     l2SequenceGaps,
     outOfOrderL2,
     dataGapOrders,
+    productMismatchMessages,
     totalDisconnectSeconds: totalDisconnectMs / 1000,
     maxDisconnectSeconds: maxDisconnectMs / 1000,
     connectedCoveragePct,
     minimumConnectedCoveragePct: manifest.recording.minimumConnectedCoveragePct,
     maximumSingleDisconnectSeconds: manifest.recording.maximumSingleDisconnectSeconds,
-    note: 'Reconnect-spanning orders are DATA_GAP and excluded. A recording is scientific only if duration, connected coverage, maximum disconnect, parse integrity, and level2 sequence rules all pass the frozen manifest.'
+    note: 'Reconnect-spanning orders are DATA_GAP and excluded. A recording is scientific only if product identity, raw SHA-256 verification, duration, connected coverage, maximum disconnect, parse integrity, and level2 sequence rules all pass the frozen manifest.'
   },
   groups: grouped,
   antiSelectionRule: manifest.antiSelectionRule
