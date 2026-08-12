@@ -32,6 +32,7 @@ export class CoinbasePublicClient {
     this.maxRetries = Math.max(0, Math.min(4, Math.trunc(finite(options.maxRetries, 2))));
     this.retryBaseMs = Math.max(100, finite(options.retryBaseMs, 750));
     this.minRequestIntervalMs = Math.max(0, finite(options.minRequestIntervalMs, 250));
+    this.fetchImpl = options.fetchImpl ?? globalThis.fetch;
     this.nextRequestAt = 0;
   }
 
@@ -47,7 +48,7 @@ export class CoinbasePublicClient {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), Math.max(1_000, this.timeoutMs));
       try {
-        const response = await fetch(url, {
+        const response = await this.fetchImpl(url, {
           signal: controller.signal,
           headers: {
             accept: "application/json",
