@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { fitRidge, predictRidge, backtestDailyPolicy, buyHoldPolicy, performanceMetrics } from '../research/crypto/lib/core.js';
+import { fitRidge, predictRidge, backtestDailyPolicy, buyHoldPolicy } from '../research/crypto/lib/core.js';
+import { performanceMetrics } from '../research/crypto/lib/metrics.js';
 import { frozenV2Config } from '../research/crypto/lib/v2-backtest.js';
 
 const manifest = JSON.parse(fs.readFileSync(new URL('../research/crypto/manifests/crypto-oos-v1.json', import.meta.url), 'utf8'));
@@ -35,7 +36,7 @@ test('frozen v2 adapter mirrors live v2 defaults', () => {
   assert.equal(config.takeProfitPct, 0.075);
 });
 
-test('backtester charges costs and preserves exposure caps for buy-and-hold', () => {
+test('backtester charges day-one costs and preserves exposure caps for buy-and-hold', () => {
   const start = Date.parse('2026-03-01T00:00:00Z') / 1000;
   const products = manifest.data.products;
   const dataset = { products: {} };
@@ -56,7 +57,8 @@ test('backtester charges costs and preserves exposure caps for buy-and-hold', ()
     end: '2026-03-04T00:00:00Z',
     policy: buyHoldPolicy(products)
   });
-  const metrics = performanceMetrics(state);
+  const metrics = performanceMetrics(state, manifest.portfolio.startingCash);
+  assert.equal(metrics.startValue, manifest.portfolio.startingCash);
   assert.ok(metrics.totalFees > 0);
   assert.ok(metrics.netReturn < 0);
   assert.ok(metrics.averageExposure <= 0.46);
