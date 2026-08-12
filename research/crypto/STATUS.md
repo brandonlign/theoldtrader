@@ -66,8 +66,33 @@ Frozen design:
 
 Data provenance is deliberately strict. Because open Binance public-data issue #475 reports cases where monthly SPOT archives differ from daily/API history, MoneyMog freezes checksum-verified **daily** BTCUSDT 8-hour spot archives, monthly USD-M 8-hour mark-price archives, and monthly funding-rate archives. `prepare-carry-data.py` verifies every official `.CHECKSUM`, uses only exact kline opens at funding timestamps, forbids interpolation, and rejects incomplete/non-8-hour funding grids. `carry-evaluate.js` independently marks both legs and never credits the first funding payment.
 
+## Execution experiment E1 — `coinbase-maker-execution-v1`
+
+**Question:** Can post-only maker execution materially lower MoneyMog's effective cost after realistic non-fills and adverse selection?  
+**Status:** FROZEN FORWARD-DATA PROTOCOL; NO LIVE RECORDING RESULT OBSERVED.
+
+The current 60 bps/side taker assumption is not merely an arbitrary stress number: it matches Coinbase Exchange's lowest published taker tier. The corresponding published maker tier is 40 bps/side. This does **not** justify replacing v2's cost model with 40 bps after seeing losses. E1 instead measures whether a post-only order can actually earn that maker treatment often enough to matter.
+
+Frozen E1 design:
+
+- public Coinbase Advanced Trade `level2`, `market_trades`, and `heartbeats` only; no account/order credentials and no real orders;
+- BTC-USD, ETH-USD, SOL-USD;
+- hypothetical BUY orders join best bid and SELL orders join best ask every 15 minutes;
+- $500 and $1,500 hypothetical sizes;
+- five-minute TTL;
+- conservative back-of-queue fill rule: same-price observed maker-side trade volume must consume displayed queue ahead plus the hypothetical order; queue-ahead cancellations are **not** credited;
+- trade-through can establish a fill because the resting limit would have been crossed by observed executions;
+- 1m/5m/15m/60m signed midpoint markouts measure adverse selection after simulated fill;
+- one-hour recordings are engineering tests only; a scientific report requires at least 168 hours, ≥98% connected-time coverage, no single disconnect over five minutes, zero parse errors, and zero detected forward level2 sequence gaps;
+- reconnect-spanning hypothetical orders are marked `DATA_GAP`, and no new order is placed until a fresh snapshot reconstructs the book;
+- raw compressed messages and SHA-256 are preserved.
+
+`record-coinbase-microstructure.mjs` records the public feed. `analyze-coinbase-maker-execution.mjs` reconstructs books and simulates the frozen orders. Its queue-consumption, markout, sequence-gap, and reconnect handling were tested synthetically before any live E1 result.
+
+E1 is tracked separately from the alpha-strategy trial count. A future change to placement price, TTL, queue model, order-size set, cancellation assumption, or maker/taker switching rule must receive a new execution experiment number before evaluation.
+
 ## Research conclusion so far
 
-The evidence does **not** support promoting a more complex directional ML model. The only completed OOS robustness test found weak/negative 24-hour forecast information and severe cost sensitivity in v2/trend trading. That makes a different, low-turnover economic return source such as carry a better next scientific test than a post-hoc Transformer/XGBoost rescue on the same candle features.
+The evidence does **not** support promoting a more complex directional ML model. The only completed OOS robustness test found weak/negative 24-hour forecast information and severe cost sensitivity in v2/trend trading. That makes a different, low-turnover economic return source such as carry—and an honest measurement of achievable execution cost—better next scientific work than a post-hoc Transformer/XGBoost rescue on the same candle features.
 
-This is a research conclusion, not a claim that carry will work. Trial 2 must still survive both-leg costs, basis movements, funding, and margin stress.
+This is a research conclusion, not a claim that carry or maker execution will work. Trial 2 must still survive both-leg costs, basis movements, funding, and margin stress; E1 must still survive low fill probability and adverse selection.
