@@ -62,6 +62,10 @@ let reconnects = 0;
 let l2SequenceGaps = 0;
 let outOfOrderL2 = 0;
 let dataGapOrders = 0;
+let disconnectedSince = null;
+let totalDisconnectMs = 0;
+let maxDisconnectMs = 0;
+let connectionIsOpen = false;
 
 function recomputeBest(levels, side) {
   let best = null;
@@ -280,8 +284,28 @@ for await (const line of rl) {
   }
   if (record.kind === 'parse_error') parseErrors += 1;
   if (record.kind === 'reconnect_scheduled') reconnects += 1;
-  if (record.kind === 'connection_open' && record.connection_id > 1) {
-    invalidateAll(`connection-${record.connection_id}-opened`, received);
+  if (record.kind === 'connection_close' && Number.isFinite(received)) {
+    if (connectionIsOpen) {
+      disconnectedSince = received;
+      connectionIsOpen = false;
+    }
+    invalidateAll(`connection-${record.connection_id ?? 'x'}-closed`, received);
+  }
+  if (record.kind === 'connection_open' && Number.isFinite(received)) {
+    if (disconnectedSince !== null) {
+      const gap = Math.max(0, received - disconnectedSince);
+      totalDisconnectMs += gap;
+      maxDisconnectMs = Math.max(maxDisconnectMs, gap);
+      disconnectedSince = null;
+    }
+    connectionIsOpen = true;
+    if (record.connection_id > 1) invalidateAll(`connection-${record.connection_id}-opened`, received);
+  }
+  if (record.kind === 'recorder_stop' && disconnectedSince !== null && Number.isFinite(received)) {
+    const gap = Math.max(0, received - disconnectedSince);
+    totalDisconnectMs += gap;
+    maxDisconnectMs = Math.max(maxDisconnectMs, gap);
+    disconnectedSince = null;
   }
   if (record.kind !== 'coinbase_message' || !record.payload) continue;
 
@@ -370,10 +394,13 @@ for (const product of manifest.venue.products) {
 const durationHours = Number.isFinite(firstReceived) && Number.isFinite(lastReceived)
   ? (lastReceived - firstReceived) / 3_600_000
   : 0;
+const wallDurationMs = Math.max(0, (lastReceived ?? 0) - (firstReceived ?? 0));
+const connectedCoveragePct = wallDurationMs > 0 ? Math.max(0, 1 - totalDisconnectMs / wallDurationMs) : 0;
 const scientificWindow = durationHours >= manifest.recording.minimumScientificHours
   && parseErrors === 0
   && l2SequenceGaps === 0
-  && reconnects === 0;
+  && connectedCoveragePct >= manifest.recording.minimumConnectedCoveragePct
+  && maxDisconnectMs <= manifest.recording.maximumSingleDisconnectSeconds * 1000;
 const result = {
   experimentId: manifest.experimentId,
   generatedAt: new Date().toISOString(),
@@ -391,7 +418,12 @@ const result = {
     l2SequenceGaps,
     outOfOrderL2,
     dataGapOrders,
-    note: 'Any reconnect, parse error, or detected forward level2 sequence gap prevents this recording from being labeled a scientific window; orders spanning invalidated books are excluded from fill-rate denominators.'
+    totalDisconnectSeconds: totalDisconnectMs / 1000,
+    maxDisconnectSeconds: maxDisconnectMs / 1000,
+    connectedCoveragePct,
+    minimumConnectedCoveragePct: manifest.recording.minimumConnectedCoveragePct,
+    maximumSingleDisconnectSeconds: manifest.recording.maximumSingleDisconnectSeconds,
+    note: 'Reconnect-spanning orders are DATA_GAP and excluded. A recording is scientific only if duration, connected coverage, maximum disconnect, parse integrity, and level2 sequence rules all pass the frozen manifest.'
   },
   groups: grouped,
   antiSelectionRule: manifest.antiSelectionRule
