@@ -130,7 +130,7 @@ export function deriveCryptoSignal({ productId, candles, position = null, config
   const maxEntryVolatility = finite(config.maxEntryVolatility, 0.03);
   const roundTripCostPct = Math.max(0, finite(config.roundTripCostPct));
   const exitCostPct = Math.max(0, finite(config.exitCostPct));
-  const minEdgeToCost = Math.max(1, finite(config.minEdgeToCost, 1.8));
+  const minEdgeToCost = Math.max(1, finite(config.minEdgeToCost, 2));
   const minProjectedEdge = Math.max(0, finite(config.minProjectedEdge, 0.01));
   const stopLossPct = Math.max(finite(config.stopLossPct, 0.035), roundTripCostPct * 2.25);
   const takeProfitPct = Math.max(finite(config.takeProfitPct, 0.075), roundTripCostPct * 4);
@@ -142,7 +142,7 @@ export function deriveCryptoSignal({ productId, candles, position = null, config
   const grossReturnPct = entryPrice > 0 ? latest.close / entryPrice - 1 : 0;
   const netReturnPct = entryPrice > 0 ? (latest.close * (1 - exitCostPct)) / entryPrice - 1 : 0;
   const drawdownPct = highestPrice > 0 ? latest.close / highestPrice - 1 : 0;
-  const directionalEdge = Math.max(0, momentum * 0.7 + trend * 4 + regimeSlope * 2);
+  const directionalEdge = Math.max(0, momentum * 0.8 + trend * 1.5 + regimeSlope * 0.75);
   const requiredEdge = Math.max(minProjectedEdge, roundTripCostPct * minEdgeToCost);
 
   const metrics = {
