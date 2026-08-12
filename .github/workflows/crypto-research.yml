@@ -56,6 +56,7 @@ jobs:
           node --check research/crypto/lib/report.js &&
           node --check research/crypto/lib/v2-backtest.js &&
           node --check research/crypto/carry-evaluate.js &&
+          node --check research/crypto/carry-report.js &&
           node --check research/crypto/record-coinbase-microstructure.mjs &&
           node --check research/crypto/record-coinbase-microstructure-all.mjs &&
           node --check research/crypto/analyze-coinbase-maker-execution.mjs &&
