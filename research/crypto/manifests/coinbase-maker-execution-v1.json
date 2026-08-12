@@ -1,0 +1,62 @@
+{
+  "experimentId": "coinbase-maker-execution-v1",
+  "createdAt": "2026-08-12T17:08:00Z",
+  "status": "FROZEN_DATA_ACQUISITION_PROTOCOL",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "strategyTrial": false,
+  "purpose": "Measure whether post-only maker execution can reduce MoneyMog implementation cost after fill probability, queue competition, spread capture, and adverse selection. This is execution research, not alpha research and not a change to frozen crypto v2.",
+  "venue": {
+    "name": "Coinbase Advanced Trade",
+    "products": ["BTC-USD", "ETH-USD", "SOL-USD"],
+    "marketDataEndpoint": "wss://advanced-trade-ws.coinbase.com",
+    "channels": ["level2", "market_trades", "heartbeats"],
+    "authenticationRequired": false
+  },
+  "recording": {
+    "engineeringPilotMinutes": 60,
+    "minimumScientificHours": 168,
+    "pilotMayNotBeUsedForExecutionClaims": true,
+    "rawMessagesMustBePreserved": true,
+    "compressRawNdjson": true,
+    "sha256EveryCompletedRecording": true,
+    "rejectIntervalsWithBookDesynchronization": true,
+    "notes": "A one-hour run is only an engineering check. The first scientific report requires at least seven contiguous calendar days so weekday/weekend and multiple liquidity conditions are represented."
+  },
+  "hypotheticalOrders": {
+    "placementCadenceMinutes": 15,
+    "directions": ["BUY", "SELL"],
+    "notionalUsd": [500, 1500],
+    "limitPriceRule": "BUY joins the current best bid; SELL joins the current best ask; never cross the spread",
+    "queueRule": "assume the hypothetical order joins the back of the displayed queue at the selected price",
+    "timeToLiveSeconds": 300,
+    "fillRule": "fill only after observed same-price market-trade volume on the maker side consumes queueAhead plus hypothetical order size, or when an observed trade prints strictly through the resting limit price; cancellations ahead are not credited",
+    "partialFills": false,
+    "reasonForConservatism": "Ignoring queue-ahead cancellations understates fill probability rather than inventing fills. A later queue model may only be introduced under a new execution experiment ID."
+  },
+  "markouts": {
+    "secondsAfterFill": [60, 300, 900, 3600],
+    "reference": "midpoint of best bid/ask from synchronized level2 book",
+    "signConvention": "positive means price moved in favor of the maker order after fill"
+  },
+  "costComparison": {
+    "makerFeeBpsPerSide": 40,
+    "takerFeeBpsPerSide": 60,
+    "feeTierAssumption": "Coinbase Exchange lowest published volume tier; report separately from account-specific realized fees",
+    "doNotAssumeMakerSlippageIsZero": true,
+    "report": [
+      "fillRate",
+      "medianTimeToFillSeconds",
+      "spreadBpsAtPlacement",
+      "queueAheadUsd",
+      "makerFeeBps",
+      "signedMarkoutBps1m",
+      "signedMarkoutBps5m",
+      "signedMarkoutBps15m",
+      "signedMarkoutBps60m",
+      "effectiveCostVsArrivalMidBps",
+      "effectiveSavingsVsImmediateTakerBps"
+    ]
+  },
+  "antiSelectionRule": "Do not choose a favorable product, side, notional, time-of-day, or market regime after viewing results and call it the primary execution policy. Any deployment-oriented execution rule must be frozen under a new numbered execution experiment and evaluated forward."
+}
