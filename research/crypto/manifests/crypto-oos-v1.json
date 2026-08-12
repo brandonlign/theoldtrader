@@ -4,6 +4,13 @@
   "status": "FROZEN_BEFORE_FIRST_FINAL_EVALUATION",
   "paperOnly": true,
   "livePromotionAllowed": false,
+  "revisionLog": [
+    {
+      "at": "2026-08-12T15:47:00Z",
+      "beforeAnyEvaluationDataWereRead": true,
+      "change": "Corrected BTC buy-and-hold comparator description from 45% exposure to the existing 15% single-position cap so the written manifest matches the frozen simulator. Candidate model, features, costs, validation dates, and promotion criteria are unchanged."
+    }
+  ],
   "researchQuestion": "Can a simple cost-aware 24-hour expected-return forecaster outperform frozen MoneyMog crypto v2 out of sample after the same conservative trading frictions?",
   "data": {
     "source": "Coinbase Exchange public REST candles",
@@ -61,7 +68,7 @@
   },
   "comparators": [
     "cash",
-    "BTC buy-and-hold at 45% crypto exposure",
+    "BTC buy-and-hold at the frozen 15% single-position cap",
     "equal-weight BTC/ETH/SOL buy-and-hold at 45% total crypto exposure",
     "simple 30-day time-series trend sign baseline at matching 15% per-asset cap",
     "frozen MoneyMog crypto v2 simulated from the unmodified live deriveCryptoSignal implementation"
