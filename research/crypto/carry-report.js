@@ -35,6 +35,18 @@ function csvCell(value) {
   const text = String(value);
   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
+function mean(values) {
+  const usable = values.filter(Number.isFinite);
+  return usable.length ? usable.reduce((sum, value) => sum + value, 0) / usable.length : null;
+}
+function minFinite(values) {
+  const usable = values.filter(Number.isFinite);
+  return usable.length ? Math.min(...usable) : null;
+}
+function maxFinite(values) {
+  const usable = values.filter(Number.isFinite);
+  return usable.length ? Math.max(...usable) : null;
+}
 
 function lineChart(title, seriesByName, { percent = false, zeroLine = false } = {}) {
   const width = 1100;
@@ -68,7 +80,29 @@ function lineChart(title, seriesByName, { percent = false, zeroLine = false } = 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="white"/><text x="${margin.left}" y="34" font-family="system-ui,sans-serif" font-size="22" font-weight="700">${esc(title)}</text>${yTicks}${zero}${lines}</svg>`;
 }
 
-const daily = summary.dailyDiagnostics.map((row) => ({ ...row, time: Date.parse(row.timestamp) }));
+const btcUnits = Number(summary.frozenPosition.btcUnits);
+const collateral = Number(summary.frozenPosition.futuresCollateral);
+const daily = summary.dailyDiagnostics.map((row) => {
+  const time = Date.parse(row.timestamp);
+  const perpMarkNotional = btcUnits * Number(row.perpMark);
+  const grossNotional = Number(row.spotValue) + perpMarkNotional;
+  const equityValue = Number(row.equity);
+  const spotMinusMarkNotional = Number(row.spotValue) - perpMarkNotional;
+  const marginUtilization = Number(row.futuresEquity) > 0 ? Number(row.maintenance) / Number(row.futuresEquity) : null;
+  return {
+    ...row,
+    time,
+    perpMarkNotional,
+    grossNotional,
+    grossExposurePctOfEquity: equityValue > 0 ? grossNotional / equityValue : null,
+    spotMinusMarkNotional,
+    absoluteSpotMarkNotionalMismatchPctOfEquity: equityValue > 0 ? Math.abs(spotMinusMarkNotional) / equityValue : null,
+    perpMarkNotionalToFrozenCollateral: collateral > 0 ? perpMarkNotional / collateral : null,
+    maintenanceToFuturesEquity: marginUtilization,
+    futuresEquityToMaintenance: Number(row.maintenance) > 0 ? Number(row.futuresEquity) / Number(row.maintenance) : null
+  };
+});
+
 let peak = summary.strategies.fundingCarry.startValue;
 const drawdown = daily.map((row) => {
   peak = Math.max(peak, row.equity);
@@ -82,19 +116,28 @@ const basis = {
   'mark - contract': daily.map((row) => ({ time: row.time, value: row.markVsContractPct }))
 };
 const margin = daily.map((row) => ({ time: row.time, value: row.marginExcess }));
+const exposure = {
+  'gross notional / equity': daily.map((row) => ({ time: row.time, value: row.grossExposurePctOfEquity })),
+  '|spot - mark notional| / equity': daily.map((row) => ({ time: row.time, value: row.absoluteSpotMarkNotionalMismatchPctOfEquity }))
+};
+const marginUtilization = daily.map((row) => ({ time: row.time, value: row.maintenanceToFuturesEquity }));
 
 fs.writeFileSync(path.join(outputDir, 'equity-curve.svg'), lineChart('Funding carry daily marked equity (USD)', { 'funding carry': equity }, { zeroLine: false }));
 fs.writeFileSync(path.join(outputDir, 'drawdown.svg'), lineChart('Funding carry drawdown', { drawdown }, { percent: true, zeroLine: true }));
 fs.writeFileSync(path.join(outputDir, 'cumulative-funding.svg'), lineChart('Cumulative funding P&L (USD)', { funding }, { zeroLine: true }));
 fs.writeFileSync(path.join(outputDir, 'basis.svg'), lineChart('Spot / contract / mark basis', basis, { percent: true, zeroLine: true }));
 fs.writeFileSync(path.join(outputDir, 'margin-excess.svg'), lineChart('Futures equity minus maintenance requirement (USD)', { 'margin excess': margin }, { zeroLine: true }));
+fs.writeFileSync(path.join(outputDir, 'gross-exposure.svg'), lineChart('Gross and residual notional exposure / equity', exposure, { percent: true, zeroLine: true }));
+fs.writeFileSync(path.join(outputDir, 'margin-utilization.svg'), lineChart('Maintenance requirement / futures equity', { 'margin utilization': marginUtilization }, { percent: true, zeroLine: true }));
 
 const dailyColumns = [
-  'timestamp','equity','spotPrice','spotValue','perpExecutionReference','perpMark','contractVsSpotPct','markVsSpotPct',
-  'markVsContractPct','fundingRate','cumulativeFundingPnl','perpUnrealizedPnl','futuresEquity','maintenance','marginExcess'
+  'timestamp','equity','spotPrice','spotValue','perpExecutionReference','perpMark','perpMarkNotional','grossNotional',
+  'grossExposurePctOfEquity','spotMinusMarkNotional','absoluteSpotMarkNotionalMismatchPctOfEquity','contractVsSpotPct','markVsSpotPct',
+  'markVsContractPct','fundingRate','cumulativeFundingPnl','perpUnrealizedPnl','futuresEquity','maintenance','marginExcess',
+  'perpMarkNotionalToFrozenCollateral','maintenanceToFuturesEquity','futuresEquityToMaintenance'
 ];
 const dailyCsv = [dailyColumns.join(',')];
-for (const row of summary.dailyDiagnostics) dailyCsv.push(dailyColumns.map((column) => csvCell(row[column])).join(','));
+for (const row of daily) dailyCsv.push(dailyColumns.map((column) => csvCell(row[column])).join(','));
 fs.writeFileSync(path.join(outputDir, 'daily-diagnostics.csv'), `${dailyCsv.join('\n')}\n`);
 
 const strategyColumns = ['strategy','netReturn','annualizedReturn','sharpe','sortino','maxDrawdown','calmar','fees','feeDrag','startValue','endValue','elapsedDays'];
@@ -103,6 +146,23 @@ for (const [name, metrics] of Object.entries(summary.strategies)) {
   strategyCsv.push(strategyColumns.map((column) => csvCell(column === 'strategy' ? name : metrics[column])).join(','));
 }
 fs.writeFileSync(path.join(outputDir, 'comparison-metrics.csv'), `${strategyCsv.join('\n')}\n`);
+
+const riskSummary = {
+  equalBtcUnitHedge: true,
+  residualBtcDeltaUnitsByConstruction: 0,
+  initialCapitalCommittedPct: summary.frozenPosition.initialCapitalCommittedPct,
+  averageGrossExposurePctOfEquity: mean(daily.map((row) => row.grossExposurePctOfEquity)),
+  maximumGrossExposurePctOfEquity: maxFinite(daily.map((row) => row.grossExposurePctOfEquity)),
+  averageAbsoluteSpotMarkNotionalMismatchPctOfEquity: mean(daily.map((row) => row.absoluteSpotMarkNotionalMismatchPctOfEquity)),
+  maximumAbsoluteSpotMarkNotionalMismatchPctOfEquity: maxFinite(daily.map((row) => row.absoluteSpotMarkNotionalMismatchPctOfEquity)),
+  maximumPerpMarkNotionalToFrozenCollateral: maxFinite(daily.map((row) => row.perpMarkNotionalToFrozenCollateral)),
+  maximumMaintenanceToFuturesEquity: maxFinite(daily.map((row) => row.maintenanceToFuturesEquity)),
+  minimumFuturesEquityToMaintenance: minFinite(daily.map((row) => row.futuresEquityToMaintenance)),
+  minimumMarginExcessUsd: minFinite(daily.map((row) => row.marginExcess)),
+  historicalMarginBreach: summary.margin.breached,
+  note: 'Equal BTC units remove first-order BTC-unit delta by construction. The reported spot-minus-mark dollar-notional mismatch is a basis/valuation diagnostic, not a claim of residual BTC units.'
+};
+fs.writeFileSync(path.join(outputDir, 'risk-summary.json'), `${JSON.stringify(riskSummary, null, 2)}\n`);
 
 const carry = summary.strategies.fundingCarry;
 const hold = summary.strategies.btcSpotBuyHold15;
@@ -127,6 +187,17 @@ const report = `# MoneyMog funding-carry-v1 robustness report\n\n` +
 `- Perpetual leg after fees: ${usd(summary.pnlDecomposition.perpetualLegPnlAfterFees)}\n` +
 `- Price hedge P&L after fees: ${usd(summary.pnlDecomposition.priceHedgePnlAfterFees)}\n` +
 `- Total modeled fees: ${usd(summary.pnlDecomposition.totalFees)}\n\n` +
+`## Exposure and capital diagnostics\n\n` +
+`- Equal BTC units / residual BTC-unit delta: yes / 0 by construction\n` +
+`- Initial committed capital: ${pct(riskSummary.initialCapitalCommittedPct)} of starting equity\n` +
+`- Average gross spot + mark notional / equity: ${pct(riskSummary.averageGrossExposurePctOfEquity)}\n` +
+`- Maximum gross spot + mark notional / equity: ${pct(riskSummary.maximumGrossExposurePctOfEquity)}\n` +
+`- Average |spot - mark notional| / equity: ${pct(riskSummary.averageAbsoluteSpotMarkNotionalMismatchPctOfEquity)}\n` +
+`- Maximum |spot - mark notional| / equity: ${pct(riskSummary.maximumAbsoluteSpotMarkNotionalMismatchPctOfEquity)}\n` +
+`- Maximum perp mark notional / frozen collateral: ${num(riskSummary.maximumPerpMarkNotionalToFrozenCollateral)}x\n` +
+`- Maximum maintenance / futures equity: ${pct(riskSummary.maximumMaintenanceToFuturesEquity)}\n` +
+`- Minimum futures equity / maintenance: ${num(riskSummary.minimumFuturesEquityToMaintenance)}x\n` +
+`- Minimum margin excess: ${usd(riskSummary.minimumMarginExcessUsd)}\n\n` +
 `## Entry / basis diagnostics\n\n` +
 `- BTC units: ${num(summary.frozenPosition.btcUnits, 8)}\n` +
 `- Spot entry notional: ${usd(summary.frozenPosition.spotEntryNotional)}\n` +
@@ -143,6 +214,7 @@ fs.writeFileSync(reportPath, report);
 console.log(JSON.stringify({
   outputDir,
   files: [
-    'REPORT.md','comparison-metrics.csv','daily-diagnostics.csv','equity-curve.svg','drawdown.svg','cumulative-funding.svg','basis.svg','margin-excess.svg'
+    'REPORT.md','comparison-metrics.csv','daily-diagnostics.csv','risk-summary.json','equity-curve.svg','drawdown.svg',
+    'cumulative-funding.svg','basis.svg','margin-excess.svg','gross-exposure.svg','margin-utilization.svg'
   ]
 }, null, 2));
