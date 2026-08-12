@@ -72,15 +72,7 @@ function parseCsv(buffer) {
       throw new Error(`Raw funding timestamp does not map to scheduled boundary at ${cells[indexes.timestamp]}`);
     }
     if (timestamp >= startMs && timestamp < endMs) {
-      parsed.push({
-        timestamp,
-        rawFundingTimestamp,
-        fundingTimestampSkewMs,
-        spot,
-        perpExec,
-        perpMark,
-        funding
-      });
+      parsed.push({ timestamp, rawFundingTimestamp, fundingTimestampSkewMs, spot, perpExec, perpMark, funding });
     }
   }
   parsed.sort((a, b) => a.timestamp - b.timestamp);
@@ -184,7 +176,6 @@ const gapStress = Object.fromEntries(
 
 for (let index = 0; index < rows.length; index += 1) {
   const row = rows[index];
-  // Funding uses mark notional. The first payment is not earned because the position is opened at this boundary.
   if (index > 0) fundingPnl += units * row.perpMark * row.funding;
 
   const spotValue = units * row.spot;
@@ -213,13 +204,19 @@ for (let index = 0; index < rows.length; index += 1) {
   equitySeries.push({
     time: row.timestamp,
     equity: freeCash + spotValue + futuresEquity,
+    spotPrice: row.spot,
     spotValue,
     perpExecutionReference: row.perpExec,
     perpMark: row.perpMark,
-    perpUnrealizedPnl,
+    contractVsSpotPct: row.perpExec / row.spot - 1,
+    markVsSpotPct: row.perpMark / row.spot - 1,
+    markVsContractPct: row.perpMark / row.perpExec - 1,
+    fundingRate: row.funding,
     fundingPnl,
+    perpUnrealizedPnl,
     futuresEquity,
-    maintenance
+    maintenance,
+    marginExcess: futuresEquity - maintenance
   });
 }
 
@@ -232,7 +229,7 @@ const perpExitFee = perpExitNotional * perpCost.feeBpsPerSide / 10_000;
 fees += spotExitFee + perpExitFee;
 const realizedPerpPnl = units * (perpEntryFill - perpExitFill);
 const finalEquity = freeCash + (spotExitGross - spotExitFee) + collateral + realizedPerpPnl + fundingPnl - perpExitFee;
-equitySeries.push({ time: last.timestamp + 1, equity: finalEquity });
+equitySeries.push({ time: last.timestamp + 1, equity: finalEquity, isFinalExit: true });
 
 // Comparator: identical spot units/costs but no futures or funding leg.
 const buyHoldFreeCash = startingCash - spotNotional - spotEntryFee;
@@ -252,6 +249,24 @@ const perpetualLegPnlAfterFees = realizedPerpPnl - perpEntryFee - perpExitFee;
 const carryMetrics = metrics(equitySeries, startingCash, fees, first.timestamp);
 const buyHoldMetrics = metrics(buyHoldSeries, startingCash, spotEntryFee + spotExitFee, first.timestamp);
 const cashMetrics = metrics(cashSeries, startingCash, 0, first.timestamp);
+
+const dailyDiagnostics = dailyLast(equitySeries.filter((point) => !point.isFinalExit)).map((point) => ({
+  timestamp: new Date(point.time).toISOString(),
+  equity: point.equity,
+  spotPrice: point.spotPrice,
+  spotValue: point.spotValue,
+  perpExecutionReference: point.perpExecutionReference,
+  perpMark: point.perpMark,
+  contractVsSpotPct: point.contractVsSpotPct,
+  markVsSpotPct: point.markVsSpotPct,
+  markVsContractPct: point.markVsContractPct,
+  fundingRate: point.fundingRate,
+  cumulativeFundingPnl: point.fundingPnl,
+  perpUnrealizedPnl: point.perpUnrealizedPnl,
+  futuresEquity: point.futuresEquity,
+  maintenance: point.maintenance,
+  marginExcess: point.marginExcess
+}));
 
 const maxFundingTimestampSkewMs = Math.max(...rows.map((row) => Math.abs(row.fundingTimestampSkewMs)));
 const result = {
@@ -315,6 +330,7 @@ const result = {
     btcSpotBuyHold15: buyHoldMetrics,
     cash: cashMetrics
   },
+  dailyDiagnostics,
   interpretationConstraint: marginBreach
     ? `${manifest.evaluation.historicalHoldoutIntegrity} Historical margin threshold was breached; post-breach return metrics are descriptive path diagnostics only and the candidate fails the frozen margin requirement.`
     : manifest.evaluation.historicalHoldoutIntegrity,
