@@ -15,6 +15,11 @@
       "at": "2026-08-12T17:31:00Z",
       "beforeAnyLiveRecording": true,
       "change": "Changed data acquisition to one independent public WebSocket/recording per product, following Coinbase guidance to spread high-volume subscriptions across connections. The hypothetical placement, queue, fill, TTL, notional and markout rules are unchanged."
+    },
+    {
+      "at": "2026-08-12T17:48:00Z",
+      "beforeAnyLiveRecording": true,
+      "change": "Required zero detected market_trades sequence gaps in addition to level2 gaps, counted initial connection delay in coverage, and replaced the touch-price taker comparator with same-size full-book executable VWAP at placement. This prevents dropped trades or insufficient top-level depth from making maker execution look artificially favorable."
     }
   ],
   "purpose": "Measure whether post-only maker execution can reduce MoneyMog implementation cost after fill probability, queue competition, spread capture, and adverse selection. This is execution research, not alpha research and not a change to frozen crypto v2.",
@@ -38,8 +43,10 @@
     "sha256EveryCompletedRecording": true,
     "rejectIntervalsWithBookDesynchronization": true,
     "forwardLevel2SequenceGapBlocksScientificClassification": true,
+    "forwardMarketTradesSequenceGapBlocksScientificClassification": true,
+    "countInitialConnectionDelayAsDisconnectedTime": true,
     "reconnectPolicy": "A reconnect does not invalidate the whole product recording by itself. All open hypothetical orders spanning the disconnect are marked DATA_GAP and excluded. No new order may be placed until a fresh level2 snapshot reconstructs that product book.",
-    "notes": "A one-hour run is only an engineering check. The first scientific report requires three concurrent product recordings, each covering at least seven calendar days, at least 98% connected-time coverage, no single disconnect longer than five minutes, zero parse errors, and zero detected forward level2 sequence gaps."
+    "notes": "A one-hour run is only an engineering check. The first scientific report requires three concurrent product recordings, each covering at least seven calendar days, at least 98% connected-time coverage, no single disconnect longer than five minutes, zero parse errors, zero detected forward level2 sequence gaps, and zero detected forward market_trades sequence gaps."
   },
   "hypotheticalOrders": {
     "placementCadenceMinutes": 15,
@@ -61,6 +68,7 @@
     "makerFeeBpsPerSide": 40,
     "takerFeeBpsPerSide": 60,
     "feeTierAssumption": "Coinbase Exchange lowest published volume tier; report separately from account-specific realized Advanced fees",
+    "immediateTakerPriceRule": "execute the identical base quantity against the full synchronized opposite-side book at placement and use volume-weighted average fill price; if recorded depth is insufficient, the taker comparator for that hypothetical order is unavailable rather than imputed",
     "doNotAssumeMakerSlippageIsZero": true,
     "report": [
       "fillRate",
@@ -73,7 +81,9 @@
       "signedMarkoutBps15m",
       "signedMarkoutBps60m",
       "effectiveCostVsArrivalMidBps",
-      "effectiveSavingsVsImmediateTakerBps"
+      "immediateTakerFullBookCostVsArrivalMidBps",
+      "priceAndFeeSavingsVsImmediateTakerConditionalOnMakerFillBps",
+      "takerDepthAvailabilityRate"
     ]
   },
   "antiSelectionRule": "Do not choose a favorable product, side, notional, time-of-day, or market regime after viewing results and call it the primary execution policy. Any deployment-oriented execution rule must be frozen under a new numbered execution experiment and evaluated forward."
