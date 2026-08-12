@@ -25,6 +25,10 @@ async function parsePayload(response) {
   }
 }
 
+function platformFetch(...args) {
+  return fetch(...args);
+}
+
 export class CoinbasePublicClient {
   constructor(options = {}) {
     this.baseUrl = options.baseUrl ?? "https://api.exchange.coinbase.com";
@@ -32,7 +36,7 @@ export class CoinbasePublicClient {
     this.maxRetries = Math.max(0, Math.min(4, Math.trunc(finite(options.maxRetries, 2))));
     this.retryBaseMs = Math.max(100, finite(options.retryBaseMs, 750));
     this.minRequestIntervalMs = Math.max(0, finite(options.minRequestIntervalMs, 250));
-    this.fetchImpl = options.fetchImpl ?? globalThis.fetch;
+    this.fetchImpl = options.fetchImpl ?? platformFetch;
     this.nextRequestAt = 0;
   }
 
