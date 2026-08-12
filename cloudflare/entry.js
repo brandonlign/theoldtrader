@@ -2,6 +2,7 @@ import worker, { runHostedCycle } from "./worker.js";
 import { runCryptoCycle } from "./crypto-engine.js";
 import { CryptoPaperStore } from "./crypto-store.js";
 import { HostedPaperStore } from "./hosted-store.js";
+import { normalizedCryptoCadenceMinutes, shouldRunCryptoAt } from "../src/crypto/cadence.js";
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -29,7 +30,20 @@ function failedDesk(name, reason) {
   };
 }
 
-async function runWithLease(env) {
+function skippedCryptoDesk(cadenceMinutes) {
+  return {
+    status: "SKIPPED",
+    health: "HEALTHY",
+    desk: "crypto",
+    skipped: true,
+    reason: `crypto-${cadenceMinutes}m-cadence`,
+    productsChecked: 0,
+    executions: 0,
+    errors: []
+  };
+}
+
+async function runWithLease(env, options = {}) {
   const store = new HostedPaperStore(env.DB);
   const owner = crypto.randomUUID();
   const acquired = await store.acquireCycleLock(owner, finite(env.CYCLE_LOCK_TTL_MS, 240_000));
@@ -46,10 +60,18 @@ async function runWithLease(env) {
     };
   }
 
+  const cryptoCadenceMinutes = normalizedCryptoCadenceMinutes(
+    options.cryptoCadenceMinutes ?? env.CRYPTO_CADENCE_MINUTES,
+    15
+  );
+  const runCrypto = options.runCrypto !== false;
+
   try {
     const [polymarketResult, cryptoResult] = await Promise.allSettled([
       runHostedCycle(env),
-      runCryptoCycle(env, { runId: owner })
+      runCrypto
+        ? runCryptoCycle(env, { runId: owner })
+        : Promise.resolve(skippedCryptoDesk(cryptoCadenceMinutes))
     ]);
     const polymarket = polymarketResult.status === "fulfilled"
       ? polymarketResult.value
@@ -84,8 +106,10 @@ async function combinedSnapshot(request, env, ctx) {
 }
 
 export default {
-  async scheduled(_controller, env, ctx) {
-    ctx.waitUntil(runWithLease(env));
+  async scheduled(controller, env, ctx) {
+    const cryptoCadenceMinutes = normalizedCryptoCadenceMinutes(env.CRYPTO_CADENCE_MINUTES, 15);
+    const runCrypto = shouldRunCryptoAt(controller?.scheduledTime, cryptoCadenceMinutes);
+    ctx.waitUntil(runWithLease(env, { runCrypto, cryptoCadenceMinutes }));
   },
 
   async fetch(request, env, ctx) {
