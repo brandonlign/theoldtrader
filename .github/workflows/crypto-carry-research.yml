@@ -44,6 +44,7 @@ jobs:
         run: |
           python -m py_compile research/crypto/prepare-carry-data.py
           node --check research/crypto/carry-evaluate.js
+          node --check research/crypto/carry-report.js
           python -m unittest tests/test_prepare_carry_data.py
           node --test tests/crypto-carry-evaluate.test.js
 
@@ -64,7 +65,13 @@ jobs:
             research/crypto/data-cache/funding-carry-v1-synchronized.csv \
             > research/crypto/results/funding-carry-v1/summary.json
 
-      - name: Commit immutable carry data provenance and result
+      - name: Build frozen carry tables and plots
+        run: >-
+          node research/crypto/carry-report.js
+          research/crypto/results/funding-carry-v1/summary.json
+          research/crypto/results/funding-carry-v1
+
+      - name: Commit immutable carry data provenance and complete result bundle
         shell: bash
         run: |
           set -euo pipefail
@@ -73,7 +80,7 @@ jobs:
           git add \
             research/crypto/data-cache/funding-carry-v1-synchronized.csv \
             research/crypto/data-cache/funding-carry-v1-sources.json \
-            research/crypto/results/funding-carry-v1/summary.json
+            research/crypto/results/funding-carry-v1
           git commit -m 'Record frozen funding-carry-v1 robustness evaluation'
           git push origin HEAD:research/crypto-oos-v1
 
@@ -84,5 +91,5 @@ jobs:
           path: |
             research/crypto/data-cache/funding-carry-v1-synchronized.csv
             research/crypto/data-cache/funding-carry-v1-sources.json
-            research/crypto/results/funding-carry-v1/summary.json
+            research/crypto/results/funding-carry-v1
           if-no-files-found: error
