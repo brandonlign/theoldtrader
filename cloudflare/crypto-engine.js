@@ -39,7 +39,7 @@ function strategyConfig(env, costs = {}) {
     trailingStopPct: finite(env.CRYPTO_TRAILING_STOP_PCT, 0.028),
     minVolumeRatio: finite(env.CRYPTO_MIN_VOLUME_RATIO, 0.9),
     requiredChecks: finite(env.CRYPTO_REQUIRED_CHECKS, 7),
-    minEdgeToCost: finite(env.CRYPTO_MIN_EDGE_TO_COST, 1.8),
+    minEdgeToCost: finite(env.CRYPTO_MIN_EDGE_TO_COST, 2),
     minProjectedEdge: finite(env.CRYPTO_MIN_PROJECTED_EDGE, 0.01),
     minHoldMinutes: finite(env.CRYPTO_MIN_HOLD_MINUTES, 180),
     roundTripCostPct: finite(costs.roundTripCostPct),
@@ -205,7 +205,7 @@ export async function runCryptoCycle(env, options = {}) {
       maxPositionPct: config.maxPositionPct,
       maxExposurePct: config.maxExposurePct,
       cooldownMinutes: config.cooldownMinutes,
-      minEdgeToCost: finite(env.CRYPTO_MIN_EDGE_TO_COST, 1.8)
+      minEdgeToCost: finite(env.CRYPTO_MIN_EDGE_TO_COST, 2)
     }
   };
   await store.finishRun(runId, summary);
