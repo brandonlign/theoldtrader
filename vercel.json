@@ -1,0 +1,3 @@
+{
+  "buildCommand": "npm test && node research/crypto/run.js research/crypto/manifests/crypto-oos-v1.json && mkdir -p public/crypto-oos-v1/data-cache && cp -R research/crypto/results/crypto-oos-v1/. public/crypto-oos-v1/ && cp research/crypto/data-cache/*.json.gz public/crypto-oos-v1/data-cache/ && next build"
+}
