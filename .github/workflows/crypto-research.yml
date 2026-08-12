@@ -4,11 +4,9 @@ on:
   push:
     branches: [research/crypto-oos-v1]
     paths:
-      - 'research/crypto/run.js'
-      - 'research/crypto/lib/**'
-      - 'research/crypto/manifests/**'
-      - 'research/crypto/LITERATURE.md'
+      - 'research/crypto/**'
       - 'tests/crypto-research*.test.js'
+      - 'tests/crypto-maker-execution.test.js'
       - '.github/workflows/crypto-research.yml'
   workflow_dispatch:
 
@@ -20,9 +18,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  evaluate:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - name: Check out research branch
         uses: actions/checkout@v4
@@ -41,16 +39,50 @@ jobs:
       - name: Run full deterministic test suite
         run: npm test
 
-      - name: Syntax-check research runner
+      - name: Syntax-check research code
         run: >-
           node --check research/crypto/run.js &&
           node --check research/crypto/lib/core.js &&
           node --check research/crypto/lib/data.js &&
           node --check research/crypto/lib/metrics.js &&
           node --check research/crypto/lib/report.js &&
-          node --check research/crypto/lib/v2-backtest.js
+          node --check research/crypto/lib/v2-backtest.js &&
+          node --check research/crypto/carry-evaluate.js &&
+          node --check research/crypto/record-coinbase-microstructure.mjs &&
+          node --check research/crypto/record-coinbase-microstructure-all.mjs &&
+          node --check research/crypto/analyze-coinbase-maker-execution.mjs &&
+          node --check research/crypto/validate-coinbase-maker-window.mjs
 
-      - name: Run frozen OOS evaluation
+  evaluate-primary-coinbase-holdout:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out frozen research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Refuse to overwrite prior final result
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -e research/crypto/results/crypto-oos-v1/summary.json ]; then
+            echo 'Frozen final result already exists; refusing a second primary evaluation.' >&2
+            exit 1
+          fi
+
+      - name: Run frozen OOS evaluation exactly once
         run: node research/crypto/run.js research/crypto/manifests/crypto-oos-v1.json
 
       - name: Commit immutable data cache and result bundle
