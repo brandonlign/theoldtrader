@@ -15,6 +15,11 @@
       "at": "2026-08-12T16:55:00Z",
       "beforeAnyCarryEvaluation": true,
       "change": "Changed spot-price provenance from monthly to checksum-verified daily Binance Vision 8h klines after identifying open Binance public-data issue #475, where some monthly spot archives disagree with daily archives/API. Strategy, dates, costs, sizing, and evaluation rules are unchanged."
+    },
+    {
+      "at": "2026-08-12T17:58:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Clarified timestamp synchronization before any carry P&L was observed. Binance funding archives use calc_time while 8h price archives use exact kline open_time boundaries, and observed Binance-derived funding records can be milliseconds off the scheduled boundary. Raw funding calc_time is therefore mapped to the nearest 8h UTC funding boundary only when absolute skew is <=60 seconds; raw timestamp and skew are preserved and any larger skew, collision, missing scheduled payment, or missing exact price open aborts evaluation. No interpolation or later price is allowed. Strategy, costs, sizing, dates, and funding rates are unchanged."
     }
   ],
   "strategyFamily": "market-neutral spot/perpetual funding and basis carry",
@@ -23,20 +28,31 @@
     "venue": "Binance",
     "symbol": "BTCUSDT",
     "requiredSeries": [
-      "spot price at entry, every funding timestamp, and exit",
-      "USD-M perpetual mark or executable price at entry, every funding timestamp, and exit",
-      "realized 8-hour funding rate at every payment timestamp"
+      "spot price at entry, every scheduled funding boundary, and exit",
+      "USD-M perpetual mark or executable price at entry, every scheduled funding boundary, and exit",
+      "realized 8-hour funding rate associated with every payment calc_time"
     ],
     "primarySources": {
-      "spot": "checksum-verified Binance Vision DAILY BTCUSDT 8h spot klines; use the exact kline open at each funding timestamp",
+      "spot": "checksum-verified Binance Vision DAILY BTCUSDT 8h spot klines; use the exact kline open at each scheduled funding boundary",
       "perpetualMark": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT 8h markPriceKlines",
       "funding": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT fundingRate archives"
     },
     "spotDailyReason": "Binance public-data issue #475 reports historical monthly SPOT kline disagreements where daily archives match API/uiKlines. Daily spot archives are therefore frozen as the primary source before any carry result is observed.",
+    "fundingTimestampNormalization": {
+      "rawField": "calc_time",
+      "scheduledGrid": "00:00, 08:00, and 16:00 UTC / exact 8-hour Unix boundaries",
+      "mappingRule": "map raw calc_time to the nearest 8-hour UTC boundary only when absolute raw-to-boundary skew is <=60,000 milliseconds",
+      "maximumAbsoluteSkewMs": 60000,
+      "preserveRawTimestampAndSkew": true,
+      "collisionRule": "abort if two distinct raw funding observations map to the same scheduled boundary",
+      "priceRuleAfterMapping": "use only the exact 8h spot and perpetual-mark kline open at that scheduled boundary; never interpolate or use a later price"
+    },
     "secondaryIntegrityCheck": "Torch-Trade BTCUSDT 8h funding dataset sourced from Binance Data Collection",
     "rejectEvaluationIf": [
-      "spot and perpetual timestamps cannot be synchronized exactly without forward-looking interpolation",
-      "funding observations are missing around an open position or the realized series is not a complete 8-hour grid",
+      "a raw funding calc_time is more than 60 seconds from its nearest scheduled 8-hour UTC boundary",
+      "two raw funding observations collide on one scheduled boundary",
+      "spot or perpetual mark price is missing at a scheduled funding boundary; no forward-looking interpolation is permitted",
+      "funding observations are missing around an open position or the normalized scheduled series is not a complete 8-hour grid",
       "perpetual mark/executable prices are unavailable for basis P&L and margin stress",
       "any downloaded archive fails its official Binance .CHECKSUM verification",
       "the exact synchronized input cannot be hashed"
@@ -45,11 +61,11 @@
   "historicalRobustnessWindow": {
     "startInclusive": "2021-05-01T00:00:00Z",
     "endExclusive": "2026-03-01T00:00:00Z",
-    "entryTimestampRule": "use the first synchronized observation at or after startInclusive",
-    "exitTimestampRule": "use the final synchronized observation strictly before endExclusive",
-    "priceTimestampRule": "use the exact 8-hour kline open at the realized funding timestamp; do not use that bar's close/high/low or any later observation",
+    "entryTimestampRule": "use the first normalized scheduled funding boundary at or after startInclusive",
+    "exitTimestampRule": "use the final normalized scheduled funding boundary strictly before endExclusive",
+    "priceTimestampRule": "use the exact 8-hour kline open at the normalized scheduled funding boundary; do not use that bar's close/high/low or any later observation",
     "fundingAtEntry": "not earned; the first synchronized row establishes the position and mark only",
-    "fundingAfterEntry": "accrue only realized funding payments on later synchronized timestamps",
+    "fundingAfterEntry": "accrue only realized funding payments on later normalized scheduled timestamps using the untouched realized funding rate associated with the preserved raw calc_time",
     "reason": "Use the entire common historical interval motivated before any carry P&L was observed rather than selecting favorable subperiods. Whole-sample funding summary statistics were already visible, so this is robustness/development evidence only."
   },
   "candidate": {
@@ -60,7 +76,7 @@
     "spotNotionalPctAtEntry": 0.15,
     "perpetualShortNotionalPctAtEntry": 0.15,
     "futuresCollateralReservePct": 0.20,
-    "fundingAccounting": "after entry, at each later realized funding timestamp, short receives positive funding and pays negative funding on contemporaneous perpetual notional; no payment at the entry timestamp is credited",
+    "fundingAccounting": "after entry, at each later normalized scheduled funding boundary, short receives positive funding and pays negative funding on contemporaneous perpetual notional using the realized rate associated with the preserved raw calc_time; no payment at the entry boundary is credited",
     "basisAccounting": "mark both legs independently; net price P&L must include spot/perpetual entry and exit basis rather than assuming convergence or perfect cancellation"
   },
   "costModel": {
