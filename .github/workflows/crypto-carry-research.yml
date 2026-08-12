@@ -13,7 +13,7 @@ concurrency:
 jobs:
   evaluate:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - name: Check out frozen research branch
         uses: actions/checkout@v4
@@ -40,10 +40,12 @@ jobs:
             exit 1
           fi
 
-      - name: Static checks
+      - name: Static and deterministic carry checks
         run: |
           python -m py_compile research/crypto/prepare-carry-data.py
           node --check research/crypto/carry-evaluate.js
+          python -m unittest tests/test_prepare_carry_data.py
+          node --test tests/crypto-carry-evaluate.test.js
 
       - name: Download, checksum, and exactly synchronize official Binance data
         run: >-
