@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { drawdownSeries, rollingSharpe } from './core.js';
+import { drawdownSeries, rollingSharpe } from './metrics.js';
 
 function esc(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -18,9 +18,9 @@ function fmtUsd(value) {
   return value === null || value === undefined || !Number.isFinite(value) ? 'n/a' : `$${Number(value).toFixed(2)}`;
 }
 
-function normalizeSeries(series) {
-  const base = series[0]?.value ?? 1;
-  return series.map((point) => ({ ...point, value: base > 0 ? point.value / base : 1 }));
+function normalizeSeries(series, startingValue = 10_000) {
+  const base = Number.isFinite(startingValue) && startingValue > 0 ? startingValue : 1;
+  return series.map((point) => ({ ...point, value: point.value / base }));
 }
 
 function lineChart(title, seriesByName, { percent = false, zeroLine = false } = {}) {
@@ -94,14 +94,15 @@ export function writeReports(outDir, bundle) {
   }
   fs.writeFileSync(path.join(outDir, 'regime-performance.csv'), regimeRows.join('\n'));
 
+  const startingValue = bundle.summary.finalHoldout.strategies.ridge24_cost_gate?.startValue ?? 10_000;
   const equity = {};
   const drawdowns = {};
   const roll = {};
   const turnover = {};
   for (const [name, state] of Object.entries(bundle.states)) {
-    equity[name] = normalizeSeries(state.equitySeries);
-    drawdowns[name] = drawdownSeries(state.equitySeries);
-    if (['ridge24_cost_gate', 'frozen_v2', 'trend30'].includes(name)) roll[name] = rollingSharpe(state.equitySeries, 30);
+    equity[name] = normalizeSeries(state.equitySeries, startingValue);
+    drawdowns[name] = drawdownSeries(state.equitySeries, startingValue);
+    if (['ridge24_cost_gate', 'frozen_v2', 'trend30'].includes(name)) roll[name] = rollingSharpe(state.equitySeries, 30, startingValue);
     turnover[name] = state.turnoverSeries.map((p) => ({ time: p.time, value: p.value }));
   }
   fs.writeFileSync(path.join(outDir, 'equity-curve.svg'), lineChart('Final holdout normalized equity', equity));
