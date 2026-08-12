@@ -278,15 +278,17 @@ function CryptoDesk({ cryptoDesk }) {
           </tbody></table></div> : <div className="hosted-empty"><strong>No crypto positions</strong><p>The model has not produced a qualified entry, or it has already exited.</p></div>}
         </article>
         <article className="hosted-panel desk-note">
-          <div className="hosted-heading"><div><p>Algorithm</p><h2>Trend + momentum</h2></div></div>
+          <div className="hosted-heading"><div><p>Algorithm</p><h2>Cost-aware trend + regime</h2></div></div>
           <div className="note-copy">
-            <p>The engine buys only when the fast trend, slow trend, momentum, RSI, volume, volatility, and breakout checks broadly agree.</p>
+            <p>Entries require fast/slow trend, momentum, RSI, slower market regime, volume, volatility, breakout, and enough projected directional edge to clear modeled trading friction.</p>
             <ul>
-              <li>5-minute Coinbase candles</li>
-              <li>{number(Number(config.positionPct ?? 0.2) * 100, 0)}% target size per entry</li>
-              <li>{number(Number(config.maxExposurePct ?? 0.6) * 100, 0)}% maximum total exposure</li>
-              <li>{number(config.feeBps ?? 60, 0)} bps fees + {number(config.slippageBps ?? 5, 0)} bps slippage</li>
-              <li>Hard stop, trailing stop, take-profit, and trend-reversal exits</li>
+              <li>{number(Number(config.candleSeconds ?? 900) / 60, 0)}-minute Coinbase candles</li>
+              <li>{number(Number(config.riskPct ?? 0.004) * 100, 2)}% account risk budget per entry</li>
+              <li>{number(Number(config.maxPositionPct ?? 0.15) * 100, 0)}% maximum single-position notional</li>
+              <li>{number(Number(config.maxExposurePct ?? 0.45) * 100, 0)}% maximum total crypto exposure</li>
+              <li>{number(config.cooldownMinutes ?? 360, 0)}-minute post-exit cooldown</li>
+              <li>{number(config.minEdgeToCost ?? 2, 1)}× minimum modeled edge-to-cost ratio</li>
+              <li>{number(config.feeBps ?? 60, 0)} bps fees + {number(config.slippageBps ?? 5, 0)} bps slippage, plus live spread</li>
             </ul>
           </div>
         </article>
@@ -361,7 +363,7 @@ export default function Dashboard() {
           <p className="hosted-kicker">{activeDesk === "crypto" ? "Continuous crypto paper desk" : "Prediction-market paper desk"}</p>
           <h1>{activeDesk === "crypto" ? <>Trade the market.<br />Not the noise.</> : <>Structural edge.<br />No forced trades.</>}</h1>
           <p>{activeDesk === "crypto"
-            ? "A separate 24/7 portfolio for BTC, ETH, and SOL. The model combines trend, momentum, volume, volatility, and explicit risk exits before simulating any trade."
+            ? "A separate 24/7 portfolio for BTC, ETH, and SOL. The model now combines trend, slower market regime, momentum, volume, volatility, explicit transaction costs, and risk-sized exits before simulating any trade."
             : "The original Polymarket research engine remains isolated in its own section, with scan counts and rejection reasons now visible even when it finds no trade."}</p>
         </div>
         <div className="hosted-run-card">
