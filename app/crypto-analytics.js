@@ -113,8 +113,9 @@ function TradeBars({ executions }) {
 function FeeDrag({ executions, performance }) {
   const realized = finite(performance?.realizedPnl);
   const fees = finite(performance?.totalFees, executions.reduce((sum, item) => sum + finite(item.fee), 0));
-  const denominator = Math.max(1, Math.abs(realized) + fees);
-  const feeShare = Math.min(1, fees / denominator);
+  const realizedMagnitude = Math.abs(realized);
+  const feeBurden = realizedMagnitude > 0 ? fees / realizedMagnitude : 0;
+  const approximatePreFeePnl = realized + fees;
   return (
     <div className={styles.feeCard}>
       <div className={styles.chartHeading}>
@@ -122,10 +123,13 @@ function FeeDrag({ executions, performance }) {
         <b>{money(fees)}</b>
       </div>
       <div className={styles.feeTrack}>
-        <span style={{ width: `${feeShare * 100}%` }} />
+        <span style={{ width: `${Math.min(1, feeBurden) * 100}%` }} />
       </div>
-      <div className={styles.feeLegend}><span>Recorded fees</span><span>{(feeShare * 100).toFixed(0)}% of fees + |realized P&amp;L|</span></div>
-      <p>The new strategy blocks entries whose directional edge is too small relative to this modeled round-trip friction.</p>
+      <div className={styles.feeLegend}>
+        <span>Fees paid to date</span>
+        <span>{realizedMagnitude > 0 ? `${(feeBurden * 100).toFixed(0)}% of |realized P&L|` : "No realized P&L yet"}</span>
+      </div>
+      <p>Approximate P&amp;L before recorded fees: <strong>{money(approximatePreFeePnl)}</strong>. The v2 strategy blocks entries whose directional edge is too small relative to modeled round-trip friction.</p>
     </div>
   );
 }
