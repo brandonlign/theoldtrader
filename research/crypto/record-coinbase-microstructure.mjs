@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 
 const WS_URL = 'wss://advanced-trade-ws.coinbase.com';
-const DEFAULT_PRODUCTS = ['BTC-USD', 'ETH-USD', 'SOL-USD'];
+const ALLOWED_PRODUCTS = new Set(['BTC-USD', 'ETH-USD', 'SOL-USD']);
 
 function arg(name, fallback = null) {
   const prefix = `--${name}=`;
@@ -18,20 +18,19 @@ function safeInt(value, fallback) {
 }
 
 const durationMinutes = safeInt(arg('duration-minutes', '60'), 60);
-const products = String(arg('products', DEFAULT_PRODUCTS.join(',')))
-  .split(',')
-  .map((value) => value.trim())
-  .filter(Boolean);
+const product = String(arg('product', '')).trim();
+if (!ALLOWED_PRODUCTS.has(product)) {
+  throw new Error(`--product must be one of ${[...ALLOWED_PRODUCTS].join(', ')}`);
+}
 const stamp = new Date().toISOString().replaceAll(':', '').replaceAll('-', '').replace(/\.\d+Z$/, 'Z');
 const outputPath = path.resolve(arg(
   'output',
-  `research/crypto/data-cache/coinbase-microstructure-${stamp}.ndjson.gz`
+  `research/crypto/data-cache/coinbase-microstructure-${product}-${stamp}.ndjson.gz`
 ));
 
 if (typeof WebSocket !== 'function') {
   throw new Error('This recorder requires a Node runtime with the standards-based WebSocket global (Node 22+ recommended).');
 }
-if (!products.length) throw new Error('At least one product is required.');
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 const file = fs.createWriteStream(outputPath, { flags: 'wx' });
@@ -65,8 +64,8 @@ function payloadText(data) {
 }
 
 function subscribe(socket) {
-  socket.send(JSON.stringify({ type: 'subscribe', channel: 'level2', product_ids: products }));
-  socket.send(JSON.stringify({ type: 'subscribe', channel: 'market_trades', product_ids: products }));
+  socket.send(JSON.stringify({ type: 'subscribe', channel: 'level2', product_ids: [product] }));
+  socket.send(JSON.stringify({ type: 'subscribe', channel: 'market_trades', product_ids: [product] }));
   socket.send(JSON.stringify({ type: 'subscribe', channel: 'heartbeats' }));
 }
 
@@ -78,6 +77,7 @@ function scheduleReconnect(reason) {
   writeRecord({
     kind: 'reconnect_scheduled',
     received_at: new Date().toISOString(),
+    product,
     delay_ms: delay,
     reason
   });
@@ -97,7 +97,7 @@ function connect() {
       kind: 'connection_open',
       received_at: new Date().toISOString(),
       connection_id: connectionId,
-      products
+      product
     });
     subscribe(socket);
   });
@@ -112,6 +112,7 @@ function connect() {
         kind: 'coinbase_message',
         received_at: receivedAt,
         connection_id: connectionId,
+        product,
         payload
       });
     } catch (error) {
@@ -120,6 +121,7 @@ function connect() {
         kind: 'parse_error',
         received_at: receivedAt,
         connection_id: connectionId,
+        product,
         error: String(error?.message ?? error)
       });
     }
@@ -129,7 +131,8 @@ function connect() {
     writeRecord({
       kind: 'connection_error',
       received_at: new Date().toISOString(),
-      connection_id: connectionId
+      connection_id: connectionId,
+      product
     });
   });
 
@@ -138,6 +141,7 @@ function connect() {
       kind: 'connection_close',
       received_at: new Date().toISOString(),
       connection_id: connectionId,
+      product,
       code: event.code,
       reason: event.reason || ''
     });
@@ -161,7 +165,7 @@ function finish(reason) {
     reason,
     started_at: new Date(startedAt).toISOString(),
     duration_minutes_requested: durationMinutes,
-    products,
+    product,
     message_count: messageCount,
     parse_errors: parseErrors,
     reconnects
@@ -177,6 +181,7 @@ file.on('close', () => {
     const digest = hash.digest('hex');
     fs.writeFileSync(`${outputPath}.sha256`, `${digest}  ${path.basename(outputPath)}\n`);
     console.log(JSON.stringify({
+      product,
       output: outputPath,
       sha256: digest,
       messageCount,
@@ -196,7 +201,7 @@ writeRecord({
   kind: 'recorder_start',
   received_at: new Date().toISOString(),
   websocket_url: WS_URL,
-  products,
+  product,
   duration_minutes_requested: durationMinutes,
   paper_only: true,
   authenticated: false
