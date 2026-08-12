@@ -15,4 +15,6 @@ The crypto desk now:
 - caps displayed signal scores when mandatory gates fail, so a HOLD cannot display fake 100-confidence;
 - records portfolio snapshots and aggregate performance statistics for dashboard plots.
 
+Settings that materially changed from the original crypto desk use `CRYPTO_V2_*` environment names. This is deliberate: an older private `wrangler.toml` can keep its legacy `CRYPTO_CANDLE_SECONDS`, `CRYPTO_MAX_EXPOSURE_PCT`, stop/target, and threshold values without silently overriding v2. To override the v2 defaults, copy the namespaced variables from `wrangler.toml.example`.
+
 The existing D1 ledger is intentionally preserved. Old trades remain visible so pre-v2 and post-v2 behavior can be compared rather than resetting a bad history.
