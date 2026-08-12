@@ -64,7 +64,7 @@ test('carry evaluator separates contract execution price from mark valuation pri
   assert.ok(Number.isFinite(output.dailyDiagnostics[0].marginExcess));
 });
 
-test('carry reporter writes deterministic tables and requested diagnostic plots', () => {
+test('carry reporter writes deterministic return, exposure, and margin evidence', () => {
   const { dir, result } = run(validRows);
   assert.equal(result.status, 0, result.stderr || result.stdout);
   const summaryPath = path.join(dir, 'summary.json');
@@ -72,8 +72,8 @@ test('carry reporter writes deterministic tables and requested diagnostic plots'
   const reportResult = spawnSync(process.execPath, [reporter, summaryPath, dir], { cwd: root, encoding: 'utf8' });
   assert.equal(reportResult.status, 0, reportResult.stderr || reportResult.stdout);
   for (const filename of [
-    'REPORT.md','comparison-metrics.csv','daily-diagnostics.csv','equity-curve.svg','drawdown.svg',
-    'cumulative-funding.svg','basis.svg','margin-excess.svg'
+    'REPORT.md','comparison-metrics.csv','daily-diagnostics.csv','risk-summary.json','equity-curve.svg','drawdown.svg',
+    'cumulative-funding.svg','basis.svg','margin-excess.svg','gross-exposure.svg','margin-utilization.svg'
   ]) {
     assert.ok(fs.existsSync(path.join(dir, filename)), `missing ${filename}`);
     assert.ok(fs.statSync(path.join(dir, filename)).size > 0, `empty ${filename}`);
@@ -82,8 +82,13 @@ test('carry reporter writes deterministic tables and requested diagnostic plots'
   assert.match(report, /Funding P&L/);
   assert.match(report, /Historical margin breach/);
   assert.match(report, /BTC spot buy-and-hold 15%/);
+  assert.match(report, /Exposure and capital diagnostics/);
   const dailyCsv = fs.readFileSync(path.join(dir, 'daily-diagnostics.csv'), 'utf8');
-  assert.match(dailyCsv, /perpExecutionReference,perpMark/);
+  assert.match(dailyCsv, /perpExecutionReference,perpMark,perpMarkNotional,grossNotional/);
+  const risk = JSON.parse(fs.readFileSync(path.join(dir, 'risk-summary.json'), 'utf8'));
+  assert.equal(risk.residualBtcDeltaUnitsByConstruction, 0);
+  assert.ok(Number.isFinite(risk.averageGrossExposurePctOfEquity));
+  assert.ok(Number.isFinite(risk.minimumMarginExcessUsd));
 });
 
 test('carry evaluator rejects a missing scheduled funding boundary', () => {
