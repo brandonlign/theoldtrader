@@ -6,6 +6,7 @@ on:
     paths:
       - 'research/crypto/**'
       - 'tests/crypto-*.test.js'
+      - 'tests/test_prepare_carry_data.py'
       - '.github/workflows/crypto-research.yml'
   workflow_dispatch:
 
@@ -32,11 +33,19 @@ jobs:
         with:
           node-version: 20
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Install project dependencies
         run: npm install
 
-      - name: Run full deterministic test suite
+      - name: Run Node deterministic test suite
         run: npm test
+
+      - name: Run carry-data deterministic tests
+        run: python -m unittest tests/test_prepare_carry_data.py
 
       - name: Syntax-check research code
         run: >-
@@ -51,7 +60,8 @@ jobs:
           node --check research/crypto/record-coinbase-microstructure-all.mjs &&
           node --check research/crypto/analyze-coinbase-maker-execution.mjs &&
           node --check research/crypto/audit-coinbase-execution-integrity.mjs &&
-          node --check research/crypto/validate-coinbase-maker-window.mjs
+          node --check research/crypto/validate-coinbase-maker-window.mjs &&
+          python -m py_compile research/crypto/prepare-carry-data.py
 
   evaluate-primary-coinbase-holdout:
     if: github.event_name == 'workflow_dispatch'
