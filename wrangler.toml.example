@@ -99,8 +99,8 @@ CRYPTO_MAX_ATR_PCT = "0.03"
 CRYPTO_MIN_VOLUME_RATIO = "0.90"
 CRYPTO_REQUIRED_CHECKS = "7"
 
-# A BUY must show substantially more directional edge than the modeled round-trip cost.
-CRYPTO_MIN_EDGE_TO_COST = "1.8"
+# A BUY must show at least 2x the modeled round-trip friction in directional edge.
+CRYPTO_MIN_EDGE_TO_COST = "2.0"
 CRYPTO_MIN_PROJECTED_EDGE = "0.01"
 CRYPTO_MIN_HOLD_MINUTES = "180"
 CRYPTO_COOLDOWN_MINUTES = "360"
