@@ -1,0 +1,63 @@
+{
+  "experimentId": "binance-btc-replication-v1",
+  "createdAt": "2026-08-12T15:52:00Z",
+  "status": "FROZEN_BEFORE_FIRST_EVALUATION",
+  "paperOnly": true,
+  "promotionEligible": false,
+  "purpose": "Run a real independent OOS robustness diagnostic while the primary Coinbase evaluation is infrastructure-blocked. This result may not substitute for or tune crypto-oos-v1.",
+  "data": {
+    "source": "Binance BTCUSDT spot 15-minute OHLCV redistributed as bmaleri/BinanceKline BTCUSDT_Corrected_15m.csv",
+    "sourceSha256": "2d1a92c9a9a28c1007f4b705e534252fa937820e82131f2144b4a542947c0e7c",
+    "product": "BTCUSDT",
+    "granularitySeconds": 900,
+    "availableStart": "2017-08-17T07:00:00Z",
+    "availableEnd": "2024-11-04T05:00:00Z",
+    "studyStart": "2022-01-01T00:00:00Z",
+    "studyEnd": "2024-11-01T00:00:00Z"
+  },
+  "costModel": {
+    "feeBpsPerSide": 60,
+    "slippageBpsPerSide": 5,
+    "historicalSpreadBpsRoundTrip": 10,
+    "spreadStressBpsRoundTrip": [0, 10, 35]
+  },
+  "validation": {
+    "developmentEnd": "2024-04-30T23:59:59Z",
+    "finalHoldoutStart": "2024-05-01T00:00:00Z",
+    "finalHoldoutEnd": "2024-11-01T00:00:00Z",
+    "walkForwardTrainMinDays": 180,
+    "walkForwardTestDays": 60,
+    "embargoHours": 24
+  },
+  "candidate": {
+    "name": "btc_ridge24_cost_gate",
+    "model": "single-asset ridge regression",
+    "target": "forward 24-hour log return",
+    "decisionFrequency": "daily at 00:00 UTC",
+    "ridgeLambda": 10,
+    "positionPct": 0.15,
+    "entryRule": "long only when predicted 24h gross return exceeds modeled round-trip cost",
+    "features": [
+      "1h log return",
+      "4h log return",
+      "24h log return",
+      "7d log return",
+      "30d log return",
+      "24h realized volatility",
+      "7d realized volatility",
+      "24h average high-low range",
+      "24h volume / trailing-7d average volume"
+    ]
+  },
+  "comparators": [
+    "cash",
+    "BTC buy-and-hold at 15% exposure",
+    "30-day time-series trend at 15% exposure",
+    "frozen MoneyMog v2 signal and risk logic applied unchanged to Binance BTCUSDT candles"
+  ],
+  "interpretation": {
+    "promotionAllowed": false,
+    "reason": "single-asset and cross-venue; not the predefined three-asset Coinbase holdout",
+    "antiRescueRule": "Do not change crypto-oos-v1 based on this result. Any future candidate motivated or tuned from this diagnostic must use a new experiment ID and increment the candidate trial ledger."
+  }
+}
