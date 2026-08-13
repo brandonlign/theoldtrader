@@ -52,7 +52,8 @@ function iso(time) {
 
 function summarizeState(state, manifest) {
   const metrics = performanceMetrics(state, manifest.portfolio.startingCash);
-  const perAssetContribution = { ...state.realizedByAsset };
+  const realizedByAsset = { ...state.realizedByAsset };
+  const perAssetContribution = { ...realizedByAsset };
   for (const [symbol, position] of state.positions) {
     perAssetContribution[symbol] = (perAssetContribution[symbol] ?? 0)
       + position.units * position.lastPrice - position.costBasis;
@@ -62,6 +63,7 @@ function summarizeState(state, manifest) {
     numberOfTrades: metrics.orderCount,
     expectancyPerClosedPosition: metrics.expectancyPerTrade,
     forcedExits: state.forcedExits,
+    realizedByAsset,
     perAssetContribution
   };
 }
