@@ -20,13 +20,23 @@ function parseArgs(argv) {
   return out;
 }
 
+function mergeContributions(...maps) {
+  const out = {};
+  for (const map of maps) {
+    for (const [asset, value] of Object.entries(map ?? {})) {
+      out[asset] = Number(out[asset] ?? 0) + Number(value ?? 0);
+    }
+  }
+  return out;
+}
+
 function contributionConcentration(contributions) {
   const positives = Object.entries(contributions ?? {}).filter(([, value]) => Number(value) > 0);
   const totalPositive = positives.reduce((sum, [, value]) => sum + Number(value), 0);
-  if (!(totalPositive > 0)) return { totalPositiveProfit: 0, largestPositiveShare: null, largestPositiveAsset: null };
+  if (!(totalPositive > 0)) return { totalPositiveRealizedProfit: 0, largestPositiveShare: null, largestPositiveAsset: null };
   positives.sort((a, b) => Number(b[1]) - Number(a[1]));
   return {
-    totalPositiveProfit: totalPositive,
+    totalPositiveRealizedProfit: totalPositive,
     largestPositiveShare: Number(positives[0][1]) / totalPositive,
     largestPositiveAsset: positives[0][0]
   };
@@ -43,7 +53,11 @@ function main() {
   if (development.experimentId !== manifest.experimentId || development.mode !== 'development') throw new Error('Wrong development result');
   if (final.experimentId !== manifest.experimentId || final.mode !== 'final') throw new Error('Wrong final result');
 
-  const concentration = contributionConcentration(final.candidate.perAssetContribution);
+  const realizedContributions = mergeContributions(
+    development.candidate.realizedByAsset,
+    final.candidate.realizedByAsset
+  );
+  const concentration = contributionConcentration(realizedContributions);
   const folds = development.developmentFolds ?? [];
   const positiveReturnFolds = folds.filter((fold) => Number(fold.netReturn) > 0).length;
   const medianDevelopmentSharpe = Number(development.developmentFoldSummary?.medianSharpe ?? 0);
@@ -74,9 +88,10 @@ function main() {
       status: 'not_applicable',
       reason: 'Trial 3 uses daily Binance cross-sectional data; the frozen v2 15-minute comparator is not evaluated on an exactly compatible same-holdout feed by this trial. The manifest criterion is conditional on availability.'
     },
-    noSingleAssetAbove60PctPositiveProfit: {
+    noSingleAssetAbove60PctPositiveRealizedProfit: {
       pass: concentration.largestPositiveShare !== null && concentration.largestPositiveShare <= 0.60,
-      ...concentration
+      ...concentration,
+      scope: 'development plus final realized P&L only; unrealized ending marks are excluded'
     },
     atLeast10CompletedPositionExits: {
       pass: totalCompletedExits >= 10,
