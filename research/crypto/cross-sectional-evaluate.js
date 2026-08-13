@@ -50,6 +50,56 @@ function iso(time) {
   return new Date(time * 1000).toISOString();
 }
 
+function utcMonthStart(time) {
+  const date = new Date(time * 1000);
+  return Math.floor(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1) / 1000);
+}
+
+function performanceByRegime(state, dataset, manifest) {
+  const btcRows = [...(dataset?.products?.BTCUSDT ?? [])].sort((a, b) => a.time - b.time);
+  const btc = new Map(btcRows.map((row) => [Number(row.time), row]));
+  const regimeCache = new Map();
+
+  function regime(time) {
+    const month = utcMonthStart(time);
+    if (regimeCache.has(month)) return regimeCache.get(month);
+    const history = [];
+    for (let lag = 91; lag >= 1; lag -= 1) {
+      const row = btc.get(month - lag * 86400);
+      if (!row || !(Number(row.close) > 0)) {
+        regimeCache.set(month, 'unavailable');
+        return 'unavailable';
+      }
+      history.push(Number(row.close));
+    }
+    const momentum90 = Math.log(history.at(-1) / history[0]);
+    const value = momentum90 > 0 ? 'btc90_positive' : 'btc90_nonpositive';
+    regimeCache.set(month, value);
+    return value;
+  }
+
+  const groups = new Map();
+  let previous = Number(manifest.portfolio.startingCash ?? 10_000);
+  for (const point of state.equitySeries ?? []) {
+    const value = Number(point.value);
+    const dailyReturn = value / previous - 1;
+    previous = value;
+    const key = regime(Number(point.time));
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(dailyReturn);
+  }
+
+  return Object.fromEntries([...groups.entries()].map(([key, returns]) => {
+    const sd = stdev(returns);
+    return [key, {
+      days: returns.length,
+      compoundedReturn: returns.reduce((capital, value) => capital * (1 + value), 1) - 1,
+      meanDailyReturn: mean(returns),
+      sharpe: sd > 0 ? Math.sqrt(365) * mean(returns) / sd : 0
+    }];
+  }));
+}
+
 function summarizeState(state, manifest) {
   const metrics = performanceMetrics(state, manifest.portfolio.startingCash);
   const realizedByAsset = { ...state.realizedByAsset };
@@ -224,6 +274,7 @@ function main() {
       positiveReturnFolds: foldReturns.filter((value) => value > 0).length,
       totalFolds: folds.length
     } : null,
+    performanceByRegime: performanceByRegime(candidate.state, dataset, manifest),
     coefficientStability: coefficientStability(candidatePredictions),
     decisions: candidate.decisions.map((decision) => ({ ...decision, timeIso: iso(decision.time) })),
     implementationFreeze: {
@@ -232,6 +283,7 @@ function main() {
       ridge: 'intercept unpenalized; six already cross-section-z-scored features are not re-standardized in pooled training',
       costGate: 'predicted log return must exceed log(1 + frozen roundTripCostBps/10000)',
       embargo: 'training labels must end on or before the previous calendar-month rebalance boundary',
+      regimeDefinition: 'BTCUSDT strictly prior 90-day log-return sign at each UTC calendar-month boundary; exact daily continuity required; positive vs non-positive; unavailable kept separate',
       momentumComparator: 'rank top three by raw 90d momentum each month with identical sizing/friction but no candidate cost gate',
       staticComparator: 'enter frozen top-three 2022-liquidity members once at evaluation start and do not rebalance'
     }
