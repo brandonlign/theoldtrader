@@ -39,11 +39,12 @@ jobs:
       - name: Validate formation code and firewall tests
         run: |
           python -m py_compile research/crypto/form-cross-sectional-universe.py
+          python -m py_compile research/crypto/form-cross-sectional-universe-entry.py
           python -m unittest tests/test_cross_sectional_universe.py
 
       - name: Form universe from checksum-verified 2022 data only
         run: >-
-          python research/crypto/form-cross-sectional-universe.py
+          python research/crypto/form-cross-sectional-universe-entry.py
           research/crypto/manifests/cross-sectional-v1.json
           research/crypto/universes/cross-sectional-v1-universe.json
           research/crypto/universes/cross-sectional-v1-formation-sources.json
