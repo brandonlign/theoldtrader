@@ -22,7 +22,7 @@ if (
 // Reporting-only compatibility wrapper: the primary carry report generator contains no
 // economic logic. Temporarily relabel the already-calculated summary so the exact same
 // tables/plot code is reused, then restore the replication identity in REPORT.md.
-const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'moneymog-carry-report-replication-'));
+const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'theoldtrader-carry-report-replication-'));
 const tempSummary = path.join(tempDir, 'summary.json');
 fs.writeFileSync(tempSummary, JSON.stringify({ ...summary, experimentId: 'funding-carry-v1' }, null, 2));
 
@@ -40,8 +40,8 @@ if (run.status !== 0) {
 const reportPath = path.join(outputDir, 'REPORT.md');
 let report = fs.readFileSync(reportPath, 'utf8');
 report = report.replace(
-  '# MoneyMog funding-carry-v1 robustness report',
-  '# MoneyMog funding-carry-v1R-api robustness replication report'
+  '# TheOldTrader funding-carry-v1 robustness report',
+  '# TheOldTrader funding-carry-v1R-api robustness replication report'
 );
 report = report.replace(
   '**Classification:** historical development/robustness evidence only; not pristine validation  ',
