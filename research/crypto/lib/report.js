@@ -116,7 +116,7 @@ export function writeReports(outDir, bundle) {
   const final = s.finalHoldout.strategies;
   const candidate = final.ridge24_cost_gate;
   const v2 = final.frozen_v2;
-  const md = `# MoneyMog crypto research result — ${s.experimentId}\n\n` +
+  const md = `# TheOldTrader crypto research result — ${s.experimentId}\n\n` +
 `**Status:** ${s.promotion.pass ? 'PASSES PREDECLARED RESEARCH GATE' : 'DOES NOT PASS PREDECLARED RESEARCH GATE'}  \n` +
 `**Live trader changed:** no  \n` +
 `**Exact data SHA-256:** \`${s.dataset.sha256}\`\n\n` +
