@@ -1,0 +1,99 @@
+{
+  "experimentId": "tsmom-v1",
+  "trial": 5,
+  "family": "low-turnover-time-series-momentum",
+  "status": "FROZEN_BEFORE_FIRST_EVALUATION",
+  "frozenAt": "2026-08-18T22:45:00.000Z",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "liveStrategyModified": false,
+  "motivation": {
+    "primaryCryptoEvidence": "Han, Kang, and Ryu, Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions, SSRN 4675565, revised 2026-03-26",
+    "supportingCryptoEvidence": "Liu and Tsyvinski, Risks and Returns of Cryptocurrency, Review of Financial Studies 34(6), 2021",
+    "riskManagementEvidence": "Barroso and Santa-Clara, Momentum has its moments, Journal of Financial Economics 116(1), 2015",
+    "designReason": "Recent realistic-assumption evidence favors time-series over cross-sectional crypto momentum. The candidate deliberately lowers turnover, avoids leverage and shorting, and scales exposure only downward when realized volatility is high."
+  },
+  "data": {
+    "source": "coinbase-exchange-public-candles",
+    "products": ["BTC-USD", "ETH-USD", "SOL-USD"],
+    "granularitySeconds": 86400,
+    "acquisitionStart": "2021-01-01T00:00:00.000Z",
+    "developmentStart": "2022-01-01T00:00:00.000Z",
+    "developmentEnd": "2026-01-01T00:00:00.000Z",
+    "retrospectiveDiagnosticEnd": "2026-08-01T00:00:00.000Z",
+    "prospectiveFinalStart": "2026-08-19T00:00:00.000Z",
+    "prospectiveFinalMinimumDays": 180,
+    "noInterpolation": true,
+    "requireExactDailyLookbacks": true
+  },
+  "signal": {
+    "decisionFrequency": "monthly",
+    "decisionTiming": "first available UTC daily candle whose date is the first day of a calendar month; signal uses only closes strictly before that candle and execution uses that candle open",
+    "momentumLookbackDays": [30, 90, 180],
+    "longRule": "at least two of the three exact-lookback simple returns are strictly positive",
+    "strengthRule": "two positive horizons targets two-thirds of the per-asset cap; three positive horizons targets the full per-asset cap",
+    "shorting": false,
+    "leverage": false,
+    "crossSectionalRanking": false,
+    "machineLearning": false
+  },
+  "risk": {
+    "realizedVolLookbackDays": 60,
+    "annualizationDays": 365,
+    "targetAnnualizedVol": 0.50,
+    "volatilityRule": "multiply the momentum target weight by min(1, targetAnnualizedVol / trailingAnnualizedVol); volatility may only reduce exposure",
+    "maxAssetWeight": 0.15,
+    "maxTotalExposure": 0.45,
+    "cashReserveMinimum": 0.55,
+    "rebalanceBetweenMonthlyDecisions": false
+  },
+  "costModel": {
+    "feeBpsPerTrade": 60,
+    "slippageBpsPerTrade": 5,
+    "historicalSpreadProxyBpsPerTrade": 5,
+    "totalBpsPerDollarTurnover": 70,
+    "fullEntryExitRoundTripBps": 140,
+    "chargeEveryDollarOfRebalanceTurnover": true,
+    "liquidateAndChargeCostAtEvaluationEnd": true
+  },
+  "development": {
+    "calendarYearFolds": [2022, 2023, 2024, 2025],
+    "comparators": [
+      "cash",
+      "BTC-USD 15% buy-and-hold with identical entry/exit cost",
+      "equal 15% BTC-USD/ETH-USD/SOL-USD buy-and-hold with identical entry/exit cost",
+      "unscaled version of the exact same monthly momentum signal"
+    ],
+    "gate": [
+      "candidate net return after costs is positive over the full 2022-2025 development window",
+      "candidate has positive net return in at least three of four calendar-year folds",
+      "candidate maximum drawdown is no worse than the unscaled momentum comparator",
+      "candidate turnover is reported in full and no missing daily lookback is interpolated"
+    ],
+    "failureRule": "If the development gate fails, Trial 5 is recorded as failed and no parameter rescue is permitted under tsmom-v1."
+  },
+  "retrospectiveDiagnostic": {
+    "allowedOnlyAfterDevelopmentPass": true,
+    "window": "2026-01-01T00:00:00.000Z to 2026-08-01T00:00:00.000Z",
+    "purpose": "diagnostic only; cannot authorize promotion because this period predates the Trial 5 freeze",
+    "mayChangeParameters": false
+  },
+  "prospectivePromotion": {
+    "notBefore": "2027-02-15T00:00:00.000Z",
+    "requirements": [
+      "at least 180 calendar days of post-freeze data beginning no earlier than 2026-08-19",
+      "positive net return after frozen costs",
+      "positive excess return versus cash",
+      "maximum drawdown below 15% of starting equity",
+      "no data provenance, exact-lookback, timestamp, or overwrite gate failure",
+      "all results reported alongside the frozen live/paper v2 result over the same prospective dates before any promotion proposal"
+    ],
+    "automaticPromotion": false
+  },
+  "antiLeakage": {
+    "noOutcomeDrivenRetuning": true,
+    "noUsingRetrospective2026DiagnosticForPromotion": true,
+    "noFinalDataBeforeDevelopmentGate": true,
+    "successorRequiresNewTrialNumber": true
+  }
+}
