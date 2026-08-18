@@ -68,18 +68,13 @@ export function selectLowestVolatility(maps, products, decisionTime, manifest) {
   return { selected: rows[0] ?? null, eligible: rows };
 }
 
-function entryMarkLossPct(manifest) {
-  const fillMultiple = 1 + (manifest.costModel.slippageBpsPerTrade + manifest.costModel.historicalSpreadProxyBpsPerTrade) / 10_000;
-  return fillMultiple * (1 + manifest.costModel.feeBpsPerTrade / 10_000) - 1;
+function tradeCostRate(manifest) {
+  return manifest.costModel.totalBpsPerDollarTurnover / 10_000;
 }
 
 function safePreCostWeight(postCostCap, manifest) {
-  const c = Math.max(0, entryMarkLossPct(manifest));
+  const c = Math.max(0, tradeCostRate(manifest));
   return postCostCap / (1 + postCostCap * c);
-}
-
-function tradeCostRate(manifest) {
-  return manifest.costModel.totalBpsPerDollarTurnover / 10_000;
 }
 
 function requireClose(maps, product, time) {
