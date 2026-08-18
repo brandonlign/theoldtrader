@@ -24,7 +24,7 @@ This note makes implementation choices explicit where `manifests/ctrend-v1.json`
 
 ## First-stage cross-sectional forecasts
 
-- Each of the 28 ranked indicators receives an independent ordinary least-squares cross-sectional regression with an intercept and **equal weight per eligible frozen-universe asset**. Point-in-time market-cap weights are deliberately not introduced because they are not part of the frozen Binance archive input; this is a MoneyMog adaptation, not a reproduction claim.
+- Each of the 28 ranked indicators receives an independent ordinary least-squares cross-sectional regression with an intercept and **equal weight per eligible frozen-universe asset**. Point-in-time market-cap weights are deliberately not introduced because they are not part of the frozen Binance archive input; this is a TheOldTrader adaptation, not a reproduction claim.
 - A weekly regression requires at least 10 eligible assets.
 - At prediction time, each indicator's intercept and slope are the arithmetic means of the latest **52 eligible weekly regressions whose labels have fully ended before the one-week embargo cutoff**.
 - If 52 eligible weekly first-stage regressions are not available, no Trial 4 prediction is produced for that week.
