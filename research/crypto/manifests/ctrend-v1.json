@@ -6,7 +6,7 @@
   "paperOnly": true,
   "livePromotionAllowed": false,
   "strategyFamily": "cross-sectional aggregate technical-trend expected-return selection",
-  "motivation": "Test a literature-backed aggregate trend-information family that is materially different from Trial 1 single-market candle forecasting and Trial 3's six-characteristic monthly ridge. The candidate is inspired by Fieberg et al. (2025) CTREND, but is adapted prospectively to MoneyMog's historical liquidity universe, conservative retail costs, long-only exposure limits, and strict chronological firewall. It is not a rescue or modification of any observed trial.",
+  "motivation": "Test a literature-backed aggregate trend-information family that is materially different from Trial 1 single-market candle forecasting and Trial 3's six-characteristic monthly ridge. The candidate is inspired by Fieberg et al. (2025) CTREND, but is adapted prospectively to TheOldTrader's historical liquidity universe, conservative retail costs, long-only exposure limits, and strict chronological firewall. It is not a rescue or modification of any observed trial.",
   "venue": "Binance spot",
   "dataSource": "checksum-verified Binance Vision public spot daily archives",
   "universe": {
@@ -104,7 +104,7 @@
     "slippageBpsPerSide": 5,
     "spreadBpsRoundTrip": 10,
     "roundTripCostBps": 140,
-    "note": "Use the same deliberately conservative MoneyMog retail friction. Trial 4 may not assume maker savings unless a separately frozen execution experiment later validates an execution-policy successor; such a successor must be reported separately from this frozen evaluation."
+    "note": "Use the same deliberately conservative TheOldTrader retail friction. Trial 4 may not assume maker savings unless a separately frozen execution experiment later validates an execution-policy successor; such a successor must be reported separately from this frozen evaluation."
   },
   "developmentEvaluation": {
     "walkForwardTestWeeks": 13,
@@ -121,7 +121,7 @@
       "same-universe 21-day momentum rank top-three weekly baseline with identical position caps and costs",
       "same-universe equal-weight top-three-by-2022-liquidity static buy-and-hold at 45% total exposure",
       "cross-sectional-v1 Trial 3 as a separately labeled frozen comparator only if Trial 3 has independently been evaluated without any Trial 4 information",
-      "frozen MoneyMog v2 on BTC/ETH/SOL as a separately labeled directional benchmark where compatible historical data are available"
+      "frozen TheOldTrader v2 on BTC/ETH/SOL as a separately labeled directional benchmark where compatible historical data are available"
     ],
     "requiredMetrics": [
       "netReturn", "annualizedReturn", "Sharpe", "Sortino", "maxDrawdown", "Calmar", "winRate", "profitFactor", "expectancyPerClosedPosition", "turnover", "totalFees", "feeDrag", "averageExposure", "numberOfTrades", "forcedExits", "performanceByRegime", "perFoldPerformance", "signalSelectionFrequency", "perSignalFirstStageStability", "perAssetContribution"
