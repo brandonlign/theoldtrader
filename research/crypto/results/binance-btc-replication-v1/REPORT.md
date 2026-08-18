@@ -1,4 +1,4 @@
-# MoneyMog auxiliary BTC robustness result — `binance-btc-replication-v1`
+# TheOldTrader auxiliary BTC robustness result — `binance-btc-replication-v1`
 
 **Scientific status:** frozen OOS robustness diagnostic only. **Not promotion eligible.** It uses BTCUSDT Binance spot history rather than the predefined three-asset Coinbase universe, so it cannot substitute for or tune `crypto-oos-v1`.
 
@@ -9,7 +9,7 @@ Holdout: **2024-05-01 through 2024-11-01**. Starting capital: **$10,000**. Model
 | Strategy | Net return | Sharpe | Sortino | Max DD | Trades | Fees | Turnover / avg equity |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | Frozen ridge24 cost gate | **0.00%** | 0.00 | 0.00 | 0.00% | 0 | $0.00 | 0.00x |
-| Frozen MoneyMog v2 | **-2.09%** | -4.14 | -2.62 | -2.25% | 14 | $190.46 | 3.20x |
+| Frozen TheOldTrader v2 | **-2.09%** | -4.14 | -2.62 | -2.25% | 14 | $190.46 | 3.20x |
 | Simple 30-day trend | **-3.30%** | -1.45 | -1.73 | -6.54% | 9 | $156.29 | 2.67x |
 | BTC buy-and-hold, 15% exposure | **+2.84%** | 0.82 | 1.35 | -4.34% | 1 | $19.83 | 0.33x |
 | Cash | 0.00% | 0.00 | 0.00 | 0.00% | 0 | $0.00 | 0.00x |
@@ -26,7 +26,7 @@ This means the defensible conclusion is **not** “lower the cost hurdle until i
 
 ## What this says about v2
 
-The result is consistent with the concern raised by v1: at MoneyMog's conservative retail cost assumptions, frequent directional trading is economically difficult. Frozen v2 turned over roughly **3.20× average equity** in six months while maintaining only **0.62% average BTC exposure**, yet still paid **1.90% of starting capital in fees** and lost 2.09% net. The low-turnover 15%-exposure buy-and-hold comparator was positive over the same interval.
+The result is consistent with the concern raised by v1: at TheOldTrader's conservative retail cost assumptions, frequent directional trading is economically difficult. Frozen v2 turned over roughly **3.20× average equity** in six months while maintaining only **0.62% average BTC exposure**, yet still paid **1.90% of starting capital in fees** and lost 2.09% net. The low-turnover 15%-exposure buy-and-hold comparator was positive over the same interval.
 
 This is not enough to conclude that buy-and-hold is universally superior or that v2 must fail on Coinbase. It is one BTC-only, cross-venue robustness sample. The primary Coinbase holdout remains untouched because GitHub Actions is blocked before checkout by the account billing/spending-limit issue recorded in `crypto-oos-v1/BLOCKED.md`.
 
