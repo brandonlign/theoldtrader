@@ -1,4 +1,4 @@
-# MoneyMog Crypto Research
+# TheOldTrader Crypto Research
 
 This directory is isolated from the live/paper crypto execution path. **Nothing here can submit an order, access exchange credentials, or change `cloudflare/crypto-engine.js` / `src/crypto/strategy.js`.** The frozen v2 strategy is imported read-only only so historical evaluation can call the exact live signal function.
 
@@ -17,7 +17,7 @@ This directory is isolated from the live/paper crypto execution path. **Nothing 
 
 `manifests/crypto-oos-v1.json` freezes the first candidate: pooled ridge regression of 24-hour forward log returns using low-dimensional price/volume/volatility/cross-asset features. It makes one decision per UTC day and can hold long only when the predicted gross return exceeds the modeled round-trip cost.
 
-Comparators are cash, BTC buy-and-hold, equal-weight BTC/ETH/SOL buy-and-hold, a sign-only 30-day time-series trend baseline, and frozen MoneyMog v2.
+Comparators are cash, BTC buy-and-hold, equal-weight BTC/ETH/SOL buy-and-hold, a sign-only 30-day time-series trend baseline, and frozen TheOldTrader v2.
 
 Ordinary branch pushes run validation only. The untouched Coinbase final holdout can be opened only by a deliberate manual dispatch of `crypto-research.yml`, after validation succeeds, and the job refuses to overwrite a prior final result. The primary holdout is currently sealed because GitHub Actions is blocked before checkout by the account's Actions billing/spending-limit state. A separate frozen BTC/Binance robustness replication is preserved under `results/binance-btc-replication-v1/` and does not substitute for the primary holdout.
 
