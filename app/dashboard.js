@@ -349,11 +349,11 @@ export default function Dashboard() {
   return (
     <main className="hosted-shell">
       <header className="hosted-topbar">
-        <a href="#top" className="hosted-brand"><span>MM</span><div><strong>MoneyMog</strong><small>two paper-trading desks</small></div></a>
+        <a href="#top" className="hosted-brand"><span>TOT</span><div><strong>TheOldTrader</strong><small>two paper-trading desks</small></div></a>
         <div className={`hosted-status status-${overallStatus.toLowerCase()}`}><i />{overallStatus}</div>
       </header>
 
-      <nav className="desk-tabs" aria-label="MoneyMog desks">
+      <nav className="desk-tabs" aria-label="TheOldTrader desks">
         <button className={activeDesk === "crypto" ? "active" : ""} onClick={() => setActiveDesk("crypto")}><span>24/7</span>Crypto trading</button>
         <button className={activeDesk === "polymarket" ? "active" : ""} onClick={() => setActiveDesk("polymarket")}><span>Prediction markets</span>Polymarket</button>
       </nav>
