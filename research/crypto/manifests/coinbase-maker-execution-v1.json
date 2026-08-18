@@ -22,7 +22,7 @@
       "change": "Required zero detected market_trades sequence gaps in addition to level2 gaps, counted initial connection delay in coverage, and replaced the touch-price taker comparator with same-size full-book executable VWAP at placement. This prevents dropped trades or insufficient top-level depth from making maker execution look artificially favorable."
     }
   ],
-  "purpose": "Measure whether post-only maker execution can reduce MoneyMog implementation cost after fill probability, queue competition, spread capture, and adverse selection. This is execution research, not alpha research and not a change to frozen crypto v2.",
+  "purpose": "Measure whether post-only maker execution can reduce TheOldTrader implementation cost after fill probability, queue competition, spread capture, and adverse selection. This is execution research, not alpha research and not a change to frozen crypto v2.",
   "venue": {
     "name": "Coinbase Advanced Trade",
     "products": ["BTC-USD", "ETH-USD", "SOL-USD"],
