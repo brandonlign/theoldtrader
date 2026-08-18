@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { backtestLowVol, selectLowestVolatility, trailingAnnualizedVolatility } from '../research/crypto/lib/lowvol.js';
+import { backtestLowVol, backtestStaticAllocation, selectLowestVolatility, trailingAnnualizedVolatility } from '../research/crypto/lib/lowvol.js';
 
 const DAY = 86_400;
 const sec = (iso) => Date.parse(`${iso}T00:00:00Z`) / 1000;
@@ -92,4 +92,14 @@ test('Trial 6 respects the 15% post-friction exposure cap and charges every trad
   assert.ok(result.equityPath[0].grossExposure > 0.14);
   assert.ok(Math.abs(result.transactionCostsUsd - result.turnoverUsd * 0.007) < 1e-8);
   assert.ok(result.trades.some((row) => row.reason === 'evaluation_end_liquidation'));
+});
+
+test('Trial 6 matched comparator also stays at 15% post-friction total exposure', () => {
+  const result = backtestStaticAllocation(dataset(), manifest(), {
+    start: '2024-01-01T00:00:00.000Z',
+    end: '2024-02-01T00:00:00.000Z',
+    weights: { 'BTC-USD': 0.05, 'ETH-USD': 0.05, 'SOL-USD': 0.05 }
+  });
+  assert.ok(result.equityPath[0].grossExposure <= 0.15 + 1e-12);
+  assert.ok(result.equityPath[0].grossExposure > 0.14);
 });
