@@ -1,4 +1,4 @@
-# MoneyMog crypto research status — 2026-08-18
+# TheOldTrader crypto research status — 2026-08-18
 
 Authoritative research branch: `research/crypto-oos-v1`  
 Draft PR: `#8`  
@@ -7,13 +7,13 @@ Real-money trading enabled: **no**
 
 ## Current conclusion
 
-**No new strategy has yet earned promotion over frozen MoneyMog crypto v2.** Trial 1's completed robustness replication was weak/negative. Trial 2 carry remains economically interesting but its primary checksum-archive evaluation is still unobserved. Trial 3 cross-sectional selection and Trial 4 CTREND-inspired selection are both frozen before their development results and remain blocked on the immutable 2022-only universe formation. E1 maker execution remains a separate unobserved execution experiment.
+**No new strategy has yet earned promotion over frozen TheOldTrader crypto v2.** Trial 1's completed robustness replication was weak/negative. Trial 2 carry remains economically interesting but its primary checksum-archive evaluation is still unobserved. Trial 3 cross-sectional selection and Trial 4 CTREND-inspired selection are both frozen before their development results and remain blocked on the immutable 2022-only universe formation. E1 maker execution remains a separate unobserved execution experiment.
 
 The correct next scientific action is to execute the already-frozen experiments, not tune them or invent outcome-driven rescue variants.
 
 ## Frozen live baseline
 
-MoneyMog crypto v2 remains the paper-only live baseline. This research branch does not modify `src/crypto/strategy.js`, `src/crypto/risk.js`, or `cloudflare/crypto-engine.js`. Research candidates must pass their own frozen development/final gates before any separate promotion proposal can exist.
+TheOldTrader crypto v2 remains the paper-only live baseline. This research branch does not modify `src/crypto/strategy.js`, `src/crypto/risk.js`, or `cloudflare/crypto-engine.js`. Research candidates must pass their own frozen development/final gates before any separate promotion proposal can exist.
 
 ## Trial 1 — `crypto-oos-v1`
 
@@ -29,7 +29,7 @@ The frozen BTCUSDT Binance replication produced zero ridge holdout trades, negat
 **Primary:** frozen, unobserved, checksum-archive acquisition pending.  
 **Replication 2R:** official Binance REST exact-family replication observed and locked; non-promotion only.
 
-The frozen economics remain: 15% starting-equity BTC spot purchase, short exactly the same BTC units in the perpetual, 20% starting-equity futures collateral reserve, no rebalancing or funding-sign/timing optimization, both-leg MoneyMog friction, standard contract prices for execution, mark price for funding/valuation/margin, exact 8-hour schedule, no interpolation, and frozen gap/margin stress.
+The frozen economics remain: 15% starting-equity BTC spot purchase, short exactly the same BTC units in the perpetual, 20% starting-equity futures collateral reserve, no rebalancing or funding-sign/timing optimization, both-leg TheOldTrader friction, standard contract prices for execution, mark price for funding/valuation/margin, exact 8-hour schedule, no interpolation, and frozen gap/margin stress.
 
 2R passed its 5,295-row official REST data gate before its first economic result was observed. The exact originating result bundle still requires canonical repository reproduction. 2R cannot replace the primary Trial 2 and cannot authorize a live change.
 
@@ -92,7 +92,7 @@ No Trial 4 result exists yet.
 
 ## Execution experiment E1 — `coinbase-maker-execution-v1`
 
-**Question:** can post-only maker execution reduce MoneyMog implementation cost after queue position, non-fills, full-book depth and adverse selection?  
+**Question:** can post-only maker execution reduce TheOldTrader implementation cost after queue position, non-fills, full-book depth and adverse selection?  
 **Status:** frozen forward-data protocol; scientific data acquisition pending.
 
 E1 remains separate from alpha research. The first scientific window requires at least 168 hours for each BTC/ETH/SOL feed plus frozen hash, coverage, sequence, queue and independent taker-VWAP audit rules. No E1 scientific result has been observed.
