@@ -44,7 +44,7 @@ The secondary BTCUSDT perpetual basis/premium-index dataset is materially less c
 - 10,156 missing one-minute bars;
 - known gaps include a full day on 2021-07-01, a roughly 96-hour interval on 2021-07-24 through 2021-07-27, full days on 2022-10-02 and 2023-02-24, plus smaller gaps.
 
-The dataset card recommends forward-filling for ML use. **MoneyMog explicitly rejects that recommendation for Trial 2.** A carry backtest with an open position cannot silently fabricate a missing basis/mark observation, especially during exchange-wide infrastructure events when derivative risk may be unusually high.
+The dataset card recommends forward-filling for ML use. **TheOldTrader explicitly rejects that recommendation for Trial 2.** A carry backtest with an open position cannot silently fabricate a missing basis/mark observation, especially during exchange-wide infrastructure events when derivative risk may be unusually high.
 
 This is another reason not to use a precomputed basis series as Trial 2's valuation input. Trial 2 instead synchronizes independently downloaded spot, standard contract, markPrice and funding archives and aborts if any required scheduled mark is unavailable.
 
