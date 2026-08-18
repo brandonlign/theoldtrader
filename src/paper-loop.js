@@ -1,11 +1,7 @@
 import { loadConfig } from "./config.js";
 import { PaperSimulationRunner } from "./paper/runner.js";
 
-function numberEnv(name, fallback) {
-  const parsed = Number(process.env[name] ?? fallback);
-  if (!Number.isFinite(parsed)) throw new Error(`${name} must be a finite number`);
-  return parsed;
-}
+const PAPER_INTERVAL_MS = 60_000;
 
 function sleep(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -31,11 +27,6 @@ function summarize(result) {
 
 async function main() {
   const config = loadConfig();
-  if (!config.paperEnabled) {
-    throw new Error("Paper simulation is disabled. Start with THEOLDTRADER_PAPER_ENABLED=true npm run paper:run");
-  }
-
-  const intervalMs = Math.max(15_000, numberEnv("THEOLDTRADER_PAPER_INTERVAL_MS", 60_000));
   const runner = new PaperSimulationRunner(config);
   let stopping = false;
 
@@ -46,7 +37,7 @@ async function main() {
   process.once("SIGINT", stop);
   process.once("SIGTERM", stop);
 
-  process.stderr.write(`TheOldTrader paper simulation started. Interval: ${intervalMs / 1000}s. Press Ctrl+C to stop.\n`);
+  process.stderr.write(`TheOldTrader paper simulation started. Interval: ${PAPER_INTERVAL_MS / 1000}s. Press Ctrl+C to stop.\n`);
 
   while (!stopping) {
     const startedAt = Date.now();
@@ -58,7 +49,7 @@ async function main() {
     }
 
     if (stopping) break;
-    const remaining = Math.max(0, intervalMs - (Date.now() - startedAt));
+    const remaining = Math.max(0, PAPER_INTERVAL_MS - (Date.now() - startedAt));
     await sleep(remaining);
   }
 }
