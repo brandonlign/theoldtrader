@@ -42,7 +42,7 @@ async function fetchJson(url, { retries = 5, delayMs = 450 } = {}) {
       const response = await fetch(url, {
         headers: {
           Accept: 'application/json',
-          'User-Agent': 'MoneyMog-Research/1.0'
+          'User-Agent': 'TheOldTrader-Research/1.0'
         }
       });
       if (response.status === 429 || response.status >= 500) {
