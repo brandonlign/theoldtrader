@@ -29,7 +29,7 @@ If perpetual notional were held constant at Trial 2's frozen 15% of account equi
 
 `39.26772% × 15% = 5.89016%` over roughly 4.83 years.
 
-The frozen Trial 2 friction is deliberately severe and applies the MoneyMog assumption to both legs:
+The frozen Trial 2 friction is deliberately severe and applies the TheOldTrader assumption to both legs:
 
 - 60 bps fee per side;
 - 5 bps slippage per side;
