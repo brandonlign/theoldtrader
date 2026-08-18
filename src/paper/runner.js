@@ -20,10 +20,6 @@ export class PaperSimulationRunner {
   }
 
   async runOnce() {
-    if (!this.config.paperEnabled) {
-      throw new Error("Paper simulation is disabled. Set MONEYMOG_PAPER_ENABLED=true only when you are ready to begin.");
-    }
-
     const scanResults = await Promise.allSettled([
       this.binaryScanner.scan(),
       this.multiScanner.scan()
