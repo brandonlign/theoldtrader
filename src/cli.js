@@ -66,7 +66,7 @@ async function main() {
     return;
   }
 
-  const config = loadConfig({ paperEnabled: command === "paper-once" });
+  const config = loadConfig();
   if (command === "multi-scan") {
     console.log(JSON.stringify(await new MultiOutcomeScanner(config).scan(), null, 2));
     return;
