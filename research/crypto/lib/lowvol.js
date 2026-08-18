@@ -209,6 +209,8 @@ export function backtestStaticAllocation(dataset, manifest, { start, end, weight
   const startingCash = manifest.portfolio.startingCash;
   const totalWeight = products.reduce((sum, product) => sum + Number(weights[product] ?? 0), 0);
   if (totalWeight > 0.45 + 1e-12) throw new Error('Static comparator exceeds 45% research cap');
+  const matchedPreCostTotalWeight = totalWeight > 0 ? safePreCostWeight(totalWeight, manifest) : 0;
+  const weightScale = totalWeight > 0 ? matchedPreCostTotalWeight / totalWeight : 0;
   const costRate = tradeCostRate(manifest);
   let cash = startingCash;
   let turnoverUsd = 0;
@@ -220,7 +222,7 @@ export function backtestStaticAllocation(dataset, manifest, { start, end, weight
     const weight = Number(weights[product] ?? 0);
     if (!(weight > 0)) continue;
     const open = requireOpen(maps, product, first);
-    const notional = startingCash * weight;
+    const notional = startingCash * weight * weightScale;
     const cost = notional * costRate;
     units[product] = notional / open;
     cash -= notional + cost;
