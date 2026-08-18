@@ -170,7 +170,7 @@ const cash = summary.strategies.cash;
 const stressLines = Object.entries(summary.margin.gapStress).map(([gap, values]) =>
   `- +${(Number(gap) * 100).toFixed(0)}% perpetual-mark gap: ${values.breached ? '**BREACH**' : 'no breach'}; minimum excess margin ${usd(values.minimumExcessMargin)}`
 ).join('\n');
-const report = `# MoneyMog funding-carry-v1 robustness report\n\n` +
+const report = `# TheOldTrader funding-carry-v1 robustness report\n\n` +
 `**Classification:** historical development/robustness evidence only; not pristine validation  \n` +
 `**Live trading enabled:** no  \n` +
 `**Input SHA-256:** \`${summary.input.sha256}\`  \n` +
