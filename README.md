@@ -1,6 +1,6 @@
-# MoneyMog
+# TheOldTrader
 
-MoneyMog is one **hosted, paper-only Polymarket research system**:
+TheOldTrader is one **hosted, paper-only Polymarket research system**:
 
 - **Vercel** serves the paper-ledger dashboard.
 - **Cloudflare Worker** rotates small scheduled market and wallet batches.
@@ -49,7 +49,7 @@ npm run scan:all
 npm run whales:rank
 ```
 
-The local JSON paper runner is separate from the hosted D1 portfolio and remains disabled unless `MONEYMOG_PAPER_ENABLED=true`.
+The local JSON paper runner is separate from the hosted D1 portfolio and remains disabled unless `THEOLDTRADER_PAPER_ENABLED=true`.
 
 # Beginner hosted setup
 
@@ -65,7 +65,7 @@ npx wrangler@latest login
 Create the database:
 
 ```bash
-npx wrangler@latest d1 create moneymog
+npx wrangler@latest d1 create theoldtrader
 ```
 
 Cloudflare prints a `database_id`. Copy the Worker example:
@@ -85,7 +85,7 @@ with the ID Cloudflare printed.
 Create the tables in the remote D1 database:
 
 ```bash
-npx wrangler@latest d1 execute moneymog --remote --file=cloudflare/schema.sql
+npx wrangler@latest d1 execute theoldtrader --remote --file=cloudflare/schema.sql
 ```
 
 ## 2. Add the Worker API secret
@@ -123,20 +123,20 @@ npx wrangler@latest deploy
 Wrangler prints a URL similar to:
 
 ```text
-https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev
+https://theoldtrader-paper-worker.YOUR-SUBDOMAIN.workers.dev
 ```
 
 Test the public service check:
 
 ```bash
-curl https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev/health
+curl https://theoldtrader-paper-worker.YOUR-SUBDOMAIN.workers.dev/health
 ```
 
 Then test the authenticated shared snapshot:
 
 ```bash
 curl -H "Authorization: Bearer YOUR_RANDOM_TOKEN" \
-  https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/snapshot
+  https://theoldtrader-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/snapshot
 ```
 
 At this point it should report a paused paper portfolio with a $10,000 starting balance.
@@ -169,7 +169,7 @@ npx wrangler@latest deploy
 
 1. Open the Vercel dashboard.
 2. Choose **Add New → Project**.
-3. Import `brandonlign/moneymog` from GitHub.
+3. Import `brandonlign/theoldtrader` from GitHub.
 4. Keep the detected framework as **Next.js**.
 5. Keep the root directory as the repository root.
 6. Do not change the build command.
@@ -179,8 +179,8 @@ npx wrangler@latest deploy
 In the Vercel project, open **Settings → Environment Variables** and add:
 
 ```text
-MONEYMOG_WORKER_URL=https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev
-MONEYMOG_WORKER_API_TOKEN=YOUR_RANDOM_TOKEN
+THEOLDTRADER_WORKER_URL=https://theoldtrader-paper-worker.YOUR-SUBDOMAIN.workers.dev
+THEOLDTRADER_WORKER_API_TOKEN=YOUR_RANDOM_TOKEN
 ```
 
 Add them to Production, Preview, and Development if you want every Vercel environment to show the same D1 paper account. Redeploy the Vercel project after saving them.
@@ -202,7 +202,7 @@ You can create a paused run immediately instead of waiting for cron:
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_RANDOM_TOKEN" \
-  https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/run
+  https://theoldtrader-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/run
 ```
 
 ## 8. Enable the hosted paper simulation
@@ -228,7 +228,7 @@ Trigger one cycle manually:
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_RANDOM_TOKEN" \
-  https://moneymog-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/run
+  https://theoldtrader-paper-worker.YOUR-SUBDOMAIN.workers.dev/api/run
 ```
 
 Refresh the Vercel dashboard. Confirm:
@@ -264,4 +264,4 @@ Changing `PAPER_STARTING_CASH` does not overwrite an existing D1 portfolio. This
 
 # Modeling limits
 
-Paper fills remain estimates. Public wallet data can arrive late, books can move between calls, fee behavior can change, and real multi-leg execution would not be atomic. MoneyMog records delayed books, partial fills, failed later legs, stale data, fees, concentration limits, and rejection reasons rather than calling detected spreads guaranteed profit.
+Paper fills remain estimates. Public wallet data can arrive late, books can move between calls, fee behavior can change, and real multi-leg execution would not be atomic. TheOldTrader records delayed books, partial fills, failed later legs, stale data, fees, concentration limits, and rejection reasons rather than calling detected spreads guaranteed profit.
