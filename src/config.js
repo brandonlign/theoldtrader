@@ -2,7 +2,7 @@ import { Dec } from "./decimal.js";
 
 // Stable local defaults belong in source, not environment variables. The hosted
 // Cloudflare worker has its own deployment configuration in wrangler.toml.
-export function loadConfig() {
+export function loadConfig({ paperEnabled = false } = {}) {
   return {
     gammaBaseUrl: "https://gamma-api.polymarket.com",
     clobBaseUrl: "https://clob.polymarket.com",
@@ -17,7 +17,7 @@ export function loadConfig() {
     fixedCostUsd: new Dec("0"),
     maxBookAgeMs: 15_000,
     requestTimeoutMs: 10_000,
-    paperEnabled: true,
+    paperEnabled: Boolean(paperEnabled),
     paperStartingCash: new Dec("10000"),
     paperStatePath: ".theoldtrader/paper-state.json",
     paperExecutionDelayMs: 2_000,
