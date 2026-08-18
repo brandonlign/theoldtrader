@@ -68,16 +68,25 @@ Frozen candidate mechanics:
 
 The first authored helper accidentally nested a second independent 52-week out-of-sample forecast history on top of the 52-week first-stage window. Before any Trial 4 universe/data/performance was observed, this was identified as an implementation interpretation error and corrected to a **single 52-week rolling parameter-estimation window**, consistent with the frozen statistical intent. The correction is recorded explicitly in `TRIAL4_IMPLEMENTATION_REVISION_1.md`; scientific evaluation must call `walkForwardCtrendWindowedPredictions` from `lib/ctrend-windowed.js`.
 
+### Pre-result data-source correction
+
+The first Trial 4 data-builder draft reused Trial 3's monthly Binance Vision archive helper. Before any Trial 4 data or performance was observed, that was rejected because the research record already documents historical monthly-SPOT archive discrepancies and the Trial 4 specification intended an official daily/market-data source. `TRIAL4_DATA_REVISION_1.md` records the correction.
+
+The authoritative Trial 4 builder is now `prepare-ctrend-rest-data.py`, using only the immutable 2022-formed membership and Binance's market-data-only REST daily klines. Every raw REST response page is preserved with its URL and SHA-256, the normalized dataset is separately hashed, no current `exchangeInfo` survivor list is consulted, and no interpolation is permitted. Development mode physically stops before `2026-01-01`; final acquisition is separate and requires explicit confirmation.
+
+Scientific evaluation is additionally wrapped by `ctrend-evaluate-rest.js`, which refuses any Trial 4 dataset unless it identifies the frozen official REST source. The superseded monthly-helper builder remains only as transparent Git history and must not be used for scientific evaluation.
+
 Trial 4 now has:
 
 - frozen manifest and anti-rescue marker;
-- explicit numerical implementation freeze and correction log;
+- explicit numerical implementation freeze plus the pre-result rolling-window correction log;
+- explicit pre-result data-provenance correction log;
 - tested 28-signal/embargo/elastic-net core;
-- holdout-safe checksum data builder;
-- development evaluator with 21-day weekly momentum, cash, major-coin buy/hold, and static-liquidity comparators;
+- REST-only holdout-safe data builder with raw-page hashes;
+- REST-source-enforcing scientific evaluator with 21-day weekly momentum, cash, major-coin buy/hold, and static-liquidity comparators;
 - 13-week fold diagnostics, signal-selection frequency, first-stage stability, fee/turnover/exposure and per-asset contribution diagnostics;
 - frozen promotion checker;
-- manual development and one-shot final workflows.
+- manual development and one-shot final workflows that preserve page-level provenance and raw response artifacts.
 
 No Trial 4 result exists yet.
 
@@ -90,24 +99,25 @@ E1 remains separate from alpha research. The first scientific window requires at
 
 ## Infrastructure state
 
-GitHub Actions was retried on 2026-08-18 and still failed **before any workflow step started**, consistent with the account Actions billing/spending-limit block. That prevents the official universe-formation and checksum-archive workflows from running. The current execution environment also cannot resolve the official Binance archive host directly, so the immutable 2022 universe cannot honestly be formed here as a substitute.
+GitHub Actions was retried on 2026-08-18 and still failed **before any workflow step started**, consistent with the account Actions billing/spending-limit block. That prevents the official universe-formation and checksum/REST workflows from running. The current execution environment also cannot resolve the official Binance archive or market-data REST hosts directly, so the immutable 2022 universe and Trial 4 development data cannot honestly be acquired here as a substitute.
 
 This is an infrastructure blocker, not a strategy result. Do not infer performance from it and do not weaken provenance rules to bypass it.
 
 ## Tested implementation state on 2026-08-18
 
-Local deterministic validation of the new Trial 4 code passed:
+Local deterministic validation completed before any Trial 4 performance was observed:
 
-- 13 JavaScript tests covering signal count, tie ranking, no-future feature cutoff, daily-gap rejection, weekly schedule, 52-week/embargo logic, elastic-net/AICc behavior, corrected one-window estimation, and promotion-gate behavior;
-- 3 Python tests covering development holdout cutoff, explicit final confirmation, and boundary-mismatch abort behavior;
-- syntax/compile checks for the Trial 4 model, corrected windowed estimator, evaluator, promotion checker and data builder.
+- 13 JavaScript tests passed covering signal count, tie ranking, no-future feature cutoff, daily-gap rejection, weekly schedule, 52-week/embargo logic, elastic-net/AICc behavior, corrected one-window estimation, and promotion-gate behavior;
+- 3 legacy Python firewall tests passed for the superseded builder, covering development cutoff, explicit final confirmation, and boundary-mismatch abort behavior;
+- 3 additional authoritative REST-builder tests are committed for development/final separation, exact daily-kline normalization, and non-midnight timestamp rejection and are required by both Trial 4 workflows;
+- syntax/compile checks were completed for the Trial 4 model, corrected windowed estimator, evaluator, REST-source wrapper, promotion checker and authoritative REST data builder.
 
-These are implementation tests only. They are **not** evidence that Trial 4 is profitable.
+These are implementation/provenance checks only. They are **not** evidence that Trial 4 is profitable.
 
 ## Required next execution order
 
 1. Run the existing Trial 3 universe-formation workflow and commit the immutable 2022-only 30-symbol membership/source hashes.
-2. Run Trial 3 development and Trial 4 development independently; neither may access 2026 rows.
+2. Run Trial 3 development and Trial 4 development independently; neither may access 2026 rows. Trial 4 must use the authoritative REST builder/evaluator only.
 3. Reproduce carry 2R canonically and run primary Trial 2 when checksum-archive compute is available.
 4. Only after a candidate's development evidence is frozen may its separate one-shot final holdout be opened.
 5. Apply the pre-frozen promotion checker. A failure creates a recorded failed trial; it does not authorize parameter rescue under the same trial number.
