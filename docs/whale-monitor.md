@@ -1,6 +1,6 @@
 # Whale monitor
 
-MoneyMog contains a disabled-by-default public-wallet monitor. It does not place simulated or real trades.
+TheOldTrader contains a disabled-by-default public-wallet monitor. It does not place simulated or real trades.
 
 ## What it does
 
@@ -21,10 +21,10 @@ This fetches public data and prints recommended wallets. It does not save state 
 
 ## Local observation
 
-Put selected wallets in `MONEYMOG_WHALE_WALLETS`, then explicitly enable observation:
+Put selected wallets in `THEOLDTRADER_WHALE_WALLETS`, then explicitly enable observation:
 
 ```bash
-MONEYMOG_WHALE_MONITOR_ENABLED=true npm run whales:observe
+THEOLDTRADER_WHALE_MONITOR_ENABLED=true npm run whales:observe
 ```
 
 The first pass only saves a baseline. Later passes inspect trades that appeared after that baseline. The paper simulation remains paused.
@@ -40,7 +40,7 @@ The repository includes a Cloudflare Worker + D1 version because Railway is not 
 5. Add an API token secret and your ranked wallet JSON.
 6. Deploy with Wrangler.
 7. Keep `MONITOR_ENABLED=false` until you intentionally want observation to begin.
-8. Add the Worker URL and API token to Vercel as `MONEYMOG_WORKER_URL` and `MONEYMOG_WORKER_API_TOKEN`.
+8. Add the Worker URL and API token to Vercel as `THEOLDTRADER_WORKER_URL` and `THEOLDTRADER_WORKER_API_TOKEN`.
 
 The example polls every minute but processes only a small rotating wallet batch. That is suitable for zero-cost paper observation, not latency-sensitive real-money execution.
 
