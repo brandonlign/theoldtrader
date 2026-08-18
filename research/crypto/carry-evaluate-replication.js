@@ -26,7 +26,7 @@ const compatibility = {
   ...replication,
   experimentId: 'funding-carry-v1'
 };
-const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'moneymog-carry-replication-'));
+const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'theoldtrader-carry-replication-'));
 const tempManifest = path.join(tempDir, 'compatibility-manifest.json');
 fs.writeFileSync(tempManifest, JSON.stringify(compatibility, null, 2));
 
