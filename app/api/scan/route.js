@@ -88,7 +88,7 @@ export async function POST(request) {
       },
       strategyErrors: {
         binary: binaryResult.status === "rejected" ? String(binaryResult.reason?.message ?? binaryResult.reason) : null,
-        multiOutcome: multiResult.status === "rejected" ? String(multiOutcome?.message ?? multiOutcome) : null
+        multiOutcome: multiResult.status === "rejected" ? String(multiResult.reason?.message ?? multiResult.reason) : null
       }
     }, {
       status: 200,
