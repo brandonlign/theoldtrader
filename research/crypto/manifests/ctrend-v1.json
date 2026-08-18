@@ -1,0 +1,150 @@
+{
+  "experimentId": "ctrend-v1",
+  "trialNumber": 4,
+  "createdAt": "2026-08-18T20:25:00Z",
+  "status": "FROZEN_UNIVERSE_FORMATION_PENDING",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "strategyFamily": "cross-sectional aggregate technical-trend expected-return selection",
+  "motivation": "Test a literature-backed aggregate trend-information family that is materially different from Trial 1 single-market candle forecasting and Trial 3's six-characteristic monthly ridge. The candidate is inspired by Fieberg et al. (2025) CTREND, but is adapted prospectively to MoneyMog's historical liquidity universe, conservative retail costs, long-only exposure limits, and strict chronological firewall. It is not a rescue or modification of any observed trial.",
+  "venue": "Binance spot",
+  "dataSource": "checksum-verified Binance Vision public spot daily archives",
+  "universe": {
+    "source": "research/crypto/universes/cross-sectional-v1-universe.json",
+    "rule": "use exactly the immutable 30-symbol 2022-only liquidity universe formed under cross-sectional-v1; Trial 4 may not add, remove, replace, or rerank members using 2023-or-later information",
+    "dependency": "Trial 4 evaluation is blocked until Trial 3 universe formation has been completed and committed under its already-frozen 2022-only rule",
+    "survivorshipRule": "never begin from a current exchangeInfo/current-survivor list and never replace a delisted or missing member with a later survivor",
+    "membershipSize": 30
+  },
+  "historicalData": {
+    "frequency": "1d",
+    "indicatorLookbackStart": "2022-01-01T00:00:00Z",
+    "modelTrainingStart": "2023-01-01T00:00:00Z",
+    "developmentStart": "2024-01-01T00:00:00Z",
+    "developmentEndExclusive": "2026-01-01T00:00:00Z",
+    "finalHoldoutStart": "2026-01-01T00:00:00Z",
+    "finalHoldoutEndExclusive": "2026-08-01T00:00:00Z",
+    "developmentAcquisitionHardStop": "2026-01-01T00:00:00Z",
+    "noInterpolation": true,
+    "missingDataRule": "an asset must have every daily bar required for the relevant indicator at a decision. Missing history makes that signal unavailable for that asset; an already-held asset that loses tradeable daily data before the next weekly rebalance is force-exited at its final observed close before the gap with frozen sell friction and remains ineligible until continuity resumes"
+  },
+  "decisionSchedule": {
+    "frequency": "weekly",
+    "decisionTime": "first available Binance UTC daily open on or after Monday 00:00 UTC",
+    "featureCutoff": "strictly before the decision open; all indicators use only daily bars whose close precedes the decision open",
+    "label": "gross log return from the current weekly decision open to the next weekly decision open",
+    "holdingPeriod": "one weekly decision interval unless a frozen missing-data forced exit occurs",
+    "embargo": "one complete weekly interval between the endpoint of the newest training label and the prediction week"
+  },
+  "technicalSignals": {
+    "count": 28,
+    "crossSectionTransform": "at every decision date, rank each available raw signal across eligible frozen-universe assets using average ranks for ties, then map the rank monotonically to [-0.5, 0.5]; no future-date standardization or pooled full-sample scaling",
+    "momentumOscillators": [
+      {"name": "rsi14", "definition": "14-day Wilder RSI"},
+      {"name": "stoch_k14", "definition": "14-day stochastic %K using close relative to the 14-day high-low range"},
+      {"name": "stoch_d3", "definition": "3-day simple moving average of stochastic %K"},
+      {"name": "stoch_rsi14", "definition": "current 14-day RSI positioned within the prior 14-observation RSI min-max range"},
+      {"name": "cci20", "definition": "20-day Commodity Channel Index from daily typical price"}
+    ],
+    "priceTrend": [
+      {"name": "price_sma3", "definition": "3-day close SMA divided by current close"},
+      {"name": "price_sma5", "definition": "5-day close SMA divided by current close"},
+      {"name": "price_sma10", "definition": "10-day close SMA divided by current close"},
+      {"name": "price_sma20", "definition": "20-day close SMA divided by current close"},
+      {"name": "price_sma50", "definition": "50-day close SMA divided by current close"},
+      {"name": "price_sma100", "definition": "100-day close SMA divided by current close"},
+      {"name": "price_sma200", "definition": "200-day close SMA divided by current close"},
+      {"name": "price_macd_12_26", "definition": "12-day EMA minus 26-day EMA, divided by the 12-day EMA"},
+      {"name": "price_macd_signal9", "definition": "price MACD minus its 9-day EMA signal line"}
+    ],
+    "volumeTrend": [
+      {"name": "volume_sma3", "definition": "3-day quote-volume SMA divided by current quote volume"},
+      {"name": "volume_sma5", "definition": "5-day quote-volume SMA divided by current quote volume"},
+      {"name": "volume_sma10", "definition": "10-day quote-volume SMA divided by current quote volume"},
+      {"name": "volume_sma20", "definition": "20-day quote-volume SMA divided by current quote volume"},
+      {"name": "volume_sma50", "definition": "50-day quote-volume SMA divided by current quote volume"},
+      {"name": "volume_sma100", "definition": "100-day quote-volume SMA divided by current quote volume"},
+      {"name": "volume_sma200", "definition": "200-day quote-volume SMA divided by current quote volume"},
+      {"name": "volume_macd_12_26", "definition": "12-day quote-volume EMA minus 26-day quote-volume EMA, divided by the 12-day EMA"},
+      {"name": "volume_macd_signal9", "definition": "volume MACD minus its 9-day EMA signal line"},
+      {"name": "chaikin_money_flow20", "definition": "20-day sum of money-flow volume divided by 20-day sum of volume, with daily money-flow multiplier from high/low/close"}
+    ],
+    "volatility": [
+      {"name": "bollinger_lower20", "definition": "20-day close SMA minus two 20-day population standard deviations, divided by current close"},
+      {"name": "bollinger_mid20", "definition": "20-day close SMA divided by current close"},
+      {"name": "bollinger_upper20", "definition": "20-day close SMA plus two 20-day population standard deviations, divided by current close"},
+      {"name": "bollinger_width20", "definition": "upper-minus-lower Bollinger band divided by the middle band"}
+    ]
+  },
+  "model": {
+    "type": "CTREND-inspired two-stage rolling cross-sectional forecast ensemble",
+    "minimumHistoryWeeks": 52,
+    "firstStage": "for each of the 28 ranked technical signals independently, estimate weekly cross-sectional return slopes using only eligible assets and realized labels available before the embargo; at each prediction date use the trailing 52 eligible weekly slopes to form that signal's current expected-return forecast",
+    "secondStage": "using only pre-embargo training observations, fit an elastic-net regression of realized next-week gross returns on the 28 first-stage forecasts; mixing parameter alpha is fixed at 0.5",
+    "lambdaSelection": "select lambda solely by corrected Akaike Information Criterion (AICc) on the training sample; no development-return grid search, Sharpe optimization, or final-holdout tuning",
+    "combination": "retain only first-stage forecasts with strictly positive second-stage coefficient and take their equal-weight arithmetic mean as the final gross-return forecast; if none are retained, forecast no eligible trade",
+    "intercept": "unpenalized where supported by the implementation",
+    "minimumEligibleAssetsPerWeek": 10,
+    "reason": "preserve a low-capacity, interpretable aggregation of many weak technical signals rather than escalating directly to a tree/sequence model after Trial 1's failed candle-forecast robustness test"
+  },
+  "portfolio": {
+    "startingCash": 10000,
+    "longOnly": true,
+    "maxSelectedAssets": 3,
+    "targetWeightPerSelectedAsset": 0.15,
+    "maxSinglePositionPct": 0.15,
+    "maxTotalCryptoExposurePct": 0.45,
+    "cashReservePct": 0.25,
+    "selectionRule": "rank eligible assets by final predicted next-week gross return; target at most the top three whose forecast exceeds the frozen 140 bps round-trip cost hurdle; unallocated capital remains cash",
+    "turnoverRule": "decisions occur weekly; an already-held asset that remains selected is resized toward 15% only at the weekly rebalance, while entries, exits and resizing pay frozen one-side implementation costs on traded notional",
+    "noShorting": true
+  },
+  "costModel": {
+    "feeBpsPerSide": 60,
+    "slippageBpsPerSide": 5,
+    "spreadBpsRoundTrip": 10,
+    "roundTripCostBps": 140,
+    "note": "Use the same deliberately conservative MoneyMog retail friction. Trial 4 may not assume maker savings unless a separately frozen execution experiment later validates an execution-policy successor; such a successor must be reported separately from this frozen evaluation."
+  },
+  "developmentEvaluation": {
+    "walkForwardTestWeeks": 13,
+    "folds": "expanding chronological 13-week test folds across 2024-01-01 through 2025-12-31 with all training and AICc lambda selection restricted to pre-embargo information",
+    "reportFoldConsistency": true,
+    "finalHoldoutNeverAccessibleToDevelopmentWorkflow": true
+  },
+  "finalEvaluation": {
+    "holdoutMayBeEvaluatedOncePerFrozenSpecification": true,
+    "comparators": [
+      "cash",
+      "15%-exposure BTC buy-and-hold",
+      "45%-total equal-weight BTC/ETH/SOL buy-and-hold",
+      "same-universe 21-day momentum rank top-three weekly baseline with identical position caps and costs",
+      "same-universe equal-weight top-three-by-2022-liquidity static buy-and-hold at 45% total exposure",
+      "cross-sectional-v1 Trial 3 as a separately labeled frozen comparator only if Trial 3 has independently been evaluated without any Trial 4 information",
+      "frozen MoneyMog v2 on BTC/ETH/SOL as a separately labeled directional benchmark where compatible historical data are available"
+    ],
+    "requiredMetrics": [
+      "netReturn", "annualizedReturn", "Sharpe", "Sortino", "maxDrawdown", "Calmar", "winRate", "profitFactor", "expectancyPerClosedPosition", "turnover", "totalFees", "feeDrag", "averageExposure", "numberOfTrades", "forcedExits", "performanceByRegime", "perFoldPerformance", "signalSelectionFrequency", "perSignalFirstStageStability", "perAssetContribution"
+    ]
+  },
+  "promotionCriteria": {
+    "required": [
+      "positive final-holdout net return",
+      "final-holdout Sharpe positive and greater than the same-universe 21-day momentum weekly baseline",
+      "development walk-forward median candidate Sharpe positive",
+      "positive net return in a majority of development folds",
+      "candidate final-holdout net return greater than cash after all frozen costs",
+      "candidate total fee drag lower than frozen v2 benchmark when that benchmark is available on the same holdout",
+      "no single asset contributes more than 60% of positive realized portfolio profit",
+      "at least 20 completed portfolio position exits across development plus final holdout",
+      "no data-integrity exception, survivor substitution, post-formation membership change, or final-holdout-informed model change"
+    ],
+    "note": "Failure of any required criterion blocks promotion. Any change to universe membership/rule, signal definitions, 52-week window, elastic-net alpha, AICc lambda rule, positive-coefficient ensemble rule, cost gate, rebalance frequency, dates, or position sizing after any Trial 4 development or final result is observed requires a new numbered alpha trial."
+  },
+  "multipleTesting": {
+    "alphaTrialNumber": 4,
+    "seriousAlphaCandidateSpecificationsThroughThisTrial": 4,
+    "replicationsDoNotReduceTrialCount": true,
+    "selectionAdjustment": "report raw Sharpe with an explicit four-trial selection-bias warning; compute Deflated Sharpe Ratio once the set of observed candidate trials supplies the inputs needed for a meaningful estimate"
+  }
+}
