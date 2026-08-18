@@ -56,6 +56,7 @@ jobs:
         run: |
           npm ci
           npm test
+          node --check research/crypto/ctrend-evaluate-rest.js
           python -m py_compile research/crypto/prepare-ctrend-rest-data.py
           python tests/test_prepare_ctrend_rest_data.py
 
@@ -79,6 +80,7 @@ jobs:
               data = json.load(handle)
           assert data['experimentId'] == 'ctrend-v1'
           assert data['acquisitionMode'] == 'development'
+          assert data['sourceType'] == 'official Binance market-data-only REST /api/v3/klines'
           assert data['sourceBaseUrl'] == 'https://data-api.binance.vision'
           assert data['endExclusive'] == '2026-01-01T00:00:00Z'
           assert all(row['time'] < boundary for rows in data['products'].values() for row in rows)
@@ -87,7 +89,7 @@ jobs:
 
       - name: Run frozen Trial 4 development evaluator once
         run: >-
-          node research/crypto/ctrend-evaluate.js
+          node research/crypto/ctrend-evaluate-rest.js
           --mode development
           --manifest research/crypto/manifests/ctrend-v1.json
           --universe research/crypto/universes/cross-sectional-v1-universe.json
