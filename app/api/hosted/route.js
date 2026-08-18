@@ -26,8 +26,8 @@ function pausedSnapshot(message) {
 }
 
 export async function GET(request) {
-  const baseUrl = process.env.MONEYMOG_WORKER_URL;
-  const token = process.env.MONEYMOG_WORKER_API_TOKEN;
+  const baseUrl = process.env.THEOLDTRADER_WORKER_URL;
+  const token = process.env.THEOLDTRADER_WORKER_API_TOKEN;
   if (!baseUrl || !token) {
     return Response.json(pausedSnapshot("Cloudflare Worker is not connected yet."), {
       headers: { "cache-control": "no-store" }

@@ -5,5 +5,5 @@ dist/
 .DS_Store
 coverage/
 data/
-.moneymog/
+.theoldtrader/
 wrangler.toml
