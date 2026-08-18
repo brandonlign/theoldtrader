@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request) {
-  const baseUrl = process.env.MONEYMOG_WORKER_URL;
-  const token = process.env.MONEYMOG_WORKER_API_TOKEN;
+  const baseUrl = process.env.THEOLDTRADER_WORKER_URL;
+  const token = process.env.THEOLDTRADER_WORKER_API_TOKEN;
   if (!baseUrl || !token) {
     return Response.json({ configured: false, signals: [] }, {
       headers: { "cache-control": "no-store" }
