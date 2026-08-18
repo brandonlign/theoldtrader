@@ -21,7 +21,7 @@ export class PaperSimulationRunner {
 
   async runOnce() {
     if (!this.config.paperEnabled) {
-      throw new Error("Paper simulation is disabled. Set MONEYMOG_PAPER_ENABLED=true only when you are ready to begin.");
+      throw new Error("Paper simulation is disabled. Start it explicitly with npm run paper:once or npm run paper:run.");
     }
 
     const scanResults = await Promise.allSettled([

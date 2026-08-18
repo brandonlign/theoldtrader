@@ -21,13 +21,21 @@ This fetches public data and prints recommended wallets. It does not save state 
 
 ## Local observation
 
-Put selected wallets in `THEOLDTRADER_WHALE_WALLETS`, then explicitly enable observation:
+Save the qualified wallet array to a local ignored file, for example:
 
-```bash
-THEOLDTRADER_WHALE_MONITOR_ENABLED=true npm run whales:observe
+```text
+.theoldtrader/qualified-whales.json
 ```
 
-The first pass only saves a baseline. Later passes inspect trades that appeared after that baseline. The paper simulation remains paused.
+Then explicitly pass that file when you want one observation cycle:
+
+```bash
+npm run whales:observe -- .theoldtrader/qualified-whales.json
+```
+
+The file may contain wallet strings or the richer wallet objects produced by the ranking workflow. `.theoldtrader/` is gitignored, so local selections do not need environment variables and are not committed accidentally.
+
+The first pass only saves a baseline. Later passes inspect trades that appeared after that baseline. The paper simulation remains separate.
 
 ## Free hosted observation
 
@@ -39,14 +47,14 @@ The repository includes a Cloudflare Worker + D1 version because Railway is not 
 4. Apply `cloudflare/schema.sql`.
 5. Add an API token secret and your ranked wallet JSON.
 6. Deploy with Wrangler.
-7. Keep `MONITOR_ENABLED=false` until you intentionally want observation to begin.
-8. Add the Worker URL and API token to Vercel as `THEOLDTRADER_WORKER_URL` and `THEOLDTRADER_WORKER_API_TOKEN`.
+7. Keep the hosted whale monitor disabled until you intentionally want observation to begin.
+8. Add only the Worker URL and API token to Vercel as `THEOLDTRADER_WORKER_URL` and `THEOLDTRADER_WORKER_API_TOKEN`.
 
-The example polls every minute but processes only a small rotating wallet batch. That is suitable for zero-cost paper observation, not latency-sensitive real-money execution.
+Hosted Worker configuration remains in `wrangler.toml`; it is separate from the app-level `.env` file.
 
 ## Safety boundary
 
 - No private keys or Polymarket trading credentials are accepted.
 - No order-submission code exists in the whale monitor.
-- No simulated portfolio is modified.
-- Real-money execution will require a separate, always-on, hardened worker and a new review of fees, geofencing, authentication, failure handling, and partial fills.
+- No simulated portfolio is modified by the local whale monitor.
+- Real-money execution would require a separate, always-on, hardened worker and a new review of fees, geofencing, authentication, failure handling, and partial fills.

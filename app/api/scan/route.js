@@ -95,7 +95,7 @@ export async function POST(request) {
       headers: { "cache-control": "no-store" }
     });
   } catch (error) {
-    console.error("MoneyMog scan failed", error);
+    console.error("TheOldTrader scan failed", error);
     return Response.json({
       error: error instanceof Error ? error.message : "The market scan failed."
     }, {
