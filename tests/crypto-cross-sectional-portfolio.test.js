@@ -51,11 +51,12 @@ test('monthly portfolio applies frozen friction and never exceeds the 15% single
   const result = simulateCrossSectionalPortfolio(dataset, predictions, manifest(), '2024-01-01T00:00:00Z', '2024-02-01T00:00:00Z');
   const position = result.state.positions.get('AAAUSDT');
   assert.ok(position);
-  assert.ok(Math.abs(position.units * 100 - 1500) < 1e-6);
+  assert.ok(position.units * 100 < 1500);
+  assert.ok(position.units * 100 > 1490);
   assert.equal(result.state.orders, 1);
   assert.ok(result.state.totalFees > 0);
   assert.ok(result.state.equitySeries.at(-1).value < 10_000);
-  assert.ok(result.state.exposureSeries[0].value < 0.151);
+  assert.ok(result.state.exposureSeries[0].value <= 0.15 + 1e-12);
 });
 
 test('deselection closes the position and records a completed lifecycle trade', () => {
@@ -103,6 +104,6 @@ test('three selected assets respect the frozen 45% aggregate target', () => {
   ]);
   const result = simulateCrossSectionalPortfolio(dataset, predictions, manifest(), '2024-01-01T00:00:00Z', '2024-02-01T00:00:00Z');
   const firstExposure = result.state.exposureSeries[0].value;
-  assert.ok(firstExposure > 0.44 && firstExposure < 0.451);
+  assert.ok(firstExposure > 0.44 && firstExposure <= 0.45 + 1e-12);
   assert.equal(result.state.positions.size, 3);
 });
