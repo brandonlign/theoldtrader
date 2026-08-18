@@ -9,9 +9,9 @@ Authoritative specification: `research/crypto/manifests/ctrend-v1.json`
 
 ## Why this trial exists
 
-Trial 4 is a prospectively specified, literature-backed alternative to simply adding model complexity to Trial 1 or tweaking Trial 3 momentum settings. Fieberg et al. (2025), *A Trend Factor for the Cross Section of Cryptocurrency Returns*, report that an aggregate price/volume technical signal predicts the cross-section of cryptocurrency returns and remains present in large/liquid subsets and after their transaction-cost analysis. Recent 2026 momentum evidence is substantially less supportive of plain cross-sectional momentum under realistic/survivorship-aware assumptions. MoneyMog therefore tests the aggregate-information idea directly under its own much harsher retail costs and historical-universe controls rather than assuming the published result transfers.
+Trial 4 is a prospectively specified, literature-backed alternative to simply adding model complexity to Trial 1 or tweaking Trial 3 momentum settings. Fieberg et al. (2025), *A Trend Factor for the Cross Section of Cryptocurrency Returns*, report that an aggregate price/volume technical signal predicts the cross-section of cryptocurrency returns and remains present in large/liquid subsets and after their transaction-cost analysis. Recent 2026 momentum evidence is substantially less supportive of plain cross-sectional momentum under realistic/survivorship-aware assumptions. TheOldTrader therefore tests the aggregate-information idea directly under its own much harsher retail costs and historical-universe controls rather than assuming the published result transfers.
 
-This is **not** a reproduction claim. `ctrend-v1` is CTREND-inspired and deliberately adapted to MoneyMog's constraints: a frozen historical top-30 liquid universe, long-only positions, 15% per asset, 45% total exposure, cash reserve, and a 140 bps modeled round-trip hurdle.
+This is **not** a reproduction claim. `ctrend-v1` is CTREND-inspired and deliberately adapted to TheOldTrader's constraints: a frozen historical top-30 liquid universe, long-only positions, 15% per asset, 45% total exposure, cash reserve, and a 140 bps modeled round-trip hurdle.
 
 ## Firewall
 
@@ -47,7 +47,7 @@ The forecasting model is frozen as a two-stage rolling ensemble:
 - the final forecast is the equal-weight mean of surviving forecasts;
 - if no signal survives, the strategy does not trade.
 
-Weekly trades are long-only and limited to the top three forecasts that individually exceed the frozen 140 bps gross-return hurdle. Exposure and costs match the MoneyMog research risk envelope.
+Weekly trades are long-only and limited to the top three forecasts that individually exceed the frozen 140 bps gross-return hurdle. Exposure and costs match the TheOldTrader research risk envelope.
 
 ## Anti-rescue rule
 
