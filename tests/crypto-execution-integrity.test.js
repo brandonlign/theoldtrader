@@ -71,7 +71,7 @@ function baseRecords(extraTradeGap = false) {
 }
 
 function run(records) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'moneymog-exec-audit-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'theoldtrader-exec-audit-'));
   const rawPath = path.join(dir, 'recording.ndjson.gz');
   const raw = records.map((record) => JSON.stringify(record)).join('\n') + '\n';
   const compressed = zlib.gzipSync(raw);
