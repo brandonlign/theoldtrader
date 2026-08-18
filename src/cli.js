@@ -1,3 +1,4 @@
+import fs from "node:fs/promises";
 import { ClobClient } from "./clients/clob.js";
 import { DataApiClient } from "./clients/data-api.js";
 import { loadConfig } from "./config.js";
@@ -24,13 +25,19 @@ async function rankWhales() {
   console.log(JSON.stringify(result, null, 2));
 }
 
-async function observeWhales() {
-  const config = loadWhaleConfig();
-  if (!config.enabled) {
-    throw new Error("Whale monitoring is disabled. Set THEOLDTRADER_WHALE_MONITOR_ENABLED=true only when you are ready to begin observation.");
+async function readWalletFile(filePath) {
+  if (!filePath) {
+    throw new Error("Whale observation requires a local JSON file: npm run whales:observe -- .theoldtrader/qualified-whales.json");
   }
+  const parsed = JSON.parse(await fs.readFile(filePath, "utf8"));
+  if (!Array.isArray(parsed)) throw new Error("Whale wallet file must contain a JSON array");
+  return parsed;
+}
+
+async function observeWhales(walletFile) {
+  const config = loadWhaleConfig(await readWalletFile(walletFile));
   if (config.wallets.length === 0) {
-    throw new Error("No whale wallets configured. Set THEOLDTRADER_WHALE_WALLETS to a JSON array of ranked wallets.");
+    throw new Error("The whale wallet file did not contain any valid 0x wallet addresses.");
   }
   const state = await loadWhaleState(config.statePath);
   const monitor = new WhaleMonitor({
@@ -55,11 +62,11 @@ async function main() {
     return;
   }
   if (command === "whales-observe") {
-    await observeWhales();
+    await observeWhales(process.argv[3]);
     return;
   }
 
-  const config = loadConfig();
+  const config = loadConfig({ paperEnabled: command === "paper-once" });
   if (command === "multi-scan") {
     console.log(JSON.stringify(await new MultiOutcomeScanner(config).scan(), null, 2));
     return;

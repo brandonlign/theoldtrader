@@ -49,7 +49,7 @@ npm run scan:all
 npm run whales:rank
 ```
 
-The local JSON paper runner is separate from the hosted D1 portfolio and remains disabled unless `THEOLDTRADER_PAPER_ENABLED=true`.
+The local JSON paper runner is separate from the hosted D1 portfolio. It starts only when you explicitly run `npm run paper:once` or `npm run paper:run`; no environment flag is required.
 
 # Beginner hosted setup
 
@@ -176,14 +176,14 @@ npx wrangler@latest deploy
 
 ## 6. Add Vercel environment variables
 
-In the Vercel project, open **Settings → Environment Variables** and add:
+In the Vercel project, open **Settings → Environment Variables** and add only:
 
 ```text
 THEOLDTRADER_WORKER_URL=https://theoldtrader-paper-worker.YOUR-SUBDOMAIN.workers.dev
 THEOLDTRADER_WORKER_API_TOKEN=YOUR_RANDOM_TOKEN
 ```
 
-Add them to Production, Preview, and Development if you want every Vercel environment to show the same D1 paper account. Redeploy the Vercel project after saving them.
+These are the only app-level environment variables TheOldTrader needs. Add them to Production, Preview, and Development if you want every Vercel environment to show the same D1 paper account. Redeploy the Vercel project after saving them.
 
 These variables are server-side. Never rename them with a `NEXT_PUBLIC_` prefix.
 
