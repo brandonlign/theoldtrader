@@ -92,7 +92,7 @@ def main(argv=None):
     start_iso, end_iso = resolve_acquisition_window(manifest, args.mode, args.confirm_final)
 
     helper_path = Path(__file__).with_name("prepare-cross-sectional-data.py")
-    helpers = runpy.run_path(str(helper_path), run_name="moneymog_trial3_data_helpers")
+    helpers = runpy.run_path(str(helper_path), run_name="theoldtrader_trial3_data_helpers")
     verify_universe = helpers["verify_universe"]
     month_keys = helpers["month_keys"]
     download_symbol_month = helpers["download_symbol_month"]
