@@ -31,7 +31,7 @@ function level(side, price, quantity, minute) {
   return { side, price_level: String(price), new_quantity: String(quantity), event_time: iso(minute) };
 }
 function run(records) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'moneymog-maker-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'theoldtrader-maker-'));
   const input = path.join(dir, 'recording.ndjson.gz');
   const raw = records.map((record) => JSON.stringify(record)).join('\n') + '\n';
   const compressed = zlib.gzipSync(raw);
