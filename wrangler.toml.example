@@ -1,4 +1,4 @@
-name = "moneymog-paper-worker"
+name = "theoldtrader-paper-worker"
 main = "cloudflare/entry.js"
 compatibility_date = "2026-08-04"
 compatibility_flags = ["nodejs_compat"]
@@ -10,7 +10,7 @@ crons = ["*/5 * * * *"]
 
 [[d1_databases]]
 binding = "DB"
-database_name = "moneymog"
+database_name = "theoldtrader"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 
 [vars]
