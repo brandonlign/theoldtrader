@@ -1,0 +1,133 @@
+name: MoneyMog CTREND Trial 4 Development
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-ctrend-v1-development
+  cancel-in-progress: false
+
+jobs:
+  evaluate-development:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Check out frozen research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Require immutable 2022-only universe and pristine Trial 4 development slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f research/crypto/universes/cross-sectional-v1-universe.json
+          test -f research/crypto/universes/cross-sectional-v1-formation-sources.json
+          test -f research/crypto/TRIAL4_FROZEN.md
+          test -f research/crypto/TRIAL4_IMPLEMENTATION_FROZEN.md
+          test -f research/crypto/TRIAL4_IMPLEMENTATION_REVISION_1.md
+          if [ -e research/crypto/results/ctrend-v1-development/summary.json ] || \
+             [ -e research/crypto/results/ctrend-v1-development/provenance.json ]; then
+            echo 'Trial 4 development evidence already exists; refusing overwrite.' >&2
+            exit 1
+          fi
+
+      - name: Validate frozen pre-result implementation
+        run: |
+          npm ci
+          npm test
+          python -m py_compile research/crypto/prepare-ctrend-data.py
+          python tests/test_prepare_ctrend_data.py
+
+      - name: Acquire checksum-verified Trial 4 development data only
+        run: >-
+          python research/crypto/prepare-ctrend-data.py
+          --mode development
+          --manifest research/crypto/manifests/ctrend-v1.json
+          --trial3-manifest research/crypto/manifests/cross-sectional-v1.json
+          --universe research/crypto/universes/cross-sectional-v1-universe.json
+          --out /tmp/ctrend-v1-development.json.gz
+          --sources /tmp/ctrend-v1-development-sources.json
+
+      - name: Independently verify sealed final holdout is absent
+        run: |
+          python - <<'PY'
+          import gzip, json
+          from datetime import datetime, timezone
+          boundary = int(datetime(2026, 1, 1, tzinfo=timezone.utc).timestamp())
+          with gzip.open('/tmp/ctrend-v1-development.json.gz', 'rt', encoding='utf-8') as handle:
+              data = json.load(handle)
+          assert data['experimentId'] == 'ctrend-v1'
+          assert data['acquisitionMode'] == 'development'
+          assert data['endExclusive'] == '2026-01-01T00:00:00Z'
+          assert all(row['time'] < boundary for rows in data['products'].values() for row in rows)
+          print('Trial 4 final-holdout firewall verified: zero rows at or after 2026-01-01.')
+          PY
+
+      - name: Run frozen Trial 4 development evaluator once
+        run: >-
+          node research/crypto/ctrend-evaluate.js
+          --mode development
+          --manifest research/crypto/manifests/ctrend-v1.json
+          --universe research/crypto/universes/cross-sectional-v1-universe.json
+          --data /tmp/ctrend-v1-development.json.gz
+          --out research/crypto/results/ctrend-v1-development/summary.json
+
+      - name: Preserve compact acquisition provenance
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          source_path = Path('/tmp/ctrend-v1-development-sources.json')
+          sources = json.loads(source_path.read_text())
+          out = Path('research/crypto/results/ctrend-v1-development/provenance.json')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          payload = {
+              'experimentId': 'ctrend-v1',
+              'trialNumber': 4,
+              'mode': 'development',
+              'finalHoldoutRowsAcquired': 0,
+              'datasetCanonicalJsonSha256': sources['datasetCanonicalJsonSha256'],
+              'formationSourceManifestSha256': sources['formationSourceManifestSha256'],
+              'universeMembershipSha256': sources['universeMembershipSha256'],
+              'sourceArchiveCount': sources['sourceArchiveCount'],
+              'sourceManifestSha256': hashlib.sha256(source_path.read_bytes()).hexdigest(),
+          }
+          out.write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n')
+          PY
+
+      - name: Commit immutable Trial 4 development evidence only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'moneymog-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add \
+            research/crypto/results/ctrend-v1-development/summary.json \
+            research/crypto/results/ctrend-v1-development/provenance.json
+          git commit -m 'Observe ctrend-v1 development result'
+          git push origin HEAD:research/crypto-oos-v1
+
+      - name: Upload Trial 4 development evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ctrend-v1-development
+          path: |
+            research/crypto/results/ctrend-v1-development/summary.json
+            research/crypto/results/ctrend-v1-development/provenance.json
+          if-no-files-found: error
