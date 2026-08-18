@@ -59,11 +59,11 @@ function baseRecords(extraTradeGap = false) {
     l2(21, 3, [level('bid', 99, 1, 21), level('offer', 101, 1, 21)]),
     l2(31, 4, [
       level('bid', 99, 0, 31), level('offer', 101, 0, 31),
-      level('bid', 100, 1, 31), level('offer', 102, 1, 31)
+      level('bid', 100, 1, 31), level('offer', 102, 1, 31), level('offer', 103, 20, 31)
     ]),
     l2(76, 5, [
       level('bid', 100, 0, 76), level('offer', 102, 0, 76),
-      level('bid', 101, 1, 76), level('offer', 103, 1, 76)
+      level('bid', 101, 1, 76), level('offer', 103, 1, 76), level('offer', 104, 20, 76)
     ]),
     { kind: 'recorder_stop', received_at: iso(76, 1), product: 'BTC-USD' }
   );
