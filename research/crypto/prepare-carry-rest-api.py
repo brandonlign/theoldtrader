@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 EIGHT_HOURS_MS = 8 * 60 * 60 * 1000
-USER_AGENT = "MoneyMog-Research/1.0"
+USER_AGENT = "TheOldTrader-Research/1.0"
 DEFAULT_MANIFEST = Path("research/crypto/manifests/funding-carry-v1R-api.json")
 DEFAULT_OUT = Path("research/crypto/data-cache/funding-carry-v1R-api-synchronized.csv")
 DEFAULT_SOURCES = Path("research/crypto/data-cache/funding-carry-v1R-api-sources.json")
