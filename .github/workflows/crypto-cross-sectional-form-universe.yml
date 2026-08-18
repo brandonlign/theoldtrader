@@ -1,4 +1,4 @@
-name: MoneyMog Cross-Sectional Trial 3 Universe Formation
+name: TheOldTrader Cross-Sectional Trial 3 Universe Formation
 
 on:
   workflow_dispatch:
@@ -68,7 +68,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name 'moneymog-research-bot'
+          git config user.name 'theoldtrader-research-bot'
           git config user.email 'actions@users.noreply.github.com'
           git add \
             research/crypto/universes/cross-sectional-v1-universe.json \
