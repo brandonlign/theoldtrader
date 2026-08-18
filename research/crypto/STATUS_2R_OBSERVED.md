@@ -1,4 +1,4 @@
-# MoneyMog crypto research — post-2R observation handoff
+# TheOldTrader crypto research — post-2R observation handoff
 
 Date: 2026-08-12  
 Branch: `research/crypto-oos-v1`  
@@ -8,7 +8,7 @@ This addendum is newer than the carry section of `STATUS.md` and exists specific
 
 ## Safety state
 
-- Frozen MoneyMog crypto v2 execution code remains unchanged.
+- Frozen TheOldTrader crypto v2 execution code remains unchanged.
 - No real-money order path exists in this research branch.
 - PR changes remain restricted to research, tests, and research workflows.
 
