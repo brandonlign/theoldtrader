@@ -1,122 +1,116 @@
-# MoneyMog crypto research status — 2026-08-12
+# MoneyMog crypto research status — 2026-08-18
 
 Authoritative research branch: `research/crypto-oos-v1`  
 Draft PR: `#8`  
-Live/paper v2 execution code modified by this branch: **no**  
+Frozen live/paper v2 execution code modified by this branch: **no**  
 Real-money trading enabled: **no**
+
+## Current conclusion
+
+**No new strategy has yet earned promotion over frozen MoneyMog crypto v2.** Trial 1's completed robustness replication was weak/negative. Trial 2 carry remains economically interesting but its primary checksum-archive evaluation is still unobserved. Trial 3 cross-sectional selection and Trial 4 CTREND-inspired selection are both frozen before their development results and remain blocked on the immutable 2022-only universe formation. E1 maker execution remains a separate unobserved execution experiment.
+
+The correct next scientific action is to execute the already-frozen experiments, not tune them or invent outcome-driven rescue variants.
 
 ## Frozen live baseline
 
-MoneyMog crypto v2 remains the frozen paper baseline. Research code may import its signal/risk functions read-only for historical comparison, but this branch does not modify the execution path.
+MoneyMog crypto v2 remains the paper-only live baseline. This research branch does not modify `src/crypto/strategy.js`, `src/crypto/risk.js`, or `cloudflare/crypto-engine.js`. Research candidates must pass their own frozen development/final gates before any separate promotion proposal can exist.
 
 ## Trial 1 — `crypto-oos-v1`
 
-**Family:** pooled 24-hour ridge expected-return forecast with an explicit cost gate.  
-**Primary data:** Coinbase BTC-USD / ETH-USD / SOL-USD 15-minute candles.  
-**Final holdout:** 2026-03-01 through 2026-08-01.  
-**Status:** FROZEN; PRIMARY HOLDOUT UNTOUCHED.
+**Family:** pooled 24-hour ridge expected-return forecast + explicit cost gate.  
+**Primary Coinbase final holdout:** untouched / infrastructure-blocked.  
+**Robustness replication 1R:** evaluated and failed.
 
-The primary evaluator includes expanding walk-forward training, a 24-hour embargo, realistic fees/slippage/spread, exact frozen-v2 comparison, trend/buy-hold/cash controls, regime analysis, stability diagnostics, and reproducible reports/plots. A first-entry performance-accounting bug discovered in the auxiliary replication was corrected in the primary pipeline **before any primary result was observed**.
-
-### Holdout firewall and infrastructure blocker
-
-GitHub Actions currently refuses to start jobs before checkout because the account reports failed payments / insufficient Actions spending limit. This is infrastructure, not a model result; `results/crypto-oos-v1/BLOCKED.md` preserves the original blocker.
-
-Ordinary research pushes run **validation only**. The final Coinbase evaluation is a separate manual `workflow_dispatch` job, runs only after validation, and refuses to run if a prior `summary.json` exists. The latest ordinary push confirmed the firewall: validation failed before checkout because of billing while `evaluate-primary-coinbase-holdout` was skipped. Restoration of Actions compute therefore cannot accidentally open the frozen holdout on an unrelated push.
-
-## Trial 1R — `binance-btc-replication-v1`
-
-**Purpose:** exact-family BTC-only cross-venue robustness diagnostic; not promotion eligible and not a substitute for the Coinbase holdout.  
-**Data:** BTCUSDT 15-minute Binance spot history, exact source SHA-256 preserved.  
-**Holdout:** 2024-05-01 through 2024-11-01.  
-**Status:** EVALUATED; FAILED ROBUSTNESS DIAGNOSTIC.
-
-Corrected holdout summary:
-
-| Strategy | Net return | Sharpe | Closed trades | Modeled fees |
-|---|---:|---:|---:|---:|
-| ridge24 cost gate | 0.00% | 0.00 | 0 | $0.00 |
-| frozen MoneyMog v2 | -2.09% | -4.14 | 14 | $190.46 |
-| 30-day trend | -3.30% | -1.45 | 9 | $156.29 |
-| BTC buy-and-hold at 15% exposure | +2.84% | +0.82 | 1 | $19.83 |
-| cash | 0.00% | 0.00 | 0 | $0.00 |
-
-Ridge24 had 0 positive-return development folds out of 11. In the holdout, forecast/realized-return correlation was -0.119 and the maximum 24-hour forecast was 1.258%, below the frozen ~1.40% round-trip hurdle. **Do not lower the hurdle, alter lambda/features/horizon, or otherwise rescue trial 1 after observing this.**
-
-The auxiliary evaluator initially anchored returns to the first post-entry snapshot and therefore omitted first-entry friction for strategies that entered immediately. That reporting calculation was corrected to anchor to the fixed $10,000 starting capital; no signals, fills or trades changed. Git history and the result report preserve the correction.
+The frozen BTCUSDT Binance replication produced zero ridge holdout trades, negative forecast/realized-return correlation, and did not support rescuing the same candle information set with a more complex model. Frozen v2 and a simple trend comparator lost money in that replication while low-exposure BTC buy-and-hold was positive. Trial 1 may not be retuned after that observed robustness result.
 
 ## Trial 2 — `funding-carry-v1`
 
 **Family:** market-neutral BTC spot / BTCUSDT perpetual funding-and-basis carry.  
-**Status:** FROZEN DATA ACQUISITION PENDING; **NO CARRY P&L OBSERVED.**
+**Primary:** frozen, unobserved, checksum-archive acquisition pending.  
+**Replication 2R:** official Binance REST exact-family replication observed and locked; non-promotion only.
 
-### Frozen economic specification
+The frozen economics remain: 15% starting-equity BTC spot purchase, short exactly the same BTC units in the perpetual, 20% starting-equity futures collateral reserve, no rebalancing or funding-sign/timing optimization, both-leg MoneyMog friction, standard contract prices for execution, mark price for funding/valuation/margin, exact 8-hour schedule, no interpolation, and frozen gap/margin stress.
 
-- spend 15% of starting equity on BTC spot at the modeled entry fill;
-- short **exactly the same BTC units** of the USD-M BTCUSDT perpetual; there is no independent perpetual-dollar-notional target;
-- reserve 20% of starting equity as futures collateral;
-- hold the original equal BTC units on both legs with no rebalancing;
-- no funding threshold, funding-sign filter, leverage tuning, entry-date selection, or regime timing;
-- apply the same conservative MoneyMog friction to both legs;
-- accrue actual realized funding after entry and model actual spot/perpetual basis rather than assuming perfect cancellation;
-- maintenance-margin stress uses the frozen 5% research assumption plus +25%/+50%/+100% instantaneous perpetual-mark gap checks;
-- historical robustness window is fixed to 2021-05-01 through 2026-03-01;
-- the funding payment coincident with entry is not earned;
-- the historical result is development/robustness evidence only because whole-sample funding summary statistics were visible before the complete freeze;
-- any promotion would still require a later untouched forward or independently sealed evaluation.
+2R passed its 5,295-row official REST data gate before its first economic result was observed. The exact originating result bundle still requires canonical repository reproduction. 2R cannot replace the primary Trial 2 and cannot authorize a live change.
 
-The equal-unit sizing rule resolves a pre-result ambiguity in earlier prose that simultaneously described equal BTC units and a 15% perpetual notional. Those cannot both be exact when spot and futures prices differ. The implementation had always used equal units; the manifest now makes that scientifically authoritative rather than introducing a new leverage choice.
+## Trial 3 — `cross-sectional-v1`
 
-### Frozen data and price roles
+**Family:** low-turnover monthly cross-sectional spot expected-return selection.  
+**Status:** frozen before universe formation and before any 2023+ Trial 3 result.  
+**Development/final performance observed:** no.
 
-Trial 2 requires four independently sourced series on the normalized scheduled 8-hour grid:
+Trial 3 first forms an immutable 30-symbol Binance USDT universe using **2022 information only**: historically enumerated symbols, deterministic stable/fiat/leveraged-token exclusions, minimum data continuity, and ranking by median 2022 daily quote volume. Current survivors may not be substituted.
 
-1. checksum-verified **daily** BTCUSDT spot 8-hour kline opens;
-2. checksum-verified monthly USD-M BTCUSDT **standard contract** 8-hour kline opens as the perpetual entry/exit execution-price proxy;
-3. checksum-verified monthly USD-M BTCUSDT **markPrice** 8-hour kline opens for unrealized short P&L, funding notional, maintenance margin and stress;
-4. checksum-verified monthly USD-M BTCUSDT funding-rate archives.
+After membership is committed, the frozen candidate uses six cross-sectional characteristics, pooled ridge (`lambda=10`), a one-month embargo, monthly top-three long-only selection, 15% per asset, 45% total exposure, and the same 140-bps round-trip friction. Development acquisition is physically capped before `2026-01-01`; the `2026-01-01` to `2026-08-01` holdout is separate and one-shot.
 
-Mark price is no longer treated as if it were the historical executable contract price. Modeled futures spread/slippage is applied around the standard contract entry/exit reference; mark price is reserved for valuation/risk/funding.
+## Trial 4 — `ctrend-v1`
 
-Because Binance funding archives use `calc_time` while price archives use exact kline `open_time`, raw funding timestamps are preserved and mapped to the nearest scheduled 00:00/08:00/16:00 UTC boundary **only if absolute skew is <=60 seconds**. Any larger skew, collision, missing payment, missing spot/contract/mark open, failed official checksum, or non-complete grid aborts the experiment rather than being interpolated.
+**Family:** CTREND-inspired cross-sectional aggregate technical-trend expected-return selection.  
+**Status:** frozen before the shared 2022-only universe was formed and before any Trial 4 post-2022 performance was observed.  
+**Development/final performance observed:** no.
 
-The frozen window contains exactly **5,295 scheduled 8-hour observations**. `prepare-carry-data.py` must produce exactly those rows and records raw funding timestamps/skews plus hashes for every source archive. `carry-evaluate.js` independently rechecks the 5,295-row grid and timestamp provenance rather than trusting preprocessing.
+Trial 4 was added prospectively after literature review rather than as a Trial 1/3 parameter tweak. It reuses exactly Trial 3's immutable 30-member 2022-only universe but does **not** use Trial 3 P&L, coefficients, picks, or holdout results.
 
-A separate secondary-data audit found meaningful gaps in an available precomputed premium/basis series, including multi-day gaps, so Trial 2 explicitly rejects the dataset-card suggestion to forward-fill. `CARRY_DATA_AUDIT.md` preserves that decision. `CARRY_PRECHECK.md` contains only a non-evaluation funding-scale sanity calculation and may never be reported as Trial 2 P&L.
+Frozen candidate mechanics:
 
-Regression tests now cover funding timestamp jitter/tolerance/collision rejection and a synthetic carry path where contract execution price is deliberately different from mark price. The carry workflow is manual-dispatch only, refuses overwrite, runs deterministic tests before data acquisition, and has a 120-minute ceiling for the checksum-heavy official archive build.
+- 28 daily price/volume technical indicators: momentum oscillators, price moving-average/MACD signals, volume moving-average/MACD/money-flow signals, and Bollinger/volatility signals;
+- exact 201-day trailing continuity, strict pre-decision feature cutoff, no interpolation;
+- contemporaneous cross-sectional average-rank transform mapped to `[-0.5, 0.5]`;
+- weekly Monday 00:00 UTC decisions;
+- one causal fixed 52-week training window with a one-week embargo;
+- 28 univariate cross-sectional first-stage forecasts with 52-week coefficient smoothing;
+- second-stage elastic net with `alpha=0.5`, training-only feature standardization, deterministic 50-point log lambda path, and AICc selection;
+- retain only strictly positive forecast-selection coefficients, then equally average the surviving first-stage forecasts;
+- top three long-only forecasts only when expected gross log return clears the frozen 140-bps hurdle;
+- 15% target per asset, 45% maximum total exposure, unallocated capital in cash.
+
+### Pre-result implementation correction
+
+The first authored helper accidentally nested a second independent 52-week out-of-sample forecast history on top of the 52-week first-stage window. Before any Trial 4 universe/data/performance was observed, this was identified as an implementation interpretation error and corrected to a **single 52-week rolling parameter-estimation window**, consistent with the frozen statistical intent. The correction is recorded explicitly in `TRIAL4_IMPLEMENTATION_REVISION_1.md`; scientific evaluation must call `walkForwardCtrendWindowedPredictions` from `lib/ctrend-windowed.js`.
+
+Trial 4 now has:
+
+- frozen manifest and anti-rescue marker;
+- explicit numerical implementation freeze and correction log;
+- tested 28-signal/embargo/elastic-net core;
+- holdout-safe checksum data builder;
+- development evaluator with 21-day weekly momentum, cash, major-coin buy/hold, and static-liquidity comparators;
+- 13-week fold diagnostics, signal-selection frequency, first-stage stability, fee/turnover/exposure and per-asset contribution diagnostics;
+- frozen promotion checker;
+- manual development and one-shot final workflows.
+
+No Trial 4 result exists yet.
 
 ## Execution experiment E1 — `coinbase-maker-execution-v1`
 
-**Question:** Can post-only maker execution materially lower MoneyMog's effective implementation cost after realistic non-fills, queue competition, depth and adverse selection?  
-**Status:** FROZEN FORWARD-DATA PROTOCOL; NO LIVE RECORDING RESULT OBSERVED.
+**Question:** can post-only maker execution reduce MoneyMog implementation cost after queue position, non-fills, full-book depth and adverse selection?  
+**Status:** frozen forward-data protocol; scientific data acquisition pending.
 
-The current 60 bps/side taker assumption matches Coinbase Exchange's lowest published taker tier; the corresponding published maker benchmark is 40 bps/side. This does **not** justify replacing v2's costs with maker fees. E1 is designed to measure whether MoneyMog-sized post-only orders can actually earn maker treatment often enough to matter.
+E1 remains separate from alpha research. The first scientific window requires at least 168 hours for each BTC/ETH/SOL feed plus frozen hash, coverage, sequence, queue and independent taker-VWAP audit rules. No E1 scientific result has been observed.
 
-Frozen E1 design:
+## Infrastructure state
 
-- public Coinbase Advanced Trade `level2`, `market_trades`, and `heartbeats` only; no account/order credentials and no real orders;
-- BTC-USD, ETH-USD and SOL-USD recorded on three independent public WebSocket connections/files;
-- hypothetical BUY orders join best bid and SELL orders join best ask every 15 minutes;
-- $500 and $1,500 hypothetical sizes; five-minute TTL;
-- conservative back-of-queue fill rule: observed same-price maker-side trade volume must consume displayed queue ahead plus the hypothetical order; queue-ahead cancellations are not credited;
-- trade-through can establish a fill because observed executions crossed the resting limit;
-- 1m/5m/15m/60m signed midpoint markouts measure post-fill adverse selection;
-- one-hour recordings are engineering tests only; each product needs at least 168 hours, >=98% connected-time coverage, no disconnect over five minutes, zero parse errors, zero forward `level2` sequence gaps and zero forward `market_trades` sequence gaps;
-- initial connection delay counts against coverage;
-- reconnect-spanning hypothetical orders become `DATA_GAP`; no new order is placed until a fresh level2 snapshot rebuilds that product book;
-- raw gzip files and companion SHA-256 values are preserved independently by product.
+GitHub Actions was retried on 2026-08-18 and still failed **before any workflow step started**, consistent with the account Actions billing/spending-limit block. That prevents the official universe-formation and checksum-archive workflows from running. The current execution environment also cannot resolve the official Binance archive host directly, so the immutable 2022 universe cannot honestly be formed here as a substitute.
 
-Execution analysis is deliberately redundant:
+This is an infrastructure blocker, not a strategy result. Do not infer performance from it and do not weaken provenance rules to bypass it.
 
-1. `analyze-coinbase-maker-execution.mjs` reconstructs books and simulates the frozen maker orders using the conservative queue rule.
-2. `audit-coinbase-execution-integrity.mjs` independently re-reads the immutable raw feed, verifies the compressed-file SHA-256, recomputes coverage and both channel sequence streams, matches every eligible placement back to the raw book, and prices the same base quantity as an immediate taker against the full opposite-side book. If recorded depth is insufficient, the taker comparator is unavailable rather than imputed.
-3. `validate-coinbase-maker-window.mjs` refuses the final scientific report unless all three unique products have verified hashes, a scientific maker window, and a passing independent integrity audit with matching raw hashes. It refuses to overwrite an existing E1 result.
+## Tested implementation state on 2026-08-18
 
-Deterministic tests cover conservative queue consumption, level2 gap invalidation, multi-level taker VWAP, and deliberate `market_trades` sequence loss. Materially changing placement price, TTL, queue model, cancellation treatment, order sizes or maker/taker switching requires a new execution experiment number.
+Local deterministic validation of the new Trial 4 code passed:
 
-## Research conclusion so far
+- 13 JavaScript tests covering signal count, tie ranking, no-future feature cutoff, daily-gap rejection, weekly schedule, 52-week/embargo logic, elastic-net/AICc behavior, corrected one-window estimation, and promotion-gate behavior;
+- 3 Python tests covering development holdout cutoff, explicit final confirmation, and boundary-mismatch abort behavior;
+- syntax/compile checks for the Trial 4 model, corrected windowed estimator, evaluator, promotion checker and data builder.
 
-The evidence does **not** support promoting a more complex directional ML model. The only completed OOS robustness test found weak/negative 24-hour forecast information and severe cost sensitivity in v2/trend trading. The highest-value unresolved questions are therefore a genuinely different low-turnover economic return source such as carry and the actual achievable execution cost after queue/non-fill/adverse-selection effects—not a post-hoc Transformer/XGBoost rescue on the same candle features.
+These are implementation tests only. They are **not** evidence that Trial 4 is profitable.
 
-This is not a claim that carry or maker execution will work. Trial 2 must still survive both-leg costs, basis movements, funding and margin stress; E1 must still survive low fill probability and adverse selection.
+## Required next execution order
+
+1. Run the existing Trial 3 universe-formation workflow and commit the immutable 2022-only 30-symbol membership/source hashes.
+2. Run Trial 3 development and Trial 4 development independently; neither may access 2026 rows.
+3. Reproduce carry 2R canonically and run primary Trial 2 when checksum-archive compute is available.
+4. Only after a candidate's development evidence is frozen may its separate one-shot final holdout be opened.
+5. Apply the pre-frozen promotion checker. A failure creates a recorded failed trial; it does not authorize parameter rescue under the same trial number.
+6. Keep E1 execution evidence separate from alpha evidence.
+
+Until those steps produce qualifying evidence, frozen v2 remains the paper baseline and no research candidate is promoted.
