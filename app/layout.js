@@ -2,7 +2,7 @@ import "./hosted.css";
 import "./desks.css";
 
 export const metadata = {
-  title: "MoneyMog — Polymarket + Crypto Paper Desks",
+  title: "TheOldTrader — Polymarket + Crypto Paper Desks",
   description: "Two separate Cloudflare-backed paper-trading desks for prediction markets and 24/7 crypto research."
 };
 
