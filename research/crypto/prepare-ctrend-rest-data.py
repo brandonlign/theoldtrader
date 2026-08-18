@@ -22,7 +22,7 @@ from pathlib import Path
 
 BASE_URL = "https://data-api.binance.vision/api/v3/klines"
 ONE_DAY_MS = 86_400_000
-USER_AGENT = "MoneyMog-Research/1.0"
+USER_AGENT = "TheOldTrader-Research/1.0"
 
 
 def sha256(payload: bytes) -> str:
