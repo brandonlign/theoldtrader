@@ -27,10 +27,10 @@ async function rankWhales() {
 async function observeWhales() {
   const config = loadWhaleConfig();
   if (!config.enabled) {
-    throw new Error("Whale monitoring is disabled. Set MONEYMOG_WHALE_MONITOR_ENABLED=true only when you are ready to begin observation.");
+    throw new Error("Whale monitoring is disabled. Set THEOLDTRADER_WHALE_MONITOR_ENABLED=true only when you are ready to begin observation.");
   }
   if (config.wallets.length === 0) {
-    throw new Error("No whale wallets configured. Set MONEYMOG_WHALE_WALLETS to a JSON array of ranked wallets.");
+    throw new Error("No whale wallets configured. Set THEOLDTRADER_WHALE_WALLETS to a JSON array of ranked wallets.");
   }
   const state = await loadWhaleState(config.statePath);
   const monitor = new WhaleMonitor({
@@ -86,6 +86,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  process.stderr.write(`MoneyMog error: ${error instanceof Error ? error.message : String(error)}\n`);
+  process.stderr.write(`TheOldTrader error: ${error instanceof Error ? error.message : String(error)}\n`);
   process.exitCode = 1;
 });
