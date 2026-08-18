@@ -48,7 +48,7 @@ def main() -> None:
     acquisition_manifest["originalFinalHoldoutEndExclusive"] = final_end
 
     builder = Path(__file__).with_name("prepare-cross-sectional-data.py")
-    with tempfile.TemporaryDirectory(prefix="moneymog-trial3-dev-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="theoldtrader-trial3-dev-") as tmp:
         transient = Path(tmp) / "cross-sectional-v1-development-acquisition.json"
         transient.write_text(json.dumps(acquisition_manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         original_argv = sys.argv[:]
