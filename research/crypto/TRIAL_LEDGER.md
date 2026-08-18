@@ -1,4 +1,4 @@
-# MoneyMog crypto serious-trial ledger
+# TheOldTrader crypto serious-trial ledger
 
 This ledger counts serious candidate specifications so failed ideas cannot disappear and multiple testing remains visible. A replication of an existing frozen specification does not create a new candidate trial. Alpha/portfolio trials and execution-policy experiments are counted separately because testing a fill model is not evidence of return predictability, but failed execution variants still must not disappear.
 
