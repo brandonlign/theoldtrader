@@ -1,0 +1,99 @@
+{
+  "experimentId": "cross-venue-funding-v1",
+  "trial": 5,
+  "family": "cross-venue-perpetual-funding-spread",
+  "status": "frozen-before-first-theoldtrader-observation",
+  "frozenDate": "2026-08-18",
+  "paperOnly": true,
+  "realMoneyTrading": false,
+  "scientificMode": "forward-only",
+  "motivation": {
+    "primary": "Lau (2026), The Funding Carry and a Cross-Venue Spread on Perpetual Futures",
+    "reason": "A recent independent study reports a persistent funding differential between Hyperliquid and major centralized perpetual venues after transaction-cost and basis-risk checks. This trial tests a deliberately simpler, lower-leverage forward implementation without using the paper's historical sample as TheOldTrader evidence."
+  },
+  "hypothesis": "A static equal-BTC long Binance USD-M BTCUSDT perpetual / short Hyperliquid BTC perpetual position earns positive net carry because Hyperliquid funding paid to shorts exceeds Binance funding paid by longs often enough to overcome basis drift and conservative execution friction.",
+  "asset": "BTC",
+  "venues": {
+    "long": {
+      "venue": "binance-usdm",
+      "symbol": "BTCUSDT",
+      "publicFundingHistoryEndpoint": "https://fapi.binance.com/fapi/v1/fundingRate",
+      "publicMarkEndpoint": "https://fapi.binance.com/fapi/v1/premiumIndex"
+    },
+    "short": {
+      "venue": "hyperliquid",
+      "coin": "BTC",
+      "publicInfoEndpoint": "https://api.hyperliquid.xyz/info",
+      "fundingHistoryType": "fundingHistory",
+      "markSnapshotType": "metaAndAssetCtxs"
+    }
+  },
+  "forwardWindow": {
+    "notBefore": "2026-08-19T00:00:00.000Z",
+    "screeningDurationDays": 90,
+    "promotionDurationDays": 180,
+    "minimumCoverage": 0.98,
+    "maximumSnapshotGapMinutes": 130,
+    "fundingMarkMatchToleranceMinutes": 10
+  },
+  "portfolio": {
+    "startingEquityUsd": 10000,
+    "pairedNotionalPctOfStartingEquity": 0.15,
+    "collateralReservePctOfStartingEquityPerVenue": 0.20,
+    "sizing": "At entry, use identical BTC quantity on both venues. Quantity = pairedNotionalUsd / mean(longVenueMark, shortVenueMark).",
+    "leverageOptimization": false,
+    "rebalancing": false,
+    "compounding": false,
+    "directionSwitching": false,
+    "fundingThreshold": null,
+    "assetSelection": false
+  },
+  "executionModel": {
+    "entryOrderType": "taker-equivalent-paper-fill",
+    "exitOrderType": "taker-equivalent-paper-fill",
+    "allInFrictionBpsPerOrder": 15,
+    "ordersInRoundTrip": 4,
+    "comment": "Each of the two venues pays 15 bps of fee+slippage friction at entry and again at exit. This deliberately exceeds Hyperliquid's current base perp taker fee and avoids assuming VIP, maker, referral or staking discounts."
+  },
+  "valuation": {
+    "markToMarket": true,
+    "fundingNotional": "equal BTC quantity multiplied by the matched venue mark price at each funding event",
+    "fundingSign": {
+      "hyperliquidShort": "positive funding is received; negative funding is paid",
+      "binanceLong": "positive funding is paid; negative funding is received"
+    },
+    "missingFundingMark": "abort scientific evaluation rather than interpolate",
+    "missingFundingEvent": "abort when the raw source indicates a coverage hole; never forward-fill"
+  },
+  "comparators": [
+    "cash",
+    "15%-notional BTC spot buy-and-hold over the identical forward timestamps",
+    "funding-only PnL with basis PnL shown separately"
+  ],
+  "screeningGate": {
+    "purpose": "engineering/economic plausibility only; cannot promote",
+    "afterDays": 90,
+    "requirements": [
+      "net paired return after all four execution frictions is positive",
+      "funding contribution is positive before basis PnL",
+      "coverage and provenance gates pass"
+    ]
+  },
+  "promotionGate": {
+    "afterDays": 180,
+    "requirements": [
+      "net paired return after all execution frictions is positive",
+      "annualized net return on total starting equity exceeds cash by at least 2 percentage points",
+      "at least two of three consecutive non-overlapping 60-day subwindows have positive net paired PnL before any parameter change",
+      "maximum drawdown on total starting equity is below 10%",
+      "no provenance, coverage, timestamp or funding-mark matching gate fails"
+    ],
+    "failureRule": "Failure is recorded as Trial 5 failure. Direction, allocation, costs, asset, venues, window, filters or holding rule may not be rescued under Trial 5."
+  },
+  "antiLeakage": {
+    "publishedHistoricalEvidenceIsMotivationOnly": true,
+    "theoldtraderHistoricalBacktestMayAuthorizePromotion": false,
+    "firstScientificObservationMustBeAfterNotBefore": true,
+    "noOutcomeDrivenRetuning": true
+  }
+}
