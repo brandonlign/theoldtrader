@@ -88,14 +88,14 @@ export async function POST(request) {
       },
       strategyErrors: {
         binary: binaryResult.status === "rejected" ? String(binaryResult.reason?.message ?? binaryResult.reason) : null,
-        multiOutcome: multiResult.status === "rejected" ? String(multiResult.reason?.message ?? multiResult.reason) : null
+        multiOutcome: multiResult.status === "rejected" ? String(multiOutcome?.message ?? multiOutcome) : null
       }
     }, {
       status: 200,
       headers: { "cache-control": "no-store" }
     });
   } catch (error) {
-    console.error("MoneyMog scan failed", error);
+    console.error("TheOldTrader scan failed", error);
     return Response.json({
       error: error instanceof Error ? error.message : "The market scan failed."
     }, {
