@@ -26,7 +26,7 @@ function summarize(result) {
 }
 
 async function main() {
-  const config = loadConfig({ paperEnabled: true });
+  const config = loadConfig();
   const runner = new PaperSimulationRunner(config);
   let stopping = false;
 
