@@ -102,7 +102,7 @@
     "slippageBpsPerSide": 5,
     "spreadBpsRoundTrip": 10,
     "roundTripCostBps": 140,
-    "note": "Use the same deliberately conservative MoneyMog retail friction as prior directional research; do not assume maker execution until E1 independently supports an execution-policy successor."
+    "note": "Use the same deliberately conservative TheOldTrader retail friction as prior directional research; do not assume maker execution until E1 independently supports an execution-policy successor."
   },
   "developmentEvaluation": {
     "walkForwardTestMonths": 6,
@@ -118,7 +118,7 @@
       "45%-total equal-weight BTC/ETH/SOL buy-and-hold",
       "same-universe 90-day momentum rank top-three monthly baseline with identical position caps/costs",
       "same-universe equal-weight top-three-by-2022-liquidity static buy-and-hold at 45% total exposure",
-      "frozen MoneyMog v2 on BTC/ETH/SOL as a separately labeled directional benchmark where compatible historical data are available"
+      "frozen TheOldTrader v2 on BTC/ETH/SOL as a separately labeled directional benchmark where compatible historical data are available"
     ],
     "requiredMetrics": [
       "netReturn", "annualizedReturn", "Sharpe", "Sortino", "maxDrawdown", "Calmar", "winRate", "profitFactor", "expectancyPerClosedPosition", "turnover", "totalFees", "feeDrag", "averageExposure", "numberOfTrades", "forcedExits", "performanceByRegime", "perFoldPerformance", "coefficientStability", "perAssetContribution"
