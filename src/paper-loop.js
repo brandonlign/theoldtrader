@@ -32,21 +32,21 @@ function summarize(result) {
 async function main() {
   const config = loadConfig();
   if (!config.paperEnabled) {
-    throw new Error("Paper simulation is disabled. Start with MONEYMOG_PAPER_ENABLED=true npm run paper:run");
+    throw new Error("Paper simulation is disabled. Start with THEOLDTRADER_PAPER_ENABLED=true npm run paper:run");
   }
 
-  const intervalMs = Math.max(15_000, numberEnv("MONEYMOG_PAPER_INTERVAL_MS", 60_000));
+  const intervalMs = Math.max(15_000, numberEnv("THEOLDTRADER_PAPER_INTERVAL_MS", 60_000));
   const runner = new PaperSimulationRunner(config);
   let stopping = false;
 
   const stop = () => {
     stopping = true;
-    process.stderr.write("\nMoneyMog will stop after the current paper pass.\n");
+    process.stderr.write("\nTheOldTrader will stop after the current paper pass.\n");
   };
   process.once("SIGINT", stop);
   process.once("SIGTERM", stop);
 
-  process.stderr.write(`MoneyMog paper simulation started. Interval: ${intervalMs / 1000}s. Press Ctrl+C to stop.\n`);
+  process.stderr.write(`TheOldTrader paper simulation started. Interval: ${intervalMs / 1000}s. Press Ctrl+C to stop.\n`);
 
   while (!stopping) {
     const startedAt = Date.now();
@@ -64,6 +64,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  process.stderr.write(`MoneyMog error: ${error instanceof Error ? error.message : String(error)}\n`);
+  process.stderr.write(`TheOldTrader error: ${error instanceof Error ? error.message : String(error)}\n`);
   process.exitCode = 1;
 });
