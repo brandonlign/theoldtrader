@@ -30,7 +30,7 @@ export function promotionDecision(manifest, development, final) {
   const devSummary = development.developmentFoldSummary ?? {};
   const concentration = positiveRealizedConcentration(final);
   const completedExits = Math.trunc(finite(development.candidate?.closedTrades)) + Math.trunc(finite(final.candidate?.closedTrades));
-  const v2 = final.comparators?.frozenMoneyMogV2 ?? null;
+  const v2 = final.comparators?.frozenTheOldTraderV2 ?? null;
 
   const criteria = [
     {
