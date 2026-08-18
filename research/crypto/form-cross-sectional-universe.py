@@ -56,7 +56,7 @@ def sha256(payload: bytes) -> str:
 def fetch(url: str, retries: int = 4, allow_404: bool = False):
     last_error = None
     for attempt in range(retries + 1):
-        request = urllib.request.Request(url, headers={"User-Agent": "MoneyMog-Research/1.0"})
+        request = urllib.request.Request(url, headers={"User-Agent": "TheOldTrader-Research/1.0"})
         try:
             with urllib.request.urlopen(request, timeout=90) as response:
                 return response.read()
