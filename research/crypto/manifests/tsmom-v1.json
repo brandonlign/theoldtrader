@@ -7,6 +7,9 @@
   "paperOnly": true,
   "livePromotionAllowed": false,
   "liveStrategyModified": false,
+  "portfolio": {
+    "startingCash": 10000
+  },
   "motivation": {
     "primaryCryptoEvidence": "Han, Kang, and Ryu, Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions, SSRN 4675565, revised 2026-03-26",
     "supportingCryptoEvidence": "Liu and Tsyvinski, Risks and Returns of Cryptocurrency, Review of Financial Studies 34(6), 2021",
