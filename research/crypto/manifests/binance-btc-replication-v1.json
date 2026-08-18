@@ -53,7 +53,7 @@
     "cash",
     "BTC buy-and-hold at 15% exposure",
     "30-day time-series trend at 15% exposure",
-    "frozen MoneyMog v2 signal and risk logic applied unchanged to Binance BTCUSDT candles"
+    "frozen TheOldTrader v2 signal and risk logic applied unchanged to Binance BTCUSDT candles"
   ],
   "interpretation": {
     "promotionAllowed": false,
