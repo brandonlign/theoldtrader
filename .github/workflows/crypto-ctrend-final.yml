@@ -1,4 +1,4 @@
-name: MoneyMog CTREND Trial 4 Final Holdout
+name: TheOldTrader CTREND Trial 4 Final Holdout
 
 on:
   workflow_dispatch:
@@ -141,7 +141,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name 'moneymog-research-bot'
+          git config user.name 'theoldtrader-research-bot'
           git config user.email 'actions@users.noreply.github.com'
           git add \
             research/crypto/results/ctrend-v1-final/summary.json \
