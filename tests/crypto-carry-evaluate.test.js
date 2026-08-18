@@ -30,7 +30,7 @@ function csv(rows) {
 }
 
 function run(rows) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'moneymog-carry-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'theoldtrader-carry-'));
   const manifestPath = makeManifest(dir);
   const dataPath = path.join(dir, 'data.csv');
   fs.writeFileSync(dataPath, csv(rows));
