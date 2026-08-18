@@ -52,6 +52,13 @@ function maps(data) {
   return Object.fromEntries(Object.entries(data.products).map(([product, rows]) => [product, new Map(rows.map((row) => [row.time, row]))]));
 }
 
+function postEntryExposure(trades, startingCash) {
+  const entries = trades.filter((row) => row.side === 'BUY');
+  const notional = entries.reduce((sum, row) => sum + row.notional, 0);
+  const costs = entries.reduce((sum, row) => sum + row.cost, 0);
+  return notional / (startingCash - costs);
+}
+
 test('Trial 6 selects the lowest exact trailing-volatility asset', () => {
   const data = dataset();
   const result = selectLowestVolatility(maps(data), manifest().data.products, sec('2024-01-01'), manifest());
@@ -84,22 +91,24 @@ test('Trial 6 tie break is deterministic by product id', () => {
 });
 
 test('Trial 6 respects the 15% post-friction exposure cap and charges every traded dollar', () => {
-  const result = backtestLowVol(dataset(), manifest(), {
+  const config = manifest();
+  const result = backtestLowVol(dataset(), config, {
     start: '2024-01-01T00:00:00.000Z',
     end: '2024-02-01T00:00:00.000Z'
   });
-  assert.ok(result.equityPath[0].grossExposure <= 0.15 + 1e-12);
-  assert.ok(result.equityPath[0].grossExposure > 0.14);
+  const exposure = postEntryExposure(result.trades, config.portfolio.startingCash);
+  assert.ok(Math.abs(exposure - 0.15) < 1e-12);
   assert.ok(Math.abs(result.transactionCostsUsd - result.turnoverUsd * 0.007) < 1e-8);
   assert.ok(result.trades.some((row) => row.reason === 'evaluation_end_liquidation'));
 });
 
 test('Trial 6 matched comparator also stays at 15% post-friction total exposure', () => {
-  const result = backtestStaticAllocation(dataset(), manifest(), {
+  const config = manifest();
+  const result = backtestStaticAllocation(dataset(), config, {
     start: '2024-01-01T00:00:00.000Z',
     end: '2024-02-01T00:00:00.000Z',
     weights: { 'BTC-USD': 0.05, 'ETH-USD': 0.05, 'SOL-USD': 0.05 }
   });
-  assert.ok(result.equityPath[0].grossExposure <= 0.15 + 1e-12);
-  assert.ok(result.equityPath[0].grossExposure > 0.14);
+  const exposure = postEntryExposure(result.trades, config.portfolio.startingCash);
+  assert.ok(Math.abs(exposure - 0.15) < 1e-12);
 });
