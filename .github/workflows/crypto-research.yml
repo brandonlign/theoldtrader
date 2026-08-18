@@ -1,4 +1,4 @@
-name: MoneyMog Crypto Research v1
+name: TheOldTrader Crypto Research v1
 
 on:
   push:
@@ -100,7 +100,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name 'moneymog-research-bot'
+          git config user.name 'theoldtrader-research-bot'
           git config user.email 'actions@users.noreply.github.com'
           git add research/crypto/data-cache research/crypto/results
           if git diff --cached --quiet; then
