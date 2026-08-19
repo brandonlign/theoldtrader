@@ -72,6 +72,27 @@ test("raw envelope and compact record preserve identical acquisition identity", 
   assert.equal(raw[0].manifestSha256, H);
 });
 
+test("raw caller cannot override protected scientific envelope fields", () => {
+  const raw = buildRawEnvelopeRows({
+    manifestSha256: H,
+    recordedAt: "2026-08-20T00:02:00Z",
+    acquisition: { type: "PRIMARY_LIVE", collector: "trial7-worker-v1" },
+    rawRows: [{
+      source: "x",
+      sha256: H,
+      rawText: "{}",
+      schema: "evil",
+      manifestSha256: "b".repeat(64),
+      recordedAt: "2099-01-01T00:00:00Z",
+      acquisition: { type: "OFFICIAL_RECOVERY", provider: "evil", sourceReference: "evil" }
+    }]
+  });
+  assert.equal(raw[0].schema, "theoldtrader-cross-venue-funding-v1-raw-v1");
+  assert.equal(raw[0].manifestSha256, H);
+  assert.equal(raw[0].recordedAt, "2026-08-20T00:02:00.000Z");
+  assert.deepEqual(raw[0].acquisition, { type: "PRIMARY_LIVE", collector: "trial7-worker-v1" });
+});
+
 test("record contract fails closed on missing price or invalid hash", () => {
   const source = venues();
   source.hyperliquid.oracle = null;
