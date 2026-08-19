@@ -121,9 +121,10 @@ async function binanceSnapshot(nowMs) {
   const funding = await fetchRawJson(fundingUrl);
 
   const mark = Number(premium.json?.markPrice);
+  const indexPrice = Number(premium.json?.indexPrice);
   const lastFundingRate = Number(premium.json?.lastFundingRate);
   const nextFundingTime = Number(premium.json?.nextFundingTime);
-  if (!(mark > 0) || !Number.isFinite(lastFundingRate) || !Number.isFinite(nextFundingTime)) {
+  if (!(mark > 0) || !(indexPrice > 0) || !Number.isFinite(lastFundingRate) || !Number.isFinite(nextFundingTime)) {
     throw new Error("Invalid Binance BTCUSDT premium-index snapshot");
   }
   const events = (Array.isArray(funding.json) ? funding.json : [])
@@ -141,6 +142,7 @@ async function binanceSnapshot(nowMs) {
   return {
     compact: {
       mark,
+      indexPrice,
       lastFundingRate,
       nextFundingTime,
       events,
