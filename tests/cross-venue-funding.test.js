@@ -24,6 +24,7 @@ function manifestFor(days = 180) {
       screeningEndExclusive: new Date(screeningEnd).toISOString(),
       finalEndExclusive: new Date(finalEnd).toISOString(),
       minimumRecorderCoverage: 0.98,
+      targetPrimaryLiveRecorderCoverage: 0.98,
       maximumSnapshotGapMinutes: 130,
       fundingPriceMatchToleranceMinutes: 10,
       entryExitPriceMatchToleranceMinutes: 10
@@ -50,6 +51,7 @@ function makeRecords({
   days = 10,
   hlRate = 0.00006,
   bnRate = 0.00004,
+  recoveredEvery = 0,
   markFn = () => ({ binance: 100, hyperliquid: 100, oracle: 100, index: 100 })
 } = {}) {
   const manifest = manifestFor(days);
@@ -65,11 +67,18 @@ function makeRecords({
       ? [{ time: boundary, rate: bnRate, markPrice: marks.binance, rateType: "Regular" }]
       : [];
     const nextFunding = start + (Math.floor(i / 8) + 1) * 8 * HOUR_MS;
+    const acquisitionType = recoveredEvery > 0 && i > 0 && i % recoveredEvery === 0
+      ? "OFFICIAL_RECOVERY"
+      : "PRIMARY_LIVE";
     records.push({
       schema: "theoldtrader-cross-venue-funding-v1-record-v2",
       experimentId: "cross-venue-funding-v1",
       trialNumber: 7,
       manifestSha256: HASHES.manifest,
+      acquisition: {
+        type: acquisitionType,
+        collector: acquisitionType === "PRIMARY_LIVE" ? "synthetic-live" : "synthetic-recovery"
+      },
       recordedAt: new Date(recorded).toISOString(),
       sources: {
         hyperliquid: {
@@ -132,6 +141,7 @@ test("Trial 7 refuses to evaluate before the frozen final boundary", () => {
 test("clean positive 180-day synthetic path can only become research-promotion eligible", () => {
   const result = evaluateFinal(makeRecords({ days: 180 }));
   assert.equal(result.dataGate.pass, true);
+  assert.equal(result.dataGate.primaryLiveCoverage, 1);
   assert.equal(result.primary.fundingPnl.net > 0, true);
   assert.equal(result.primary.netPnl > 0, true);
   assert.equal(result.costStress.netPnl > 0, true);
@@ -143,15 +153,37 @@ test("clean positive 180-day synthetic path can only become research-promotion e
   assert.equal(result.livePromotionAllowed, false);
 });
 
-test("missing one hourly Hyperliquid funding event fails the scientific data gate", () => {
+test("mixed official recovery counts toward first-party coverage but is reported separately", () => {
+  const result = evaluateFinal(makeRecords({ recoveredEvery: 10 }));
+  assert.equal(result.dataGate.pass, true);
+  assert.equal(result.dataGate.hourlyFirstPartyContextCoverage, 1);
+  assert.ok(result.dataGate.primaryLiveCoverage < 1);
+  assert.ok(result.dataGate.primaryLiveCoverage > 0.85);
+  assert.ok(result.dataGate.acquisitionCoverage.officialRecoveryHourlyContexts > 0);
+  assert.equal(
+    result.dataGate.acquisitionCoverage.primaryLiveHourlyContexts
+      + result.dataGate.acquisitionCoverage.officialRecoveryHourlyContexts,
+    result.dataGate.expectedHourlyContexts
+  );
+});
+
+test("invalid or missing acquisition provenance is rejected before economics", () => {
+  const bundle = makeRecords();
+  delete bundle.records[10].acquisition;
+  assert.throws(() => evaluateFinal(bundle), /Invalid Trial 7 acquisition type/);
+});
+
+test("missing one hourly Hyperliquid funding event fails the scientific data gate without calculating P&L", () => {
   const bundle = makeRecords();
   bundle.records[100].sources.hyperliquid.events = [];
   const result = evaluateFinal(bundle);
   assert.equal(result.dataGate.fundingCoverage.hyperliquidPass, false);
   assert.equal(result.classification, "FAILED_DATA_GATE");
+  assert.equal(result.economicsCalculated, false);
+  assert.equal(result.primary, undefined);
 });
 
-test("missing preserved raw-response hash fails even when economics are positive", () => {
+test("missing preserved raw-response hash fails without calculating economics", () => {
   const bundle = makeRecords();
   const available = rawHashes();
   available.delete(HASHES.hlMeta);
@@ -166,6 +198,7 @@ test("missing preserved raw-response hash fails even when economics are positive
   });
   assert.equal(result.dataGate.rawHashCoverage.pass, false);
   assert.equal(result.classification, "FAILED_DATA_GATE");
+  assert.equal(result.economicsCalculated, false);
 });
 
 test("funding edge does not rescue a large adverse cross-venue basis move", () => {
