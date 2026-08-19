@@ -7,6 +7,7 @@ import zlib from "node:zlib";
 import { evaluateCrossVenueFunding } from "./lib/cross-venue-funding.js";
 import { auditCompactAgainstRaw } from "./lib/cross-venue-raw-audit.js";
 import { auditBinanceFundingSchedule } from "./lib/binance-funding-schedule-audit.js";
+import { normalizeHyperliquidFundingTimes } from "./lib/hyperliquid-funding-time-audit.js";
 
 const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
 const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
@@ -117,6 +118,29 @@ function frozenWindow(manifest, mode) {
   return { startMs, endMs, startIso: new Date(startMs).toISOString(), endIso: new Date(endMs).toISOString() };
 }
 
+function writeDataFailure({ manifest, mode, window, provenance, reason, extraGate = {} }) {
+  process.stdout.write(`${JSON.stringify({
+    experimentId: manifest.experimentId,
+    trialNumber: manifest.trialNumber,
+    mode,
+    paperOnly: true,
+    livePromotionAllowed: false,
+    classification: "FAILED_DATA_GATE",
+    frozenWindow: {
+      startInclusive: window.startIso,
+      endExclusive: window.endIso
+    },
+    dataGate: {
+      pass: false,
+      ...extraGate
+    },
+    economicsCalculated: false,
+    interpretationConstraint: reason,
+    antiLeakage: manifest.antiLeakage,
+    provenance
+  }, null, 2)}\n`);
+}
+
 async function main() {
   const [mode, compactPath, rawPath, manifestPath = DEFAULT_MANIFEST] = process.argv.slice(2);
   if (!["screening", "final"].includes(mode) || !compactPath || !rawPath) usage();
@@ -140,14 +164,10 @@ async function main() {
   const raw = await readAndVerifyRaw(rawPath, manifestHash);
   verifyCompactRawAcquisition(records, raw);
   const semanticAudit = auditCompactAgainstRaw(records, raw.rawRowsByHash);
-  const binanceFundingScheduleAudit = auditBinanceFundingSchedule(records, {
-    startMs: window.startMs,
-    endMs: window.endMs
-  });
   const compactHash = sha256(fs.readFileSync(compactPath));
   const rawArchiveHash = sha256(fs.readFileSync(rawPath));
 
-  const provenance = {
+  const provenanceBase = {
     manifestPath,
     manifestSha256: manifestHash,
     compactPath,
@@ -159,47 +179,78 @@ async function main() {
     rawAcquisitionRows: raw.acquisitionRows,
     verifiedDistinctRawResponseHashes: raw.hashes.size,
     compactRawAcquisitionMatchVerified: true,
-    rawSemanticAudit: semanticAudit,
+    rawSemanticAudit: semanticAudit
+  };
+
+  let normalized;
+  try {
+    normalized = normalizeHyperliquidFundingTimes(records, {
+      toleranceMs: Number(manifest.sourceRules?.hyperliquidFundingTimestampNormalization?.maximumAbsoluteSkewMs ?? 60_000)
+    });
+  } catch (error) {
+    writeDataFailure({
+      manifest,
+      mode,
+      window,
+      provenance: {
+        ...provenanceBase,
+        hyperliquidFundingTimestampNormalization: {
+          pass: false,
+          error: String(error?.message ?? error)
+        }
+      },
+      reason: "Trial 7 economics are intentionally not calculated when Hyperliquid settled-funding timestamps violate the frozen hourly-normalization rule.",
+      extraGate: {
+        hyperliquidFundingTimestampNormalization: {
+          pass: false,
+          error: String(error?.message ?? error)
+        }
+      }
+    });
+    return;
+  }
+
+  const normalizedRecords = normalized.records;
+  const binanceFundingScheduleAudit = auditBinanceFundingSchedule(normalizedRecords, {
+    startMs: window.startMs,
+    endMs: window.endMs
+  });
+  const provenance = {
+    ...provenanceBase,
+    hyperliquidFundingTimestampNormalization: normalized.audit,
     binanceFundingScheduleAudit
   };
 
   if (!binanceFundingScheduleAudit.pass) {
-    const output = {
-      experimentId: manifest.experimentId,
-      trialNumber: manifest.trialNumber,
+    writeDataFailure({
+      manifest,
       mode,
-      paperOnly: true,
-      livePromotionAllowed: false,
-      classification: "FAILED_DATA_GATE",
-      frozenWindow: {
-        startInclusive: window.startIso,
-        endExclusive: window.endIso
-      },
-      dataGate: {
-        pass: false,
+      window,
+      provenance,
+      reason: "Trial 7 economics are intentionally not calculated when the first-party Binance announced-funding schedule is incomplete.",
+      extraGate: {
+        hyperliquidFundingTimestampNormalization: normalized.audit,
         binanceFundingScheduleAudit
-      },
-      economicsCalculated: false,
-      interpretationConstraint: "Trial 7 economics are intentionally not calculated when the first-party Binance announced-funding schedule is incomplete.",
-      antiLeakage: manifest.antiLeakage,
-      provenance
-    };
-    process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
+      }
+    });
     return;
   }
 
   const result = evaluateCrossVenueFunding({
     manifest,
     manifestHash,
-    records,
+    records: normalizedRecords,
     availableRawHashes: raw.hashes,
     mode,
     evaluationNowMs: Date.now()
   });
   result.dataGate = {
     ...result.dataGate,
+    hyperliquidFundingTimestampNormalization: normalized.audit,
     binanceFundingScheduleAudit,
-    pass: Boolean(result.dataGate?.pass) && binanceFundingScheduleAudit.pass
+    pass: Boolean(result.dataGate?.pass)
+      && normalized.audit.pass
+      && binanceFundingScheduleAudit.pass
   };
 
   const output = {
