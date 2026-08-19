@@ -17,10 +17,16 @@ function rawRowsFor(hash, type, rawRowsByHash) {
   return (rawRowsByHash.get(String(hash).toLowerCase()) ?? []).filter((row) => row.acquisition?.type === type);
 }
 
-function exactlyOneSource(hash, type, source, rawRowsByHash) {
+function sourcePayload(hash, type, source, rawRowsByHash) {
   const rows = rawRowsFor(hash, type, rawRowsByHash).filter((row) => row.source === source);
-  if (rows.length !== 1) {
-    throw new Error(`Trial 7 expected exactly one ${source} raw payload for ${type}/${hash}, found ${rows.length}`);
+  if (!rows.length) {
+    throw new Error(`Trial 7 expected at least one ${source} raw payload for ${type}/${hash}, found 0`);
+  }
+  const canonical = String(rows[0].rawText ?? "");
+  for (const row of rows.slice(1)) {
+    if (String(row.rawText ?? "") !== canonical) {
+      throw new Error(`Trial 7 identical hash ${hash} resolved to non-identical ${source} raw payload bytes`);
+    }
   }
   return rows[0];
 }
@@ -94,25 +100,25 @@ function auditPrimaryLive(record, rawRowsByHash) {
   const bn = record.sources.binance;
   const type = "PRIMARY_LIVE";
 
-  const hlContextRaw = exactlyOneSource(
+  const hlContextRaw = sourcePayload(
     hl.hashes.metaAndAssetCtxsSha256,
     type,
     "hyperliquid-metaAndAssetCtxs",
     rawRowsByHash
   );
-  const hlFundingRaw = exactlyOneSource(
+  const hlFundingRaw = sourcePayload(
     hl.hashes.fundingHistorySha256,
     type,
     "hyperliquid-fundingHistory",
     rawRowsByHash
   );
-  const bnPremiumRaw = exactlyOneSource(
+  const bnPremiumRaw = sourcePayload(
     bn.hashes.premiumIndexSha256,
     type,
     "binance-premiumIndex",
     rawRowsByHash
   );
-  const bnFundingRaw = exactlyOneSource(
+  const bnFundingRaw = sourcePayload(
     bn.hashes.fundingHistorySha256,
     type,
     "binance-fundingRate",
