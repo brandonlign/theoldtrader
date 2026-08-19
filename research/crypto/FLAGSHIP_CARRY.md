@@ -86,3 +86,7 @@ The strategy is scientifically ready to be evaluated; infrastructure is not. The
 ## Validation state
 
 The result-agnostic audit logic was added with deterministic tests for success-without-promotion, historical margin breach, frozen gap-stress failure, non-positive net return versus cash, broken synchronized-grid provenance, and attempted live-promotion input. The repository build path reported 104/104 tests passing and a successful Next.js compile after the audit/test additions.
+
+## Next code step
+
+When primary Trial 2 can be executed, its immutable `summary.json` is the direct input to `carry-flagship-audit.js`. No additional parameter-selection phase is permitted between the primary result and that audit. If the audit rejects, the frozen Trial 2 flagship candidate is closed. If it returns `PROMISING_HISTORICAL_ONLY`, the next strategy work is to freeze an unchanged untouched validation protocol before viewing that validation result.
