@@ -7,7 +7,7 @@ import { gzipSync } from "node:zlib";
 import { buildCompactRecord, buildRawEnvelopeRows } from "./lib/cross-venue-record.js";
 import { msUntilTrial7Collection } from "./lib/trial7-collection-schedule.js";
 
-const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
+const CANONICAL_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
 const DEFAULT_OUTPUT = "research/crypto/data-cache/cross-venue-funding-v1-forward.ndjson";
 const HL_INFO = "https://api.hyperliquid.xyz/info";
 const BINANCE_PREMIUM = "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT";
@@ -21,6 +21,19 @@ const PRIMARY_ACQUISITION = Object.freeze({
 function argValue(name, fallback = null) {
   const index = process.argv.indexOf(name);
   return index >= 0 ? process.argv[index + 1] ?? fallback : fallback;
+}
+
+function canonicalManifestPath() {
+  const index = process.argv.indexOf("--manifest");
+  if (index >= 0) {
+    const supplied = process.argv[index + 1];
+    if (supplied !== CANONICAL_MANIFEST) {
+      throw new Error(
+        `Trial 7 recorder requires the canonical manifest ${CANONICAL_MANIFEST}; custom manifests are forbidden`
+      );
+    }
+  }
+  return CANONICAL_MANIFEST;
 }
 
 function sha256(value) {
@@ -181,6 +194,9 @@ async function binanceSnapshot(nowMs) {
 }
 
 async function loadManifest(manifestPath) {
+  if (manifestPath !== CANONICAL_MANIFEST) {
+    throw new Error(`Trial 7 recorder requires the canonical manifest ${CANONICAL_MANIFEST}`);
+  }
   const bytes = await readFile(manifestPath);
   const manifest = JSON.parse(bytes.toString("utf8"));
   if (manifest.experimentId !== "cross-venue-funding-v1" || manifest.trialNumber !== 7) {
@@ -221,6 +237,7 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
     process.stdout.write(`${JSON.stringify({
       connectivityOnly: true,
       manifestSha256: frozen.sha256,
+      canonicalManifestVerified: true,
       hyperliquidSchemaValid: true,
       binanceSchemaValid: true,
       collectionLatencyMs: finishedAt - startedAt
@@ -254,6 +271,7 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
     recordedAt: record.recordedAt,
     acquisitionType: record.acquisition.type,
     manifestSha256: frozen.sha256,
+    canonicalManifestVerified: true,
     hyperliquidEvents: hyperliquid.compact.events.length,
     binanceEvents: binance.compact.events.length
   })}\n`);
@@ -261,7 +279,7 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
 
 async function main() {
   const output = argValue("--output", DEFAULT_OUTPUT);
-  const manifestPath = argValue("--manifest", DEFAULT_MANIFEST);
+  const manifestPath = canonicalManifestPath();
   const once = process.argv.includes("--once");
   const connectivityOnly = process.argv.includes("--connectivity-only");
   const durationHours = Number(argValue("--duration-hours", "0"));
