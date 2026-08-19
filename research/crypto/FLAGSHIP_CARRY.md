@@ -82,3 +82,7 @@ A failure does not authorize a funding-sign filter, better entry date, more coll
 ## Current bottleneck
 
 The strategy is scientifically ready to be evaluated; infrastructure is not. The primary carry workflow exists but GitHub Actions has been blocked before checkout by the account billing/spending-limit condition. Until that is resolved or an equivalent provenance-preserving execution environment is available, the correct state is **flagship candidate / primary result unobserved**.
+
+## Validation state
+
+The result-agnostic audit logic was added with deterministic tests for success-without-promotion, historical margin breach, frozen gap-stress failure, non-positive net return versus cash, broken synchronized-grid provenance, and attempted live-promotion input. The repository build path reported 104/104 tests passing and a successful Next.js compile after the audit/test additions.
