@@ -15,17 +15,12 @@ const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
 function usage() {
   throw new Error("Usage: node research/crypto/cross-venue-funding-evaluate.mjs screening|final <compact.ndjson> <raw.ndjson.gz>");
 }
-
-function sha256(value) {
-  return crypto.createHash("sha256").update(value).digest("hex");
-}
-
+function sha256(value) { return crypto.createHash("sha256").update(value).digest("hex"); }
 function acquisitionType(record, label) {
   const type = String(record?.acquisition?.type ?? "");
   if (!ACQUISITION_TYPES.has(type)) throw new Error(`${label} has invalid acquisition type: ${type || "missing"}`);
   return type;
 }
-
 function compactRawHashes(record) {
   return [
     record.sources?.hyperliquid?.hashes?.metaAndAssetCtxsSha256,
@@ -37,8 +32,7 @@ function compactRawHashes(record) {
 
 async function readCompact(path) {
   const records = [];
-  const input = fs.createReadStream(path);
-  const rl = readline.createInterface({ input, crlfDelay: Infinity });
+  const rl = readline.createInterface({ input: fs.createReadStream(path), crlfDelay: Infinity });
   for await (const line of rl) {
     if (!line.trim()) continue;
     const record = JSON.parse(line);
@@ -55,8 +49,7 @@ async function readAndVerifyRaw(path, expectedManifestHash) {
   const rawRowsByHash = new Map();
   const acquisitionRows = { PRIMARY_LIVE: 0, OFFICIAL_RECOVERY: 0 };
   let rows = 0;
-  const input = fs.createReadStream(path).pipe(zlib.createGunzip());
-  const rl = readline.createInterface({ input, crlfDelay: Infinity });
+  const rl = readline.createInterface({ input: fs.createReadStream(path).pipe(zlib.createGunzip()), crlfDelay: Infinity });
   for await (const line of rl) {
     if (!line.trim()) continue;
     rows += 1;
@@ -85,9 +78,7 @@ function verifyCompactRawAcquisition(records, raw) {
     for (const hash of compactRawHashes(record)) {
       if (!/^[0-9a-f]{64}$/.test(hash)) throw new Error(`Trial 7 evidence compact row ${index + 1} has invalid source hash`);
       const rawTypes = raw.acquisitionByHash.get(hash);
-      if (!rawTypes?.has(type)) {
-        throw new Error(`Trial 7 compact/raw acquisition mismatch at evidence row ${index + 1}: ${type} compact source ${hash} has no raw payload with the same acquisition type`);
-      }
+      if (!rawTypes?.has(type)) throw new Error(`Trial 7 compact/raw acquisition mismatch at evidence row ${index + 1}: ${type} compact source ${hash} has no raw payload with the same acquisition type`);
     }
   }
 }
@@ -97,7 +88,15 @@ function frozenWindow(manifest, mode) {
   const endIso = mode === "screening" ? manifest.forwardWindow?.screeningEndExclusive : manifest.forwardWindow?.finalEndExclusive;
   const endMs = Date.parse(endIso);
   if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) throw new Error("Invalid frozen Trial 7 evaluation window");
-  return { startMs, endMs, startIso: new Date(startMs).toISOString(), endIso: new Date(endMs).toISOString() };
+  const evaluationDelayMs = Number(manifest.forwardWindow?.earliestEvaluationDelayMinutesAfterBoundary ?? 0) * 60_000;
+  return {
+    startMs,
+    endMs,
+    evaluationNotBeforeMs: endMs + evaluationDelayMs,
+    startIso: new Date(startMs).toISOString(),
+    endIso: new Date(endMs).toISOString(),
+    evaluationNotBeforeIso: new Date(endMs + evaluationDelayMs).toISOString()
+  };
 }
 
 function evidenceWindow(records, manifest, window) {
@@ -141,7 +140,9 @@ async function main() {
   }
 
   const window = frozenWindow(manifest, mode);
-  if (Date.now() < window.endMs) throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${window.endIso}`);
+  if (Date.now() < window.evaluationNotBeforeMs) {
+    throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${window.evaluationNotBeforeIso}; the frozen exit-context tolerance has not elapsed`);
+  }
 
   const allRecords = await readCompact(compactPath);
   const records = evidenceWindow(allRecords, manifest, window);
@@ -160,7 +161,8 @@ async function main() {
     compactSha256: compactHash,
     compactRowsTotal: allRecords.length,
     compactRowsInFrozenEvidenceWindow: records.length,
-    semanticAuditScope: "startInclusive<=recordedAt<=endExclusive+entryExitTolerance",
+    semanticAuditScope: "startInclusive<=recordedAt<=endBoundary+entryExitTolerance",
+    evaluationNotBefore: window.evaluationNotBeforeIso,
     rawPath,
     rawArchiveSha256: rawArchiveHash,
     rawRows: raw.rows,
