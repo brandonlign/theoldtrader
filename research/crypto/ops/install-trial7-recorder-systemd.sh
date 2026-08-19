@@ -7,9 +7,15 @@ SERVICE_USER="${1:-$(id -un)}"
 ROOT="$(git rev-parse --show-toplevel)"
 CURRENT_BRANCH="$(git -C "$ROOT" branch --show-current)"
 NPM_BIN="$(command -v npm || true)"
+NODE_BIN="$(command -v node || true)"
+SHA256SUM_BIN="$(command -v sha256sum || true)"
 
-if [[ -z "$NPM_BIN" ]]; then
-  echo "npm is required" >&2
+if [[ -z "$NPM_BIN" || -z "$NODE_BIN" ]]; then
+  echo "node and npm are required" >&2
+  exit 1
+fi
+if [[ -z "$SHA256SUM_BIN" ]]; then
+  echo "sha256sum is required" >&2
   exit 1
 fi
 if [[ "$CURRENT_BRANCH" != "$REQUIRED_BRANCH" ]]; then
@@ -48,7 +54,26 @@ else
   sudo chown "$SERVICE_USER":"$(id -gn "$SERVICE_USER")" "$DATA_DIR"
 fi
 
+# Snapshot the exact acquisition runtime after all preflight checks. The
+# root-owned checksum file prevents a later pull/edit from silently changing
+# the recorder on a systemd restart. These are the complete files reachable by
+# the acquisition command before public HTTP requests are made.
+RUNTIME_FILES=(
+  "package.json"
+  "research/crypto/manifests/cross-venue-funding-v1.json"
+  "research/crypto/trial7-manifest-guard.mjs"
+  "research/crypto/trial7-recorder-start.mjs"
+  "research/crypto/record-cross-venue-funding.mjs"
+  "research/crypto/lib/trial7-freeze-identity.js"
+  "research/crypto/lib/trial7-collection-schedule.js"
+  "research/crypto/lib/cross-venue-record.js"
+)
+CHECKSUM_CONTENT="$(for relative in "${RUNTIME_FILES[@]}"; do "$SHA256SUM_BIN" "$ROOT/$relative"; done)"
+CHECKSUM_PATH="/etc/${SERVICE_NAME}.sha256"
 UNIT_PATH="/etc/systemd/system/${SERVICE_NAME}.service"
+NODE_DIR="$(dirname "$NODE_BIN")"
+SYSTEM_PATH="${NODE_DIR}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
 UNIT_CONTENT="$(cat <<UNIT
 [Unit]
 Description=TheOldTrader Trial 7 sealed cross-venue funding recorder
@@ -59,6 +84,8 @@ Wants=network-online.target
 Type=simple
 User=${SERVICE_USER}
 WorkingDirectory=${ROOT}
+Environment=PATH=${SYSTEM_PATH}
+ExecStartPre=${SHA256SUM_BIN} -c ${CHECKSUM_PATH}
 ExecStart=${NPM_BIN} run research:cv:record
 Restart=on-failure
 RestartSec=30
@@ -84,11 +111,15 @@ UNIT
 )"
 
 if [[ "$(id -u)" -eq 0 ]]; then
+  printf '%s\n' "$CHECKSUM_CONTENT" > "$CHECKSUM_PATH"
+  chmod 0444 "$CHECKSUM_PATH"
   printf '%s\n' "$UNIT_CONTENT" > "$UNIT_PATH"
   systemctl daemon-reload
   systemctl enable --now "$SERVICE_NAME"
   systemctl --no-pager --full status "$SERVICE_NAME"
 else
+  printf '%s\n' "$CHECKSUM_CONTENT" | sudo tee "$CHECKSUM_PATH" >/dev/null
+  sudo chmod 0444 "$CHECKSUM_PATH"
   printf '%s\n' "$UNIT_CONTENT" | sudo tee "$UNIT_PATH" >/dev/null
   sudo systemctl daemon-reload
   sudo systemctl enable --now "$SERVICE_NAME"
@@ -102,6 +133,13 @@ Trial 7 recorder service installed.
 Scientific outputs (gitignored):
   ${DATA_DIR}/cross-venue-funding-v1-forward.ndjson
   ${DATA_DIR}/cross-venue-funding-v1-forward.raw.ndjson.gz
+
+Runtime identity snapshot:
+  ${CHECKSUM_PATH}
+  Every service start verifies these acquisition files before network access.
+
+Node runtime:
+  ${NODE_BIN} ($(${NODE_BIN} --version))
 
 Sealed health check:
   cd ${ROOT} && npm run research:cv:health
