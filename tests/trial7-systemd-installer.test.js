@@ -4,7 +4,9 @@ import fs from "node:fs";
 import { spawnSync } from "node:child_process";
 
 const path = "research/crypto/ops/install-trial7-recorder-systemd.sh";
+const templatePath = "research/crypto/ops/theoldtrader-trial7-recorder.service.example";
 const script = fs.readFileSync(path, "utf8");
+const template = fs.readFileSync(templatePath, "utf8");
 
 test("Trial 7 systemd installer is valid bash", () => {
   const result = spawnSync("bash", ["-n", path], { encoding: "utf8" });
@@ -72,4 +74,15 @@ test("installed service limits writable filesystem to Trial 7 data directory", (
   assert.match(script, /PrivateDevices=true/);
   assert.match(script, /ReadWritePaths=\$\{DATA_DIR\}/);
   assert.match(script, /UMask=0077/);
+});
+
+test("review-only systemd template cannot bypass supervisor or runtime checksum verification", () => {
+  assert.match(template, /Prefer:/);
+  assert.match(template, /ExecStartPre=\/usr\/bin\/sha256sum -c \/etc\/theoldtrader-trial7-recorder\.sha256/);
+  assert.match(template, /ExecStart=\/REPLACE\/WITH\/NPM_BIN run research:cv:record/);
+  assert.match(template, /Environment=PATH=\/REPLACE\/WITH\/NODE_BIN_DIRECTORY/);
+  assert.match(template, /UMask=0077/);
+  assert.doesNotMatch(template, /\/usr\/bin\/env npm/);
+  assert.doesNotMatch(template, /record-cross-venue-funding\.mjs/);
+  assert.doesNotMatch(template, /paper:run|paper:once|scan:all|whales:observe/);
 });
