@@ -11,7 +11,7 @@
     "originalRecorderCommit": "68dd16647fe7721bbd5509162fec1f8fc3a90a13",
     "originalProvisionalTrialNumber": 5,
     "currentFreezeAt": "2026-08-19T21:15:27Z",
-    "finalImplementationFreezeAt": "2026-08-19T22:54:27Z",
+    "finalImplementationFreezeAt": "2026-08-19T23:04:02Z",
     "firstTheOldTraderCrossVenueResultObservedBeforeCurrentFreeze": false,
     "revisionLog": [
       {
@@ -32,7 +32,7 @@
       },
       {
         "beforeAnyTheOldTraderCrossVenueResult": true,
-        "change": "Resolve boundary/comparator implementation before data: funding exactly at the declared start or end boundary is excluded and the BTC directional comparator uses Binance premium-index indexPrice as an official reference rather than adding a selectable spot feed."
+        "change": "Resolve boundary/comparator implementation before data: start-boundary funding is excluded and the BTC directional comparator uses Binance premium-index indexPrice as an official reference rather than adding a selectable spot feed."
       },
       {
         "beforeAnyTheOldTraderCrossVenueResult": true,
@@ -61,6 +61,10 @@
       {
         "beforeAnyTheOldTraderCrossVenueResult": true,
         "change": "Freeze provenance hardening: recorder/evaluator/reporter are bound to the canonical repository manifest and every PRIMARY_LIVE compact source hash must resolve to a matching raw source payload with the same exact recordedAt timestamp before economics can be calculated."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Correct boundary cashflow timing before the forward start: because entry and exit fills use the first context after their UTC boundaries, start-boundary funding occurs before entry and is excluded, while end-boundary funding occurs before the post-boundary exit and is included. Screening/final evaluation is also sealed until the full ten-minute exit-context tolerance has elapsed so an on-time post-boundary record cannot be falsely classified as missing."
       }
     ]
   },
@@ -106,7 +110,7 @@
     },
     "hyperliquidFundingOracleRule": "Use the first valid preserved official asset context at or after the normalized hourly funding event, within fundingPriceMatchToleranceMinutes, for oraclePx. Pre-event contexts are ineligible. Otherwise fail the scientific data gate.",
     "binanceFundingScheduleAudit": {
-      "rule": "For every in-window funding timestamp announced by official BTCUSDT premiumIndex.nextFundingTime from an in-window context, require the exact timestamp to appear in settled official fundingRate.fundingTime history. Do not assume a fixed eight-hour interval.",
+      "rule": "For every funding timestamp after entry and at or before the exit boundary announced by official BTCUSDT premiumIndex.nextFundingTime from an in-window context, require the exact timestamp to appear in settled official fundingRate.fundingTime history. Do not assume a fixed eight-hour interval.",
       "maximumStaleAnnouncementLagMs": 300000
     },
     "binanceFundingMarkRule": "Use the markPrice returned with each official fundingRate history event. Do not reconstruct or substitute another price when the field is absent.",
@@ -129,8 +133,9 @@
     "entryExitPriceMatchToleranceMinutes": 10,
     "entryExitSelectionRule": "firstValidOfficialObservationAtOrAfterBoundary",
     "preBoundaryEntryExitContextAllowed": false,
+    "earliestEvaluationDelayMinutesAfterBoundary": 10,
     "fundingAtStartBoundaryEarned": false,
-    "fundingAtEndBoundaryEarned": false,
+    "fundingAtEndBoundaryEarned": true,
     "evaluateScreeningBeforeEnd": false,
     "evaluateFinalBeforeEnd": false
   },
@@ -160,10 +165,10 @@
   },
   "fundingAccounting": {
     "resampleRates": false,
-    "hyperliquid": "For each observed Hyperliquid BTC funding event strictly inside the declared evaluation boundaries, the short receives positive funding and pays negative funding: +quantity * matched oraclePx * fundingRate.",
-    "binance": "For each observed Binance BTCUSDT funding event strictly inside the declared evaluation boundaries, the long pays positive funding and receives negative funding: -quantity * event markPrice * fundingRate.",
+    "hyperliquid": "For each observed Hyperliquid BTC funding event after the start boundary and at or before the exit boundary, the short receives positive funding and pays negative funding: +quantity * matched oraclePx * fundingRate.",
+    "binance": "For each observed Binance BTCUSDT funding event after the start boundary and at or before the exit boundary, the long pays positive funding and receives negative funding: -quantity * event markPrice * fundingRate.",
     "nativeIntervalsOnly": true,
-    "boundaryRule": "Include funding only when startBoundary < eventTime < endBoundary. Funding exactly at either declared boundary is excluded.",
+    "boundaryRule": "Include funding when startBoundary < eventTime <= endBoundary. Start-boundary funding is excluded because entry occurs after it; end-boundary funding is included because exit occurs after it.",
     "missingFundingEvent": "fail the data gate if first-party sequence/interval evidence implies an event is missing; never synthesize a zero or carry a prior rate forward"
   },
   "priceAccounting": {
