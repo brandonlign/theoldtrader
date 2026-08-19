@@ -36,16 +36,11 @@ function goodResult() {
     economicsCalculated: true,
     primary: {
       frictionBpsPerOrder: 15,
+      grossPnlBeforeFriction: 149,
       netPnl: 140,
-      stats: {
-        netReturn: 0.014,
-        annualizedReturn: 0.0285,
-        sharpe: 1.2,
-        sortino: 1.6,
-        maxDrawdown: -0.025
-      },
+      stats: { netReturn: 0.014, annualizedReturn: 0.0285, sharpe: 1.2, sortino: 1.6, maxDrawdown: -0.025 },
       fundingPnl: { hyperliquid: 250, binance: -70, net: 180 },
-      pricePnl: { combinedBasisAfterFriction: -40 },
+      pricePnl: { combinedBasisBeforeFriction: -31, combinedBasisAfterFriction: -40 },
       executionFriction: { totalUsd: 9 },
       margin: {
         observedBreach: null,
@@ -69,31 +64,37 @@ function goodResult() {
     },
     costStress: {
       frictionBpsPerOrder: 25,
+      grossPnlBeforeFriction: 95,
       netPnl: 80,
-      stats: { netReturn: 0.008, annualizedReturn: 0.0162, maxDrawdown: -0.03 },
+      stats: { netReturn: 0.008, annualizedReturn: 0.0162, maxDrawdown: -0.03, sortino: 1.1 },
       fundingPnl: { hyperliquid: 250, binance: -70, net: 180 },
-      pricePnl: { combinedBasisAfterFriction: -100 },
+      pricePnl: { combinedBasisBeforeFriction: -85, combinedBasisAfterFriction: -100 },
       executionFriction: { totalUsd: 15 }
     },
     directionalComparator: { pnl: 300, netReturn: 0.03 },
     windows60d: [
-      { start: "a", end: "b", pnl: 40, positive: true },
-      { start: "b", end: "c", pnl: 30, positive: true },
-      { start: "c", end: "d", pnl: 70, positive: true }
+      { start: "a", end: "b", pnl: 40, positive: true, complete: true },
+      { start: "b", end: "c", pnl: 30, positive: true, complete: true },
+      { start: "c", end: "d", pnl: 70, positive: true, complete: true }
     ],
+    consistencyTelescopeErrorUsd: 0,
     breakEvenAllInFrictionBpsPerOrder: 38.2,
     interpretationConstraint: "research-only"
   };
 }
 
-test("Trial 7 report is deterministic and always exposes recovery plus decomposition", () => {
+test("Trial 7 report is deterministic and always exposes recovery plus non-double-counted decomposition", () => {
   const result = goodResult();
   const first = buildCrossVenueFundingReport(result);
   const second = buildCrossVenueFundingReport(result);
   assert.deepEqual(first, second);
   assert.match(first["REPORT.md"], /Official-recovery hourly contexts: 216/);
   assert.match(first["REPORT.md"], /Net funding P&L: \$180\.00/);
-  assert.match(first["REPORT.md"], /Cross-venue basis P&L after friction: -\$40\.00|Cross-venue basis P&L after friction: \$-40\.00/);
+  assert.match(first["REPORT.md"], /Raw cross-venue basis P&L before friction: \$-31\.00/);
+  assert.match(first["REPORT.md"], /execution friction: \$9\.00/i);
+  assert.match(first["REPORT.md"], /residual: \$0\.00/);
+  assert.match(first["economics.csv"], /raw_basis_pnl_before_friction_usd/);
+  assert.match(first["economics.csv"], /decomposition_residual_usd,0/);
   assert.match(first["economics.csv"], /break_even_friction_bps_per_order/);
   assert.match(first["margin-stress.csv"], /0\.25/);
   assert.ok(first["equity-curve.svg"]?.startsWith("<svg"));
