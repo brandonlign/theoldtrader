@@ -64,7 +64,7 @@ function fixture() {
   ].map((row) => ({ ...row, acquisition }));
   const rawRowsByHash = new Map();
   for (const row of rows) rawRowsByHash.set(row.sha256, [row]);
-  return { record, rawRowsByHash };
+  return { record, rawRowsByHash, hashes };
 }
 
 test("raw semantic audit independently reproduces every live compact field", () => {
@@ -75,6 +75,17 @@ test("raw semantic audit independently reproduces every live compact field", () 
     officialRecoveryAudited: 0,
     compactRowsAudited: 1
   });
+});
+
+test("repeated identical raw payload hash is valid across multiple polls", () => {
+  const { record, rawRowsByHash, hashes } = fixture();
+  const original = rawRowsByHash.get(hashes.bnFunding)[0];
+  rawRowsByHash.set(hashes.bnFunding, [
+    original,
+    { ...original, recordedAt: "2026-08-20T01:02:00Z" },
+    { ...original, recordedAt: "2026-08-20T02:02:00Z" }
+  ]);
+  assert.equal(auditCompactAgainstRaw([record], rawRowsByHash).pass, true);
 });
 
 test("raw semantic audit catches a compact oracle mutation despite correct hashes", () => {
