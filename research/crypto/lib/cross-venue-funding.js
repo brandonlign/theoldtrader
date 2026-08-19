@@ -88,9 +88,7 @@ function verifyRecordIdentity(record, manifestHash) {
     bn?.hashes?.premiumIndexSha256,
     bn?.hashes?.fundingHistorySha256
   ];
-  if (hashes.some((hash) => !/^[0-9a-f]{64}$/i.test(String(hash ?? "")))) {
-    throw new Error("Trial 7 compact record has an invalid raw-response hash");
-  }
+  if (hashes.some((hash) => !/^[0-9a-f]{64}$/i.test(String(hash ?? "")))) throw new Error("Trial 7 compact record has an invalid raw-response hash");
 }
 
 export function requiredRawHashes(records) {
@@ -138,11 +136,11 @@ function collectFundingEvents(records, startMs, endMs) {
   for (const record of records) {
     for (const event of record.sources?.hyperliquid?.events ?? []) {
       const time = Number(event.time);
-      if (time > startMs && time < endMs) insertEvent(hyperliquid, event, "Hyperliquid");
+      if (time > startMs && time <= endMs) insertEvent(hyperliquid, event, "Hyperliquid");
     }
     for (const event of record.sources?.binance?.events ?? []) {
       const time = Number(event.time);
-      if (time > startMs && time < endMs) insertEvent(binance, event, "Binance");
+      if (time > startMs && time <= endMs) insertEvent(binance, event, "Binance");
     }
   }
   return {
@@ -152,10 +150,10 @@ function collectFundingEvents(records, startMs, endMs) {
 }
 
 function hyperliquidFundingCoverage(events, startMs, endMs) {
-  const expected = Math.max(0, Math.round((endMs - startMs) / HOUR_MS) - 1);
+  const expected = Math.max(0, Math.round((endMs - startMs) / HOUR_MS));
   const times = new Set(events.map((event) => event.time));
   const missing = [];
-  for (let time = startMs + HOUR_MS; time < endMs; time += HOUR_MS) if (!times.has(time)) missing.push(time);
+  for (let time = startMs + HOUR_MS; time <= endMs; time += HOUR_MS) if (!times.has(time)) missing.push(time);
   return {
     expectedHyperliquid: expected,
     observedHyperliquid: events.length,
@@ -188,9 +186,7 @@ function cumulativeFundingAt(time, events, quantity, venue) {
   let total = 0;
   for (const event of events) {
     if (event.time > time) break;
-    total += venue === "hyperliquid"
-      ? quantity * event.oracle * event.rate
-      : -quantity * event.markPrice * event.rate;
+    total += venue === "hyperliquid" ? quantity * event.oracle * event.rate : -quantity * event.markPrice * event.rate;
   }
   return total;
 }
@@ -236,9 +232,7 @@ function returnStats(series, startingEquity, startMs, endMs, toleranceMs, annual
   const returns = fixedDailyReturns(series, startingEquity, startMs, endMs, toleranceMs);
   const sd = stdev(returns);
   const target = 0;
-  const downsideDeviation = returns.length
-    ? Math.sqrt(mean(returns.map((value) => Math.min(value - target, 0) ** 2)))
-    : 0;
+  const downsideDeviation = returns.length ? Math.sqrt(mean(returns.map((value) => Math.min(value - target, 0) ** 2))) : 0;
   const finalEquity = series.at(-1)?.equity ?? startingEquity;
   const netReturn = finalEquity / startingEquity - 1;
   const elapsedDays = (endMs - startMs) / DAY_MS;
@@ -467,10 +461,7 @@ function consistencyWindows(series, startMs, endMs, manifest) {
 }
 
 function analyticalBreakEvenFrictionBps(scenario) {
-  const marks = scenario.entry.binanceMark
-    + scenario.entry.hyperliquidMark
-    + scenario.exit.binanceMark
-    + scenario.exit.hyperliquidMark;
+  const marks = scenario.entry.binanceMark + scenario.entry.hyperliquidMark + scenario.exit.binanceMark + scenario.exit.hyperliquidMark;
   const frictionUsdPerBps = scenario.quantity * marks / 10_000;
   if (!(frictionUsdPerBps > 0)) return 0;
   return Math.max(0, scenario.grossPnlBeforeFriction / frictionUsdPerBps);
@@ -496,7 +487,11 @@ export function evaluateCrossVenueFunding({ manifest, manifestHash, records, ava
   const startMs = Date.parse(manifest.forwardWindow.startInclusive);
   const endMs = Date.parse(mode === "screening" ? manifest.forwardWindow.screeningEndExclusive : manifest.forwardWindow.finalEndExclusive);
   if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) throw new Error("Invalid frozen Trial 7 window");
-  if (evaluationNowMs < endMs) throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${new Date(endMs).toISOString()}`);
+  const evaluationDelayMs = Number(manifest.forwardWindow.earliestEvaluationDelayMinutesAfterBoundary ?? 0) * 60_000;
+  const evaluationNotBeforeMs = endMs + evaluationDelayMs;
+  if (evaluationNowMs < evaluationNotBeforeMs) {
+    throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${new Date(evaluationNotBeforeMs).toISOString()}`);
+  }
 
   const boundaryToleranceMs = manifest.forwardWindow.entryExitPriceMatchToleranceMinutes * 60_000;
   const evidenceRecords = [...records]
@@ -546,6 +541,7 @@ export function evaluateCrossVenueFunding({ manifest, manifestHash, records, ava
     entrySnapshotPresent: Boolean(entryRecord),
     exitSnapshotPresent: Boolean(exitRecord),
     entrySelectionRule: manifest.forwardWindow.entryExitSelectionRule,
+    fundingBoundaryRule: manifest.fundingAccounting?.boundaryRule,
     expectedHourlyContexts,
     observedUniqueHourlyContexts: windowRecords.length,
     acquisitionCoverage: coverageState,
