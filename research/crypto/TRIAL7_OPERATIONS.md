@@ -38,7 +38,9 @@ Recommended command:
 npm run research:cv:record
 ```
 
-It waits for the frozen scientific start if launched early, then records at approximately minute `02` of each UTC hour.
+It waits for the frozen scientific start if launched early, then targets **00:00:05 after each UTC hour**. The five-second offset is regression-tested in `tests/trial7-collection-schedule.test.js` and is chosen to put Hyperliquid oracle/mark context close to the hourly funding boundary while avoiding a request exactly on the boundary.
+
+The same poll also requests recent funding history. A just-settled funding event does **not** have to be visible in that exact poll: the next hourly request has a 130-minute lookback, so the event can be recovered from a later raw funding-history response while still being matched to the preserved near-boundary oracle context. The evaluator deduplicates identical event observations and rejects conflicting duplicates.
 
 The default outputs are:
 
@@ -128,7 +130,13 @@ npm run research:cv:evaluate -- screening \
   > trial7-screening-evaluation.json
 ```
 
-The evaluator itself refuses to run before the boundary. It independently checks compact/raw acquisition identity and reconstructs every primary-live compact market/funding field from the exact raw responses before it can calculate economics.
+The evaluator itself refuses to run before the boundary. Before any economics it now performs **three independent provenance layers**:
+
+1. compact/raw acquisition-type and SHA-256 consistency;
+2. raw semantic reconstruction of every primary-live compact mark/oracle/funding value;
+3. Binance funding-schedule reconstruction from first-party `premiumIndex.nextFundingTime`, requiring every announced in-window funding timestamp to appear in settled `fundingRate` history. This deliberately avoids assuming an immutable 8-hour Binance interval.
+
+Only after those pass does the main data gate check hourly first-party context coverage, Hyperliquid hourly funding completeness/oracle matching, boundary contexts and the remaining strategy-independent integrity rules.
 
 The 90-day classification cannot promote the strategy and cannot authorize retuning.
 
