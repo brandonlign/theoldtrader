@@ -11,7 +11,7 @@ test("Trial 7 identity, safety and forward boundaries remain frozen", () => {
   assert.equal(manifest.paperOnly, true);
   assert.equal(manifest.livePromotionAllowed, false);
   assert.equal(manifest.scientificMode, "forward-only");
-  assert.equal(manifest.freeze.finalImplementationFreezeAt, "2026-08-19T22:54:27Z");
+  assert.equal(manifest.freeze.finalImplementationFreezeAt, "2026-08-19T23:04:02Z");
   assert.equal(manifest.forwardWindow.startInclusive, "2026-08-20T00:00:00.000Z");
   assert.equal(manifest.forwardWindow.screeningEndExclusive, "2026-11-18T00:00:00.000Z");
   assert.equal(manifest.forwardWindow.finalEndExclusive, "2027-02-16T00:00:00.000Z");
@@ -22,6 +22,7 @@ test("Trial 7 identity, safety and forward boundaries remain frozen", () => {
   assert.equal(manifest.forwardWindow.entryExitPriceMatchToleranceMinutes, 10);
   assert.equal(manifest.forwardWindow.entryExitSelectionRule, "firstValidOfficialObservationAtOrAfterBoundary");
   assert.equal(manifest.forwardWindow.preBoundaryEntryExitContextAllowed, false);
+  assert.equal(manifest.forwardWindow.earliestEvaluationDelayMinutesAfterBoundary, 10);
 });
 
 test("Trial 7 direction, sizing and no-tuning controls remain frozen", () => {
@@ -51,7 +52,8 @@ test("Trial 7 transaction-cost, funding and stress assumptions remain frozen", (
   assert.equal(manifest.fundingAccounting.resampleRates, false);
   assert.equal(manifest.fundingAccounting.nativeIntervalsOnly, true);
   assert.equal(manifest.forwardWindow.fundingAtStartBoundaryEarned, false);
-  assert.equal(manifest.forwardWindow.fundingAtEndBoundaryEarned, false);
+  assert.equal(manifest.forwardWindow.fundingAtEndBoundaryEarned, true);
+  assert.match(manifest.fundingAccounting.boundaryRule, /startBoundary < eventTime <= endBoundary/);
   assert.equal(manifest.marginStress.researchMaintenanceMarginPctOfLegNotional, 0.10);
   assert.deepEqual(manifest.marginStress.crossVenueBasisShockPct, [0.05, 0.10, 0.25]);
 });
