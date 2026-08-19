@@ -26,6 +26,7 @@
     "research:cv:connectivity": "node research/crypto/record-cross-venue-funding.mjs --connectivity-only",
     "research:cv:once": "node research/crypto/record-cross-venue-funding.mjs --once",
     "research:cv:record": "node research/crypto/record-cross-venue-funding.mjs",
+    "research:cv:health": "node research/crypto/trial7-recorder-health.mjs",
     "research:cv:evaluate": "node research/crypto/cross-venue-funding-evaluate.mjs",
     "research:cv:report": "node research/crypto/cross-venue-funding-report.mjs",
     "test": "node --test tests/*.test.js"
