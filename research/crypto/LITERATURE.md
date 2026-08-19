@@ -1,6 +1,19 @@
-# TheOldTrader Crypto Research Evidence Review — 2026-08-18
+# TheOldTrader Crypto Research Evidence Review — 2026-08-19
 
 This note records the evidence used to choose TheOldTrader research directions. It is not a claim that any cited strategy is profitable for TheOldTrader. The live paper trader remains unchanged. Published/working-paper results are treated as hypotheses to replicate under TheOldTrader's own costs and data, not as transferable alpha.
+
+## Current flagship decision
+
+The current flagship **strategy research candidate** is the already-frozen Trial 2 `funding-carry-v1`. The decision is based on economic distinctness and plausible magnitude, not on an observed primary Trial 2 result. The current flagship **execution experiment** remains E1 `coinbase-maker-execution-v1`.
+
+This prioritization does not modify either frozen experiment.
+
+Two recent evidence updates sharpen that choice:
+
+- Schmeling, Schrimpf and Todorov, *Crypto Carry* (Management Science, 2026), document large and time-varying crypto futures carry, with average carry above 10% annualized and episodes above 40%, while emphasizing crash, margin and limited-arbitrage-capital risks. That magnitude is large enough to justify testing an unchanged delta-neutral carry family under TheOldTrader's deliberately harsh retail friction.
+- Kim and Hansen, *The Quarter-Hour Effect: Periodic Algorithmic Trading and Return Predictability in Cryptocurrency Futures* (2026), document quarter-hour bursts in crypto-futures activity and multi-hour return predictability from opening order imbalance. This is relevant to TheOldTrader's L2/trade research, but the predictive components are measured in basis points and the paper's directly traded opening-return effect is smaller still. Under TheOldTrader's current retail friction, the evidence does not justify freezing a new microstructure Trial 7 before execution economics are measured.
+
+Therefore carry receives the current strategy-research priority while E1 develops execution evidence. Microstructure alpha remains a prospective hypothesis, not a mined extension of E1.
 
 ## Evidence strong enough to affect the research design
 
@@ -10,7 +23,7 @@ This note records the evidence used to choose TheOldTrader research directions. 
 
 3. **Crypto momentum evidence is conditional and implementation-sensitive.** Han, Kang and Ryu, *Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions* (revised March 2026), find stronger evidence for time-series momentum than cross-sectional momentum once realistic assumptions are imposed. Zhang and Makgolo (2026) show cross-sectional momentum is state dependent and sensitive to dynamic, survivorship-aware universe construction. This supported Trial 5's simple low-turnover time-series momentum test. Trial 5 subsequently failed its frozen 2022-2025 development gate, so its parameterization is locked as a failed trial rather than retuned.
 
-4. **A low-volatility crypto premium is a distinct recent hypothesis.** Pyo and Jang, *Revisiting the low-volatility anomaly in cryptocurrency markets* (Finance Research Letters 97, 2026, 109851), report that lower-realized-volatility cryptocurrencies outperform higher-volatility cryptocurrencies in the post-2017 period, with the strongest reported spread around two-to-three-month volatility formation and one-month holding horizons. Trial 6 therefore prospectively fixes one 90-day formation window and monthly holding period before any TheOldTrader result. To avoid adding a broad survivorship-selected altcoin universe, it tests only the existing BTC/ETH/SOL Coinbase spot set and compares against a matched 15%-total-exposure equal-weight portfolio.
+4. **A low-volatility crypto premium is a distinct recent hypothesis.** Pyo and Jang, *Revisiting the low-volatility anomaly in cryptocurrency markets* (Finance Research Letters 97, 2026, 109851), report that lower-realized-volatility cryptocurrencies outperform higher-volatility cryptocurrencies in the post-2017 period, with the strongest reported spread around two-to-three-month volatility formation and one-month holding horizons. Trial 6 prospectively fixed one 90-day formation window and monthly holding period before any TheOldTrader result. Trial 6 then failed its first frozen development gate and is locked against rescue.
 
 5. **Backtest multiplicity must be recorded.** Bailey and López de Prado's Deflated Sharpe Ratio corrects observed Sharpe for selection bias, non-normality and the number of trials. Bailey, Borwein, López de Prado and Zhu's Probability of Backtest Overfitting motivates explicit trial accounting and non-selection on a final holdout. TheOldTrader therefore uses frozen manifests, an explicit serious-trial ledger, walk-forward development folds, embargo where labels overlap, and a chronological holdout that cannot be used to alter the evaluated specification.
 
@@ -20,9 +33,9 @@ This note records the evidence used to choose TheOldTrader research directions. 
 
 ## Evidence that motivates separate strategy families
 
-- **Market microstructure / LOB:** Lucchese, Pakkanen and Veraart (2022) find broad short-horizon return predictability from order books with strong representation dependence; Jha et al. (2020) show walk-forward Bitcoin LOB predictability at a two-second horizon. Recent 2026 work using Hawkes/LOB event streams likewise treats this as a high-frequency microstructure problem. None of that implies retail profitability after latency, taker fees, fill probability and adverse selection. A TheOldTrader microstructure study therefore requires recorded L2/trades and realistic execution simulation, not 15-minute candles.
+- **Market microstructure / LOB:** Lucchese, Pakkanen and Veraart (2022) find broad short-horizon return predictability from order books with strong representation dependence; Jha et al. (2020) show walk-forward Bitcoin LOB predictability at a two-second horizon. Kim and Hansen (2026) add evidence that quarter-hour opening order imbalance predicts returns over roughly 4–12 hours, with the predictive decomposition shifting from lagged-flow toward public-signal components at longer horizons. None of this implies retail profitability after latency, fees, fill probability and adverse selection. A TheOldTrader microstructure study therefore requires recorded L2/trades and realistic execution simulation, not 15-minute candles.
 
-- **Funding / basis carry:** Schmeling, Schrimpf and Todorov, *Crypto Carry*, published in Management Science in 2026, document large and time-varying crypto futures carry together with crash, margin and liquidation risks. Trial 2 therefore evaluates carry as its own delta-neutral spot/perpetual strategy with realized funding, independently marked spot and perpetual legs, both-leg costs, collateral and gap stress. Carry performance is never pooled with directional-strategy performance.
+- **Funding / basis carry:** Schmeling, Schrimpf and Todorov, *Crypto Carry*, published in Management Science in 2026, document large and time-varying crypto futures carry together with crash, margin and liquidation risks. Trial 2 evaluates carry as its own delta-neutral spot/perpetual strategy with realized funding, independently marked spot and perpetual legs, both-leg costs, collateral and gap stress. Carry performance is never pooled with directional-strategy performance.
 
 - **Text / LLM signals:** The evidence is mixed enough that text remains an input-feature study, not an autonomous trader. Ider and Lessmann (2022) find domain-adapted BERT sentiment can improve crypto forecasts. Fiszeder, Orzeszko and Pietrzyk (Journal of Big Data, 2026) find ChatGPT-derived Bitcoin-news sentiment improves in-sample fit but not statistically significant OOS forecasting performance. Sharma and Baruah (2026) find a leakage-safe news-sentiment pipeline slightly *reduces* mean Sharpe versus a technical baseline. Gao, Jiang and Yan (2026) show LLM historical forecasts can exhibit measurable look-ahead contamination through memorized outcomes. Therefore any future TheOldTrader text feature needs point-in-time news timestamps, frozen model/version prompts, post-training-cutoff or contamination controls, and incremental OOS tests. An LLM will not directly choose trades.
 
@@ -32,18 +45,18 @@ This note records the evidence used to choose TheOldTrader research directions. 
 
 These are inferences from the evidence plus TheOldTrader's frozen cost assumptions, not direct literature findings.
 
-- With 60 bps fee per side + 5 bps slippage per side + spread, TheOldTrader's primary modeled round trip is roughly **1.40%** at a 10 bps spread. That is far above the 10 bps cost experiment in Bysik and Ślepaczuk, so their profitable selected XGBoost configurations cannot be assumed to transfer to TheOldTrader.
+- With 60 bps fee per side + 5 bps slippage per side + spread, TheOldTrader's primary modeled spot round trip is roughly **1.40%** at a 10 bps spread. That is far above the 10 bps cost experiment in Bysik and Ślepaczuk, so their profitable selected XGBoost configurations cannot be assumed to transfer to TheOldTrader.
 - Trial 1's BTC robustness replication failed: the forecast/realized-return relationship was negative and the model did not clear the frozen cost hurdle. That is evidence against rescuing the same candle feature set by simply increasing model complexity.
-- Trial 5 then tested a low-turnover time-series momentum family under the same harsh cost model and failed its frozen development gate. That failure is retained rather than optimized away.
-- Trial 6 asks a different question: whether relative volatility across the same three spot assets contains enough persistent cross-sectional information to improve matched-exposure risk-adjusted returns after costs. The 2026 paper motivates the hypothesis but does not prove it for this tiny universe or TheOldTrader's costs.
-- Funding/basis carry remains economically distinct and defensible research, but realized funding, both-leg basis P&L, fees and margin risk still decide the result.
-- Maker execution could materially change economics, but historical candles cannot validate it honestly. It remains gated on richer quote/trade data.
+- Trials 5 and 6 then failed two separate low-turnover spot hypotheses under the same harsh cost framework. Those failures are retained rather than optimized away.
+- Funding/basis carry is now the flagship strategy-research candidate because its return source and turnover profile are structurally different and the literature-scale economics are large enough to justify a harsh-cost replication. This is a prioritization inference, not evidence that Trial 2 will pass.
+- Maker execution could materially change economics, but historical candles cannot validate it honestly. E1 remains gated on richer quote/trade data and cannot retroactively alter prior trial costs.
+- Quarter-hour order imbalance is a credible microstructure hypothesis but currently lacks enough demonstrated margin over retail friction to justify spending Trial 7 before execution evidence exists.
 
 ## Speculative hypotheses — not treated as evidence
 
 - Cross-asset dispersion may help identify when relative momentum is unreliable in crypto.
 - LOB imbalance may add execution timing even if it is too weak to justify standalone directional trading.
-- Funding/basis carry may survive a high-fee retail setting better than medium-horizon directional forecasting, but this remains unproven until the frozen carry evaluator sees synchronized spot/perpetual/funding data.
+- Funding/basis carry may survive a high-fee retail setting better than medium-horizon directional forecasting, but this remains unproven until the frozen primary carry evaluator sees synchronized spot/perpetual/funding data.
 - Text/news could add incremental information around discrete macro/crypto events, but the null and contamination evidence means the burden of proof is high.
 
 ## Primary / first-party references
@@ -54,6 +67,7 @@ These are inferences from the evidence plus TheOldTrader's frozen cost assumptio
 - Han, Kang & Ryu, *Momentum in the Cryptocurrency Market: A Comprehensive Analysis under Realistic Assumptions*, SSRN 4675565, revised 2026-03-26.
 - Pyo & Jang, *Revisiting the low-volatility anomaly in cryptocurrency markets*, Finance Research Letters 97 (2026), 109851.
 - Zhang & Makgolo, *Cross-Sectional Dispersion and the State Dependence of Cryptocurrency Momentum*, SSRN 6648082 (2026).
+- Kim & Hansen, *The Quarter-Hour Effect: Periodic Algorithmic Trading and Return Predictability in Cryptocurrency Futures*, arXiv:2607.09426 (2026).
 - *Machine Learning and the Implementable Efficient Frontier*, Review of Financial Studies, published 2026-03-15, doi:10.1093/rfs/hhag022.
 - Bailey & López de Prado, *The Deflated Sharpe Ratio*, Journal of Portfolio Management 40(5), 2014.
 - Bailey et al., *The Probability of Backtest Overfitting*, Journal of Computational Finance 20(4), 2017.
