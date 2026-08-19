@@ -38,14 +38,8 @@ test("announced Binance nextFundingTime events must appear in settled history", 
 
 test("missing an announced settled event fails regardless of observed gap size", () => {
   const records = [
-    row(0, 4),
-    row(1, 4),
-    row(2, 4),
-    row(3, 4),
-    row(4, 12),
-    row(5, 12),
-    row(12, 20, [12]),
-    row(20, 28, [12, 20])
+    row(0, 4), row(1, 4), row(2, 4), row(3, 4), row(4, 12), row(5, 12),
+    row(12, 20, [12]), row(20, 28, [12, 20])
   ];
   const audit = auditBinanceFundingSchedule(records, { startMs: START, endMs: END });
   assert.equal(audit.pass, false);
@@ -54,15 +48,8 @@ test("missing an announced settled event fails regardless of observed gap size",
 
 test("adjusted non-eight-hour schedule passes when official announced events settle", () => {
   const records = [
-    row(0, 4),
-    row(1, 4),
-    row(2, 4),
-    row(3, 4),
-    row(4, 8, [4]),
-    row(5, 8, [4]),
-    row(8, 12, [4, 8]),
-    row(12, 16, [4, 8, 12]),
-    row(16, 20, [4, 8, 12, 16]),
+    row(0, 4), row(1, 4), row(2, 4), row(3, 4), row(4, 8, [4]), row(5, 8, [4]),
+    row(8, 12, [4, 8]), row(12, 16, [4, 8, 12]), row(16, 20, [4, 8, 12, 16]),
     row(20, 24, [4, 8, 12, 16, 20])
   ];
   const audit = auditBinanceFundingSchedule(records, { startMs: START, endMs: END });
@@ -78,4 +65,20 @@ test("stale nextFundingTime context is a provenance failure", () => {
   const audit = auditBinanceFundingSchedule(records, { startMs: START, endMs: END });
   assert.equal(audit.pass, false);
   assert.equal(audit.staleScheduleRows.length, 1);
+});
+
+test("records outside the frozen evaluation window cannot fail the schedule gate", () => {
+  const records = [
+    row(0, 8),
+    row(8, 16, [8]),
+    row(16, 24, [8, 16]),
+    {
+      recordedAt: new Date(END + HOUR).toISOString(),
+      sources: { binance: { nextFundingTime: END - HOUR, events: [] } }
+    }
+  ];
+  const audit = auditBinanceFundingSchedule(records, { startMs: START, endMs: END });
+  assert.equal(audit.pass, true);
+  assert.equal(audit.staleScheduleRows.length, 0);
+  assert.equal(audit.contextRows, 3);
 });
