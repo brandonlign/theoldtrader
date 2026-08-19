@@ -8,3 +8,32 @@ export function msUntilTrial7Collection(now = new Date()) {
   }
   return next.getTime() - now.getTime();
 }
+
+export function trial7CriticalBoundaryCatchUp({
+  nowMs = Date.now(),
+  boundariesMs,
+  toleranceMinutes,
+  offsetSeconds = TRIAL7_COLLECTION_OFFSET_SECONDS
+}) {
+  if (!Array.isArray(boundariesMs) || boundariesMs.some((value) => !Number.isFinite(value))) {
+    throw new Error("Trial 7 critical-boundary catch-up requires finite boundary timestamps");
+  }
+  if (!Number.isFinite(toleranceMinutes) || toleranceMinutes <= 0) {
+    throw new Error("Trial 7 critical-boundary catch-up requires a positive tolerance");
+  }
+  const toleranceMs = toleranceMinutes * 60_000;
+  const offsetMs = offsetSeconds * 1000;
+  for (const boundaryMs of [...boundariesMs].sort((a, b) => a - b)) {
+    const preferredMs = boundaryMs + offsetMs;
+    const deadlineMs = boundaryMs + toleranceMs;
+    if (nowMs >= preferredMs && nowMs <= deadlineMs) {
+      return {
+        boundaryMs,
+        preferredMs,
+        deadlineMs,
+        latenessFromPreferredMs: nowMs - preferredMs
+      };
+    }
+  }
+  return null;
+}
