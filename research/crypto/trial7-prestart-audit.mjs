@@ -8,9 +8,7 @@ const RESULT_DIR = "research/crypto/results/cross-venue-funding-v1";
 const COMPACT_PATH = "research/crypto/data-cache/cross-venue-funding-v1-forward.ndjson";
 const RAW_PATH = "research/crypto/data-cache/cross-venue-funding-v1-forward.raw.ndjson.gz";
 
-function sha256(value) {
-  return crypto.createHash("sha256").update(value).digest("hex");
-}
+function sha256(value) { return crypto.createHash("sha256").update(value).digest("hex"); }
 function requireEqual(actual, expected, label) {
   if (actual !== expected) throw new Error(`${label} changed: expected ${expected}, got ${actual}`);
 }
@@ -26,7 +24,7 @@ function check(label, fn) { fn(); checks.push(label); }
 check("identity", () => {
   requireEqual(manifest.experimentId, "cross-venue-funding-v1", "experimentId");
   requireNumber(manifest.trialNumber, 7, "trialNumber");
-  requireEqual(manifest.freeze?.finalImplementationFreezeAt, "2026-08-19T23:04:02Z", "final implementation freeze time");
+  requireEqual(manifest.freeze?.finalImplementationFreezeAt, "2026-08-19T23:19:57Z", "final implementation freeze time");
 });
 check("paper-only safety", () => {
   requireEqual(manifest.paperOnly, true, "paperOnly");
@@ -47,9 +45,10 @@ check("frozen forward boundaries", () => {
   requireNumber(manifest.forwardWindow?.primaryCollectionOffsetSecondsAfterUtcHour, 5, "primary collection offset");
   requireNumber(manifest.forwardWindow?.minimumRecorderCoverage, 0.98, "minimum first-party context coverage");
   requireNumber(manifest.forwardWindow?.entryExitPriceMatchToleranceMinutes, 10, "entry/exit tolerance");
+  requireNumber(manifest.forwardWindow?.settlementDiscoveryLookaheadMinutes, 70, "settlement discovery lookahead");
   requireEqual(manifest.forwardWindow?.entryExitSelectionRule, "firstValidOfficialObservationAtOrAfterBoundary", "entry/exit selection rule");
   requireEqual(manifest.forwardWindow?.preBoundaryEntryExitContextAllowed, false, "pre-boundary entry/exit context");
-  requireNumber(manifest.forwardWindow?.earliestEvaluationDelayMinutesAfterBoundary, 10, "evaluation delay");
+  requireNumber(manifest.forwardWindow?.earliestEvaluationDelayMinutesAfterBoundary, 70, "evaluation delay");
 });
 check("frozen economics", () => {
   requireNumber(manifest.portfolio?.startingEquityUsd, 10000, "starting equity");
@@ -73,6 +72,11 @@ check("native funding and schedule semantics", () => {
   if (!String(manifest.fundingAccounting?.boundaryRule ?? "").includes("startBoundary < eventTime <= endBoundary")) throw new Error("funding boundary rule changed");
   requireNumber(manifest.sourceRules?.hyperliquidFundingTimestampNormalization?.maximumAbsoluteSkewMs, 60000, "Hyperliquid funding timestamp skew");
   requireNumber(manifest.sourceRules?.binanceFundingScheduleAudit?.maximumStaleAnnouncementLagMs, 300000, "Binance funding schedule stale lag");
+});
+check("settlement discovery isolation", () => {
+  if (!String(manifest.sourceRules?.settlementDiscoveryRule ?? "").includes("settlementDiscoveryLookaheadMinutes")) throw new Error("settlement discovery rule changed");
+  if (!String(manifest.sourceRules?.settlementDiscoveryRule ?? "").includes("excluded from fills")) throw new Error("post-window market-field exclusion changed");
+  requireNumber(manifest.forwardWindow?.settlementDiscoveryLookaheadMinutes, 70, "settlement discovery lookahead");
 });
 check("canonical provenance binding", () => {
   requireEqual(manifest.sourceRules?.canonicalManifestOnly, true, "canonicalManifestOnly");
@@ -120,6 +124,7 @@ process.stdout.write(`${JSON.stringify({
   forwardStart: manifest.forwardWindow.startInclusive,
   screeningEndExclusive: manifest.forwardWindow.screeningEndExclusive,
   finalEndExclusive: manifest.forwardWindow.finalEndExclusive,
+  settlementDiscoveryLookaheadMinutes: manifest.forwardWindow.settlementDiscoveryLookaheadMinutes,
   compactAcquisitionPresent: compactExists,
   rawAcquisitionPresent: rawExists,
   candidatePerformanceInspected: false,
