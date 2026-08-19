@@ -1,3 +1,5 @@
+import { auditBinanceFundingSchedule } from "./binance-funding-schedule-audit.js";
+
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
 const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
@@ -26,9 +28,7 @@ function stdev(values) {
 
 function acquisitionType(record) {
   const type = String(record?.acquisition?.type ?? "");
-  if (!ACQUISITION_TYPES.has(type)) {
-    throw new Error(`Invalid Trial 7 acquisition type: ${type || "missing"}`);
-  }
+  if (!ACQUISITION_TYPES.has(type)) throw new Error(`Invalid Trial 7 acquisition type: ${type || "missing"}`);
   return type;
 }
 
@@ -52,36 +52,26 @@ function uniqueByHour(records, startMs, endMs) {
   return [...byHour.values()].sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt));
 }
 
-function nearestRecord(records, targetMs, toleranceMs) {
+function firstRecordAtOrAfter(records, targetMs, toleranceMs) {
   let best = null;
-  let bestDistance = Infinity;
+  let bestTime = Infinity;
   for (const record of records) {
     const time = Date.parse(record.recordedAt);
-    if (!Number.isFinite(time)) continue;
-    const distance = Math.abs(time - targetMs);
-    if (distance < bestDistance) {
+    if (!Number.isFinite(time) || time < targetMs || time - targetMs > toleranceMs) continue;
+    if (time < bestTime) {
       best = record;
-      bestDistance = distance;
-    } else if (distance === bestDistance && best) {
-      const bestType = acquisitionType(best);
-      const candidateType = acquisitionType(record);
-      if (bestType !== candidateType && candidateType === "PRIMARY_LIVE") best = record;
+      bestTime = time;
+    } else if (time === bestTime && best && acquisitionType(best) !== acquisitionType(record)) {
+      if (acquisitionType(record) === "PRIMARY_LIVE") best = record;
     }
   }
-  if (!best || bestDistance > toleranceMs) return null;
   return best;
 }
 
 function verifyRecordIdentity(record, manifestHash) {
-  if (record.schema !== "theoldtrader-cross-venue-funding-v1-record-v2") {
-    throw new Error("Unexpected Trial 7 compact-record schema");
-  }
-  if (record.experimentId !== "cross-venue-funding-v1" || record.trialNumber !== 7) {
-    throw new Error("Unexpected Trial 7 compact-record identity");
-  }
-  if (record.manifestSha256 !== manifestHash) {
-    throw new Error("Trial 7 manifest hash changed during acquisition");
-  }
+  if (record.schema !== "theoldtrader-cross-venue-funding-v1-record-v2") throw new Error("Unexpected Trial 7 compact-record schema");
+  if (record.experimentId !== "cross-venue-funding-v1" || record.trialNumber !== 7) throw new Error("Unexpected Trial 7 compact-record identity");
+  if (record.manifestSha256 !== manifestHash) throw new Error("Trial 7 manifest hash changed during acquisition");
   acquisitionType(record);
   const hl = record.sources?.hyperliquid;
   const bn = record.sources?.binance;
@@ -113,9 +103,7 @@ export function requiredRawHashes(records) {
       hl?.hashes?.fundingHistorySha256,
       bn?.hashes?.premiumIndexSha256,
       bn?.hashes?.fundingHistorySha256
-    ]) {
-      if (value) hashes.add(String(value));
-    }
+    ]) if (value) hashes.add(String(value));
   }
   return hashes;
 }
@@ -123,12 +111,7 @@ export function requiredRawHashes(records) {
 export function verifyRawHashCoverage(records, availableRawHashes) {
   const required = requiredRawHashes(records);
   const missing = [...required].filter((hash) => !availableRawHashes.has(hash));
-  return {
-    pass: missing.length === 0,
-    required: required.size,
-    available: availableRawHashes.size,
-    missing
-  };
+  return { pass: missing.length === 0, required: required.size, available: availableRawHashes.size, missing };
 }
 
 function insertEvent(map, event, label) {
@@ -136,9 +119,7 @@ function insertEvent(map, event, label) {
   const rate = finite(event.rate, `${label} funding rate`);
   const prior = map.get(time);
   if (prior) {
-    if (Math.abs(prior.rate - rate) > 1e-15) {
-      throw new Error(`Conflicting ${label} funding rate at ${new Date(time).toISOString()}`);
-    }
+    if (Math.abs(prior.rate - rate) > 1e-15) throw new Error(`Conflicting ${label} funding rate at ${new Date(time).toISOString()}`);
     if (label === "Binance") {
       const markPrice = positive(event.markPrice, "Binance funding markPrice");
       if (Math.abs(prior.markPrice - markPrice) > 1e-8 * Math.max(prior.markPrice, markPrice)) {
@@ -147,11 +128,8 @@ function insertEvent(map, event, label) {
     }
     return;
   }
-  if (label === "Binance") {
-    map.set(time, { time, rate, markPrice: positive(event.markPrice, "Binance funding markPrice") });
-  } else {
-    map.set(time, { time, rate });
-  }
+  if (label === "Binance") map.set(time, { time, rate, markPrice: positive(event.markPrice, "Binance funding markPrice") });
+  else map.set(time, { time, rate });
 }
 
 function collectFundingEvents(records, startMs, endMs) {
@@ -173,52 +151,30 @@ function collectFundingEvents(records, startMs, endMs) {
   };
 }
 
-function fundingCoverage(events, startMs, endMs) {
-  const expectedHyperliquid = Math.max(0, Math.round((endMs - startMs) / HOUR_MS) - 1);
-  const hlTimes = new Set(events.hyperliquid.map((event) => event.time));
-  const missingHyperliquid = [];
-  for (let time = startMs + HOUR_MS; time < endMs; time += HOUR_MS) {
-    if (!hlTimes.has(time)) missingHyperliquid.push(time);
-  }
-
-  const maxBinanceGapMs = 8 * HOUR_MS + 5 * 60_000;
-  const bnTimes = events.binance.map((event) => event.time);
-  let maxObservedBinanceGapMs = 0;
-  let binanceGapPass = bnTimes.length > 0;
-  if (bnTimes.length) {
-    maxObservedBinanceGapMs = Math.max(
-      bnTimes[0] - startMs,
-      endMs - bnTimes.at(-1),
-      ...bnTimes.slice(1).map((time, index) => time - bnTimes[index])
-    );
-    binanceGapPass = maxObservedBinanceGapMs <= maxBinanceGapMs;
-  }
-
+function hyperliquidFundingCoverage(events, startMs, endMs) {
+  const expected = Math.max(0, Math.round((endMs - startMs) / HOUR_MS) - 1);
+  const times = new Set(events.map((event) => event.time));
+  const missing = [];
+  for (let time = startMs + HOUR_MS; time < endMs; time += HOUR_MS) if (!times.has(time)) missing.push(time);
   return {
-    expectedHyperliquid,
-    observedHyperliquid: events.hyperliquid.length,
-    missingHyperliquid,
-    hyperliquidPass: missingHyperliquid.length === 0,
-    observedBinance: events.binance.length,
-    maxObservedBinanceGapMs,
-    maxAllowedBinanceGapMs: maxBinanceGapMs,
-    binancePass: binanceGapPass
+    expectedHyperliquid: expected,
+    observedHyperliquid: events.length,
+    missingHyperliquid: missing,
+    hyperliquidPass: missing.length === 0
   };
 }
 
 function matchHyperliquidFunding(events, records, toleranceMs) {
   return events.map((event) => {
-    const record = nearestRecord(records, event.time, toleranceMs);
-    if (!record) {
-      return { ...event, oracle: null, matchedRecordAt: null, matchDistanceMs: null };
-    }
+    const record = firstRecordAtOrAfter(records, event.time, toleranceMs);
+    if (!record) return { ...event, oracle: null, matchedRecordAt: null, matchedAcquisitionType: null, matchDistanceMs: null };
     const time = Date.parse(record.recordedAt);
     return {
       ...event,
       oracle: positive(record.sources.hyperliquid.oracle, "matched Hyperliquid oracle"),
       matchedRecordAt: record.recordedAt,
       matchedAcquisitionType: acquisitionType(record),
-      matchDistanceMs: Math.abs(time - event.time)
+      matchDistanceMs: time - event.time
     };
   });
 }
@@ -232,8 +188,9 @@ function cumulativeFundingAt(time, events, quantity, venue) {
   let total = 0;
   for (const event of events) {
     if (event.time > time) break;
-    if (venue === "hyperliquid") total += quantity * event.oracle * event.rate;
-    else total -= quantity * event.markPrice * event.rate;
+    total += venue === "hyperliquid"
+      ? quantity * event.oracle * event.rate
+      : -quantity * event.markPrice * event.rate;
   }
   return total;
 }
@@ -247,34 +204,81 @@ function fundingTotals(events, quantity) {
 function maxDrawdown(series) {
   let peak = -Infinity;
   let worst = 0;
-  for (const point of series) {
+  for (const point of [...series].sort((a, b) => a.time - b.time)) {
     peak = Math.max(peak, point.equity);
     if (peak > 0) worst = Math.min(worst, point.equity / peak - 1);
   }
   return worst;
 }
 
-function returnStats(series, startingEquity, elapsedDays) {
-  const dailyByDay = new Map();
-  for (const point of series) dailyByDay.set(Math.floor(point.time / DAY_MS), point);
-  const daily = [...dailyByDay.values()].sort((a, b) => a.time - b.time);
-  let previous = startingEquity;
-  const returns = [];
-  for (const point of daily) {
-    returns.push(point.equity / previous - 1);
-    previous = point.equity;
+function firstEquityAtOrAfter(series, targetMs, toleranceMs) {
+  let best = null;
+  for (const point of series) {
+    if (point.time < targetMs || point.time - targetMs > toleranceMs) continue;
+    if (!best || point.time < best.time) best = point;
   }
+  return best;
+}
+
+function fixedDailyReturns(series, startingEquity, startMs, endMs, toleranceMs) {
+  const returns = [];
+  let previousEquity = startingEquity;
+  for (let boundary = startMs + DAY_MS; boundary <= endMs; boundary += DAY_MS) {
+    const point = firstEquityAtOrAfter(series, boundary, boundary === endMs ? 0 : toleranceMs);
+    if (!point) throw new Error(`Missing fixed daily equity observation at ${new Date(boundary).toISOString()}`);
+    returns.push(point.equity / previousEquity - 1);
+    previousEquity = point.equity;
+  }
+  return returns;
+}
+
+function returnStats(series, startingEquity, startMs, endMs, toleranceMs, annualizationDays = 365) {
+  const returns = fixedDailyReturns(series, startingEquity, startMs, endMs, toleranceMs);
   const sd = stdev(returns);
-  const downsideSd = stdev(returns.filter((value) => value < 0));
+  const target = 0;
+  const downsideDeviation = returns.length
+    ? Math.sqrt(mean(returns.map((value) => Math.min(value - target, 0) ** 2)))
+    : 0;
   const finalEquity = series.at(-1)?.equity ?? startingEquity;
   const netReturn = finalEquity / startingEquity - 1;
+  const elapsedDays = (endMs - startMs) / DAY_MS;
   return {
     finalEquity,
     netReturn,
-    annualizedReturn: (1 + netReturn) ** (365 / elapsedDays) - 1,
-    sharpe: sd > 0 ? Math.sqrt(365) * mean(returns) / sd : 0,
-    sortino: downsideSd > 0 ? Math.sqrt(365) * mean(returns) / downsideSd : 0,
+    annualizedReturn: (1 + netReturn) ** (annualizationDays / elapsedDays) - 1,
+    sharpe: sd > 0 ? Math.sqrt(annualizationDays) * mean(returns) / sd : 0,
+    sortino: downsideDeviation > 0 ? Math.sqrt(annualizationDays) * mean(returns) / downsideDeviation : 0,
+    sortinoTargetReturn: target,
+    downsideDeviation,
+    dailyObservations: returns.length,
     maxDrawdown: maxDrawdown(series)
+  };
+}
+
+function marginState({ record, quantity, longEntryFill, shortEntryFill, funding, collateral, marginPct }) {
+  const time = Date.parse(record.recordedAt);
+  const bnMark = positive(record.sources.binance.mark, "Binance mark path");
+  const hlMark = positive(record.sources.hyperliquid.mark, "Hyperliquid mark path");
+  const bnFunding = cumulativeFundingAt(time, funding.binance, quantity, "binance");
+  const hlFunding = cumulativeFundingAt(time, funding.hyperliquid, quantity, "hyperliquid");
+  const bnPricePnl = quantity * (bnMark - longEntryFill);
+  const hlPricePnl = quantity * (shortEntryFill - hlMark);
+  const bnVenueEquity = collateral + bnPricePnl + bnFunding;
+  const hlVenueEquity = collateral + hlPricePnl + hlFunding;
+  const bnMaintenance = quantity * bnMark * marginPct;
+  const hlMaintenance = quantity * hlMark * marginPct;
+  return {
+    time,
+    timestamp: record.recordedAt,
+    acquisitionType: acquisitionType(record),
+    bnMark,
+    hlMark,
+    bnFunding,
+    hlFunding,
+    bnPricePnl,
+    hlPricePnl,
+    binanceExcess: bnVenueEquity - bnMaintenance,
+    hyperliquidExcess: hlVenueEquity - hlMaintenance
   };
 }
 
@@ -293,14 +297,17 @@ function buildScenario({ records, funding, manifest, entryRecord, exitRecord, st
   const shortExitFill = fill(exitHyperliquidMark, "buy", frictionBps);
 
   const fundingPnl = fundingTotals(funding, quantity);
-  const longPricePnl = quantity * (longExitFill - longEntryFill);
-  const shortPricePnl = quantity * (shortEntryFill - shortExitFill);
-  const basisPnlAfterFriction = longPricePnl + shortPricePnl;
-  const netPnl = fundingPnl.net + basisPnlAfterFriction;
-
+  const binanceRawBasisPnl = quantity * (exitBinanceMark - entryBinanceMark);
+  const hyperliquidRawBasisPnl = quantity * (entryHyperliquidMark - exitHyperliquidMark);
+  const rawBasisPnl = binanceRawBasisPnl + hyperliquidRawBasisPnl;
+  const longPricePnlAfterFriction = quantity * (longExitFill - longEntryFill);
+  const shortPricePnlAfterFriction = quantity * (shortEntryFill - shortExitFill);
+  const combinedBasisAfterFriction = longPricePnlAfterFriction + shortPricePnlAfterFriction;
   const entryFrictionUsd = quantity * ((longEntryFill - entryBinanceMark) + (entryHyperliquidMark - shortEntryFill));
   const exitFrictionUsd = quantity * ((exitBinanceMark - longExitFill) + (shortExitFill - exitHyperliquidMark));
   const totalFrictionUsd = entryFrictionUsd + exitFrictionUsd;
+  const grossPnlBeforeFriction = fundingPnl.net + rawBasisPnl;
+  const netPnl = grossPnlBeforeFriction - totalFrictionUsd;
 
   const marginPct = manifest.marginStress.researchMaintenanceMarginPctOfLegNotional;
   const collateral = startingEquity * manifest.portfolio.collateralReservePctOfStartingEquityPerVenue;
@@ -310,68 +317,71 @@ function buildScenario({ records, funding, manifest, entryRecord, exitRecord, st
     minBinanceExcess: Infinity,
     minHyperliquidExcess: Infinity
   }]));
-  const equitySeries = [];
+  const equitySeries = [{ time: startMs, equity: startingEquity, phase: "pre-entry" }];
   const marginSeries = [];
+  const pathRecords = [...records];
+  if (!pathRecords.some((record) => record.recordedAt === exitRecord.recordedAt)) pathRecords.push(exitRecord);
+  pathRecords.sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt));
 
-  for (const record of records) {
-    const time = Date.parse(record.recordedAt);
-    if (!(time >= startMs && time < endMs)) continue;
-    const bnMark = positive(record.sources.binance.mark, "Binance mark path");
-    const hlMark = positive(record.sources.hyperliquid.mark, "Hyperliquid mark path");
-    const bnFunding = cumulativeFundingAt(time, funding.binance, quantity, "binance");
-    const hlFunding = cumulativeFundingAt(time, funding.hyperliquid, quantity, "hyperliquid");
-    const bnPricePnl = quantity * (bnMark - longEntryFill);
-    const hlPricePnl = quantity * (shortEntryFill - hlMark);
-    const bnVenueEquity = collateral + bnPricePnl + bnFunding;
-    const hlVenueEquity = collateral + hlPricePnl + hlFunding;
-    const bnMaintenance = quantity * bnMark * marginPct;
-    const hlMaintenance = quantity * hlMark * marginPct;
-    const bnExcess = bnVenueEquity - bnMaintenance;
-    const hlExcess = hlVenueEquity - hlMaintenance;
-    if (!observedMarginBreach && (bnExcess < 0 || hlExcess < 0)) {
+  for (const record of pathRecords) {
+    const state = marginState({ record, quantity, longEntryFill, shortEntryFill, funding, collateral, marginPct });
+    if (!observedMarginBreach && (state.binanceExcess < 0 || state.hyperliquidExcess < 0)) {
       observedMarginBreach = {
-        timestamp: record.recordedAt,
-        venue: bnExcess < 0 ? "binance" : "hyperliquid",
-        binanceExcess: bnExcess,
-        hyperliquidExcess: hlExcess
+        timestamp: state.timestamp,
+        venue: state.binanceExcess < 0 ? "binance" : "hyperliquid",
+        binanceExcess: state.binanceExcess,
+        hyperliquidExcess: state.hyperliquidExcess
       };
     }
-
     for (const shock of manifest.marginStress.crossVenueBasisShockPct) {
-      const stressedBnMark = bnMark * (1 - shock / 2);
-      const stressedHlMark = hlMark * (1 + shock / 2);
-      const stressedBnEquity = collateral + quantity * (stressedBnMark - longEntryFill) + bnFunding;
-      const stressedHlEquity = collateral + quantity * (shortEntryFill - stressedHlMark) + hlFunding;
+      const stressedBnMark = state.bnMark * (1 - shock / 2);
+      const stressedHlMark = state.hlMark * (1 + shock / 2);
+      const stressedBnEquity = collateral + quantity * (stressedBnMark - longEntryFill) + state.bnFunding;
+      const stressedHlEquity = collateral + quantity * (shortEntryFill - stressedHlMark) + state.hlFunding;
       const stressedBnExcess = stressedBnEquity - quantity * stressedBnMark * marginPct;
       const stressedHlExcess = stressedHlEquity - quantity * stressedHlMark * marginPct;
-      const state = stressState[String(shock)];
-      state.minBinanceExcess = Math.min(state.minBinanceExcess, stressedBnExcess);
-      state.minHyperliquidExcess = Math.min(state.minHyperliquidExcess, stressedHlExcess);
-      if (stressedBnExcess < 0 || stressedHlExcess < 0) state.breached = true;
+      const stress = stressState[String(shock)];
+      stress.minBinanceExcess = Math.min(stress.minBinanceExcess, stressedBnExcess);
+      stress.minHyperliquidExcess = Math.min(stress.minHyperliquidExcess, stressedHlExcess);
+      if (stressedBnExcess < 0 || stressedHlExcess < 0) stress.breached = true;
     }
-
-    const equity = startingEquity + bnPricePnl + hlPricePnl + bnFunding + hlFunding;
-    equitySeries.push({ time, equity });
     marginSeries.push({
-      time,
-      timestamp: record.recordedAt,
-      acquisitionType: acquisitionType(record),
-      binanceExcess: bnExcess,
-      hyperliquidExcess: hlExcess,
-      binanceFunding: bnFunding,
-      hyperliquidFunding: hlFunding
+      time: state.time,
+      timestamp: state.timestamp,
+      acquisitionType: state.acquisitionType,
+      binanceExcess: state.binanceExcess,
+      hyperliquidExcess: state.hyperliquidExcess,
+      binanceFunding: state.bnFunding,
+      hyperliquidFunding: state.hlFunding
     });
+    if (state.time < endMs) {
+      equitySeries.push({
+        time: state.time,
+        equity: startingEquity + state.bnPricePnl + state.hlPricePnl + state.bnFunding + state.hlFunding,
+        phase: "open"
+      });
+    }
   }
 
-  equitySeries.push({ time: endMs, equity: startingEquity + netPnl });
-  const elapsedDays = (endMs - startMs) / DAY_MS;
-  const stats = returnStats(equitySeries, startingEquity, elapsedDays);
+  equitySeries.push({ time: endMs, equity: startingEquity + netPnl, phase: "post-exit" });
+  equitySeries.sort((a, b) => a.time - b.time);
+  const toleranceMs = manifest.forwardWindow.maximumSnapshotGapMinutes * 60_000;
+  const stats = returnStats(
+    equitySeries,
+    startingEquity,
+    startMs,
+    endMs,
+    toleranceMs,
+    manifest.riskStatistics?.sharpeAnnualizationDays ?? 365
+  );
 
   return {
     frictionBpsPerOrder: frictionBps,
     quantity,
     pairedNotional,
     entry: {
+      timestamp: entryRecord.recordedAt,
+      delayFromBoundaryMs: Date.parse(entryRecord.recordedAt) - startMs,
       binanceMark: entryBinanceMark,
       hyperliquidMark: entryHyperliquidMark,
       binanceFill: longEntryFill,
@@ -379,6 +389,8 @@ function buildScenario({ records, funding, manifest, entryRecord, exitRecord, st
       acquisitionType: acquisitionType(entryRecord)
     },
     exit: {
+      timestamp: exitRecord.recordedAt,
+      delayFromBoundaryMs: Date.parse(exitRecord.recordedAt) - endMs,
       binanceMark: exitBinanceMark,
       hyperliquidMark: exitHyperliquidMark,
       binanceFill: longExitFill,
@@ -387,10 +399,14 @@ function buildScenario({ records, funding, manifest, entryRecord, exitRecord, st
     },
     fundingPnl,
     pricePnl: {
-      binanceLongAfterFriction: longPricePnl,
-      hyperliquidShortAfterFriction: shortPricePnl,
-      combinedBasisAfterFriction: basisPnlAfterFriction
+      binanceRawBasis: binanceRawBasisPnl,
+      hyperliquidRawBasis: hyperliquidRawBasisPnl,
+      combinedBasisBeforeFriction: rawBasisPnl,
+      binanceLongAfterFriction: longPricePnlAfterFriction,
+      hyperliquidShortAfterFriction: shortPricePnlAfterFriction,
+      combinedBasisAfterFriction
     },
+    grossPnlBeforeFriction,
     executionFriction: { entryUsd: entryFrictionUsd, exitUsd: exitFrictionUsd, totalUsd: totalFrictionUsd },
     netPnl,
     stats,
@@ -417,6 +433,8 @@ function indexComparator(entryRecord, exitRecord, manifest, frictionBps, startMs
   const elapsedDays = (endMs - startMs) / DAY_MS;
   return {
     reference: "Binance premiumIndex indexPrice",
+    entryTimestamp: entryRecord.recordedAt,
+    exitTimestamp: exitRecord.recordedAt,
     notional,
     quantity,
     entryReference: entry,
@@ -427,41 +445,35 @@ function indexComparator(entryRecord, exitRecord, manifest, frictionBps, startMs
   };
 }
 
-function sixtyDayWindows(series, startMs, endMs) {
+function consistencyWindows(series, startMs, endMs, manifest) {
+  const count = manifest.riskStatistics?.consistencyWindows?.count ?? 3;
+  const durationDays = manifest.riskStatistics?.consistencyWindows?.durationDays ?? 60;
+  const toleranceMs = manifest.forwardWindow.maximumSnapshotGapMinutes * 60_000;
   const windows = [];
-  for (let start = startMs; start < endMs; start += 60 * DAY_MS) {
-    const end = Math.min(start + 60 * DAY_MS, endMs);
-    if (end - start < 59 * DAY_MS) continue;
-    const first = nearestRecord(series.map((point) => ({
-      recordedAt: new Date(point.time).toISOString(),
-      acquisition: { type: "PRIMARY_LIVE" },
-      point
-    })), start, 2 * HOUR_MS)?.point;
-    const last = nearestRecord(series.map((point) => ({
-      recordedAt: new Date(point.time).toISOString(),
-      acquisition: { type: "PRIMARY_LIVE" },
-      point
-    })), end, 2 * HOUR_MS)?.point;
+  for (let index = 0; index < count; index += 1) {
+    const start = startMs + index * durationDays * DAY_MS;
+    const end = Math.min(start + durationDays * DAY_MS, endMs);
+    if (end <= start || end - start < durationDays * DAY_MS) continue;
+    const first = firstEquityAtOrAfter(series, start, start === startMs ? 0 : toleranceMs);
+    const last = firstEquityAtOrAfter(series, end, end === endMs ? 0 : toleranceMs);
     if (!first || !last) {
-      windows.push({ start, end, pnl: null, positive: false });
+      windows.push({ start, end, pnl: null, positive: false, complete: false });
       continue;
     }
     const pnl = last.equity - first.equity;
-    windows.push({ start, end, pnl, positive: pnl > 0 });
+    windows.push({ start, end, pnl, positive: pnl > 0, complete: true });
   }
   return windows;
 }
 
-function breakEvenFriction(args) {
-  let low = 0;
-  let high = 500;
-  for (let i = 0; i < 50; i += 1) {
-    const mid = (low + high) / 2;
-    const pnl = buildScenario({ ...args, frictionBps: mid }).netPnl;
-    if (pnl > 0) low = mid;
-    else high = mid;
-  }
-  return low;
+function analyticalBreakEvenFrictionBps(scenario) {
+  const marks = scenario.entry.binanceMark
+    + scenario.entry.hyperliquidMark
+    + scenario.exit.binanceMark
+    + scenario.exit.hyperliquidMark;
+  const frictionUsdPerBps = scenario.quantity * marks / 10_000;
+  if (!(frictionUsdPerBps > 0)) return 0;
+  return Math.max(0, scenario.grossPnlBeforeFriction / frictionUsdPerBps);
 }
 
 function acquisitionCoverage(windowRecords, expectedHourlyContexts) {
@@ -477,37 +489,27 @@ function acquisitionCoverage(windowRecords, expectedHourlyContexts) {
   };
 }
 
-export function evaluateCrossVenueFunding({
-  manifest,
-  manifestHash,
-  records,
-  availableRawHashes,
-  mode,
-  evaluationNowMs = Date.now()
-}) {
-  if (manifest.experimentId !== "cross-venue-funding-v1" || manifest.trialNumber !== 7) {
-    throw new Error("Unexpected Trial 7 manifest");
-  }
+export function evaluateCrossVenueFunding({ manifest, manifestHash, records, availableRawHashes, mode, evaluationNowMs = Date.now() }) {
+  if (manifest.experimentId !== "cross-venue-funding-v1" || manifest.trialNumber !== 7) throw new Error("Unexpected Trial 7 manifest");
   if (!["screening", "final"].includes(mode)) throw new Error("mode must be screening or final");
-  for (const record of records) verifyRecordIdentity(record, manifestHash);
-  records = [...records].sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt));
 
   const startMs = Date.parse(manifest.forwardWindow.startInclusive);
-  const endMs = Date.parse(mode === "screening"
-    ? manifest.forwardWindow.screeningEndExclusive
-    : manifest.forwardWindow.finalEndExclusive);
-  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) {
-    throw new Error("Invalid frozen Trial 7 window");
-  }
-  if (evaluationNowMs < endMs) {
-    throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${new Date(endMs).toISOString()}`);
-  }
+  const endMs = Date.parse(mode === "screening" ? manifest.forwardWindow.screeningEndExclusive : manifest.forwardWindow.finalEndExclusive);
+  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) throw new Error("Invalid frozen Trial 7 window");
+  if (evaluationNowMs < endMs) throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${new Date(endMs).toISOString()}`);
 
-  const toleranceMs = manifest.forwardWindow.entryExitPriceMatchToleranceMinutes * 60_000;
-  const fundingToleranceMs = manifest.forwardWindow.fundingPriceMatchToleranceMinutes * 60_000;
-  const entryRecord = nearestRecord(records, startMs, toleranceMs);
-  const exitRecord = nearestRecord(records, endMs, toleranceMs);
-  const windowRecords = uniqueByHour(records, startMs, endMs);
+  const boundaryToleranceMs = manifest.forwardWindow.entryExitPriceMatchToleranceMinutes * 60_000;
+  const evidenceRecords = [...records]
+    .filter((record) => {
+      const time = Date.parse(record.recordedAt);
+      return Number.isFinite(time) && time >= startMs && time <= endMs + boundaryToleranceMs;
+    })
+    .sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt));
+  for (const record of evidenceRecords) verifyRecordIdentity(record, manifestHash);
+
+  const entryRecord = firstRecordAtOrAfter(evidenceRecords, startMs, boundaryToleranceMs);
+  const exitRecord = firstRecordAtOrAfter(evidenceRecords, endMs, boundaryToleranceMs);
+  const windowRecords = uniqueByHour(evidenceRecords, startMs, endMs);
   const expectedHourlyContexts = Math.round((endMs - startMs) / HOUR_MS);
   const coverageState = acquisitionCoverage(windowRecords, expectedHourlyContexts);
   const minimumContextCoverage = manifest.forwardWindow.minimumRecorderCoverage;
@@ -521,16 +523,29 @@ export function evaluateCrossVenueFunding({
     );
   }
 
-  const raw = verifyRawHashCoverage(records, availableRawHashes);
-  const rawEvents = collectFundingEvents(records, startMs, endMs);
-  const fundingCoverageState = fundingCoverage(rawEvents, startMs, endMs);
-  const matchedHyperliquid = matchHyperliquidFunding(rawEvents.hyperliquid, records, fundingToleranceMs);
+  const raw = verifyRawHashCoverage(evidenceRecords, availableRawHashes);
+  const rawEvents = collectFundingEvents(evidenceRecords, startMs, endMs);
+  const hlCoverage = hyperliquidFundingCoverage(rawEvents.hyperliquid, startMs, endMs);
+  const fundingToleranceMs = manifest.forwardWindow.fundingPriceMatchToleranceMinutes * 60_000;
+  const matchedHyperliquid = matchHyperliquidFunding(rawEvents.hyperliquid, evidenceRecords, fundingToleranceMs);
   const unmatchedHyperliquid = matchedHyperliquid.filter((event) => !(event.oracle > 0));
   const matchedFunding = { hyperliquid: matchedHyperliquid, binance: rawEvents.binance };
+  const binanceFundingScheduleAudit = auditBinanceFundingSchedule(evidenceRecords, {
+    startMs,
+    endMs,
+    maximumStaleAnnouncementLagMs: manifest.sourceRules?.binanceFundingScheduleAudit?.maximumStaleAnnouncementLagMs ?? 300000
+  });
+  const fundingCoverageState = {
+    ...hlCoverage,
+    observedBinance: rawEvents.binance.length,
+    binancePass: binanceFundingScheduleAudit.pass,
+    binanceMechanism: "announcedSchedule"
+  };
 
   const dataGate = {
     entrySnapshotPresent: Boolean(entryRecord),
     exitSnapshotPresent: Boolean(exitRecord),
+    entrySelectionRule: manifest.forwardWindow.entryExitSelectionRule,
     expectedHourlyContexts,
     observedUniqueHourlyContexts: windowRecords.length,
     acquisitionCoverage: coverageState,
@@ -544,6 +559,7 @@ export function evaluateCrossVenueFunding({
     snapshotGapPass: maxSnapshotGapMs <= manifest.forwardWindow.maximumSnapshotGapMinutes * 60_000,
     rawHashCoverage: raw,
     fundingCoverage: fundingCoverageState,
+    binanceFundingScheduleAudit,
     unmatchedHyperliquidFundingOracleEvents: unmatchedHyperliquid.map((event) => event.time),
     hyperliquidFundingOraclePass: unmatchedHyperliquid.length === 0
   };
@@ -552,8 +568,8 @@ export function evaluateCrossVenueFunding({
     && dataGate.coveragePass
     && dataGate.snapshotGapPass
     && raw.pass
-    && fundingCoverageState.hyperliquidPass
-    && fundingCoverageState.binancePass
+    && hlCoverage.hyperliquidPass
+    && binanceFundingScheduleAudit.pass
     && dataGate.hyperliquidFundingOraclePass;
 
   if (!dataGate.pass) {
@@ -564,15 +580,9 @@ export function evaluateCrossVenueFunding({
       paperOnly: true,
       livePromotionAllowed: false,
       classification: "FAILED_DATA_GATE",
-      frozenWindow: {
-        startInclusive: new Date(startMs).toISOString(),
-        endExclusive: new Date(endMs).toISOString()
-      },
+      frozenWindow: { startInclusive: new Date(startMs).toISOString(), endExclusive: new Date(endMs).toISOString() },
       dataGate,
-      fundingEvents: {
-        hyperliquidObserved: matchedFunding.hyperliquid.length,
-        binanceObserved: matchedFunding.binance.length
-      },
+      fundingEvents: { hyperliquidObserved: matchedFunding.hyperliquid.length, binanceObserved: matchedFunding.binance.length },
       economicsCalculated: false,
       interpretationConstraint: "Trial 7 economics are intentionally not calculated when the frozen provenance/data gate fails.",
       antiLeakage: manifest.antiLeakage
@@ -583,8 +593,12 @@ export function evaluateCrossVenueFunding({
   const primary = buildScenario({ ...baseArgs, frictionBps: manifest.executionModel.primaryAllInFrictionBpsPerOrder });
   const costStress = buildScenario({ ...baseArgs, frictionBps: manifest.executionModel.stressAllInFrictionBpsPerOrder });
   const comparator = indexComparator(entryRecord, exitRecord, manifest, manifest.executionModel.primaryAllInFrictionBpsPerOrder, startMs, endMs);
-  const windows60d = sixtyDayWindows(primary.equitySeries, startMs, endMs);
+  const windows60d = consistencyWindows(primary.equitySeries, startMs, endMs, manifest);
   const positive60d = windows60d.filter((window) => window.positive).length;
+  const consistencyTelescopeErrorUsd = mode === "final" && windows60d.length === 3 && windows60d.every((window) => window.complete)
+    ? windows60d.reduce((sum, window) => sum + window.pnl, 0) - primary.netPnl
+    : null;
+  const consistencyTelescopePass = consistencyTelescopeErrorUsd === null || Math.abs(consistencyTelescopeErrorUsd) < 1e-8;
   const noMarginFailure = !primary.margin.observedBreach && primary.margin.allFrozenStressesPass;
 
   const screeningRequirements = {
@@ -599,11 +613,11 @@ export function evaluateCrossVenueFunding({
     ...screeningRequirements,
     annualizedReturnExceedsCashBy2Pct: primary.stats.annualizedReturn > 0.02,
     twoOfThreeSixtyDayWindowsPositive: windows60d.length === 3 && positive60d >= 2,
+    consistencyWindowsTelescope: consistencyTelescopePass,
     maxDrawdownBelow10Pct: primary.stats.maxDrawdown > -0.10,
     costStressNetPositive: costStress.netPnl > 0
   };
   const finalPass = mode === "final" && Object.values(finalRequirements).every(Boolean);
-
   const classification = mode === "screening"
     ? (screeningPass ? "SCREENING_PASS_NO_PROMOTION" : "SCREENING_FAIL_NO_PROMOTION")
     : (finalPass ? manifest.finalGate.strongestPossibleClassification : "FAILED_FINAL_GATE");
@@ -615,15 +629,9 @@ export function evaluateCrossVenueFunding({
     paperOnly: true,
     livePromotionAllowed: false,
     classification,
-    frozenWindow: {
-      startInclusive: new Date(startMs).toISOString(),
-      endExclusive: new Date(endMs).toISOString()
-    },
+    frozenWindow: { startInclusive: new Date(startMs).toISOString(), endExclusive: new Date(endMs).toISOString() },
     dataGate,
-    fundingEvents: {
-      hyperliquid: matchedFunding.hyperliquid.length,
-      binance: matchedFunding.binance.length
-    },
+    fundingEvents: { hyperliquid: matchedFunding.hyperliquid.length, binance: matchedFunding.binance.length },
     economicsCalculated: true,
     primary,
     costStress,
@@ -632,11 +640,13 @@ export function evaluateCrossVenueFunding({
       start: new Date(window.start).toISOString(),
       end: new Date(window.end).toISOString(),
       pnl: window.pnl,
-      positive: window.positive
+      positive: window.positive,
+      complete: window.complete
     })),
+    consistencyTelescopeErrorUsd,
     screeningRequirements,
     finalRequirements: mode === "final" ? finalRequirements : null,
-    breakEvenAllInFrictionBpsPerOrder: breakEvenFriction(baseArgs),
+    breakEvenAllInFrictionBpsPerOrder: analyticalBreakEvenFrictionBps(primary),
     interpretationConstraint: mode === "screening"
       ? "The 90-day result is predeclared interim evidence only. It cannot promote Trial 7 or authorize any parameter change."
       : "Even PROMOTION_ELIGIBLE_RESEARCH_ONLY permits only a separate paper-baseline proposal. It does not authorize real-money trading.",
