@@ -26,11 +26,23 @@ export function auditBinanceFundingSchedule(records, {
 
   for (const record of records) {
     const recordedAt = Date.parse(record?.recordedAt);
-    if (!Number.isFinite(recordedAt) || recordedAt < startMs || recordedAt >= endMs) continue;
+    if (!Number.isFinite(recordedAt) || recordedAt < startMs) continue;
     const binance = record?.sources?.binance;
     if (!binance) continue;
-    contextRows += 1;
 
+    // Settled history from the post-boundary exit poll is eligible to prove an
+    // event announced before the boundary. Only the event timestamp, not the
+    // poll timestamp, determines whether the cashflow belongs to the position.
+    for (const event of binance.events ?? []) {
+      const time = finite(event.time, "Binance funding event time");
+      eventRowsSeen += 1;
+      if (time > startMs && time <= endMs) actual.add(time);
+    }
+
+    // Funding-schedule announcements are frozen only from contexts observed
+    // while the position is still inside the declared window.
+    if (recordedAt >= endMs) continue;
+    contextRows += 1;
     const nextFundingTime = finite(binance.nextFundingTime, "Binance nextFundingTime");
     if (nextFundingTime < recordedAt - maximumStaleAnnouncementLagMs) {
       staleScheduleRows.push({
@@ -39,13 +51,7 @@ export function auditBinanceFundingSchedule(records, {
         lagMs: recordedAt - nextFundingTime
       });
     }
-    if (nextFundingTime > startMs && nextFundingTime < endMs) announced.add(nextFundingTime);
-
-    for (const event of binance.events ?? []) {
-      const time = finite(event.time, "Binance funding event time");
-      eventRowsSeen += 1;
-      if (time > startMs && time < endMs) actual.add(time);
-    }
+    if (nextFundingTime > startMs && nextFundingTime <= endMs) announced.add(nextFundingTime);
   }
 
   const announcedTimes = [...announced].sort((a, b) => a - b);
@@ -55,8 +61,8 @@ export function auditBinanceFundingSchedule(records, {
 
   return {
     pass: contextRows > 0 && staleScheduleRows.length === 0 && missingAnnouncedEvents.length === 0,
-    sourceMechanism: "Binance premiumIndex.nextFundingTime -> settled fundingRate.fundingTime",
-    contextWindow: "startInclusive<=recordedAt<endExclusive",
+    sourceMechanism: "in-window Binance premiumIndex.nextFundingTime -> settled fundingRate.fundingTime, including exit-poll settlement",
+    contextWindow: "startInclusive<=recordedAt<endBoundary; settled events start<fundingTime<=endBoundary",
     maximumStaleAnnouncementLagMs,
     contextRows,
     eventRowsSeen,
