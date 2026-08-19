@@ -1,196 +1,172 @@
 # TheOldTrader crypto research status — 2026-08-19
 
 Authoritative current branch: `research/cross-venue-funding-v1-current`  
-Parent research branch: `research/tsmom-v1` / draft PR `#14`  
+Draft stacked PR: **#15** against `research/tsmom-v1`  
 Frozen live/paper v2 execution code modified by this branch: **no**  
 Real-money trading enabled: **no**
 
 ## Current conclusion
 
-**No new strategy has yet earned promotion over frozen TheOldTrader crypto v2.** Trial 1's completed robustness replication was weak/negative. Trials 5 (`tsmom-v1`) and 6 (`lowvol-v1`) both failed their frozen development gates on first evaluation and are locked against rescue. Trial 3 and Trial 4 remain frozen/unobserved behind their immutable-universe/data-acquisition requirements.
+**No research strategy has yet earned promotion over frozen TheOldTrader crypto v2.** Trial 1's completed robustness replication was weak/negative. Trials 5 (`tsmom-v1`) and 6 (`lowvol-v1`) failed their frozen development gates on first evaluation and are locked against rescue. Trials 3 and 4 remain frozen/unobserved behind their existing provenance/data requirements.
 
-There are now **two serious carry tracks**, with different evidence roles:
+There are now two serious carry tracks with different evidence roles:
 
-1. **Trial 2 `funding-carry-v1` — flagship historical carry candidate.** It is the already-frozen single-venue-family spot/perpetual carry protocol. Its primary checksum-archive result remains unobserved. The observed exact-family REST replication 2R remains non-promotion evidence and still requires canonical reproduction.
-2. **Trial 7 `cross-venue-funding-v1` — flagship forward carry challenger.** It is a static BTC-only long-Binance-USD-M / short-Hyperliquid perpetual pair, frozen prospectively before any TheOldTrader cross-venue result. Scientific observation starts at **2026-08-20T00:00:00Z**, with a sealed 90-day screen ending **2026-11-18T00:00:00Z** and a 180-day final ending **2027-02-16T00:00:00Z**.
+1. **Trial 2 `funding-carry-v1` — flagship historical carry candidate.** Its primary checksum-archive result remains unobserved. Exact-family REST replication 2R is observed but non-promotion evidence and still requires canonical reproduction.
+2. **Trial 7 `cross-venue-funding-v1` — flagship forward carry challenger.** Static BTC-only long Binance USD-M `BTCUSDT` perpetual / short Hyperliquid BTC perpetual. The final pre-start implementation freeze is timestamped **2026-08-19T23:04:02Z**, before the scientific start at **2026-08-20T00:00:00Z**.
 
-E1 `coinbase-maker-execution-v1` remains the parallel flagship **execution** experiment. It must not be treated as alpha evidence or used to retroactively lower the cost model of prior trials.
+E1 `coinbase-maker-execution-v1` remains a separate execution experiment. It cannot be used as alpha evidence or to retroactively lower the costs of prior strategy trials.
 
-### Why the Trial 7 decision changed
+## Trial 7 scientific state
 
-Earlier on 2026-08-19 the working recommendation was to finish Trial 2 and E1 before spending Trial 7. That recommendation is now revised **before any Trial 7 candidate result**. Two pieces of new information materially changed the decision:
+**First Trial 7 candidate result observed:** no.  
+**Scientific start:** 2026-08-20T00:00:00Z.  
+**90-day screening boundary:** 2026-11-18T00:00:00Z.  
+**Earliest supported screening evaluation:** 2026-11-18T00:10:00Z.  
+**180-day final boundary:** 2027-02-16T00:00:00Z.  
+**Earliest supported final evaluation:** 2027-02-16T00:10:00Z.  
+**Strongest possible final classification:** `PROMOTION_ELIGIBLE_RESEARCH_ONLY`.
 
-- a current literature/source audit identified an independently studied cross-venue perpetual funding spread as a genuinely different return source with first-party public venue data available for prospective observation; and
-- repository archaeology found that this exact BTC-only candidate had already been frozen prospectively on the stale `research/cross-venue-funding-v1` branch on 2026-08-18, before the later time-series-momentum and low-volatility experiments consumed Trials 5 and 6.
+The authoritative specification is `research/crypto/manifests/cross-venue-funding-v1.json`. `TRIAL7_CROSS_VENUE_FUNDING_FROZEN.md` records the provenance/revision history, and `TRIAL7_OPERATIONS.md` is the operator runbook.
 
-The stale branch is preserved. Its original commits are `ed726ad32574c5aa41ef791dc90f19bff46b0e1e` (provisional Trial-5 freeze) and `68dd16647fe7721bbd5509162fec1f8fc3a90a13` (forward recorder). The current candidate is administratively registered as Trial 7 rather than rewriting those commits or pretending the idea was invented after the Trial 5/6 failures.
+### Frozen economics
 
-## Trial 2 — `funding-carry-v1` — FLAGSHIP HISTORICAL CARRY
+- BTC only.
+- Long Binance USD-M `BTCUSDT` perpetual.
+- Short Hyperliquid BTC perpetual.
+- Identical BTC quantity on both legs.
+- Approximately 15% of starting equity notional per leg.
+- 20% starting-equity collateral reserve per venue.
+- One entry and one exit.
+- No rebalancing, compounding, funding threshold, direction switching, asset selection or leverage optimization.
+- Primary all-in friction: **15 bps per venue order**, four fills total.
+- Promotion cost stress: **25 bps per order**.
+- Research maintenance threshold: 10% of current leg notional per venue.
+- Frozen adverse relative-basis shocks: 5%, 10%, 25%.
+- Unused capital remains zero-return cash.
 
-**Family:** market-neutral BTC spot / BTCUSDT perpetual funding-and-basis carry.  
-**Primary:** frozen, unobserved, checksum-archive acquisition pending.  
-**Replication 2R:** official Binance REST exact-family replication observed and locked; non-promotion only.
+### Frozen boundary economics
 
-The frozen economics remain unchanged: 15% starting-equity BTC spot purchase, short exactly the same BTC units in the perpetual, 20% starting-equity futures collateral reserve, no rebalancing or funding-sign/timing optimization, both-leg TheOldTrader friction, standard contract prices for execution, mark price for funding/valuation/margin, exact 8-hour schedule, no interpolation, and frozen gap/margin stress.
+Entry and exit use the first valid official context **at or after** the respective UTC boundary within 10 minutes. Therefore:
 
-`FLAGSHIP_CARRY.md` records the historical-carry evidence ladder. The result-agnostic audit is available through:
+- exact **start-boundary funding is excluded** because it settles before the post-boundary entry;
+- exact **end-boundary funding is included** because it settles before the post-boundary exit;
+- the evaluator refuses to run until the full 10-minute exit-context tolerance has elapsed.
+
+The funding inclusion rule is `startBoundary < eventTime <= endBoundary`.
+
+### Funding and basis accounting
+
+Rates remain on their native venue schedules and are never forward-filled or resampled to a synthetic common interval.
+
+- Hyperliquid short funding uses the matched official `oraclePx` after the normalized hourly event.
+- Binance long funding uses the settled funding event's official `markPrice`.
+- Primary P&L decomposition is `net funding + raw cross-venue basis - modeled execution friction = net P&L`.
+- After-friction leg/basis P&L is diagnostic only and is never double-counted with the separately reported friction.
+
+A positive funding spread is insufficient if cross-venue basis, four-fill execution friction, venue-specific collateral stress or drawdown erases it.
+
+## Trial 7 first-party provenance firewall
+
+Primary live collection targets **`HH:00:05Z`** and uses only public first-party Binance/Hyperliquid market-data endpoints. It has no order path and requires no exchange credentials.
+
+Every scientific compact observation carries the canonical manifest SHA-256 and hashes of the exact raw venue responses. Before economics can run, the supported evaluator requires:
+
+1. canonical manifest identity and compact/raw acquisition/hash consistency;
+2. exact `recordedAt` binding between every PRIMARY_LIVE compact source and its raw payload;
+3. independent raw semantic reconstruction of compact mark/oracle/funding fields;
+4. Hyperliquid settled-funding timestamp normalization to the nearest UTC hour only within ±60 seconds, with raw time/skew preserved and conflicts/collisions rejected;
+5. Binance funding completeness reconstructed from first-party `premiumIndex.nextFundingTime` announcements to settled `fundingRate.fundingTime`, including an exact end-boundary settlement delivered by the post-boundary exit poll;
+6. hourly first-party context coverage, boundary contexts, Hyperliquid hourly funding completeness/oracle matching and remaining fail-closed data gates.
+
+The recorder, evaluator and reporter are canonical-manifest locked. Custom Trial-7 manifests are rejected through the supported scientific commands.
+
+`OFFICIAL_RECOVERY` is specified in `TRIAL7_DATA_RECOVERY.md` but is intentionally unable to score the candidate until an exact source-specific first-party raw semantic adapter is implemented and tested. Published paper/Zenodo data, aggregators, reconstructed third-party feeds and interpolation are prohibited from filling scientific observations.
+
+## Trial 7 risk/reporting definitions
+
+Before any result, the evaluator/reporting layer was frozen to:
+
+- max drawdown beginning from **pre-entry starting equity**, so entry friction cannot disappear;
+- fixed 24-hour boundary-to-boundary daily returns with final exit included in the last return;
+- zero-target Sortino downside deviation;
+- three consecutive 60-day **contribution** windows for the 180-day final;
+- entry friction charged once in window 1 and exit friction once in window 3;
+- a required telescope check that the three 60-day contributions sum back to full final P&L;
+- analytical break-even all-in friction under the frozen four-fill model;
+- deterministic reporting of live/recovery coverage, funding, raw basis, friction, cost stress, margin stress and consistency windows.
+
+A failed provenance/data gate produces **no strategy economics**.
+
+## Trial 7 validation state
+
+The last fully executed repository-wide Vercel validation of the coherent scientific code path, at commit `84e5343fbdea3c12d52e3d68dbfa0bbf0abd8ce3`, completed:
+
+- **170 tests / 170 passing / 0 failing**;
+- the boundary/accounting adversarial suite, including start-excluded/end-included funding semantics;
+- canonical-manifest command locks;
+- raw semantic/provenance mutation tests;
+- Binance schedule and Hyperliquid timestamp tests;
+- basis/cost/margin failure tests;
+- 60-day telescope, drawdown, Sortino and analytical break-even tests;
+- successful Next.js production build.
+
+After that green scientific-code checkpoint, only documentation plus the external-host systemd deployment helper/test were added. Current head is `63eeaae703db184daa1ecd07801c188b29ac56e0`. Vercel did **not** execute that head because the account hit its build-rate limit; GitHub reports the Vercel status target as the build-rate-limit upgrade page rather than a code-test failure. The exact installer currently on the branch was separately syntax-checked with `bash -n` and its branch lock, preflight commands and sealed recorder `ExecStart` invariants were verified locally. Do not represent current-head Vercel CI as green until the quota permits a real build.
+
+Intermediate red Vercel deployments created while the manifest/core/tests were being updated commit-by-commit are superseded states, not the final scientific implementation. The coherent scientific head above is the relevant completed build.
+
+## Trial 7 operations / remaining blocker
+
+**No persistent primary-live collector is currently deployed by this branch or by Vercel.** The Vercel project exposes no durable storage backend suitable for the six-month evidence files, and GitHub Actions remains blocked by the account billing/spending-limit condition.
+
+The branch now includes:
 
 ```bash
-npm run research:carry:flagship -- research/crypto/results/funding-carry-v1/summary.json
+bash research/crypto/ops/install-trial7-recorder-systemd.sh
 ```
 
-The audit can only return historical rejection or `PROMISING_HISTORICAL_ONLY`; it can never promote the strategy. Primary historical robustness still has to be produced canonically and then survive later untouched validation before any separate promotion proposal can exist.
+for an external long-running Linux host. It refuses the wrong branch or a dirty worktree, uses the lockfile through `npm ci`, runs the test suite + pre-start audit + sealed connectivity check, then installs a hardened systemd service invoking only `npm run research:cv:record` and writing to the gitignored Trial 7 data directory.
 
-## Trial 7 — `cross-venue-funding-v1` — FLAGSHIP FORWARD CHALLENGER
+This installer has **not** been executed on the user's external host from this session; no SSH/host connector is available here. Do not claim primary-live acquisition is running until an actual host service/health check confirms it.
 
-**Family:** static cross-venue perpetual funding spread.  
-**Direction:** long Binance USD-M `BTCUSDT` perpetual / short Hyperliquid BTC perpetual.  
-**Asset selection:** BTC only, frozen.  
-**Scientific mode:** forward only.  
-**First TheOldTrader cross-venue result observed:** no.
+## Other research tracks
 
-The economic candidate is deliberately simple:
+### Trial 2 — `funding-carry-v1`
 
-- identical BTC quantity on both legs;
-- approximately 15% of starting equity notional per leg at entry;
-- 20% starting-equity collateral reserve per venue;
-- one entry and one exit;
-- no rebalancing;
-- no compounding;
-- no funding threshold;
-- no direction switching;
-- no asset selection;
-- no leverage optimization;
-- unused capital remains cash.
+Historical single-venue-family BTC spot/perpetual carry. Primary result remains unobserved; exact-family REST 2R is non-promotion evidence. Trial 2 remains worth completing under its original checksum-archive protocol because it answers a different historical robustness question from Trial 7's prospective cross-venue test.
 
-Primary execution friction is frozen at **15 bps all-in per venue order**, applied adversely to both venue entries and exits: four orders total. A separate **25 bps/order** stress must also remain profitable for the final gate. The primary cost is intentionally not a VIP/maker discount assumption.
+### Trial 1 — `crypto-oos-v1`
 
-### Trial 7 funding and basis accounting
+The BTCUSDT Binance robustness replication failed: zero ridge holdout trades and negative forecast/realized-return relationship. That is evidence against rescuing the same candle information set with greater model complexity.
 
-Funding rates stay on their native venue schedules; rates are never converted to a synthetic common interval and never forward-filled.
+### Trial 3 — `cross-sectional-v1`
 
-- Hyperliquid short funding: at each observed hourly event strictly inside the declared window, `+BTC quantity × matched official oracle price × funding rate`.
-- Binance long funding: at each observed official funding event strictly inside the declared window, `-BTC quantity × event markPrice × funding rate`.
-- Funding exactly on the frozen start or end boundary is excluded.
+Frozen/unobserved behind the immutable 2022-only universe/data workflow.
 
-Cross-venue basis P&L is reported separately from funding. A positive funding spread is not enough to pass if relative venue prices, four execution frictions, or margin risk erase the carry.
+### Trial 4 — `ctrend-v1`
 
-### Trial 7 provenance and data gate
+Frozen/unobserved and may not borrow Trial 3 P&L/coefficients/picks.
 
-`manifests/cross-venue-funding-v1.json` and `TRIAL7_CROSS_VENUE_FUNDING_FROZEN.md` are authoritative. Candidate evaluation uses first-party venue data only. The published paper/replication package is design motivation and **cannot** score Trial 7 or authorize promotion.
+### Trial 5 — `tsmom-v1`
 
-The recorder:
+**FAILED development** on the first frozen evaluation. No rescue under Trial 5.
 
-```bash
-npm run research:cv:connectivity
-npm run research:cv:once
-npm run research:cv:record
-```
+### Trial 6 — `lowvol-v1`
 
-stores a compact hourly record plus the exact raw venue responses in a concatenated gzip archive. Every raw response is SHA-256 hashed; every compact record carries the frozen-manifest SHA-256. Pre-start `connectivity` mode validates source schemas without persisting or printing candidate marks/rates.
+**FAILED development** on the first frozen evaluation. No rescue under Trial 6.
 
-Scientific evaluation:
+### E1 — `coinbase-maker-execution-v1`
 
-```bash
-npm run research:cv:evaluate -- screening \
-  research/crypto/data-cache/cross-venue-funding-v1-forward.ndjson \
-  research/crypto/data-cache/cross-venue-funding-v1-forward.raw.ndjson.gz
-```
+Frozen execution protocol, scientific acquisition pending. It remains execution evidence only and cannot rewrite strategy costs retrospectively.
 
-and later the same command with `final` refuses to run before its frozen boundary. It verifies raw-response hashes, hourly recorder coverage, funding-event coverage, exact manifest identity, Hyperliquid funding-to-oracle matching, Binance funding marks, cross-venue basis P&L, each venue's collateral path, observed research margin, frozen 5%/10%/25% adverse basis shocks, primary and 25-bps/order stressed execution costs, three non-overlapping 60-day windows, and total-equity drawdown.
+## Required execution order
 
-The 90-day classification can only be `SCREENING_PASS_NO_PROMOTION`, `SCREENING_FAIL_NO_PROMOTION`, or a data-gate failure. The strongest possible 180-day result is **`PROMOTION_ELIGIBLE_RESEARCH_ONLY`**. That label permits only a separate proposal to replace the paper baseline; it never authorizes real-money trading.
-
-### Trial 7 pre-result implementation corrections
-
-The current branch records these before any Trial 7 result:
-
-1. provisional trial number 5 → administrative Trial 7 because Trials 5/6 were later consumed by other experiments;
-2. prospective start Aug. 19 → Aug. 20 because continuous acquisition was not established before the old boundary passed;
-3. Hyperliquid funding notional uses official `oraclePx`, correcting the stale draft's `markPx` wording;
-4. 25 bps/order cost stress plus explicit basis/margin stresses added as harder promotion gates;
-5. funding exactly on entry/exit boundaries excluded, and the directional comparator fixed to Binance premium-index `indexPrice` so no new selectable spot feed is introduced.
-
-None of these revisions used a Trial 7 P&L, funding spread, favorable subperiod, asset screen, threshold, leverage search, or cost optimization.
-
-## Trial 1 — `crypto-oos-v1`
-
-**Family:** pooled 24-hour ridge expected-return forecast + explicit cost gate.  
-**Primary Coinbase final holdout:** untouched / infrastructure-blocked.  
-**Robustness replication 1R:** evaluated and failed.
-
-The frozen BTCUSDT Binance replication produced zero ridge holdout trades, negative forecast/realized-return correlation, and did not support rescuing the same candle information set with a more complex model. Trial 1 may not be retuned after that observed robustness result.
-
-## Trial 3 — `cross-sectional-v1`
-
-**Family:** low-turnover monthly cross-sectional spot expected-return selection.  
-**Status:** frozen before universe formation and before any 2023+ Trial 3 result.  
-**Development/final performance observed:** no.
-
-Trial 3 remains blocked on immutable 2022-only historical-universe formation. Its frozen design and holdout firewall remain unchanged.
-
-## Trial 4 — `ctrend-v1`
-
-**Family:** CTREND-inspired cross-sectional aggregate technical-trend expected-return selection.  
-**Status:** frozen before shared 2022-only universe formation and before any Trial 4 post-2022 performance.  
-**Development/final performance observed:** no.
-
-Trial 4 remains frozen and unobserved. It may not use Trial 3 P&L, coefficients, picks, or holdout results as inputs.
-
-## Trial 5 — `tsmom-v1`
-
-**Status:** **FAILED development on first frozen evaluation.**  
-No parameter, cadence, lookback, volatility target, asset-set, cost, or entry-rule rescue is permitted under Trial 5.
-
-## Trial 6 — `lowvol-v1`
-
-**Status:** **FAILED development on first frozen evaluation.**  
-No formation-window, holding-period, universe, exposure, cost, or selector rescue is permitted under Trial 6.
-
-## Execution experiment E1 — `coinbase-maker-execution-v1`
-
-**Question:** can post-only maker execution reduce implementation cost after queue position, non-fills, full-book depth and adverse selection?  
-**Status:** frozen forward-data protocol; scientific data acquisition pending.
-
-E1 remains separate from strategy evidence. The first scientific window requires at least 168 hours for each BTC/ETH/SOL feed plus frozen hash, coverage, sequence, queue and independent taker-VWAP audit rules. No E1 scientific result has been observed.
-
-The three-product runner emits 30-second progress heartbeats, child-process state, and bytes written so a recording cannot silently die while appearing active.
-
-## Microstructure-alpha note
-
-Recent quarter-hour/order-imbalance research remains scientifically relevant to the L2/trade data E1 records, but it is **not** Trial 7. Its reported basis-point-scale signal currently has less economic margin than the newly frozen cross-venue funding candidate. E1 itself remains execution evidence and may not be mined retrospectively as alpha without a separate prospective protocol.
-
-## Deterministic implementation validation
-
-Trial 7 added nine adversarial synthetic tests covering:
-
-- frozen-boundary refusal;
-- a complete positive 180-day path that can only become research-promotion eligible;
-- missing hourly Hyperliquid funding;
-- missing raw-response hashes;
-- positive funding erased by adverse basis movement;
-- primary-cost profit erased by the frozen 25-bps/order stress;
-- observed per-venue margin breach;
-- conflicting duplicate funding observations;
-- exclusion of funding exactly on frozen start/end boundaries.
-
-The first full repository build after those tests ran **113 tests with 113 passing** and completed the Next.js production build. This is implementation evidence only, not performance evidence.
-
-## Infrastructure state
-
-GitHub Actions remains blocked before workflow steps by the account Actions billing/spending-limit condition. That still blocks the manual canonical primary Trial 2 workflow and several other official-data workflows.
-
-Vercel preview builds are functioning and provide repository-wide deterministic validation. They do not substitute for the prospective Trial 7 data window or the missing canonical Trial 2 result.
-
-## Required next execution order
-
-1. **Trial 7 pre-start engineering:** finish source/recorder provenance checks before 2026-08-20T00:00Z without observing/storing a candidate result before the boundary.
-2. **Trial 7 acquisition:** preserve the frozen manifest hash and begin hourly first-party recording at/after the declared start. Do not inspect a strategy P&L before the sealed 90-day screen.
-3. **Primary Trial 2:** run the existing checksum-archive carry workflow exactly once when provenance-preserving execution is available; do not change the frozen candidate.
-4. Run the result-agnostic Trial 2 flagship audit on its immutable summary. Historical failure closes that frozen candidate; historical success remains `PROMISING_HISTORICAL_ONLY`.
-5. Canonically reproduce the already-observed exact-family 2R result without changing 2R.
-6. Continue E1 acquisition independently; execution evidence cannot rewrite prior strategy results.
-7. Keep Trials 3/4 frozen until their existing provenance/data blockers can be resolved. Do not use their unobserved state as permission for outcome-driven redesign.
-8. After the first Trial 7 result, do not alter its direction, venues, asset, allocation, costs, collateral, timing, data substitution, funding accounting, or stress rules. A changed successor requires Trial 8.
+1. Preserve the canonical Trial 7 manifest unchanged after the scientific start.
+2. Deploy/confirm the external `research:cv:record` service and use only sealed `research:cv:health` monitoring; do not inspect market values or estimated strategy P&L.
+3. If acquisition gaps occur, restore primary capture. Do not enable recovered observations for scoring until the source-specific independent adapter is implemented/tested under the already-frozen recovery rules.
+4. Do not evaluate Trial 7 before **2026-11-18T00:10:00Z**. The 90-day screen cannot promote or retune the candidate.
+5. Do not evaluate the final before **2027-02-16T00:10:00Z**. A full pass can only produce `PROMOTION_ELIGIBLE_RESEARCH_ONLY`.
+6. Complete primary Trial 2 and canonical 2R reproduction separately when provenance-preserving execution is available.
+7. Continue E1 independently; do not use it to rewrite Trial 7's frozen 15/25-bps cost assumptions.
+8. Keep Trials 3/4 frozen until their existing blockers are resolved.
 
 Until qualifying evidence exists, frozen v2 remains the paper baseline and no research candidate is promoted.
