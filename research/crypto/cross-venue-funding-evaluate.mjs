@@ -14,7 +14,7 @@ const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
 
 function usage() {
   throw new Error(
-    "Usage: node research/crypto/cross-venue-funding-evaluate.mjs screening|final <compact.ndjson> <raw.ndjson.gz> [manifest.json]"
+    "Usage: node research/crypto/cross-venue-funding-evaluate.mjs screening|final <compact.ndjson> <raw.ndjson.gz>"
   );
 }
 
@@ -142,8 +142,11 @@ function writeDataFailure({ manifest, mode, window, provenance, reason, extraGat
 }
 
 async function main() {
-  const [mode, compactPath, rawPath, manifestPath = DEFAULT_MANIFEST] = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  if (args.length !== 3) usage();
+  const [mode, compactPath, rawPath] = args;
   if (!["screening", "final"].includes(mode) || !compactPath || !rawPath) usage();
+  const manifestPath = DEFAULT_MANIFEST;
 
   const manifestBytes = fs.readFileSync(manifestPath);
   const manifestHash = sha256(manifestBytes);
@@ -170,6 +173,7 @@ async function main() {
   const provenanceBase = {
     manifestPath,
     manifestSha256: manifestHash,
+    canonicalManifestVerified: true,
     compactPath,
     compactSha256: compactHash,
     compactRows: records.length,
