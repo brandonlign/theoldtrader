@@ -4,7 +4,9 @@ Date: 2026-08-12
 Branch: `research/crypto-oos-v1`  
 Draft PR: #8
 
-This addendum is newer than the carry section of `STATUS.md` and exists specifically so no later session mistakes the now-observed REST replication for an unobserved/mutable experiment.
+> 2026-08-19 priority note: the unchanged primary Trial 2 `funding-carry-v1` is now the flagship **strategy research candidate**. This does not alter 2R, does not make 2R promotion-eligible, and does not imply that the unobserved primary Trial 2 has passed. See `FLAGSHIP_CARRY.md` and the newer `STATUS.md`.
+
+This addendum is newer than the carry section of the older status record and exists specifically so no later session mistakes the now-observed REST replication for an unobserved/mutable experiment.
 
 ## Safety state
 
@@ -80,10 +82,11 @@ If the canonical reproduction disagrees with the originating frozen evidence, in
 
 ## Current decision boundary
 
-No research result authorizes modification or promotion of live v2. The next legitimate work is:
+No research result authorizes modification or promotion of live v2. The current strategy-research priority is to finish the already-frozen primary carry evidence rather than invent an outcome-driven successor. The next legitimate work is:
 
-1. canonical reproduction of already-observed 2R once compute is available;
-2. primary checksum-archive Trial 2 without changing its frozen rules;
-3. primary Coinbase Trial 1 final holdout without changing Trial 1;
-4. forward E1 execution recording under the already-frozen protocol;
-5. only then, if evidence motivates it, a **new numbered** strategy/execution successor frozen before evaluation.
+1. primary checksum-archive Trial 2 without changing its frozen rules;
+2. run the result-agnostic flagship audit; even a pass is historical-only and requires untouched validation;
+3. canonical reproduction of already-observed 2R once compute is available;
+4. primary Coinbase Trial 1 final holdout without changing Trial 1;
+5. forward E1 execution recording under the already-frozen protocol;
+6. only then, if evidence motivates it, a **new numbered** strategy/execution successor frozen before evaluation.
