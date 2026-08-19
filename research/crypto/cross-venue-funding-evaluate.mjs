@@ -8,6 +8,7 @@ import { evaluateCrossVenueFunding } from "./lib/cross-venue-funding.js";
 import { auditCompactAgainstRaw } from "./lib/cross-venue-raw-audit.js";
 import { auditBinanceFundingSchedule } from "./lib/binance-funding-schedule-audit.js";
 import { normalizeHyperliquidFundingTimes } from "./lib/hyperliquid-funding-time-audit.js";
+import { projectLateSettlementsIntoContext } from "./lib/trial7-settlement-discovery.js";
 
 const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
 const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
@@ -145,11 +146,11 @@ async function main() {
   }
 
   const allRecords = await readCompact(compactPath);
-  const records = settlementDiscoveryWindow(allRecords, manifest, window);
-  if (!records.length) throw new Error("Trial 7 has no compact evidence rows inside the frozen settlement-discovery window");
+  const discoveryRecords = settlementDiscoveryWindow(allRecords, manifest, window);
+  if (!discoveryRecords.length) throw new Error("Trial 7 has no compact evidence rows inside the frozen settlement-discovery window");
   const raw = await readAndVerifyRaw(rawPath, manifestHash);
-  verifyCompactRawAcquisition(records, raw);
-  const semanticAudit = auditCompactAgainstRaw(records, raw.rawRowsByHash);
+  verifyCompactRawAcquisition(discoveryRecords, raw);
+  const semanticAudit = auditCompactAgainstRaw(discoveryRecords, raw.rawRowsByHash);
   const compactHash = sha256(fs.readFileSync(compactPath));
   const rawArchiveHash = sha256(fs.readFileSync(rawPath));
 
@@ -162,7 +163,7 @@ async function main() {
     compactPath,
     compactSha256: compactHash,
     compactRowsTotal: allRecords.length,
-    compactRowsInSettlementDiscoveryWindow: records.length,
+    compactRowsInSettlementDiscoveryWindow: discoveryRecords.length,
     contextEvidenceCutoff: new Date(window.endMs + contextToleranceMinutes * 60_000).toISOString(),
     settlementDiscoveryCutoff: new Date(window.endMs + discoveryLookaheadMinutes * 60_000).toISOString(),
     semanticAuditScope: "startInclusive<=recordedAt<=endBoundary+settlementDiscoveryLookahead; post-context-window market fields are integrity-audited but prohibited from economics",
@@ -178,7 +179,7 @@ async function main() {
 
   let normalized;
   try {
-    normalized = normalizeHyperliquidFundingTimes(records, {
+    normalized = normalizeHyperliquidFundingTimes(discoveryRecords, {
       toleranceMs: Number(manifest.sourceRules.hyperliquidFundingTimestampNormalization.maximumAbsoluteSkewMs)
     });
   } catch (error) {
@@ -197,13 +198,31 @@ async function main() {
     endMs: window.endMs,
     maximumStaleAnnouncementLagMs: Number(manifest.sourceRules.binanceFundingScheduleAudit.maximumStaleAnnouncementLagMs)
   });
-  const provenance = { ...provenanceBase, hyperliquidFundingTimestampNormalization: normalized.audit, binanceFundingScheduleAudit };
+  const settlementProjection = projectLateSettlementsIntoContext({
+    records: normalizedRecords,
+    startMs: window.startMs,
+    endMs: window.endMs,
+    contextToleranceMinutes,
+    discoveryLookaheadMinutes
+  });
+  const provenance = {
+    ...provenanceBase,
+    hyperliquidFundingTimestampNormalization: normalized.audit,
+    binanceFundingScheduleAudit,
+    settlementDiscoveryProjection: settlementProjection.audit
+  };
 
-  if (!binanceFundingScheduleAudit.pass) {
+  if (!binanceFundingScheduleAudit.pass || !settlementProjection.audit.pass) {
     writeDataFailure({
       manifest, mode, window, provenance,
-      reason: "Trial 7 economics are intentionally not calculated when the first-party Binance announced-funding schedule is incomplete.",
-      extraGate: { hyperliquidFundingTimestampNormalization: normalized.audit, binanceFundingScheduleAudit }
+      reason: !binanceFundingScheduleAudit.pass
+        ? "Trial 7 economics are intentionally not calculated when the first-party Binance announced-funding schedule is incomplete."
+        : "Trial 7 economics are intentionally not calculated when late settlement history cannot be projected into the frozen context window without using post-window market fields.",
+      extraGate: {
+        hyperliquidFundingTimestampNormalization: normalized.audit,
+        binanceFundingScheduleAudit,
+        settlementDiscoveryProjection: settlementProjection.audit
+      }
     });
     return;
   }
@@ -211,7 +230,7 @@ async function main() {
   const result = evaluateCrossVenueFunding({
     manifest,
     manifestHash,
-    records: normalizedRecords,
+    records: settlementProjection.records,
     availableRawHashes: raw.hashes,
     mode,
     evaluationNowMs: Date.now()
@@ -220,7 +239,11 @@ async function main() {
     ...result.dataGate,
     hyperliquidFundingTimestampNormalization: normalized.audit,
     binanceFundingScheduleAudit,
-    pass: Boolean(result.dataGate?.pass) && normalized.audit.pass && binanceFundingScheduleAudit.pass
+    settlementDiscoveryProjection: settlementProjection.audit,
+    pass: Boolean(result.dataGate?.pass)
+      && normalized.audit.pass
+      && binanceFundingScheduleAudit.pass
+      && settlementProjection.audit.pass
   };
 
   process.stdout.write(`${JSON.stringify({ ...result, provenance }, null, 2)}\n`);
