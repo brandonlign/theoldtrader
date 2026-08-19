@@ -33,6 +33,7 @@ function check(label, fn) {
 check("identity", () => {
   requireEqual(manifest.experimentId, "cross-venue-funding-v1", "experimentId");
   requireNumber(manifest.trialNumber, 7, "trialNumber");
+  requireEqual(manifest.freeze?.finalImplementationFreezeAt, "2026-08-19T22:54:27Z", "final implementation freeze time");
 });
 check("paper-only safety", () => {
   requireEqual(manifest.paperOnly, true, "paperOnly");
@@ -50,7 +51,11 @@ check("frozen forward boundaries", () => {
   requireEqual(manifest.forwardWindow?.startInclusive, "2026-08-20T00:00:00.000Z", "forward start");
   requireEqual(manifest.forwardWindow?.screeningEndExclusive, "2026-11-18T00:00:00.000Z", "screening end");
   requireEqual(manifest.forwardWindow?.finalEndExclusive, "2027-02-16T00:00:00.000Z", "final end");
+  requireNumber(manifest.forwardWindow?.primaryCollectionOffsetSecondsAfterUtcHour, 5, "primary collection offset");
   requireNumber(manifest.forwardWindow?.minimumRecorderCoverage, 0.98, "minimum first-party context coverage");
+  requireNumber(manifest.forwardWindow?.entryExitPriceMatchToleranceMinutes, 10, "entry/exit tolerance");
+  requireEqual(manifest.forwardWindow?.entryExitSelectionRule, "firstValidOfficialObservationAtOrAfterBoundary", "entry/exit selection rule");
+  requireEqual(manifest.forwardWindow?.preBoundaryEntryExitContextAllowed, false, "pre-boundary entry/exit context");
 });
 check("frozen economics", () => {
   requireNumber(manifest.portfolio?.startingEquityUsd, 10000, "starting equity");
@@ -64,12 +69,31 @@ check("frozen economics", () => {
   requireNumber(manifest.executionModel?.primaryAllInFrictionBpsPerOrder, 15, "primary friction");
   requireNumber(manifest.executionModel?.stressAllInFrictionBpsPerOrder, 25, "stress friction");
   requireNumber(manifest.executionModel?.ordersInRoundTrip, 4, "orders in round trip");
+  requireEqual(manifest.executionModel?.breakEvenFrictionMethod, "analyticalLinearFourFillModel", "break-even method");
 });
-check("native funding semantics", () => {
+check("native funding and schedule semantics", () => {
   requireEqual(manifest.fundingAccounting?.resampleRates, false, "resampleRates");
   requireEqual(manifest.fundingAccounting?.nativeIntervalsOnly, true, "nativeIntervalsOnly");
   requireEqual(manifest.forwardWindow?.fundingAtStartBoundaryEarned, false, "start-boundary funding");
   requireEqual(manifest.forwardWindow?.fundingAtEndBoundaryEarned, false, "end-boundary funding");
+  requireNumber(manifest.sourceRules?.hyperliquidFundingTimestampNormalization?.maximumAbsoluteSkewMs, 60000, "Hyperliquid funding timestamp skew");
+  requireNumber(manifest.sourceRules?.binanceFundingScheduleAudit?.maximumStaleAnnouncementLagMs, 300000, "Binance funding schedule stale lag");
+});
+check("canonical provenance binding", () => {
+  requireEqual(manifest.sourceRules?.canonicalManifestOnly, true, "canonicalManifestOnly");
+  if (!String(manifest.sourceRules?.compactRawTimestampBinding ?? "").includes("exact recordedAt")) {
+    throw new Error("compact/raw exact recordedAt binding changed");
+  }
+});
+check("risk and consistency definitions", () => {
+  requireEqual(manifest.riskStatistics?.maxDrawdownStart, "preEntryStartingEquity", "max-drawdown start");
+  requireEqual(manifest.riskStatistics?.dailyReturnGrid, "fixed24hFromFrozenStartWithFinalExitAtWindowEnd", "daily-return grid");
+  requireNumber(manifest.riskStatistics?.sharpeAnnualizationDays, 365, "Sharpe annualization days");
+  requireNumber(manifest.riskStatistics?.sortinoTargetReturn, 0, "Sortino target");
+  requireEqual(manifest.riskStatistics?.sortinoDownsideDeviation, "sqrt(mean(min(dailyReturn-target,0)^2))", "Sortino downside deviation");
+  requireNumber(manifest.riskStatistics?.consistencyWindows?.count, 3, "consistency-window count");
+  requireNumber(manifest.riskStatistics?.consistencyWindows?.durationDays, 60, "consistency-window days");
+  requireEqual(manifest.riskStatistics?.consistencyWindows?.telescopeToFullFinalPnl, true, "consistency-window telescoping");
 });
 check("anti-leakage", () => {
   requireEqual(manifest.antiLeakage?.publishedHistoricalEvidenceIsMotivationOnly, true, "published evidence role");
@@ -100,6 +124,7 @@ process.stdout.write(`${JSON.stringify({
   experimentId: manifest.experimentId,
   trialNumber: manifest.trialNumber,
   phase,
+  finalImplementationFreezeAt: manifest.freeze.finalImplementationFreezeAt,
   manifestSha256: sha256(bytes),
   forwardStart: manifest.forwardWindow.startInclusive,
   screeningEndExclusive: manifest.forwardWindow.screeningEndExclusive,
