@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { appendFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
+import { buildCompactRecord, buildRawEnvelopeRows } from "./lib/cross-venue-record.js";
 
 const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
 const DEFAULT_OUTPUT = "research/crypto/data-cache/cross-venue-funding-v1-forward.ndjson";
@@ -226,30 +227,25 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
     return;
   }
 
+  const recordedAt = new Date(finishedAt).toISOString();
   const rawPath = rawOutputPath(output);
   await mkdir(path.dirname(output), { recursive: true });
-  const rawEnvelope = [...hyperliquid.raw, ...binance.raw].map((row) => ({
-    schema: "theoldtrader-cross-venue-funding-v1-raw-v1",
-    recordedAt: new Date(finishedAt).toISOString(),
+  const rawEnvelope = buildRawEnvelopeRows({
     manifestSha256: frozen.sha256,
+    recordedAt,
     acquisition: PRIMARY_ACQUISITION,
-    ...row
-  }));
+    rawRows: [...hyperliquid.raw, ...binance.raw]
+  });
   await appendRawMembers(rawPath, rawEnvelope);
 
-  const record = {
-    schema: "theoldtrader-cross-venue-funding-v1-record-v2",
-    experimentId: frozen.manifest.experimentId,
-    trialNumber: frozen.manifest.trialNumber,
+  const record = buildCompactRecord({
     manifestSha256: frozen.sha256,
+    recordedAt,
     acquisition: PRIMARY_ACQUISITION,
-    recordedAt: new Date(finishedAt).toISOString(),
-    collectionLatencyMs: finishedAt - startedAt,
-    sources: {
-      hyperliquid: hyperliquid.compact,
-      binance: binance.compact
-    }
-  };
+    hyperliquid: hyperliquid.compact,
+    binance: binance.compact,
+    collectionLatencyMs: finishedAt - startedAt
+  });
   await appendFile(output, `${JSON.stringify(record)}\n`, "utf8");
   process.stdout.write(`${JSON.stringify({
     output,
