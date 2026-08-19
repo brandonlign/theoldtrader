@@ -5,6 +5,7 @@ import fs from "node:fs";
 import readline from "node:readline";
 import zlib from "node:zlib";
 import { evaluateCrossVenueFunding } from "./lib/cross-venue-funding.js";
+import { auditCompactAgainstRaw } from "./lib/cross-venue-raw-audit.js";
 
 const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
 const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
@@ -51,6 +52,7 @@ async function readCompact(path) {
 async function readAndVerifyRaw(path, expectedManifestHash) {
   const hashes = new Set();
   const acquisitionByHash = new Map();
+  const rawRowsByHash = new Map();
   const acquisitionRows = { PRIMARY_LIVE: 0, OFFICIAL_RECOVERY: 0 };
   let rows = 0;
   const input = fs.createReadStream(path).pipe(zlib.createGunzip());
@@ -77,9 +79,11 @@ async function readAndVerifyRaw(path, expectedManifestHash) {
     hashes.add(recomputed);
     if (!acquisitionByHash.has(recomputed)) acquisitionByHash.set(recomputed, new Set());
     acquisitionByHash.get(recomputed).add(type);
+    if (!rawRowsByHash.has(recomputed)) rawRowsByHash.set(recomputed, []);
+    rawRowsByHash.get(recomputed).push(record);
   }
   if (!rows) throw new Error("Trial 7 raw-response archive is empty");
-  return { hashes, rows, acquisitionByHash, acquisitionRows };
+  return { hashes, rows, acquisitionByHash, rawRowsByHash, acquisitionRows };
 }
 
 function verifyCompactRawAcquisition(records, raw) {
@@ -117,6 +121,7 @@ async function main() {
   const records = await readCompact(compactPath);
   const raw = await readAndVerifyRaw(rawPath, manifestHash);
   verifyCompactRawAcquisition(records, raw);
+  const semanticAudit = auditCompactAgainstRaw(records, raw.rawRowsByHash);
   const compactHash = sha256(fs.readFileSync(compactPath));
   const rawArchiveHash = sha256(fs.readFileSync(rawPath));
 
@@ -142,7 +147,8 @@ async function main() {
       rawRows: raw.rows,
       rawAcquisitionRows: raw.acquisitionRows,
       verifiedDistinctRawResponseHashes: raw.hashes.size,
-      compactRawAcquisitionMatchVerified: true
+      compactRawAcquisitionMatchVerified: true,
+      rawSemanticAudit: semanticAudit
     }
   };
   process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
