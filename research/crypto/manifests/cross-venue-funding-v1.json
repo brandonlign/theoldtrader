@@ -28,6 +28,10 @@
       {
         "beforeAnyTheOldTraderCrossVenueResult": true,
         "change": "Add a pre-frozen 25 bps per-order execution-cost stress and explicit margin/basis stress gates. The primary candidate remains the original 15 bps per-order static BTC pair."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Resolve boundary/comparator implementation before data: funding exactly at the declared start or end boundary is excluded; entry/exit price references may be the nearest official snapshot within 10 minutes; the BTC directional comparator uses Binance premium-index indexPrice as an official spot-index reference rather than adding a new selectable spot feed."
       }
     ]
   },
@@ -66,6 +70,7 @@
     "noOutcomeSelectedSubperiods": true,
     "hyperliquidFundingOracleRule": "Use the nearest preserved official asset context oraclePx to each hourly funding event only if within fundingPriceMatchToleranceMinutes; otherwise fail the scientific data gate.",
     "binanceFundingMarkRule": "Use the markPrice returned with each official fundingRate history event. Do not reconstruct or substitute another price when the field is absent.",
+    "binanceDirectionalComparatorRule": "Use indexPrice from the official BTCUSDT premium-index snapshots nearest the frozen entry/exit boundaries. This is an index-reference directional comparator, not a claim of historical spot execution.",
     "archiveFallback": "A missing recorder observation may be recovered only from an official first-party venue archive/API whose raw response is preserved and hashed and which satisfies the same timestamp tolerance. Missing data may never be interpolated from candles or paper replication files."
   },
   "forwardWindow": {
@@ -77,6 +82,9 @@
     "minimumRecorderCoverage": 0.98,
     "maximumSnapshotGapMinutes": 130,
     "fundingPriceMatchToleranceMinutes": 10,
+    "entryExitPriceMatchToleranceMinutes": 10,
+    "fundingAtStartBoundaryEarned": false,
+    "fundingAtEndBoundaryEarned": false,
     "evaluateScreeningBeforeEnd": false,
     "evaluateFinalBeforeEnd": false
   },
@@ -105,9 +113,10 @@
   },
   "fundingAccounting": {
     "resampleRates": false,
-    "hyperliquid": "At every observed Hyperliquid BTC funding event, the short receives positive funding and pays negative funding: +quantity * matched oraclePx * fundingRate.",
-    "binance": "At every observed Binance BTCUSDT funding event, the long pays positive funding and receives negative funding: -quantity * event markPrice * fundingRate.",
+    "hyperliquid": "For each observed Hyperliquid BTC funding event strictly inside the declared evaluation boundaries, the short receives positive funding and pays negative funding: +quantity * matched oraclePx * fundingRate.",
+    "binance": "For each observed Binance BTCUSDT funding event strictly inside the declared evaluation boundaries, the long pays positive funding and receives negative funding: -quantity * event markPrice * fundingRate.",
     "nativeIntervalsOnly": true,
+    "boundaryRule": "Include funding only when startBoundary < eventTime < endBoundary. Funding exactly at either declared boundary is excluded.",
     "missingFundingEvent": "fail the data gate if first-party sequence/interval evidence implies an event is missing; never synthesize a zero or carry a prior rate forward"
   },
   "priceAccounting": {
@@ -126,7 +135,7 @@
   },
   "comparators": [
     "cash",
-    "15%-notional BTC spot buy-and-hold over identical timestamps",
+    "15%-notional BTC Binance indexPrice reference buy-and-hold over identical declared boundaries with the same primary per-order friction applied at entry and exit",
     "funding-only contribution with cross-venue basis PnL and execution friction shown separately"
   ],
   "screeningGate": {
