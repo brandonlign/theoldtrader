@@ -74,11 +74,11 @@ async function readAndVerifyRaw(path, expectedManifestHash) {
 function verifyCompactRawAcquisition(records, raw) {
   for (let index = 0; index < records.length; index += 1) {
     const record = records[index];
-    const type = acquisitionType(record, `Trial 7 evidence compact row ${index + 1}`);
+    const type = acquisitionType(record, `Trial 7 settlement-discovery compact row ${index + 1}`);
     for (const hash of compactRawHashes(record)) {
-      if (!/^[0-9a-f]{64}$/.test(hash)) throw new Error(`Trial 7 evidence compact row ${index + 1} has invalid source hash`);
+      if (!/^[0-9a-f]{64}$/.test(hash)) throw new Error(`Trial 7 settlement-discovery compact row ${index + 1} has invalid source hash`);
       const rawTypes = raw.acquisitionByHash.get(hash);
-      if (!rawTypes?.has(type)) throw new Error(`Trial 7 compact/raw acquisition mismatch at evidence row ${index + 1}: ${type} compact source ${hash} has no raw payload with the same acquisition type`);
+      if (!rawTypes?.has(type)) throw new Error(`Trial 7 compact/raw acquisition mismatch at discovery row ${index + 1}: ${type} compact source ${hash} has no raw payload with the same acquisition type`);
     }
   }
 }
@@ -99,11 +99,11 @@ function frozenWindow(manifest, mode) {
   };
 }
 
-function evidenceWindow(records, manifest, window) {
-  const toleranceMs = Number(manifest.forwardWindow?.entryExitPriceMatchToleranceMinutes ?? 0) * 60_000;
+function settlementDiscoveryWindow(records, manifest, window) {
+  const lookaheadMs = Number(manifest.forwardWindow?.settlementDiscoveryLookaheadMinutes ?? 0) * 60_000;
   return records.filter((record) => {
     const time = Date.parse(record.recordedAt);
-    return Number.isFinite(time) && time >= window.startMs && time <= window.endMs + toleranceMs;
+    return Number.isFinite(time) && time >= window.startMs && time <= window.endMs + lookaheadMs;
   });
 }
 
@@ -141,18 +141,20 @@ async function main() {
 
   const window = frozenWindow(manifest, mode);
   if (Date.now() < window.evaluationNotBeforeMs) {
-    throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${window.evaluationNotBeforeIso}; the frozen exit-context tolerance has not elapsed`);
+    throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${window.evaluationNotBeforeIso}; the frozen settlement-discovery buffer has not elapsed`);
   }
 
   const allRecords = await readCompact(compactPath);
-  const records = evidenceWindow(allRecords, manifest, window);
-  if (!records.length) throw new Error("Trial 7 has no compact evidence rows inside the frozen evaluation window");
+  const records = settlementDiscoveryWindow(allRecords, manifest, window);
+  if (!records.length) throw new Error("Trial 7 has no compact evidence rows inside the frozen settlement-discovery window");
   const raw = await readAndVerifyRaw(rawPath, manifestHash);
   verifyCompactRawAcquisition(records, raw);
   const semanticAudit = auditCompactAgainstRaw(records, raw.rawRowsByHash);
   const compactHash = sha256(fs.readFileSync(compactPath));
   const rawArchiveHash = sha256(fs.readFileSync(rawPath));
 
+  const contextToleranceMinutes = Number(manifest.forwardWindow.entryExitPriceMatchToleranceMinutes);
+  const discoveryLookaheadMinutes = Number(manifest.forwardWindow.settlementDiscoveryLookaheadMinutes);
   const provenanceBase = {
     manifestPath,
     manifestSha256: manifestHash,
@@ -160,8 +162,10 @@ async function main() {
     compactPath,
     compactSha256: compactHash,
     compactRowsTotal: allRecords.length,
-    compactRowsInFrozenEvidenceWindow: records.length,
-    semanticAuditScope: "startInclusive<=recordedAt<=endBoundary+entryExitTolerance",
+    compactRowsInSettlementDiscoveryWindow: records.length,
+    contextEvidenceCutoff: new Date(window.endMs + contextToleranceMinutes * 60_000).toISOString(),
+    settlementDiscoveryCutoff: new Date(window.endMs + discoveryLookaheadMinutes * 60_000).toISOString(),
+    semanticAuditScope: "startInclusive<=recordedAt<=endBoundary+settlementDiscoveryLookahead; post-context-window market fields are integrity-audited but prohibited from economics",
     evaluationNotBefore: window.evaluationNotBeforeIso,
     rawPath,
     rawArchiveSha256: rawArchiveHash,
