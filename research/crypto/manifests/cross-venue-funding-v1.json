@@ -1,0 +1,251 @@
+{
+  "experimentId": "cross-venue-funding-v1",
+  "trialNumber": 7,
+  "family": "cross-venue-perpetual-funding-spread",
+  "status": "FROZEN_FORWARD_BEFORE_FIRST_THEOLDTRADER_OBSERVATION",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "scientificMode": "forward-only",
+  "freeze": {
+    "originalProvisionalFreezeCommit": "ed726ad32574c5aa41ef791dc90f19bff46b0e1e",
+    "originalRecorderCommit": "68dd16647fe7721bbd5509162fec1f8fc3a90a13",
+    "originalProvisionalTrialNumber": 5,
+    "currentFreezeAt": "2026-08-19T21:15:27Z",
+    "finalImplementationFreezeAt": "2026-08-19T23:19:57Z",
+    "firstTheOldTraderCrossVenueResultObservedBeforeCurrentFreeze": false,
+    "revisionLog": [
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Administrative renumber from provisional Trial 5 to Trial 7 because the stale branch diverged before the subsequently evaluated tsmom-v1 and lowvol-v1 candidates consumed Trials 5 and 6. No economic rule changed because of this renumber."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Move the prospective start from 2026-08-19T00:00:00Z to 2026-08-20T00:00:00Z because the original start passed before continuous scientific acquisition was established. No post-start candidate return or funding-spread result was inspected to choose the new boundary."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Correct Hyperliquid funding cashflow notional from mark price to oracle price, matching first-party Hyperliquid funding documentation. This is a mechanism-accuracy correction, not an outcome-driven strategy change."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Add a pre-frozen 25 bps per-order execution-cost stress and explicit margin/basis stress gates. The primary candidate remains the original 15 bps per-order static BTC pair."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Resolve boundary/comparator implementation before data: start-boundary funding is excluded and the BTC directional comparator uses Binance premium-index indexPrice as an official reference rather than adding a selectable spot feed."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Clarify the 98% coverage gate as hourly first-party context coverage rather than six months of one daemon's uptime. Live capture remains preferred; only source-specific official recovery records admitted by the frozen recovery protocol may supplement context coverage."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Freeze normal primary context collection at five seconds after each UTC hour so the intended hourly boundary observation is deterministic and funding-event oracle matching is not post-result selectable."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Replace the draft implicit eight-hour Binance funding completeness assumption with a first-party schedule audit: every in-window funding timestamp announced by premiumIndex.nextFundingTime must later appear in settled fundingRate.fundingTime history."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Freeze Hyperliquid settled funding timestamp normalization to the nearest UTC hour only when absolute raw timestamp skew is at most 60 seconds; preserve raw timestamps/skews and fail on collisions or conflicting duplicates."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Freeze entry and exit context selection as the first valid official observation at or after each declared boundary within ten minutes. Pre-boundary context is ineligible even if temporally closer."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Freeze risk/reporting semantics: drawdown starts from pre-entry starting equity; daily returns use fixed 24-hour boundary-to-boundary equity observations with final exit included in the final period; Sortino uses zero-target downside deviation; three consecutive 60-day contribution windows telescope to full 180-day P&L with entry friction in window 1 and exit friction in window 3; funding, raw basis, and execution friction are reported separately; break-even all-in friction is analytical under the frozen four-fill model."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Freeze provenance hardening: recorder/evaluator/reporter are bound to the canonical repository manifest and every PRIMARY_LIVE compact source hash must resolve to a matching raw source payload with the same exact recordedAt timestamp before economics can be calculated."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Correct boundary cashflow timing before the forward start: because entry and exit fills use the first context after their UTC boundaries, start-boundary funding occurs before entry and is excluded, while end-boundary funding occurs before the post-boundary exit and is included."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Freeze a 70-minute post-boundary settlement-discovery buffer before screening/final evaluation. Context/fill/risk data remain capped at endBoundary+10m, but first-party funding-history responses through endBoundary+70m may only prove settled events whose own normalized/event timestamp is <= endBoundary. Post-window prices/oracles from those later discovery polls are prohibited from entry, exit, margin, basis, comparator or return calculations. This prevents an exchange-history publication delay at the exact end settlement from causing a false data-gate failure without importing future market information into P&L."
+      }
+    ]
+  },
+  "motivation": {
+    "primary": "Lau (2026), The Funding Carry and a Cross-Venue Spread on Perpetual Futures",
+    "evidenceRole": "hypothesis and design motivation only",
+    "replicationPackage": "Zenodo 10.5281/zenodo.20938723",
+    "reason": "A 2026 independent study reports a persistent funding differential between Hyperliquid and major centralized perpetual venues and reports that a static naive implementation outperformed more elaborate refinements. TheOldTrader therefore tests a deliberately simpler and lower-exposure forward implementation without using the paper's historical sample as TheOldTrader performance evidence."
+  },
+  "hypothesis": "A static equal-BTC long Binance USD-M BTCUSDT perpetual / short Hyperliquid BTC perpetual position earns positive net carry because Hyperliquid funding paid to shorts exceeds Binance funding paid by longs often enough to overcome cross-venue basis drift and conservative execution friction.",
+  "asset": "BTC",
+  "venues": {
+    "long": {
+      "venue": "binance-usdm",
+      "symbol": "BTCUSDT",
+      "publicFundingHistoryEndpoint": "https://fapi.binance.com/fapi/v1/fundingRate",
+      "publicMarkEndpoint": "https://fapi.binance.com/fapi/v1/premiumIndex",
+      "fundingPriceField": "markPrice"
+    },
+    "short": {
+      "venue": "hyperliquid",
+      "coin": "BTC",
+      "publicInfoEndpoint": "https://api.hyperliquid.xyz/info",
+      "fundingHistoryType": "fundingHistory",
+      "assetContextType": "metaAndAssetCtxs",
+      "fundingPriceField": "oraclePx"
+    }
+  },
+  "sourceRules": {
+    "candidateEvaluationMayUsePaperCachedData": false,
+    "officialFirstPartyVenueDataOnly": true,
+    "preserveRawResponses": true,
+    "sha256EveryRawResponse": true,
+    "noInterpolation": true,
+    "noForwardFill": true,
+    "noOutcomeSelectedSubperiods": true,
+    "canonicalManifestOnly": true,
+    "compactRawTimestampBinding": "PRIMARY_LIVE compact source hashes must resolve to raw rows of the same source, acquisition type, hash and exact recordedAt timestamp.",
+    "hourlyContextCoverageRule": "An hourly BTC context can be supplied either by the primary live recorder or by a recovery record built from an already-authorized first-party Hyperliquid/Binance historical source under TRIAL7_DATA_RECOVERY.md. Recovery must preserve/hash the official source and use the identical timestamp tolerances. Third-party/paper data never count.",
+    "settlementDiscoveryRule": "For screening/final completeness only, first-party funding-history responses recorded after endBoundary but no later than settlementDiscoveryLookaheadMinutes may prove a settled funding event with startBoundary < eventTime <= endBoundary. All context/price/oracle/schedule-announcement fields from records after endBoundary+entryExitPriceMatchToleranceMinutes are excluded from fills, funding-oracle matching, coverage, margin, basis, comparator and return calculations.",
+    "hyperliquidFundingTimestampNormalization": {
+      "rule": "Normalize a raw settled funding event to its nearest UTC-hour boundary only when its absolute timestamp skew is at most maximumAbsoluteSkewMs. Preserve raw time/skew. Reject collisions and conflicting duplicates.",
+      "maximumAbsoluteSkewMs": 60000
+    },
+    "hyperliquidFundingOracleRule": "Use the first valid preserved official asset context at or after the normalized hourly funding event, within fundingPriceMatchToleranceMinutes, for oraclePx. Pre-event contexts are ineligible. Otherwise fail the scientific data gate.",
+    "binanceFundingScheduleAudit": {
+      "rule": "For every funding timestamp after entry and at or before the exit boundary announced by official BTCUSDT premiumIndex.nextFundingTime from an in-window context, require the exact timestamp to appear in settled official fundingRate.fundingTime history. Later settlement-discovery polls may prove the event but may not contribute new post-window announcements.",
+      "maximumStaleAnnouncementLagMs": 300000
+    },
+    "binanceFundingMarkRule": "Use the markPrice returned with each official fundingRate history event. Do not reconstruct or substitute another price when the field is absent.",
+    "binanceDirectionalComparatorRule": "Use indexPrice from the first valid official BTCUSDT premium-index observations at or after the frozen entry/exit boundaries within the same ten-minute boundary tolerance. This is an index-reference directional comparator, not a claim of historical spot execution.",
+    "archiveFallback": "A missing primary observation may be recovered only from an official first-party venue archive/API whose raw response/object is preserved and hashed and which satisfies the same timestamp tolerance. Missing data may never be interpolated from candles, third-party feeds or paper replication files."
+  },
+  "forwardWindow": {
+    "startInclusive": "2026-08-20T00:00:00.000Z",
+    "screeningEndExclusive": "2026-11-18T00:00:00.000Z",
+    "finalEndExclusive": "2027-02-16T00:00:00.000Z",
+    "screeningDurationDays": 90,
+    "finalDurationDays": 180,
+    "primaryCollectionOffsetSecondsAfterUtcHour": 5,
+    "coverageMetric": "hourlyFirstPartyContextCoverage",
+    "minimumRecorderCoverage": 0.98,
+    "minimumRecorderCoverageLegacyFieldMeaning": "The evaluator retains this key name for implementation compatibility; scientifically it means minimum hourly first-party context coverage from primary live records plus only those official recovery records permitted by TRIAL7_DATA_RECOVERY.md.",
+    "targetPrimaryLiveRecorderCoverage": 0.98,
+    "maximumSnapshotGapMinutes": 130,
+    "fundingPriceMatchToleranceMinutes": 10,
+    "entryExitPriceMatchToleranceMinutes": 10,
+    "settlementDiscoveryLookaheadMinutes": 70,
+    "entryExitSelectionRule": "firstValidOfficialObservationAtOrAfterBoundary",
+    "preBoundaryEntryExitContextAllowed": false,
+    "earliestEvaluationDelayMinutesAfterBoundary": 70,
+    "fundingAtStartBoundaryEarned": false,
+    "fundingAtEndBoundaryEarned": true,
+    "evaluateScreeningBeforeEnd": false,
+    "evaluateFinalBeforeEnd": false
+  },
+  "portfolio": {
+    "startingEquityUsd": 10000,
+    "pairedNotionalPctOfStartingEquityPerLeg": 0.15,
+    "collateralReservePctOfStartingEquityPerVenue": 0.20,
+    "sizing": "At entry use identical BTC quantity on both venues. Quantity = pairedNotionalUsd / mean(Binance entry mark, Hyperliquid entry mark).",
+    "equalBaseUnits": true,
+    "leverageOptimization": false,
+    "rebalancing": false,
+    "compounding": false,
+    "directionSwitching": false,
+    "fundingThreshold": null,
+    "assetSelection": false,
+    "unusedCapitalRemainsCash": true
+  },
+  "executionModel": {
+    "entryOrderType": "taker-equivalent-paper-fill",
+    "exitOrderType": "taker-equivalent-paper-fill",
+    "primaryAllInFrictionBpsPerOrder": 15,
+    "stressAllInFrictionBpsPerOrder": 25,
+    "ordersInRoundTrip": 4,
+    "applyFrictionAdverselyToPrice": true,
+    "breakEvenFrictionMethod": "analyticalLinearFourFillModel",
+    "comment": "The primary model charges 15 bps of fee+spread+slippage per venue order at entry and exit, deliberately above Hyperliquid's current base 4.5 bps perp taker fee and without assuming VIP, maker, referral, BNB or staking discounts. The 25 bps/order scenario is a frozen promotion stress, not a tunable replacement cost."
+  },
+  "fundingAccounting": {
+    "resampleRates": false,
+    "hyperliquid": "For each observed Hyperliquid BTC funding event after the start boundary and at or before the exit boundary, the short receives positive funding and pays negative funding: +quantity * matched oraclePx * fundingRate.",
+    "binance": "For each observed Binance BTCUSDT funding event after the start boundary and at or before the exit boundary, the long pays positive funding and receives negative funding: -quantity * event markPrice * fundingRate.",
+    "nativeIntervalsOnly": true,
+    "boundaryRule": "Include funding when startBoundary < eventTime <= endBoundary. Start-boundary funding is excluded because entry occurs after it; end-boundary funding is included because exit occurs after it.",
+    "missingFundingEvent": "fail the data gate if first-party sequence/interval evidence implies an event is missing; never synthesize a zero or carry a prior rate forward"
+  },
+  "priceAccounting": {
+    "markToMarket": true,
+    "binanceLong": "quantity * (currentMark - entryFill)",
+    "hyperliquidShort": "quantity * (entryFill - currentMark)",
+    "decompositionRule": "netPnl = netFundingPnl + rawCrossVenueBasisPnl - modeledExecutionFriction; report all three terms separately and also report after-friction leg PnL only as a diagnostic.",
+    "basisPnlReportedSeparatelyFromFunding": true,
+    "entryExitMarksMustBeObservedWithinMinutes": 10
+  },
+  "riskStatistics": {
+    "maxDrawdownStart": "preEntryStartingEquity",
+    "dailyReturnGrid": "fixed24hFromFrozenStartWithFinalExitAtWindowEnd",
+    "sharpeAnnualizationDays": 365,
+    "sortinoTargetReturn": 0,
+    "sortinoDownsideDeviation": "sqrt(mean(min(dailyReturn-target,0)^2))",
+    "consistencyWindows": {
+      "count": 3,
+      "durationDays": 60,
+      "windowAccounting": "contributionPnl",
+      "entryFrictionChargedInWindow": 1,
+      "exitFrictionChargedInWindow": 3,
+      "telescopeToFullFinalPnl": true
+    }
+  },
+  "marginStress": {
+    "researchMaintenanceMarginPctOfLegNotional": 0.10,
+    "isExchangeTierClaim": false,
+    "rule": "For each venue independently, reserved venue collateral plus that venue leg's unrealized PnL plus its accumulated funding must remain above 10% of current leg notional. Check every retained in-window context and the selected exit context before closing. A breach fails the candidate even if an exchange might have allowed the position to survive.",
+    "crossVenueBasisShockPct": [0.05, 0.10, 0.25],
+    "basisShockRule": "Stress the adverse relative move by increasing the short-venue mark and decreasing the long-venue mark by half the stated spread shock; every frozen shock must remain above the research maintenance threshold."
+  },
+  "comparators": [
+    "cash with zero modeled return",
+    "15%-notional BTC Binance indexPrice reference buy-and-hold over identical declared boundaries with the same primary per-order friction applied at entry and exit",
+    "funding-only contribution with raw cross-venue basis PnL and execution friction shown separately"
+  ],
+  "screeningGate": {
+    "purpose": "predeclared interim evidence only; cannot promote or authorize retuning",
+    "afterDays": 90,
+    "requirements": [
+      "all provenance, timestamp, funding-price and hourly first-party context coverage gates pass",
+      "primary-cost net paired return is positive",
+      "funding contribution is positive before basis PnL",
+      "no observed or frozen-stress research margin breach"
+    ],
+    "failureEffect": "Record the failure and continue the sealed 180-day observation only for diagnostic completeness; no specification change is allowed under Trial 7."
+  },
+  "finalGate": {
+    "afterDays": 180,
+    "automaticLivePromotion": false,
+    "strongestPossibleClassification": "PROMOTION_ELIGIBLE_RESEARCH_ONLY",
+    "requirements": [
+      "all provenance, timestamp, funding-price and hourly first-party context coverage gates pass",
+      "primary-cost net paired return is positive",
+      "annualized primary-cost net return on total starting equity exceeds zero-return cash by at least 2 percentage points",
+      "at least two of three consecutive non-overlapping frozen 60-day contribution windows have positive net contribution",
+      "maximum drawdown on total starting equity is below 10% from pre-entry starting equity",
+      "25 bps per-order cost-stress net paired return remains positive",
+      "funding contribution remains positive before basis PnL",
+      "no observed or frozen-stress research margin breach"
+    ],
+    "afterPass": "A pass permits a separate paper-baseline promotion proposal only. It does not authorize real-money trading."
+  },
+  "antiLeakage": {
+    "publishedHistoricalEvidenceIsMotivationOnly": true,
+    "publishedReplicationPackageMayAuthorizePromotion": false,
+    "TheOldTraderHistoricalBacktestMayAuthorizePromotion": false,
+    "firstScientificCandidateObservationMustBeAtOrAfterStartInclusive": true,
+    "screeningResultMayChangeSpecification": false,
+    "noOutcomeDrivenRetuning": true,
+    "failureRule": "Direction, asset, venues, allocation, costs, collateral, window, filters, holding rule, data substitution or funding-price rule may not be changed after the first Trial 7 candidate result is observed. Any changed economic candidate requires a new trial number."
+  }
+}

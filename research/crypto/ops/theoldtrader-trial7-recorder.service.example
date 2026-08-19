@@ -1,0 +1,37 @@
+# Review-only template. Prefer:
+#   bash research/crypto/ops/install-trial7-recorder-systemd.sh
+# The installer resolves the actual Node/npm paths, creates the root-owned
+# runtime checksum snapshot, and runs all sealed preflight checks first.
+
+[Unit]
+Description=TheOldTrader Trial 7 sealed cross-venue funding recorder
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=REPLACE_WITH_SERVICE_USER
+WorkingDirectory=/REPLACE/WITH/theoldtrader
+Environment=PATH=/REPLACE/WITH/NODE_BIN_DIRECTORY:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStartPre=/usr/bin/sha256sum -c /etc/theoldtrader-trial7-recorder.sha256
+ExecStart=/REPLACE/WITH/NPM_BIN run research:cv:record
+Restart=on-failure
+RestartSec=30
+TimeoutStopSec=30
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=full
+ProtectHome=read-only
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/REPLACE/WITH/theoldtrader/research/crypto/data-cache
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
