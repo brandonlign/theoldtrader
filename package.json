@@ -22,6 +22,7 @@
     "research:e1:pilot": "node research/crypto/run-coinbase-maker-e1.mjs --mode=pilot",
     "research:e1:scientific": "node research/crypto/run-coinbase-maker-e1.mjs --mode=scientific",
     "research:e1:evaluate": "node research/crypto/evaluate-coinbase-maker-e1-run.mjs",
+    "research:carry:flagship": "node research/crypto/carry-flagship-audit.js",
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {
