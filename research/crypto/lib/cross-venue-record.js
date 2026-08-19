@@ -97,11 +97,11 @@ export function buildRawEnvelopeRows({ manifestSha256, recordedAt, acquisition, 
   const normalizedAcquisition = acquisitionMetadata(acquisition?.type, acquisition ?? {});
   if (!Array.isArray(rawRows) || !rawRows.length) throw new Error("Trial 7 raw envelope requires rows");
   return rawRows.map((row) => ({
+    ...row,
     schema: RAW_SCHEMA,
     recordedAt: timestamp.toISOString(),
     manifestSha256: manifestHash,
-    acquisition: normalizedAcquisition,
-    ...row
+    acquisition: normalizedAcquisition
   }));
 }
 
