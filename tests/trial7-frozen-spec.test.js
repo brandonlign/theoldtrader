@@ -11,7 +11,7 @@ test("Trial 7 identity, safety and forward boundaries remain frozen", () => {
   assert.equal(manifest.paperOnly, true);
   assert.equal(manifest.livePromotionAllowed, false);
   assert.equal(manifest.scientificMode, "forward-only");
-  assert.equal(manifest.freeze.finalImplementationFreezeAt, "2026-08-19T23:04:02Z");
+  assert.equal(manifest.freeze.finalImplementationFreezeAt, "2026-08-19T23:19:57Z");
   assert.equal(manifest.forwardWindow.startInclusive, "2026-08-20T00:00:00.000Z");
   assert.equal(manifest.forwardWindow.screeningEndExclusive, "2026-11-18T00:00:00.000Z");
   assert.equal(manifest.forwardWindow.finalEndExclusive, "2027-02-16T00:00:00.000Z");
@@ -20,9 +20,10 @@ test("Trial 7 identity, safety and forward boundaries remain frozen", () => {
   assert.equal(manifest.forwardWindow.maximumSnapshotGapMinutes, 130);
   assert.equal(manifest.forwardWindow.fundingPriceMatchToleranceMinutes, 10);
   assert.equal(manifest.forwardWindow.entryExitPriceMatchToleranceMinutes, 10);
+  assert.equal(manifest.forwardWindow.settlementDiscoveryLookaheadMinutes, 70);
   assert.equal(manifest.forwardWindow.entryExitSelectionRule, "firstValidOfficialObservationAtOrAfterBoundary");
   assert.equal(manifest.forwardWindow.preBoundaryEntryExitContextAllowed, false);
-  assert.equal(manifest.forwardWindow.earliestEvaluationDelayMinutesAfterBoundary, 10);
+  assert.equal(manifest.forwardWindow.earliestEvaluationDelayMinutesAfterBoundary, 70);
 });
 
 test("Trial 7 direction, sizing and no-tuning controls remain frozen", () => {
@@ -67,7 +68,9 @@ test("Trial 7 first-party timing and provenance semantics remain frozen", () => 
   assert.equal(manifest.sourceRules.noOutcomeSelectedSubperiods, true);
   assert.equal(manifest.sourceRules.hyperliquidFundingTimestampNormalization.maximumAbsoluteSkewMs, 60000);
   assert.match(manifest.sourceRules.compactRawTimestampBinding, /exact recordedAt/);
-  assert.match(manifest.sourceRules.binanceFundingScheduleAudit.rule, /nextFundingTime/);
+  assert.match(manifest.sourceRules.settlementDiscoveryRule, /settlementDiscoveryLookaheadMinutes/);
+  assert.match(manifest.sourceRules.settlementDiscoveryRule, /excluded from fills/);
+  assert.match(manifest.sourceRules.binanceFundingScheduleAudit.rule, /Later settlement-discovery polls/);
   assert.equal(manifest.sourceRules.binanceFundingScheduleAudit.maximumStaleAnnouncementLagMs, 300000);
   assert.match(manifest.sourceRules.hyperliquidFundingOracleRule, /at or after/);
   assert.match(manifest.sourceRules.binanceDirectionalComparatorRule, /at or after/);
