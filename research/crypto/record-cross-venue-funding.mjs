@@ -5,6 +5,7 @@ import { appendFile, mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { gzipSync } from "node:zlib";
 import { buildCompactRecord, buildRawEnvelopeRows } from "./lib/cross-venue-record.js";
+import { msUntilTrial7Collection } from "./lib/trial7-collection-schedule.js";
 
 const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
 const DEFAULT_OUTPUT = "research/crypto/data-cache/cross-venue-funding-v1-forward.ndjson";
@@ -258,13 +259,6 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
   })}\n`);
 }
 
-function msUntilNextCollection(now = new Date()) {
-  const next = new Date(now);
-  next.setUTCMinutes(0, 5, 0);
-  if (next <= now) next.setUTCHours(next.getUTCHours() + 1, 0, 5, 0);
-  return next.getTime() - now.getTime();
-}
-
 async function main() {
   const output = argValue("--output", DEFAULT_OUTPUT);
   const manifestPath = argValue("--manifest", DEFAULT_MANIFEST);
@@ -284,7 +278,7 @@ async function main() {
   }
   const deadline = durationHours > 0 ? Date.now() + durationHours * 3_600_000 : Infinity;
   while (Date.now() < deadline) {
-    const wait = msUntilNextCollection();
+    const wait = msUntilTrial7Collection();
     await new Promise((resolve) => setTimeout(resolve, wait));
     try {
       await recordOnce({ output, manifestPath });
