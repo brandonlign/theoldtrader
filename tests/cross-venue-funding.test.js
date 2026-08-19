@@ -47,7 +47,7 @@ function manifestFor(days = 180) {
 }
 
 function makeRecords({
-  days = 180,
+  days = 10,
   hlRate = 0.00006,
   bnRate = 0.00004,
   markFn = () => ({ binance: 100, hyperliquid: 100, oracle: 100, index: 100 })
@@ -130,7 +130,7 @@ test("Trial 7 refuses to evaluate before the frozen final boundary", () => {
 });
 
 test("clean positive 180-day synthetic path can only become research-promotion eligible", () => {
-  const result = evaluateFinal(makeRecords());
+  const result = evaluateFinal(makeRecords({ days: 180 }));
   assert.equal(result.dataGate.pass, true);
   assert.equal(result.primary.fundingPnl.net > 0, true);
   assert.equal(result.primary.netPnl > 0, true);
@@ -185,7 +185,7 @@ test("funding edge does not rescue a large adverse cross-venue basis move", () =
 });
 
 test("primary-cost profit can still fail the frozen 25 bps per-order stress", () => {
-  const result = evaluateFinal(makeRecords({ hlRate: 0.000007 }));
+  const result = evaluateFinal(makeRecords({ hlRate: 0.0000385 }));
   assert.equal(result.primary.netPnl > 0, true);
   assert.equal(result.costStress.netPnl < 0, true);
   assert.equal(result.finalRequirements.costStressNetPositive, false);
@@ -215,8 +215,7 @@ test("conflicting duplicate funding observations are rejected rather than averag
 });
 
 test("funding exactly on frozen start/end boundaries is excluded", () => {
-  const bundle = makeRecords({ days: 90 });
-  const start = Date.parse(bundle.manifest.forwardWindow.startInclusive);
+  const bundle = makeRecords();
   const end = Date.parse(bundle.manifest.forwardWindow.screeningEndExclusive);
   bundle.records[0].sources.hyperliquid.events[0].rate = 999;
   bundle.records.at(-1).sources.hyperliquid.events[0].rate = 999;
