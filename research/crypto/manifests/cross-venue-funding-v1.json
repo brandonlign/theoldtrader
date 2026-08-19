@@ -32,6 +32,10 @@
       {
         "beforeAnyTheOldTraderCrossVenueResult": true,
         "change": "Resolve boundary/comparator implementation before data: funding exactly at the declared start or end boundary is excluded; entry/exit price references may be the nearest official snapshot within 10 minutes; the BTC directional comparator uses Binance premium-index indexPrice as an official spot-index reference rather than adding a new selectable spot feed."
+      },
+      {
+        "beforeAnyTheOldTraderCrossVenueResult": true,
+        "change": "Clarify the 98% coverage gate as hourly first-party context coverage rather than six months of one daemon's uptime. Live capture remains the preferred primary source, but an hourly context recovered under the already-frozen official Hyperliquid/Binance archive/API rules may count toward context coverage. This changes no economic observation or threshold and was frozen before the forward window began."
       }
     ]
   },
@@ -68,10 +72,11 @@
     "noInterpolation": true,
     "noForwardFill": true,
     "noOutcomeSelectedSubperiods": true,
+    "hourlyContextCoverageRule": "An hourly BTC context can be supplied either by the primary live recorder or by a recovery record built from an already-authorized first-party Hyperliquid/Binance historical source under TRIAL7_DATA_RECOVERY.md. Recovery must preserve/hash the official source and use the identical timestamp tolerances. Third-party/paper data never count.",
     "hyperliquidFundingOracleRule": "Use the nearest preserved official asset context oraclePx to each hourly funding event only if within fundingPriceMatchToleranceMinutes; otherwise fail the scientific data gate.",
     "binanceFundingMarkRule": "Use the markPrice returned with each official fundingRate history event. Do not reconstruct or substitute another price when the field is absent.",
-    "binanceDirectionalComparatorRule": "Use indexPrice from the official BTCUSDT premium-index snapshots nearest the frozen entry/exit boundaries. This is an index-reference directional comparator, not a claim of historical spot execution.",
-    "archiveFallback": "A missing recorder observation may be recovered only from an official first-party venue archive/API whose raw response is preserved and hashed and which satisfies the same timestamp tolerance. Missing data may never be interpolated from candles or paper replication files."
+    "binanceDirectionalComparatorRule": "Use indexPrice from official BTCUSDT premium-index observations nearest the frozen entry/exit boundaries. This is an index-reference directional comparator, not a claim of historical spot execution.",
+    "archiveFallback": "A missing primary observation may be recovered only from an official first-party venue archive/API whose raw response/object is preserved and hashed and which satisfies the same timestamp tolerance. Missing data may never be interpolated from candles, third-party feeds or paper replication files."
   },
   "forwardWindow": {
     "startInclusive": "2026-08-20T00:00:00.000Z",
@@ -79,7 +84,10 @@
     "finalEndExclusive": "2027-02-16T00:00:00.000Z",
     "screeningDurationDays": 90,
     "finalDurationDays": 180,
+    "coverageMetric": "hourlyFirstPartyContextCoverage",
     "minimumRecorderCoverage": 0.98,
+    "minimumRecorderCoverageLegacyFieldMeaning": "The evaluator retains this key name for implementation compatibility; scientifically it means minimum hourly first-party context coverage from primary live records plus only those official recovery records permitted by TRIAL7_DATA_RECOVERY.md.",
+    "targetPrimaryLiveRecorderCoverage": 0.98,
     "maximumSnapshotGapMinutes": 130,
     "fundingPriceMatchToleranceMinutes": 10,
     "entryExitPriceMatchToleranceMinutes": 10,
@@ -142,7 +150,7 @@
     "purpose": "predeclared interim evidence only; cannot promote or authorize retuning",
     "afterDays": 90,
     "requirements": [
-      "all provenance, timestamp, funding-price and coverage gates pass",
+      "all provenance, timestamp, funding-price and hourly first-party context coverage gates pass",
       "primary-cost net paired return is positive",
       "funding contribution is positive before basis PnL",
       "no observed or frozen-stress research margin breach"
@@ -154,7 +162,7 @@
     "automaticLivePromotion": false,
     "strongestPossibleClassification": "PROMOTION_ELIGIBLE_RESEARCH_ONLY",
     "requirements": [
-      "all provenance, timestamp, funding-price and coverage gates pass",
+      "all provenance, timestamp, funding-price and hourly first-party context coverage gates pass",
       "primary-cost net paired return is positive",
       "annualized primary-cost net return on total starting equity exceeds cash by at least 2 percentage points",
       "at least two of three consecutive non-overlapping 60-day subwindows have positive primary-cost net paired PnL",
