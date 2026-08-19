@@ -1,8 +1,8 @@
 import crypto from "node:crypto";
 
 export const TRIAL7_CANONICAL_MANIFEST_PATH = "research/crypto/manifests/cross-venue-funding-v1.json";
-export const TRIAL7_CANONICAL_MANIFEST_GIT_BLOB_SHA1 = "d01224c1fb79a6bffff7a5ad72d9d7bd35dded21";
-export const TRIAL7_FINAL_IMPLEMENTATION_FREEZE_AT = "2026-08-19T23:04:02Z";
+export const TRIAL7_CANONICAL_MANIFEST_GIT_BLOB_SHA1 = "33363388183c9ef4fb6910398a0ae9dc381601cc";
+export const TRIAL7_FINAL_IMPLEMENTATION_FREEZE_AT = "2026-08-19T23:19:57Z";
 
 export function gitBlobSha1(bytes) {
   const buffer = Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
