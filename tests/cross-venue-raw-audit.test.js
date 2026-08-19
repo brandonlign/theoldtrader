@@ -6,6 +6,7 @@ import { auditCompactAgainstRaw } from "../research/crypto/lib/cross-venue-raw-a
 
 const MANIFEST_HASH = "f".repeat(64);
 const acquisition = { type: "PRIMARY_LIVE", collector: "test" };
+const RECORDED_AT = "2026-08-20T00:02:00.000Z";
 
 function hash(text) {
   return crypto.createHash("sha256").update(text).digest("hex");
@@ -38,7 +39,7 @@ function fixture() {
   };
   const record = buildCompactRecord({
     manifestSha256: MANIFEST_HASH,
-    recordedAt: "2026-08-20T00:02:00Z",
+    recordedAt: RECORDED_AT,
     acquisition,
     hyperliquid: {
       mark: 100,
@@ -61,7 +62,7 @@ function fixture() {
     { source: "hyperliquid-fundingHistory", sha256: hashes.hlFunding, rawText: hlFundingText },
     { source: "binance-premiumIndex", sha256: hashes.bnPremium, rawText: bnPremiumText },
     { source: "binance-fundingRate", sha256: hashes.bnFunding, rawText: bnFundingText }
-  ].map((row) => ({ ...row, acquisition }));
+  ].map((row) => ({ ...row, acquisition, recordedAt: RECORDED_AT }));
   const rawRowsByHash = new Map();
   for (const row of rows) rawRowsByHash.set(row.sha256, [row]);
   return { record, rawRowsByHash, hashes };
@@ -77,15 +78,28 @@ test("raw semantic audit independently reproduces every live compact field", () 
   });
 });
 
-test("repeated identical raw payload hash is valid across multiple polls", () => {
+test("repeated identical raw payload hash is valid across multiple polls when the same-time row exists", () => {
   const { record, rawRowsByHash, hashes } = fixture();
   const original = rawRowsByHash.get(hashes.bnFunding)[0];
   rawRowsByHash.set(hashes.bnFunding, [
+    { ...original, recordedAt: "2026-08-19T23:02:00.000Z" },
     original,
-    { ...original, recordedAt: "2026-08-20T01:02:00Z" },
-    { ...original, recordedAt: "2026-08-20T02:02:00Z" }
+    { ...original, recordedAt: "2026-08-20T01:02:00.000Z" }
   ]);
   assert.equal(auditCompactAgainstRaw([record], rawRowsByHash).pass, true);
+});
+
+test("older identical raw payload cannot be replayed as a later compact observation", () => {
+  const { record, rawRowsByHash, hashes } = fixture();
+  const original = rawRowsByHash.get(hashes.bnFunding)[0];
+  rawRowsByHash.set(hashes.bnFunding, [
+    { ...original, recordedAt: "2026-08-19T23:02:00.000Z" },
+    { ...original, recordedAt: "2026-08-20T01:02:00.000Z" }
+  ]);
+  assert.throws(
+    () => auditCompactAgainstRaw([record], rawRowsByHash),
+    /compact timestamp 2026-08-20T00:02:00\.000Z/
+  );
 });
 
 test("raw semantic audit catches a compact oracle mutation despite correct hashes", () => {
