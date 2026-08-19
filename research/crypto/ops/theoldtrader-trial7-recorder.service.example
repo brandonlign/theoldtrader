@@ -1,0 +1,24 @@
+[Unit]
+Description=TheOldTrader Trial 7 sealed cross-venue funding recorder
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=REPLACE_WITH_SERVICE_USER
+WorkingDirectory=/REPLACE/WITH/theoldtrader
+ExecStart=/usr/bin/env npm run research:cv:record
+Restart=on-failure
+RestartSec=30
+TimeoutStopSec=30
+KillSignal=SIGTERM
+StandardOutput=append:/REPLACE/WITH/theoldtrader-trial7-recorder.log
+StandardError=append:/REPLACE/WITH/theoldtrader-trial7-recorder.log
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/REPLACE/WITH/theoldtrader/research/crypto/data-cache
+
+[Install]
+WantedBy=multi-user.target
