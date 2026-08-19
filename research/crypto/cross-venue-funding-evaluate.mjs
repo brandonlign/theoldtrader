@@ -7,6 +7,7 @@ import zlib from "node:zlib";
 import { evaluateCrossVenueFunding } from "./lib/cross-venue-funding.js";
 
 const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
+const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
 
 function usage() {
   throw new Error(
@@ -18,13 +19,30 @@ function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
 }
 
+function acquisitionType(record, label) {
+  const type = String(record?.acquisition?.type ?? "");
+  if (!ACQUISITION_TYPES.has(type)) throw new Error(`${label} has invalid acquisition type: ${type || "missing"}`);
+  return type;
+}
+
+function compactRawHashes(record) {
+  return [
+    record.sources?.hyperliquid?.hashes?.metaAndAssetCtxsSha256,
+    record.sources?.hyperliquid?.hashes?.fundingHistorySha256,
+    record.sources?.binance?.hashes?.premiumIndexSha256,
+    record.sources?.binance?.hashes?.fundingHistorySha256
+  ].map((value) => String(value ?? "").toLowerCase());
+}
+
 async function readCompact(path) {
   const records = [];
   const input = fs.createReadStream(path);
   const rl = readline.createInterface({ input, crlfDelay: Infinity });
   for await (const line of rl) {
     if (!line.trim()) continue;
-    records.push(JSON.parse(line));
+    const record = JSON.parse(line);
+    acquisitionType(record, `Trial 7 compact row ${records.length + 1}`);
+    records.push(record);
   }
   if (!records.length) throw new Error("Trial 7 compact recording is empty");
   return records;
@@ -32,6 +50,8 @@ async function readCompact(path) {
 
 async function readAndVerifyRaw(path, expectedManifestHash) {
   const hashes = new Set();
+  const acquisitionByHash = new Map();
+  const acquisitionRows = { PRIMARY_LIVE: 0, OFFICIAL_RECOVERY: 0 };
   let rows = 0;
   const input = fs.createReadStream(path).pipe(zlib.createGunzip());
   const rl = readline.createInterface({ input, crlfDelay: Infinity });
@@ -45,6 +65,8 @@ async function readAndVerifyRaw(path, expectedManifestHash) {
     if (record.manifestSha256 !== expectedManifestHash) {
       throw new Error(`Trial 7 raw row ${rows} was collected under a different manifest hash`);
     }
+    const type = acquisitionType(record, `Trial 7 raw row ${rows}`);
+    acquisitionRows[type] += 1;
     if (!/^[0-9a-f]{64}$/i.test(String(record.sha256 ?? ""))) {
       throw new Error(`Trial 7 raw row ${rows} has an invalid SHA-256 field`);
     }
@@ -53,14 +75,34 @@ async function readAndVerifyRaw(path, expectedManifestHash) {
       throw new Error(`Trial 7 raw-response SHA-256 mismatch at raw row ${rows}`);
     }
     hashes.add(recomputed);
+    if (!acquisitionByHash.has(recomputed)) acquisitionByHash.set(recomputed, new Set());
+    acquisitionByHash.get(recomputed).add(type);
   }
   if (!rows) throw new Error("Trial 7 raw-response archive is empty");
-  return { hashes, rows };
+  return { hashes, rows, acquisitionByHash, acquisitionRows };
+}
+
+function verifyCompactRawAcquisition(records, raw) {
+  for (let index = 0; index < records.length; index += 1) {
+    const record = records[index];
+    const type = acquisitionType(record, `Trial 7 compact row ${index + 1}`);
+    for (const hash of compactRawHashes(record)) {
+      if (!/^[0-9a-f]{64}$/.test(hash)) {
+        throw new Error(`Trial 7 compact row ${index + 1} has invalid source hash`);
+      }
+      const rawTypes = raw.acquisitionByHash.get(hash);
+      if (!rawTypes?.has(type)) {
+        throw new Error(
+          `Trial 7 compact/raw acquisition mismatch at compact row ${index + 1}: ${type} compact source ${hash} has no raw payload with the same acquisition type`
+        );
+      }
+    }
+  }
 }
 
 async function main() {
   const [mode, compactPath, rawPath, manifestPath = DEFAULT_MANIFEST] = process.argv.slice(2);
-  if (!['screening', 'final'].includes(mode) || !compactPath || !rawPath) usage();
+  if (!["screening", "final"].includes(mode) || !compactPath || !rawPath) usage();
 
   const manifestBytes = fs.readFileSync(manifestPath);
   const manifestHash = sha256(manifestBytes);
@@ -74,6 +116,7 @@ async function main() {
 
   const records = await readCompact(compactPath);
   const raw = await readAndVerifyRaw(rawPath, manifestHash);
+  verifyCompactRawAcquisition(records, raw);
   const compactHash = sha256(fs.readFileSync(compactPath));
   const rawArchiveHash = sha256(fs.readFileSync(rawPath));
 
@@ -97,7 +140,9 @@ async function main() {
       rawPath,
       rawArchiveSha256: rawArchiveHash,
       rawRows: raw.rows,
-      verifiedDistinctRawResponseHashes: raw.hashes.size
+      rawAcquisitionRows: raw.acquisitionRows,
+      verifiedDistinctRawResponseHashes: raw.hashes.size,
+      compactRawAcquisitionMatchVerified: true
     }
   };
   process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
