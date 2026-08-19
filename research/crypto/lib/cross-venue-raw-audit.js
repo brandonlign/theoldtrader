@@ -17,10 +17,14 @@ function rawRowsFor(hash, type, rawRowsByHash) {
   return (rawRowsByHash.get(String(hash).toLowerCase()) ?? []).filter((row) => row.acquisition?.type === type);
 }
 
-function sourcePayload(hash, type, source, rawRowsByHash) {
-  const rows = rawRowsFor(hash, type, rawRowsByHash).filter((row) => row.source === source);
+function sourcePayload(hash, type, source, recordedAt, rawRowsByHash) {
+  const rows = rawRowsFor(hash, type, rawRowsByHash)
+    .filter((row) => row.source === source)
+    .filter((row) => row.recordedAt === recordedAt);
   if (!rows.length) {
-    throw new Error(`Trial 7 expected at least one ${source} raw payload for ${type}/${hash}, found 0`);
+    throw new Error(
+      `Trial 7 expected ${source} raw payload for ${type}/${hash} at compact timestamp ${recordedAt}, found 0`
+    );
   }
   const canonical = String(rows[0].rawText ?? "");
   for (const row of rows.slice(1)) {
@@ -99,29 +103,34 @@ function auditPrimaryLive(record, rawRowsByHash) {
   const hl = record.sources.hyperliquid;
   const bn = record.sources.binance;
   const type = "PRIMARY_LIVE";
+  const recordedAt = record.recordedAt;
 
   const hlContextRaw = sourcePayload(
     hl.hashes.metaAndAssetCtxsSha256,
     type,
     "hyperliquid-metaAndAssetCtxs",
+    recordedAt,
     rawRowsByHash
   );
   const hlFundingRaw = sourcePayload(
     hl.hashes.fundingHistorySha256,
     type,
     "hyperliquid-fundingHistory",
+    recordedAt,
     rawRowsByHash
   );
   const bnPremiumRaw = sourcePayload(
     bn.hashes.premiumIndexSha256,
     type,
     "binance-premiumIndex",
+    recordedAt,
     rawRowsByHash
   );
   const bnFundingRaw = sourcePayload(
     bn.hashes.fundingHistorySha256,
     type,
     "binance-fundingRate",
+    recordedAt,
     rawRowsByHash
   );
 
