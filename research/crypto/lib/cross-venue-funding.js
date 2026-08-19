@@ -1,5 +1,6 @@
 const HOUR_MS = 60 * 60 * 1000;
 const DAY_MS = 24 * HOUR_MS;
+const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
 
 function finite(value, label) {
   const number = Number(value);
@@ -23,6 +24,22 @@ function stdev(values) {
   return Math.sqrt(values.reduce((sum, value) => sum + (value - mu) ** 2, 0) / (values.length - 1));
 }
 
+function acquisitionType(record) {
+  const type = String(record?.acquisition?.type ?? "");
+  if (!ACQUISITION_TYPES.has(type)) {
+    throw new Error(`Invalid Trial 7 acquisition type: ${type || "missing"}`);
+  }
+  return type;
+}
+
+function shouldReplaceHourlyRecord(prior, candidate) {
+  if (!prior) return true;
+  const priorType = acquisitionType(prior);
+  const candidateType = acquisitionType(candidate);
+  if (priorType !== candidateType) return candidateType === "PRIMARY_LIVE";
+  return Date.parse(candidate.recordedAt) < Date.parse(prior.recordedAt);
+}
+
 function uniqueByHour(records, startMs, endMs) {
   const byHour = new Map();
   for (const record of records) {
@@ -30,7 +47,7 @@ function uniqueByHour(records, startMs, endMs) {
     if (!Number.isFinite(time) || time < startMs || time >= endMs) continue;
     const bucket = Math.floor(time / HOUR_MS) * HOUR_MS;
     const prior = byHour.get(bucket);
-    if (!prior || Date.parse(prior.recordedAt) > time) byHour.set(bucket, record);
+    if (shouldReplaceHourlyRecord(prior, record)) byHour.set(bucket, record);
   }
   return [...byHour.values()].sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt));
 }
@@ -45,6 +62,10 @@ function nearestRecord(records, targetMs, toleranceMs) {
     if (distance < bestDistance) {
       best = record;
       bestDistance = distance;
+    } else if (distance === bestDistance && best) {
+      const bestType = acquisitionType(best);
+      const candidateType = acquisitionType(record);
+      if (bestType !== candidateType && candidateType === "PRIMARY_LIVE") best = record;
     }
   }
   if (!best || bestDistance > toleranceMs) return null;
@@ -61,6 +82,7 @@ function verifyRecordIdentity(record, manifestHash) {
   if (record.manifestSha256 !== manifestHash) {
     throw new Error("Trial 7 manifest hash changed during acquisition");
   }
+  acquisitionType(record);
   const hl = record.sources?.hyperliquid;
   const bn = record.sources?.binance;
   positive(hl?.mark, "Hyperliquid mark");
@@ -195,6 +217,7 @@ function matchHyperliquidFunding(events, records, toleranceMs) {
       ...event,
       oracle: positive(record.sources.hyperliquid.oracle, "matched Hyperliquid oracle"),
       matchedRecordAt: record.recordedAt,
+      matchedAcquisitionType: acquisitionType(record),
       matchDistanceMs: Math.abs(time - event.time)
     };
   });
@@ -332,6 +355,7 @@ function buildScenario({ records, funding, manifest, entryRecord, exitRecord, st
     marginSeries.push({
       time,
       timestamp: record.recordedAt,
+      acquisitionType: acquisitionType(record),
       binanceExcess: bnExcess,
       hyperliquidExcess: hlExcess,
       binanceFunding: bnFunding,
@@ -351,13 +375,15 @@ function buildScenario({ records, funding, manifest, entryRecord, exitRecord, st
       binanceMark: entryBinanceMark,
       hyperliquidMark: entryHyperliquidMark,
       binanceFill: longEntryFill,
-      hyperliquidFill: shortEntryFill
+      hyperliquidFill: shortEntryFill,
+      acquisitionType: acquisitionType(entryRecord)
     },
     exit: {
       binanceMark: exitBinanceMark,
       hyperliquidMark: exitHyperliquidMark,
       binanceFill: longExitFill,
-      hyperliquidFill: shortExitFill
+      hyperliquidFill: shortExitFill,
+      acquisitionType: acquisitionType(exitRecord)
     },
     fundingPnl,
     pricePnl: {
@@ -406,8 +432,16 @@ function sixtyDayWindows(series, startMs, endMs) {
   for (let start = startMs; start < endMs; start += 60 * DAY_MS) {
     const end = Math.min(start + 60 * DAY_MS, endMs);
     if (end - start < 59 * DAY_MS) continue;
-    const first = nearestRecord(series.map((point) => ({ recordedAt: new Date(point.time).toISOString(), point })), start, 2 * HOUR_MS)?.point;
-    const last = nearestRecord(series.map((point) => ({ recordedAt: new Date(point.time).toISOString(), point })), end, 2 * HOUR_MS)?.point;
+    const first = nearestRecord(series.map((point) => ({
+      recordedAt: new Date(point.time).toISOString(),
+      acquisition: { type: "PRIMARY_LIVE" },
+      point
+    })), start, 2 * HOUR_MS)?.point;
+    const last = nearestRecord(series.map((point) => ({
+      recordedAt: new Date(point.time).toISOString(),
+      acquisition: { type: "PRIMARY_LIVE" },
+      point
+    })), end, 2 * HOUR_MS)?.point;
     if (!first || !last) {
       windows.push({ start, end, pnl: null, positive: false });
       continue;
@@ -430,6 +464,19 @@ function breakEvenFriction(args) {
   return low;
 }
 
+function acquisitionCoverage(windowRecords, expectedHourlyContexts) {
+  const primaryLiveHourlyContexts = windowRecords.filter((record) => acquisitionType(record) === "PRIMARY_LIVE").length;
+  const officialRecoveryHourlyContexts = windowRecords.filter((record) => acquisitionType(record) === "OFFICIAL_RECOVERY").length;
+  const combinedHourlyContexts = windowRecords.length;
+  return {
+    primaryLiveHourlyContexts,
+    officialRecoveryHourlyContexts,
+    combinedHourlyContexts,
+    primaryLiveCoverage: expectedHourlyContexts > 0 ? primaryLiveHourlyContexts / expectedHourlyContexts : 0,
+    hourlyFirstPartyContextCoverage: expectedHourlyContexts > 0 ? combinedHourlyContexts / expectedHourlyContexts : 0
+  };
+}
+
 export function evaluateCrossVenueFunding({
   manifest,
   manifestHash,
@@ -441,7 +488,7 @@ export function evaluateCrossVenueFunding({
   if (manifest.experimentId !== "cross-venue-funding-v1" || manifest.trialNumber !== 7) {
     throw new Error("Unexpected Trial 7 manifest");
   }
-  if (!['screening', 'final'].includes(mode)) throw new Error("mode must be screening or final");
+  if (!["screening", "final"].includes(mode)) throw new Error("mode must be screening or final");
   for (const record of records) verifyRecordIdentity(record, manifestHash);
   records = [...records].sort((a, b) => Date.parse(a.recordedAt) - Date.parse(b.recordedAt));
 
@@ -461,8 +508,9 @@ export function evaluateCrossVenueFunding({
   const entryRecord = nearestRecord(records, startMs, toleranceMs);
   const exitRecord = nearestRecord(records, endMs, toleranceMs);
   const windowRecords = uniqueByHour(records, startMs, endMs);
-  const expectedSnapshots = Math.round((endMs - startMs) / HOUR_MS);
-  const coverage = expectedSnapshots > 0 ? windowRecords.length / expectedSnapshots : 0;
+  const expectedHourlyContexts = Math.round((endMs - startMs) / HOUR_MS);
+  const coverageState = acquisitionCoverage(windowRecords, expectedHourlyContexts);
+  const minimumContextCoverage = manifest.forwardWindow.minimumRecorderCoverage;
   let maxSnapshotGapMs = Infinity;
   if (windowRecords.length) {
     const times = windowRecords.map((record) => Date.parse(record.recordedAt));
@@ -483,11 +531,14 @@ export function evaluateCrossVenueFunding({
   const dataGate = {
     entrySnapshotPresent: Boolean(entryRecord),
     exitSnapshotPresent: Boolean(exitRecord),
-    expectedSnapshots,
-    observedUniqueHourlySnapshots: windowRecords.length,
-    recorderCoverage: coverage,
-    minimumRecorderCoverage: manifest.forwardWindow.minimumRecorderCoverage,
-    coveragePass: coverage >= manifest.forwardWindow.minimumRecorderCoverage,
+    expectedHourlyContexts,
+    observedUniqueHourlyContexts: windowRecords.length,
+    acquisitionCoverage: coverageState,
+    hourlyFirstPartyContextCoverage: coverageState.hourlyFirstPartyContextCoverage,
+    minimumHourlyFirstPartyContextCoverage: minimumContextCoverage,
+    primaryLiveCoverage: coverageState.primaryLiveCoverage,
+    targetPrimaryLiveRecorderCoverage: manifest.forwardWindow.targetPrimaryLiveRecorderCoverage ?? minimumContextCoverage,
+    coveragePass: coverageState.hourlyFirstPartyContextCoverage >= minimumContextCoverage,
     maxSnapshotGapMs,
     maxAllowedSnapshotGapMs: manifest.forwardWindow.maximumSnapshotGapMinutes * 60_000,
     snapshotGapPass: maxSnapshotGapMs <= manifest.forwardWindow.maximumSnapshotGapMinutes * 60_000,
@@ -505,13 +556,25 @@ export function evaluateCrossVenueFunding({
     && fundingCoverageState.binancePass
     && dataGate.hyperliquidFundingOraclePass;
 
-  if (!entryRecord || !exitRecord) {
+  if (!dataGate.pass) {
     return {
       experimentId: manifest.experimentId,
       trialNumber: manifest.trialNumber,
       mode,
+      paperOnly: true,
+      livePromotionAllowed: false,
       classification: "FAILED_DATA_GATE",
+      frozenWindow: {
+        startInclusive: new Date(startMs).toISOString(),
+        endExclusive: new Date(endMs).toISOString()
+      },
       dataGate,
+      fundingEvents: {
+        hyperliquidObserved: matchedFunding.hyperliquid.length,
+        binanceObserved: matchedFunding.binance.length
+      },
+      economicsCalculated: false,
+      interpretationConstraint: "Trial 7 economics are intentionally not calculated when the frozen provenance/data gate fails.",
       antiLeakage: manifest.antiLeakage
     };
   }
@@ -525,7 +588,7 @@ export function evaluateCrossVenueFunding({
   const noMarginFailure = !primary.margin.observedBreach && primary.margin.allFrozenStressesPass;
 
   const screeningRequirements = {
-    dataGatePass: dataGate.pass,
+    dataGatePass: true,
     primaryNetPositive: primary.netPnl > 0,
     fundingContributionPositive: primary.fundingPnl.net > 0,
     marginPass: noMarginFailure
@@ -541,10 +604,9 @@ export function evaluateCrossVenueFunding({
   };
   const finalPass = mode === "final" && Object.values(finalRequirements).every(Boolean);
 
-  let classification;
-  if (!dataGate.pass) classification = "FAILED_DATA_GATE";
-  else if (mode === "screening") classification = screeningPass ? "SCREENING_PASS_NO_PROMOTION" : "SCREENING_FAIL_NO_PROMOTION";
-  else classification = finalPass ? manifest.finalGate.strongestPossibleClassification : "FAILED_FINAL_GATE";
+  const classification = mode === "screening"
+    ? (screeningPass ? "SCREENING_PASS_NO_PROMOTION" : "SCREENING_FAIL_NO_PROMOTION")
+    : (finalPass ? manifest.finalGate.strongestPossibleClassification : "FAILED_FINAL_GATE");
 
   return {
     experimentId: manifest.experimentId,
@@ -562,6 +624,7 @@ export function evaluateCrossVenueFunding({
       hyperliquid: matchedFunding.hyperliquid.length,
       binance: matchedFunding.binance.length
     },
+    economicsCalculated: true,
     primary,
     costStress,
     directionalComparator: comparator,
