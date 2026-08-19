@@ -11,9 +11,9 @@ import {
 
 const bytes = fs.readFileSync(TRIAL7_CANONICAL_MANIFEST_PATH);
 
-test("exact canonical Trial 7 manifest bytes equal the pre-start frozen Git blob", () => {
-  assert.equal(TRIAL7_CANONICAL_MANIFEST_GIT_BLOB_SHA1, "d01224c1fb79a6bffff7a5ad72d9d7bd35dded21");
-  assert.equal(TRIAL7_FINAL_IMPLEMENTATION_FREEZE_AT, "2026-08-19T23:04:02Z");
+test("exact canonical Trial 7 manifest bytes equal the final pre-start frozen Git blob", () => {
+  assert.equal(TRIAL7_CANONICAL_MANIFEST_GIT_BLOB_SHA1, "33363388183c9ef4fb6910398a0ae9dc381601cc");
+  assert.equal(TRIAL7_FINAL_IMPLEMENTATION_FREEZE_AT, "2026-08-19T23:19:57Z");
   assert.equal(gitBlobSha1(bytes), TRIAL7_CANONICAL_MANIFEST_GIT_BLOB_SHA1);
   assert.equal(verifyTrial7CanonicalManifestBytes(bytes), TRIAL7_CANONICAL_MANIFEST_GIT_BLOB_SHA1);
 });
