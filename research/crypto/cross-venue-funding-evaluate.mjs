@@ -13,9 +13,7 @@ const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json"
 const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
 
 function usage() {
-  throw new Error(
-    "Usage: node research/crypto/cross-venue-funding-evaluate.mjs screening|final <compact.ndjson> <raw.ndjson.gz>"
-  );
+  throw new Error("Usage: node research/crypto/cross-venue-funding-evaluate.mjs screening|final <compact.ndjson> <raw.ndjson.gz>");
 }
 
 function sha256(value) {
@@ -63,21 +61,13 @@ async function readAndVerifyRaw(path, expectedManifestHash) {
     if (!line.trim()) continue;
     rows += 1;
     const record = JSON.parse(line);
-    if (record.schema !== "theoldtrader-cross-venue-funding-v1-raw-v1") {
-      throw new Error(`Unexpected Trial 7 raw schema at raw row ${rows}`);
-    }
-    if (record.manifestSha256 !== expectedManifestHash) {
-      throw new Error(`Trial 7 raw row ${rows} was collected under a different manifest hash`);
-    }
+    if (record.schema !== "theoldtrader-cross-venue-funding-v1-raw-v1") throw new Error(`Unexpected Trial 7 raw schema at raw row ${rows}`);
+    if (record.manifestSha256 !== expectedManifestHash) throw new Error(`Trial 7 raw row ${rows} was collected under a different manifest hash`);
     const type = acquisitionType(record, `Trial 7 raw row ${rows}`);
     acquisitionRows[type] += 1;
-    if (!/^[0-9a-f]{64}$/i.test(String(record.sha256 ?? ""))) {
-      throw new Error(`Trial 7 raw row ${rows} has an invalid SHA-256 field`);
-    }
+    if (!/^[0-9a-f]{64}$/i.test(String(record.sha256 ?? ""))) throw new Error(`Trial 7 raw row ${rows} has an invalid SHA-256 field`);
     const recomputed = sha256(String(record.rawText ?? ""));
-    if (recomputed !== String(record.sha256).toLowerCase()) {
-      throw new Error(`Trial 7 raw-response SHA-256 mismatch at raw row ${rows}`);
-    }
+    if (recomputed !== String(record.sha256).toLowerCase()) throw new Error(`Trial 7 raw-response SHA-256 mismatch at raw row ${rows}`);
     hashes.add(recomputed);
     if (!acquisitionByHash.has(recomputed)) acquisitionByHash.set(recomputed, new Set());
     acquisitionByHash.get(recomputed).add(type);
@@ -91,16 +81,12 @@ async function readAndVerifyRaw(path, expectedManifestHash) {
 function verifyCompactRawAcquisition(records, raw) {
   for (let index = 0; index < records.length; index += 1) {
     const record = records[index];
-    const type = acquisitionType(record, `Trial 7 compact row ${index + 1}`);
+    const type = acquisitionType(record, `Trial 7 evidence compact row ${index + 1}`);
     for (const hash of compactRawHashes(record)) {
-      if (!/^[0-9a-f]{64}$/.test(hash)) {
-        throw new Error(`Trial 7 compact row ${index + 1} has invalid source hash`);
-      }
+      if (!/^[0-9a-f]{64}$/.test(hash)) throw new Error(`Trial 7 evidence compact row ${index + 1} has invalid source hash`);
       const rawTypes = raw.acquisitionByHash.get(hash);
       if (!rawTypes?.has(type)) {
-        throw new Error(
-          `Trial 7 compact/raw acquisition mismatch at compact row ${index + 1}: ${type} compact source ${hash} has no raw payload with the same acquisition type`
-        );
+        throw new Error(`Trial 7 compact/raw acquisition mismatch at evidence row ${index + 1}: ${type} compact source ${hash} has no raw payload with the same acquisition type`);
       }
     }
   }
@@ -108,14 +94,18 @@ function verifyCompactRawAcquisition(records, raw) {
 
 function frozenWindow(manifest, mode) {
   const startMs = Date.parse(manifest.forwardWindow?.startInclusive);
-  const endIso = mode === "screening"
-    ? manifest.forwardWindow?.screeningEndExclusive
-    : manifest.forwardWindow?.finalEndExclusive;
+  const endIso = mode === "screening" ? manifest.forwardWindow?.screeningEndExclusive : manifest.forwardWindow?.finalEndExclusive;
   const endMs = Date.parse(endIso);
-  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) {
-    throw new Error("Invalid frozen Trial 7 evaluation window");
-  }
+  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) throw new Error("Invalid frozen Trial 7 evaluation window");
   return { startMs, endMs, startIso: new Date(startMs).toISOString(), endIso: new Date(endMs).toISOString() };
+}
+
+function evidenceWindow(records, manifest, window) {
+  const toleranceMs = Number(manifest.forwardWindow?.entryExitPriceMatchToleranceMinutes ?? 0) * 60_000;
+  return records.filter((record) => {
+    const time = Date.parse(record.recordedAt);
+    return Number.isFinite(time) && time >= window.startMs && time <= window.endMs + toleranceMs;
+  });
 }
 
 function writeDataFailure({ manifest, mode, window, provenance, reason, extraGate = {} }) {
@@ -126,14 +116,8 @@ function writeDataFailure({ manifest, mode, window, provenance, reason, extraGat
     paperOnly: true,
     livePromotionAllowed: false,
     classification: "FAILED_DATA_GATE",
-    frozenWindow: {
-      startInclusive: window.startIso,
-      endExclusive: window.endIso
-    },
-    dataGate: {
-      pass: false,
-      ...extraGate
-    },
+    frozenWindow: { startInclusive: window.startIso, endExclusive: window.endIso },
+    dataGate: { pass: false, ...extraGate },
     economicsCalculated: false,
     interpretationConstraint: reason,
     antiLeakage: manifest.antiLeakage,
@@ -151,19 +135,17 @@ async function main() {
   const manifestBytes = fs.readFileSync(manifestPath);
   const manifestHash = sha256(manifestBytes);
   const manifest = JSON.parse(manifestBytes.toString("utf8"));
-  if (manifest.experimentId !== "cross-venue-funding-v1" || manifest.trialNumber !== 7) {
-    throw new Error("Unexpected Trial 7 manifest identity");
-  }
-  if (manifest.paperOnly !== true || manifest.livePromotionAllowed !== false) {
-    throw new Error("Trial 7 evaluator only accepts the frozen paper-only manifest");
+  if (manifest.experimentId !== "cross-venue-funding-v1" || manifest.trialNumber !== 7) throw new Error("Unexpected Trial 7 manifest identity");
+  if (manifest.paperOnly !== true || manifest.livePromotionAllowed !== false || manifest.sourceRules?.canonicalManifestOnly !== true) {
+    throw new Error("Trial 7 evaluator only accepts the canonical frozen paper-only manifest");
   }
 
   const window = frozenWindow(manifest, mode);
-  if (Date.now() < window.endMs) {
-    throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${window.endIso}`);
-  }
+  if (Date.now() < window.endMs) throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${window.endIso}`);
 
-  const records = await readCompact(compactPath);
+  const allRecords = await readCompact(compactPath);
+  const records = evidenceWindow(allRecords, manifest, window);
+  if (!records.length) throw new Error("Trial 7 has no compact evidence rows inside the frozen evaluation window");
   const raw = await readAndVerifyRaw(rawPath, manifestHash);
   verifyCompactRawAcquisition(records, raw);
   const semanticAudit = auditCompactAgainstRaw(records, raw.rawRowsByHash);
@@ -176,7 +158,9 @@ async function main() {
     canonicalManifestVerified: true,
     compactPath,
     compactSha256: compactHash,
-    compactRows: records.length,
+    compactRowsTotal: allRecords.length,
+    compactRowsInFrozenEvidenceWindow: records.length,
+    semanticAuditScope: "startInclusive<=recordedAt<=endExclusive+entryExitTolerance",
     rawPath,
     rawArchiveSha256: rawArchiveHash,
     rawRows: raw.rows,
@@ -189,27 +173,14 @@ async function main() {
   let normalized;
   try {
     normalized = normalizeHyperliquidFundingTimes(records, {
-      toleranceMs: Number(manifest.sourceRules?.hyperliquidFundingTimestampNormalization?.maximumAbsoluteSkewMs ?? 60_000)
+      toleranceMs: Number(manifest.sourceRules.hyperliquidFundingTimestampNormalization.maximumAbsoluteSkewMs)
     });
   } catch (error) {
     writeDataFailure({
-      manifest,
-      mode,
-      window,
-      provenance: {
-        ...provenanceBase,
-        hyperliquidFundingTimestampNormalization: {
-          pass: false,
-          error: String(error?.message ?? error)
-        }
-      },
+      manifest, mode, window,
+      provenance: { ...provenanceBase, hyperliquidFundingTimestampNormalization: { pass: false, error: String(error?.message ?? error) } },
       reason: "Trial 7 economics are intentionally not calculated when Hyperliquid settled-funding timestamps violate the frozen hourly-normalization rule.",
-      extraGate: {
-        hyperliquidFundingTimestampNormalization: {
-          pass: false,
-          error: String(error?.message ?? error)
-        }
-      }
+      extraGate: { hyperliquidFundingTimestampNormalization: { pass: false, error: String(error?.message ?? error) } }
     });
     return;
   }
@@ -217,25 +188,16 @@ async function main() {
   const normalizedRecords = normalized.records;
   const binanceFundingScheduleAudit = auditBinanceFundingSchedule(normalizedRecords, {
     startMs: window.startMs,
-    endMs: window.endMs
+    endMs: window.endMs,
+    maximumStaleAnnouncementLagMs: Number(manifest.sourceRules.binanceFundingScheduleAudit.maximumStaleAnnouncementLagMs)
   });
-  const provenance = {
-    ...provenanceBase,
-    hyperliquidFundingTimestampNormalization: normalized.audit,
-    binanceFundingScheduleAudit
-  };
+  const provenance = { ...provenanceBase, hyperliquidFundingTimestampNormalization: normalized.audit, binanceFundingScheduleAudit };
 
   if (!binanceFundingScheduleAudit.pass) {
     writeDataFailure({
-      manifest,
-      mode,
-      window,
-      provenance,
+      manifest, mode, window, provenance,
       reason: "Trial 7 economics are intentionally not calculated when the first-party Binance announced-funding schedule is incomplete.",
-      extraGate: {
-        hyperliquidFundingTimestampNormalization: normalized.audit,
-        binanceFundingScheduleAudit
-      }
+      extraGate: { hyperliquidFundingTimestampNormalization: normalized.audit, binanceFundingScheduleAudit }
     });
     return;
   }
@@ -252,16 +214,10 @@ async function main() {
     ...result.dataGate,
     hyperliquidFundingTimestampNormalization: normalized.audit,
     binanceFundingScheduleAudit,
-    pass: Boolean(result.dataGate?.pass)
-      && normalized.audit.pass
-      && binanceFundingScheduleAudit.pass
+    pass: Boolean(result.dataGate?.pass) && normalized.audit.pass && binanceFundingScheduleAudit.pass
   };
 
-  const output = {
-    ...result,
-    provenance
-  };
-  process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
+  process.stdout.write(`${JSON.stringify({ ...result, provenance }, null, 2)}\n`);
 }
 
 main().catch((error) => {
