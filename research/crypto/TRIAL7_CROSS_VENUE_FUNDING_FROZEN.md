@@ -1,7 +1,7 @@
 # Trial 7 — `cross-venue-funding-v1` forward freeze
 
 Initial current-branch freeze timestamp: **2026-08-19T21:15:27Z**  
-Final implementation freeze timestamp: **2026-08-19T22:54:27Z**  
+Final implementation freeze timestamp: **2026-08-19T23:04:02Z**  
 Scientific start: **2026-08-20T00:00:00Z**  
 90-day screening boundary: **2026-11-18T00:00:00Z**  
 180-day final boundary: **2027-02-16T00:00:00Z**  
@@ -30,7 +30,7 @@ All changes below were made before the scientific start and before any TheOldTra
 1. **Prospective start moved Aug. 19 → Aug. 20.** Continuous scientific acquisition was not established before the old boundary passed. The new boundary was frozen before any candidate return/funding-spread result was inspected.
 2. **Hyperliquid funding uses oracle price.** The stale draft said mark price. The first-party mechanism uses position size × oracle price × funding rate.
 3. **Promotion stress made harder.** The primary candidate remains 15 bps all-in per venue order; a separate 25 bps/order promotion stress plus venue-by-venue margin and 5%/10%/25% adverse relative-basis shocks were frozen before data.
-4. **Funding at the exact entry/exit boundary is excluded.** Only events strictly inside the declared window accrue.
+4. **Funding boundary timing follows the actual fill timing.** Entry and exit use the first valid official context after their UTC boundary. Therefore the exact start-boundary settlement occurs before entry and is excluded, while an exact end-boundary settlement occurs before the post-boundary exit and is included. The supported evaluator will not run until the full 10-minute exit-context tolerance has elapsed.
 5. **Risk/reporting semantics were made explicit.** Max drawdown begins from pre-entry equity; daily risk returns use fixed 24-hour boundary-to-boundary observations; Sortino uses zero-target downside deviation; three 60-day contribution windows telescope to full 180-day P&L; funding, raw basis and execution friction are separately reported; break-even all-in friction is solved analytically under the frozen four-fill model.
 
 ### Timing/provenance hardening
@@ -38,7 +38,7 @@ All changes below were made before the scientific start and before any TheOldTra
 6. **Primary hourly context target fixed at `HH:00:05Z`.** This removes a later choice of sampling offset.
 7. **Boundary fills use the first valid official context at or after the boundary within 10 minutes.** A pre-boundary observation is ineligible even if closer in absolute time.
 8. **Hyperliquid raw funding timestamps normalize to the nearest UTC hour only within ±60 seconds.** Raw timestamps/skews remain preserved; collisions/conflicting duplicates fail closed.
-9. **Binance completeness follows Binance's announced schedule.** Every in-window `premiumIndex.nextFundingTime` announcement must later appear as an official settled `fundingRate.fundingTime`; the evaluator does not assume an immutable eight-hour interval.
+9. **Binance completeness follows Binance's announced schedule.** Every funding timestamp after entry and at or before the exit boundary announced by in-window `premiumIndex.nextFundingTime` must appear as official settled `fundingRate.fundingTime`. The post-boundary exit poll may supply the settlement at the exact end boundary. The evaluator does not assume an immutable eight-hour interval.
 10. **Compact/raw provenance is timestamp-bound.** Every PRIMARY_LIVE compact source must resolve to the same source/hash/acquisition type at the exact same `recordedAt` in the preserved raw archive before economics can run.
 11. **Recorder/evaluator/reporter are canonical-manifest locked.** A custom manifest cannot be substituted through the supported scientific commands.
 12. **Recovery is specified but fail-closed in the evaluator until source-specific independent raw parsers exist.** A prose claim or third-party parser cannot make recovered data score the candidate.
@@ -70,8 +70,8 @@ Equal base units remove first-order BTC direction, but cross-venue basis, execut
 
 Rates are never resampled to a synthetic common interval and never forward-filled.
 
-- Hyperliquid: each valid hourly settled event strictly inside the window is accrued on the short using the first valid official oracle context at or after its normalized UTC-hour event time, within the frozen tolerance. Positive funding is received by the short; negative funding is paid.
-- Binance: each valid official settled event strictly inside the window is accrued on the long using the event's official `markPrice`. Positive funding is paid by the long; negative funding is received.
+- Hyperliquid: each valid hourly settled event with `startBoundary < eventTime <= endBoundary` is accrued on the short using the first valid official oracle context at or after its normalized UTC-hour event time, within the frozen tolerance. Positive funding is received by the short; negative funding is paid.
+- Binance: each valid official settled event with `startBoundary < eventTime <= endBoundary` is accrued on the long using the event's official `markPrice`. Positive funding is paid by the long; negative funding is received.
 
 A required event, schedule announcement, funding-notional price, raw hash, raw semantic reconstruction, or timestamp match that cannot satisfy the frozen first-party rules fails the data gate before strategy P&L is calculated.
 
