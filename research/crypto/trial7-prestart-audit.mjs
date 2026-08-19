@@ -11,29 +11,22 @@ const RAW_PATH = "research/crypto/data-cache/cross-venue-funding-v1-forward.raw.
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
 }
-
 function requireEqual(actual, expected, label) {
   if (actual !== expected) throw new Error(`${label} changed: expected ${expected}, got ${actual}`);
 }
-
 function requireNumber(actual, expected, label) {
-  if (!Number.isFinite(Number(actual)) || Math.abs(Number(actual) - expected) > 1e-12) {
-    throw new Error(`${label} changed: expected ${expected}, got ${actual}`);
-  }
+  if (!Number.isFinite(Number(actual)) || Math.abs(Number(actual) - expected) > 1e-12) throw new Error(`${label} changed: expected ${expected}, got ${actual}`);
 }
 
 const bytes = fs.readFileSync(MANIFEST_PATH);
 const manifest = JSON.parse(bytes.toString("utf8"));
 const checks = [];
-function check(label, fn) {
-  fn();
-  checks.push(label);
-}
+function check(label, fn) { fn(); checks.push(label); }
 
 check("identity", () => {
   requireEqual(manifest.experimentId, "cross-venue-funding-v1", "experimentId");
   requireNumber(manifest.trialNumber, 7, "trialNumber");
-  requireEqual(manifest.freeze?.finalImplementationFreezeAt, "2026-08-19T22:54:27Z", "final implementation freeze time");
+  requireEqual(manifest.freeze?.finalImplementationFreezeAt, "2026-08-19T23:04:02Z", "final implementation freeze time");
 });
 check("paper-only safety", () => {
   requireEqual(manifest.paperOnly, true, "paperOnly");
@@ -56,6 +49,7 @@ check("frozen forward boundaries", () => {
   requireNumber(manifest.forwardWindow?.entryExitPriceMatchToleranceMinutes, 10, "entry/exit tolerance");
   requireEqual(manifest.forwardWindow?.entryExitSelectionRule, "firstValidOfficialObservationAtOrAfterBoundary", "entry/exit selection rule");
   requireEqual(manifest.forwardWindow?.preBoundaryEntryExitContextAllowed, false, "pre-boundary entry/exit context");
+  requireNumber(manifest.forwardWindow?.earliestEvaluationDelayMinutesAfterBoundary, 10, "evaluation delay");
 });
 check("frozen economics", () => {
   requireNumber(manifest.portfolio?.startingEquityUsd, 10000, "starting equity");
@@ -75,15 +69,14 @@ check("native funding and schedule semantics", () => {
   requireEqual(manifest.fundingAccounting?.resampleRates, false, "resampleRates");
   requireEqual(manifest.fundingAccounting?.nativeIntervalsOnly, true, "nativeIntervalsOnly");
   requireEqual(manifest.forwardWindow?.fundingAtStartBoundaryEarned, false, "start-boundary funding");
-  requireEqual(manifest.forwardWindow?.fundingAtEndBoundaryEarned, false, "end-boundary funding");
+  requireEqual(manifest.forwardWindow?.fundingAtEndBoundaryEarned, true, "end-boundary funding");
+  if (!String(manifest.fundingAccounting?.boundaryRule ?? "").includes("startBoundary < eventTime <= endBoundary")) throw new Error("funding boundary rule changed");
   requireNumber(manifest.sourceRules?.hyperliquidFundingTimestampNormalization?.maximumAbsoluteSkewMs, 60000, "Hyperliquid funding timestamp skew");
   requireNumber(manifest.sourceRules?.binanceFundingScheduleAudit?.maximumStaleAnnouncementLagMs, 300000, "Binance funding schedule stale lag");
 });
 check("canonical provenance binding", () => {
   requireEqual(manifest.sourceRules?.canonicalManifestOnly, true, "canonicalManifestOnly");
-  if (!String(manifest.sourceRules?.compactRawTimestampBinding ?? "").includes("exact recordedAt")) {
-    throw new Error("compact/raw exact recordedAt binding changed");
-  }
+  if (!String(manifest.sourceRules?.compactRawTimestampBinding ?? "").includes("exact recordedAt")) throw new Error("compact/raw exact recordedAt binding changed");
 });
 check("risk and consistency definitions", () => {
   requireEqual(manifest.riskStatistics?.maxDrawdownStart, "preEntryStartingEquity", "max-drawdown start");
@@ -108,9 +101,7 @@ check("no observed Trial 7 result committed", () => {
 
 const compactExists = fs.existsSync(COMPACT_PATH);
 const rawExists = fs.existsSync(RAW_PATH);
-if (compactExists !== rawExists) {
-  throw new Error("Trial 7 forward acquisition is incomplete: compact/raw existence mismatch");
-}
+if (compactExists !== rawExists) throw new Error("Trial 7 forward acquisition is incomplete: compact/raw existence mismatch");
 
 const startMs = Date.parse(manifest.forwardWindow.startInclusive);
 const nowMs = Date.now();
