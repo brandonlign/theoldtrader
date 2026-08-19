@@ -260,8 +260,8 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
 
 function msUntilNextCollection(now = new Date()) {
   const next = new Date(now);
-  next.setUTCMinutes(2, 0, 0);
-  if (next <= now) next.setUTCHours(next.getUTCHours() + 1);
+  next.setUTCMinutes(0, 5, 0);
+  if (next <= now) next.setUTCHours(next.getUTCHours() + 1, 0, 5, 0);
   return next.getTime() - now.getTime();
 }
 
