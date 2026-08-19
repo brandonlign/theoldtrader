@@ -11,6 +11,10 @@ const HL_INFO = "https://api.hyperliquid.xyz/info";
 const BINANCE_PREMIUM = "https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT";
 const BINANCE_FUNDING = "https://fapi.binance.com/fapi/v1/fundingRate";
 const LOOKBACK_MS = 130 * 60_000;
+const PRIMARY_ACQUISITION = Object.freeze({
+  type: "PRIMARY_LIVE",
+  collector: "theoldtrader-forward-recorder-v1"
+});
 
 function argValue(name, fallback = null) {
   const index = process.argv.indexOf(name);
@@ -228,6 +232,7 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
     schema: "theoldtrader-cross-venue-funding-v1-raw-v1",
     recordedAt: new Date(finishedAt).toISOString(),
     manifestSha256: frozen.sha256,
+    acquisition: PRIMARY_ACQUISITION,
     ...row
   }));
   await appendRawMembers(rawPath, rawEnvelope);
@@ -237,6 +242,7 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
     experimentId: frozen.manifest.experimentId,
     trialNumber: frozen.manifest.trialNumber,
     manifestSha256: frozen.sha256,
+    acquisition: PRIMARY_ACQUISITION,
     recordedAt: new Date(finishedAt).toISOString(),
     collectionLatencyMs: finishedAt - startedAt,
     sources: {
@@ -249,6 +255,7 @@ async function recordOnce({ output, manifestPath, allowPrestartConnectivity = fa
     output,
     rawOutput: rawPath,
     recordedAt: record.recordedAt,
+    acquisitionType: record.acquisition.type,
     manifestSha256: frozen.sha256,
     hyperliquidEvents: hyperliquid.compact.events.length,
     binanceEvents: binance.compact.events.length
