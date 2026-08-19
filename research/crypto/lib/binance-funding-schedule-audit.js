@@ -1,4 +1,4 @@
-const FIVE_MINUTES_MS = 5 * 60_000;
+const DEFAULT_STALE_LAG_MS = 5 * 60_000;
 
 function finite(value, label) {
   const number = Number(value);
@@ -6,9 +6,16 @@ function finite(value, label) {
   return number;
 }
 
-export function auditBinanceFundingSchedule(records, { startMs, endMs }) {
+export function auditBinanceFundingSchedule(records, {
+  startMs,
+  endMs,
+  maximumStaleAnnouncementLagMs = DEFAULT_STALE_LAG_MS
+}) {
   if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) {
     throw new Error("Invalid Trial 7 Binance schedule audit window");
+  }
+  if (!Number.isFinite(maximumStaleAnnouncementLagMs) || maximumStaleAnnouncementLagMs < 0) {
+    throw new Error("Invalid Trial 7 Binance stale-announcement tolerance");
   }
 
   const announced = new Set();
@@ -19,13 +26,13 @@ export function auditBinanceFundingSchedule(records, { startMs, endMs }) {
 
   for (const record of records) {
     const recordedAt = Date.parse(record?.recordedAt);
-    if (!Number.isFinite(recordedAt)) continue;
+    if (!Number.isFinite(recordedAt) || recordedAt < startMs || recordedAt >= endMs) continue;
     const binance = record?.sources?.binance;
     if (!binance) continue;
     contextRows += 1;
 
     const nextFundingTime = finite(binance.nextFundingTime, "Binance nextFundingTime");
-    if (nextFundingTime < recordedAt - FIVE_MINUTES_MS) {
+    if (nextFundingTime < recordedAt - maximumStaleAnnouncementLagMs) {
       staleScheduleRows.push({
         recordedAt: new Date(recordedAt).toISOString(),
         nextFundingTime: new Date(nextFundingTime).toISOString(),
@@ -49,6 +56,8 @@ export function auditBinanceFundingSchedule(records, { startMs, endMs }) {
   return {
     pass: contextRows > 0 && staleScheduleRows.length === 0 && missingAnnouncedEvents.length === 0,
     sourceMechanism: "Binance premiumIndex.nextFundingTime -> settled fundingRate.fundingTime",
+    contextWindow: "startInclusive<=recordedAt<endExclusive",
+    maximumStaleAnnouncementLagMs,
     contextRows,
     eventRowsSeen,
     announcedFundingTimes: announcedTimes.map((time) => new Date(time).toISOString()),
@@ -58,3 +67,5 @@ export function auditBinanceFundingSchedule(records, { startMs, endMs }) {
     staleScheduleRows
   };
 }
+
+export { DEFAULT_STALE_LAG_MS };
