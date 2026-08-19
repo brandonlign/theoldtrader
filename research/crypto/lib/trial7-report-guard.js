@@ -15,6 +15,12 @@ function scheduleAudit(result) {
     ?? null;
 }
 
+function settlementProjection(result) {
+  return result?.dataGate?.settlementDiscoveryProjection
+    ?? result?.provenance?.settlementDiscoveryProjection
+    ?? null;
+}
+
 export function validateTrial7ReportArtifact(result) {
   if (result?.experimentId !== "cross-venue-funding-v1" || result?.trialNumber !== 7) {
     throw new Error("Unexpected Trial 7 report artifact identity");
@@ -29,17 +35,47 @@ export function validateTrial7ReportArtifact(result) {
   if (!allowed.has(result.classification)) {
     throw new Error(`Forbidden Trial 7 classification in report artifact: ${result.classification}`);
   }
-  const audit = scheduleAudit(result);
-  if (!audit || typeof audit.pass !== "boolean") {
-    throw new Error("Trial 7 report artifact is missing the Binance funding schedule audit");
+
+  const schedule = scheduleAudit(result);
+  const settlement = settlementProjection(result);
+  const failedDataGate = result.classification === "FAILED_DATA_GATE";
+
+  if (failedDataGate) {
+    if (result.economicsCalculated !== false || result?.dataGate?.pass !== false) {
+      throw new Error("FAILED_DATA_GATE Trial 7 report artifact must contain no economics and a failed data gate");
+    }
+    if (settlement?.postWindowMarketFieldsUsed === true) {
+      throw new Error("Trial 7 report artifact cannot use post-window market fields during settlement discovery");
+    }
+    return { pass: true, scheduleAudit: schedule, settlementProjection: settlement };
   }
-  if (result.classification !== "FAILED_DATA_GATE" && audit.pass !== true) {
-    throw new Error("A non-data-failure Trial 7 report cannot contain a failed Binance funding schedule audit");
+
+  if (result.economicsCalculated !== true || result?.dataGate?.pass !== true) {
+    throw new Error("A non-data-failure Trial 7 report requires calculated economics and a passing data gate");
   }
-  return { pass: true, scheduleAudit: audit };
+  if (result?.provenance?.rawSemanticAudit?.pass !== true) {
+    throw new Error("A non-data-failure Trial 7 report requires a passing independent raw semantic audit");
+  }
+  if (result?.provenance?.hyperliquidFundingTimestampNormalization?.pass !== true) {
+    throw new Error("A non-data-failure Trial 7 report requires passing Hyperliquid funding timestamp normalization");
+  }
+  if (!schedule || schedule.pass !== true) {
+    throw new Error("A non-data-failure Trial 7 report requires a passing Binance funding schedule audit");
+  }
+  if (!settlement || settlement.pass !== true) {
+    throw new Error("A non-data-failure Trial 7 report requires a passing settlement-discovery projection audit");
+  }
+  if (settlement.postWindowMarketFieldsUsed !== false) {
+    throw new Error("Trial 7 report artifact cannot use post-window market fields during settlement discovery");
+  }
+
+  return { pass: true, scheduleAudit: schedule, settlementProjection: settlement };
 }
 
 export function binanceFundingScheduleCsv(audit) {
+  if (!audit) {
+    return "metric,value\nstatus,not_reached_before_data_failure\n";
+  }
   const rows = [
     ["metric", "value"],
     ["pass", audit.pass],
