@@ -1,5 +1,7 @@
 # TheOldTrader Crypto Research
 
+> **Current priority (2026-08-19):** Trial 2 `funding-carry-v1` is the flagship **strategy research candidate**; E1 `coinbase-maker-execution-v1` remains the parallel flagship **execution experiment**. This is research prioritization only, not promotion evidence. See `FLAGSHIP_CARRY.md` and `STATUS.md`.
+
 This directory is isolated from the live/paper crypto execution path. **Nothing here can submit an order, access exchange credentials, or change `cloudflare/crypto-engine.js` / `src/crypto/strategy.js`.** The frozen v2 strategy is imported read-only only so historical evaluation can call the exact live signal function.
 
 ## Scientific rules
@@ -75,9 +77,12 @@ node research/crypto/carry-evaluate.js \
 node research/crypto/carry-report.js \
   research/crypto/results/funding-carry-v1/summary.json \
   research/crypto/results/funding-carry-v1
+
+npm run research:carry:flagship -- \
+  research/crypto/results/funding-carry-v1/summary.json
 ```
 
-`CARRY_DATA_AUDIT.md` records why a secondary premium/basis dataset cannot be forward-filled into this experiment. `CARRY_PRECHECK.md` is only an order-of-magnitude funding-scale sanity check and must never be presented as Trial 2 performance.
+`CARRY_DATA_AUDIT.md` records why a secondary premium/basis dataset cannot be forward-filled into this experiment. `CARRY_PRECHECK.md` is only an order-of-magnitude funding-scale sanity check and must never be presented as Trial 2 performance. `FLAGSHIP_CARRY.md` defines the result-agnostic evidence ladder: even a passing historical audit can only be labeled `PROMISING_HISTORICAL_ONLY` and still requires untouched validation.
 
 Do not introduce a funding threshold, sign filter, leverage/allocation change, entry-date selection or rebalancing rule under Trial 2 after seeing its result. Any such change is a new numbered trial.
 
