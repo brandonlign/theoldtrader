@@ -6,6 +6,7 @@ import readline from "node:readline";
 import zlib from "node:zlib";
 import { evaluateCrossVenueFunding } from "./lib/cross-venue-funding.js";
 import { auditCompactAgainstRaw } from "./lib/cross-venue-raw-audit.js";
+import { auditBinanceFundingSchedule } from "./lib/binance-funding-schedule-audit.js";
 
 const DEFAULT_MANIFEST = "research/crypto/manifests/cross-venue-funding-v1.json";
 const ACQUISITION_TYPES = new Set(["PRIMARY_LIVE", "OFFICIAL_RECOVERY"]);
@@ -104,6 +105,18 @@ function verifyCompactRawAcquisition(records, raw) {
   }
 }
 
+function frozenWindow(manifest, mode) {
+  const startMs = Date.parse(manifest.forwardWindow?.startInclusive);
+  const endIso = mode === "screening"
+    ? manifest.forwardWindow?.screeningEndExclusive
+    : manifest.forwardWindow?.finalEndExclusive;
+  const endMs = Date.parse(endIso);
+  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs <= startMs) {
+    throw new Error("Invalid frozen Trial 7 evaluation window");
+  }
+  return { startMs, endMs, startIso: new Date(startMs).toISOString(), endIso: new Date(endMs).toISOString() };
+}
+
 async function main() {
   const [mode, compactPath, rawPath, manifestPath = DEFAULT_MANIFEST] = process.argv.slice(2);
   if (!["screening", "final"].includes(mode) || !compactPath || !rawPath) usage();
@@ -118,12 +131,62 @@ async function main() {
     throw new Error("Trial 7 evaluator only accepts the frozen paper-only manifest");
   }
 
+  const window = frozenWindow(manifest, mode);
+  if (Date.now() < window.endMs) {
+    throw new Error(`Refusing to evaluate Trial 7 ${mode} before ${window.endIso}`);
+  }
+
   const records = await readCompact(compactPath);
   const raw = await readAndVerifyRaw(rawPath, manifestHash);
   verifyCompactRawAcquisition(records, raw);
   const semanticAudit = auditCompactAgainstRaw(records, raw.rawRowsByHash);
+  const binanceFundingScheduleAudit = auditBinanceFundingSchedule(records, {
+    startMs: window.startMs,
+    endMs: window.endMs
+  });
   const compactHash = sha256(fs.readFileSync(compactPath));
   const rawArchiveHash = sha256(fs.readFileSync(rawPath));
+
+  const provenance = {
+    manifestPath,
+    manifestSha256: manifestHash,
+    compactPath,
+    compactSha256: compactHash,
+    compactRows: records.length,
+    rawPath,
+    rawArchiveSha256: rawArchiveHash,
+    rawRows: raw.rows,
+    rawAcquisitionRows: raw.acquisitionRows,
+    verifiedDistinctRawResponseHashes: raw.hashes.size,
+    compactRawAcquisitionMatchVerified: true,
+    rawSemanticAudit: semanticAudit,
+    binanceFundingScheduleAudit
+  };
+
+  if (!binanceFundingScheduleAudit.pass) {
+    const output = {
+      experimentId: manifest.experimentId,
+      trialNumber: manifest.trialNumber,
+      mode,
+      paperOnly: true,
+      livePromotionAllowed: false,
+      classification: "FAILED_DATA_GATE",
+      frozenWindow: {
+        startInclusive: window.startIso,
+        endExclusive: window.endIso
+      },
+      dataGate: {
+        pass: false,
+        binanceFundingScheduleAudit
+      },
+      economicsCalculated: false,
+      interpretationConstraint: "Trial 7 economics are intentionally not calculated when the first-party Binance announced-funding schedule is incomplete.",
+      antiLeakage: manifest.antiLeakage,
+      provenance
+    };
+    process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
+    return;
+  }
 
   const result = evaluateCrossVenueFunding({
     manifest,
@@ -133,23 +196,15 @@ async function main() {
     mode,
     evaluationNowMs: Date.now()
   });
+  result.dataGate = {
+    ...result.dataGate,
+    binanceFundingScheduleAudit,
+    pass: Boolean(result.dataGate?.pass) && binanceFundingScheduleAudit.pass
+  };
 
   const output = {
     ...result,
-    provenance: {
-      manifestPath,
-      manifestSha256: manifestHash,
-      compactPath,
-      compactSha256: compactHash,
-      compactRows: records.length,
-      rawPath,
-      rawArchiveSha256: rawArchiveHash,
-      rawRows: raw.rows,
-      rawAcquisitionRows: raw.acquisitionRows,
-      verifiedDistinctRawResponseHashes: raw.hashes.size,
-      compactRawAcquisitionMatchVerified: true,
-      rawSemanticAudit: semanticAudit
-    }
+    provenance
   };
   process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
 }
