@@ -19,6 +19,7 @@ function manifestFor(days = 180) {
     trialNumber: 7,
     paperOnly: true,
     livePromotionAllowed: false,
+    sourceRules: { binanceFundingScheduleAudit: { maximumStaleAnnouncementLagMs: 300000 } },
     forwardWindow: {
       startInclusive: new Date(start).toISOString(),
       screeningEndExclusive: new Date(screeningEnd).toISOString(),
@@ -27,7 +28,9 @@ function manifestFor(days = 180) {
       targetPrimaryLiveRecorderCoverage: 0.98,
       maximumSnapshotGapMinutes: 130,
       fundingPriceMatchToleranceMinutes: 10,
-      entryExitPriceMatchToleranceMinutes: 10
+      entryExitPriceMatchToleranceMinutes: 10,
+      fundingAtStartBoundaryEarned: false,
+      fundingAtEndBoundaryEarned: true
     },
     portfolio: {
       startingEquityUsd: 10000,
@@ -247,19 +250,18 @@ test("conflicting duplicate funding observations are rejected rather than averag
   assert.throws(() => evaluateFinal(bundle), /Conflicting Hyperliquid funding rate/);
 });
 
-test("funding exactly on frozen start/end boundaries is excluded", () => {
-  const bundle = makeRecords();
-  const end = Date.parse(bundle.manifest.forwardWindow.screeningEndExclusive);
-  bundle.records[0].sources.hyperliquid.events[0].rate = 999;
-  bundle.records.at(-1).sources.hyperliquid.events[0].rate = 999;
-  const result = evaluateCrossVenueFunding({
-    manifest: bundle.manifest,
-    manifestHash: HASHES.manifest,
-    records: bundle.records,
-    availableRawHashes: rawHashes(),
-    mode: "screening",
-    evaluationNowMs: end + 1
-  });
-  assert.ok(result.primary.fundingPnl.hyperliquid < 1000000);
-  assert.equal(result.dataGate.pass, true);
+test("start-boundary funding is excluded while end-boundary funding is included before post-boundary exit", () => {
+  const baseline = makeRecords();
+  const baselineResult = evaluateFinal(baseline);
+
+  const startMutated = makeRecords();
+  startMutated.records[0].sources.hyperliquid.events[0].rate = 999;
+  const startResult = evaluateFinal(startMutated);
+  assert.ok(Math.abs(startResult.primary.fundingPnl.hyperliquid - baselineResult.primary.fundingPnl.hyperliquid) < 1e-12);
+
+  const endMutated = makeRecords();
+  endMutated.records.at(-1).sources.hyperliquid.events[0].rate = 999;
+  const endResult = evaluateFinal(endMutated);
+  assert.ok(endResult.primary.fundingPnl.hyperliquid > baselineResult.primary.fundingPnl.hyperliquid + 100000);
+  assert.equal(endResult.dataGate.pass, true);
 });
