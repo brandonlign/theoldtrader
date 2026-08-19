@@ -4,6 +4,12 @@ set -euo pipefail
 SERVICE_NAME="theoldtrader-trial7-recorder"
 REQUIRED_BRANCH="research/cross-venue-funding-v1-current"
 SERVICE_USER="${1:-$(id -un)}"
+
+if [[ "$(uname -s)" != "Linux" ]]; then
+  echo "Trial 7 recorder must be installed on the persistent Linux host, not this $(uname -s) machine." >&2
+  exit 1
+fi
+
 ROOT="$(git rev-parse --show-toplevel)"
 CURRENT_BRANCH="$(git -C "$ROOT" branch --show-current)"
 NPM_BIN="$(command -v npm || true)"
@@ -16,6 +22,10 @@ if [[ -z "$NPM_BIN" || -z "$NODE_BIN" ]]; then
 fi
 if [[ -z "$SHA256SUM_BIN" ]]; then
   echo "sha256sum is required" >&2
+  exit 1
+fi
+if ! command -v systemctl >/dev/null 2>&1; then
+  echo "systemd/systemctl is required for sealed Trial 7 deployment" >&2
   exit 1
 fi
 if [[ "$CURRENT_BRANCH" != "$REQUIRED_BRANCH" ]]; then
@@ -33,14 +43,9 @@ fi
 
 cd "$ROOT"
 
-# Do not mutate the dependency graph during scientific deployment.
-if [[ -f package-lock.json ]]; then
-  npm ci
-else
-  echo "package-lock.json is required for sealed Trial 7 deployment" >&2
-  exit 1
-fi
-
+# Trial 7 acquisition/evaluation uses Node built-ins only. Do not run npm install
+# during scientific deployment: this repo intentionally has no package-lock.json,
+# and mutating the dependency graph is unnecessary for the sealed collector.
 npm test
 npm run research:cv:prestart
 npm run research:cv:connectivity
