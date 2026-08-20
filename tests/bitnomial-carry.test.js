@@ -106,8 +106,8 @@ function evaluate(bundle, mode = "final") {
 test("clean positive 180-day cash-and-carry path can only become research-promotion eligible", () => {
   const result = evaluate(records());
   assert.equal(result.dataGate.pass, true);
-  assert.equal(result.primary.size.contracts, 1);
-  assert.equal(result.primary.size.btcQuantity, 0.01);
+  assert.equal(result.primary.size.contracts, 2);
+  assert.equal(result.primary.size.btcQuantity, 0.02);
   assert.ok(result.primary.pnl.funding > 0);
   assert.ok(result.primary.pnl.net > 0);
   assert.ok(result.costStress.pnl.net > 0);
@@ -148,7 +148,7 @@ test("positive funding cannot rescue a large adverse perpetual basis move", () =
   assert.notEqual(result.classification, "PROMOTION_ELIGIBLE_RESEARCH_ONLY");
 });
 
-test("frozen high-cost stress can fail even when primary economics are positive", () => {
+test("frozen high-cost stress is strictly harsher than primary economics", () => {
   const bundle = records({ days: 10, fundingRate: 0.00015 });
   const result = evaluate(bundle);
   assert.ok(result.primary.pnl.net > result.costStress.pnl.net);
