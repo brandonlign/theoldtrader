@@ -1,0 +1,26 @@
+name: CME BFF Public Source Probe
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'research/crypto/cme-bff-source-probe.mjs'
+      - '.github/workflows/cme-bff-source-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Qualify public CME Bitcoin Friday futures settlement source
+        run: node research/crypto/cme-bff-source-probe.mjs
+
+# Development source qualification only. No settlement prices, basis, ETF prices,
+# returns, or P&L are printed by this workflow.
