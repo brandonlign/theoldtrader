@@ -1,0 +1,26 @@
+name: Audit Trial 2 Mark Source Union
+
+on:
+  pull_request:
+    branches: [research/crypto-oos-v1]
+    paths:
+      - 'research/crypto/audit-carry-mark-source-union.py'
+      - '.github/workflows/audit-trial2-mark-source-union.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check checksum-verified monthly/daily mark consistency and union coverage
+        run: python research/crypto/audit-carry-mark-source-union.py
+
+# Source-provenance audit only. This workflow never loads the carry evaluator,
+# never computes funding economics, and never emits mark prices or P&L.
