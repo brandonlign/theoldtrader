@@ -31,6 +31,14 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Require explicit post-development integrity authorization
+        run: |
+          set -euo pipefail
+          if [ ! -f research/crypto/TRIAL3_FINAL_ACCESS_AUTHORIZED.md ]; then
+            echo 'Trial 3 final holdout is intentionally blocked pending post-development integrity review. Do not bypass this gate.' >&2
+            exit 1
+          fi
+
       - name: Require frozen development result and pristine final slot
         shell: bash
         run: |
