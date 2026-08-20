@@ -1,0 +1,78 @@
+name: Run Frozen Trial 2D Daily-Mark Replication
+
+on:
+  pull_request:
+    branches: [research/crypto-oos-v1]
+    paths:
+      - 'research/crypto/manifests/funding-carry-v1D-daily-mark.json'
+      - 'research/crypto/prepare-carry-data-daily-mark.py'
+      - '.github/workflows/run-trial2d-daily-mark.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frozen-trial2d-daily-mark
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refuse overwrite and validate frozen code
+        shell: bash
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/funding-carry-v1D-daily-mark/summary.json
+          python -m py_compile research/crypto/prepare-carry-data.py research/crypto/prepare-carry-data-daily-mark.py
+          node --check research/crypto/carry-evaluate.js
+          node --check research/crypto/carry-report.js
+          python -m unittest tests/test_prepare_carry_data.py
+          node --test tests/crypto-carry-evaluate.test.js
+
+      - name: Build exact full-window daily-mark replication input
+        run: >-
+          python research/crypto/prepare-carry-data-daily-mark.py
+          research/crypto/data-cache/funding-carry-v1D-daily-mark-synchronized.csv
+          research/crypto/data-cache/funding-carry-v1D-daily-mark-sources.json
+
+      - name: Evaluate unchanged Trial 2 economics on Trial 2D source replication
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p research/crypto/results/funding-carry-v1D-daily-mark
+          node research/crypto/carry-evaluate.js \
+            research/crypto/manifests/funding-carry-v1.json \
+            research/crypto/data-cache/funding-carry-v1D-daily-mark-synchronized.csv \
+            > research/crypto/results/funding-carry-v1D-daily-mark/summary.json
+          node research/crypto/carry-report.js \
+            research/crypto/results/funding-carry-v1D-daily-mark/summary.json \
+            research/crypto/results/funding-carry-v1D-daily-mark
+          echo '--- Trial 2D frozen economic summary ---'
+          cat research/crypto/results/funding-carry-v1D-daily-mark/summary.json
+
+      - name: Upload Trial 2D evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-carry-v1D-daily-mark-evidence
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            research/crypto/manifests/funding-carry-v1.json
+            research/crypto/manifests/funding-carry-v1D-daily-mark.json
+            research/crypto/data-cache/funding-carry-v1D-daily-mark-synchronized.csv
+            research/crypto/data-cache/funding-carry-v1D-daily-mark-sources.json
+            research/crypto/results/funding-carry-v1D-daily-mark
+
+# Trial 2D is a source replication, not a new tuned strategy. The evaluator consumes
+# the unchanged frozen Trial 2 economic manifest. Daily mark archives are used for
+# the entire window; gap-only patching and interpolation are forbidden.
