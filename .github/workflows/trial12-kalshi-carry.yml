@@ -1,0 +1,66 @@
+name: Trial 12 Frozen Unit-Corrected Kalshi Carry
+
+on:
+  pull_request:
+    branches: [research/kalshi-coinbase-carry-v1]
+    paths:
+      - 'research/crypto/manifests/kalshi-coinbase-carry-v2.json'
+      - 'research/crypto/prepare-kalshi-coinbase-carry-v2.mjs'
+      - 'research/crypto/evaluate-kalshi-coinbase-carry-v2.mjs'
+      - 'tests/kalshi-coinbase-carry-v2.test.js'
+      - '.github/workflows/trial12-kalshi-carry.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate frozen Trial 12 implementation
+        run: |
+          set -euo pipefail
+          node --check research/crypto/prepare-kalshi-coinbase-carry-v2.mjs
+          node --check research/crypto/evaluate-kalshi-coinbase-carry-v2.mjs
+          node --test tests/kalshi-coinbase-carry-v2.test.js
+          node - <<'NODE'
+          const fs=require('fs');
+          const m=JSON.parse(fs.readFileSync('research/crypto/manifests/kalshi-coinbase-carry-v2.json'));
+          if(m.trialNumber!==12 || m.status!=='FROZEN_HISTORICAL_UNIT_REPLICATION_UNOBSERVED' || m.frozenAt!=='2026-08-20T14:27:25Z') process.exit(2);
+          NODE
+      - name: Acquire exact frozen-window first-party evidence
+        run: |
+          node research/crypto/prepare-kalshi-coinbase-carry-v2.mjs \
+            research/crypto/data-cache/kalshi-coinbase-carry-v2-synchronized.json \
+            research/crypto/data-cache/kalshi-coinbase-carry-v2-sources.json \
+            research/crypto/data-cache/kalshi-coinbase-carry-v2-raw
+      - name: Evaluate frozen Trial 12 once
+        run: |
+          mkdir -p research/crypto/results/kalshi-coinbase-carry-v2
+          node research/crypto/evaluate-kalshi-coinbase-carry-v2.mjs \
+            research/crypto/data-cache/kalshi-coinbase-carry-v2-synchronized.json \
+            research/crypto/data-cache/kalshi-coinbase-carry-v2-sources.json \
+            > research/crypto/results/kalshi-coinbase-carry-v2/summary.json
+      - name: Print compact unit-corrected result
+        run: |
+          node - <<'NODE'
+          const s=JSON.parse(require('fs').readFileSync('research/crypto/results/kalshi-coinbase-carry-v2/summary.json'));
+          console.log(JSON.stringify({experimentId:s.experimentId,classification:s.classification,developmentPass:s.developmentPass,window:s.window,sizing:s.sizing,primary:s.primary,stress:s.stress,shocks:s.shocks,developmentChecks:s.developmentChecks,feeVerificationFirewallSatisfied:s.feeVerificationFirewallSatisfied,sourceIntegrity:s.sourceIntegrity},null,2));
+          NODE
+      - name: Upload immutable Trial 12 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: kalshi-coinbase-carry-v2-unit-corrected-evidence
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            research/crypto/manifests/kalshi-coinbase-carry-v2.json
+            research/crypto/data-cache/kalshi-coinbase-carry-v2-synchronized.json
+            research/crypto/data-cache/kalshi-coinbase-carry-v2-sources.json
+            research/crypto/data-cache/kalshi-coinbase-carry-v2-raw
+            research/crypto/results/kalshi-coinbase-carry-v2/summary.json
