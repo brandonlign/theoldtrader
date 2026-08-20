@@ -7,6 +7,10 @@ provides the deterministic-gzip compatibility required by the base builder, and
 attaches the same checksum-verified first-observed Binance timestamps used by the
 development path so ``asset_age_log_days`` has one identical definition in both
 stages.
+
+Final-holdout acquisition is itself protected: merely invoking the script is not
+sufficient. The caller must pass ``--confirm-final YES`` before any manifest is
+read or any network acquisition can begin.
 """
 
 from __future__ import annotations
@@ -28,10 +32,10 @@ def load_dev_helpers():
 
 
 def main() -> None:
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 7 or sys.argv[5] != "--confirm-final" or sys.argv[6] != "YES":
         raise SystemExit(
             "usage: prepare-cross-sectional-final-data.py "
-            "<manifest> <universe> <out.gz> <sources.json>"
+            "<manifest> <universe> <out.gz> <sources.json> --confirm-final YES"
         )
 
     manifest_path = Path(sys.argv[1])
