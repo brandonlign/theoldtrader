@@ -79,3 +79,5 @@ jobs:
             research/crypto/universes/cross-sectional-v1-universe.json
             research/crypto/universes/cross-sectional-v1-formation-sources.json
           if-no-files-found: error
+
+# Explicit one-shot retrigger after the research branch's pre-result fixture correction.
