@@ -29,35 +29,51 @@ function rows(json) {
   return Array.isArray(json?.data) ? json.data : Array.isArray(json) ? json : [];
 }
 
+async function webSocketDataToText(data) {
+  if (typeof data === "string") return data;
+  if (data && typeof data.text === "function") return data.text();
+  if (data instanceof ArrayBuffer) return Buffer.from(data).toString("utf8");
+  if (ArrayBuffer.isView(data)) return Buffer.from(data.buffer, data.byteOffset, data.byteLength).toString("utf8");
+  return String(data);
+}
+
 async function getBookSnapshots({ url, specs, timeoutSeconds }) {
-  if (typeof WebSocket !== "function") throw new Error("Trial 9 connectivity requires Node with global WebSocket support (Node 22+ recommended)");
+  if (typeof WebSocket !== "function") {
+    throw new Error(`Trial 9 connectivity requires a Node runtime with global WebSocket support; current Node=${process.version}, WebSocket=${typeof WebSocket}`);
+  }
   return new Promise((resolve, reject) => {
     const ws = new WebSocket(url);
     const wanted = new Map(specs.map((spec) => [String(spec.symbol), spec]));
     const books = new Map();
-    const timer = setTimeout(() => {
-      try { ws.close(); } catch {}
-      reject(new Error(`Timed out waiting for Bitnomial book snapshots: got ${[...books.keys()].join(",") || "none"}`));
-    }, timeoutSeconds * 1000);
-    const fail = (error) => {
+    let settled = false;
+    const finishError = (error) => {
+      if (settled) return;
+      settled = true;
       clearTimeout(timer);
       try { ws.close(); } catch {}
       reject(error instanceof Error ? error : new Error(String(error)));
     };
+    const timer = setTimeout(() => {
+      finishError(new Error(`Timed out waiting for Bitnomial book snapshots: got ${[...books.keys()].join(",") || "none"}`));
+    }, timeoutSeconds * 1000);
+
     ws.addEventListener("open", () => {
       const symbols = [...wanted.keys()];
       ws.send(JSON.stringify({
         type: "subscribe",
-        product_codes: symbols,
+        product_codes: [],
         channels: [{ name: "book", product_codes: symbols }]
       }));
     });
     ws.addEventListener("message", async (event) => {
       try {
-        const text = typeof event.data === "string" ? event.data : await event.data.text?.() ?? String(event.data);
+        const text = await webSocketDataToText(event.data);
         const payload = JSON.parse(text);
         const messages = Array.isArray(payload) ? payload : [payload];
         for (const message of messages) {
+          if (message?.type === "disconnect") {
+            return finishError(new Error(`Bitnomial WebSocket disconnected: ${message.reason ?? "unknown"}`));
+          }
           if (message?.type !== "book" || !wanted.has(String(message.symbol))) continue;
           const spec = wanted.get(String(message.symbol));
           const book = normalizeBookSnapshot(message, {
@@ -65,18 +81,19 @@ async function getBookSnapshots({ url, specs, timeoutSeconds }) {
             priceIncrement: spec.price_increment,
             contractSizeBtc: spec.contract_size
           });
-          books.set(spec.symbol, book);
+          if (!books.has(spec.symbol)) books.set(spec.symbol, book);
         }
-        if (books.size === wanted.size) {
+        if (!settled && books.size === wanted.size) {
+          settled = true;
           clearTimeout(timer);
           try { ws.close(1000, "trial9-connectivity-complete"); } catch {}
           resolve(books);
         }
       } catch (error) {
-        fail(error);
+        finishError(error);
       }
     });
-    ws.addEventListener("error", () => fail(new Error("Bitnomial WebSocket connection error")));
+    ws.addEventListener("error", () => finishError(new Error("Bitnomial WebSocket connection error")));
   });
 }
 
@@ -116,6 +133,8 @@ async function main() {
     experimentId: manifest.experimentId,
     trialNumber: manifest.trialNumber,
     manifestSha256: sha256(manifestBytes),
+    nodeVersion: process.version,
+    webSocketRuntimeAvailable: true,
     fundingEndpointValid: true,
     spotIdentityValid: true,
     perpetualIdentityValid: true,
