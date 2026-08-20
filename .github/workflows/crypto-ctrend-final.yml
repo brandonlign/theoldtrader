@@ -25,7 +25,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -55,9 +54,17 @@ jobs:
 
       - name: Validate frozen implementation before first final access
         run: |
-          npm ci
-          npm test
+          set -euo pipefail
+          npm install
+          node --test \
+            tests/crypto-cross-sectional-portfolio.test.js \
+            tests/crypto-ctrend.test.js \
+            tests/crypto-ctrend-windowed.test.js \
+            tests/crypto-ctrend-promotion.test.js \
+            tests/crypto-research-metrics.test.js \
+            tests/crypto-research.test.js
           node --check research/crypto/ctrend-evaluate-rest.js
+          node --check research/crypto/ctrend-promotion-check.js
           python -m py_compile research/crypto/prepare-ctrend-rest-data.py
           python tests/test_prepare_ctrend_rest_data.py
 
@@ -143,7 +150,7 @@ jobs:
           set -euo pipefail
           git config user.name 'theoldtrader-research-bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add \
+          git add -- \
             research/crypto/results/ctrend-v1-final/summary.json \
             research/crypto/results/ctrend-v1-final/provenance.json \
             research/crypto/results/ctrend-v1-final/source-pages.json \
@@ -159,6 +166,7 @@ jobs:
             research/crypto/results/ctrend-v1-final/summary.json
             research/crypto/results/ctrend-v1-final/provenance.json
             research/crypto/results/ctrend-v1-final/source-pages.json
+            research/crypto/results/ctrend-v1-final/provenance.json
             research/crypto/results/ctrend-v1-final/promotion.json
             /tmp/ctrend-v1-final-pages
           if-no-files-found: error
