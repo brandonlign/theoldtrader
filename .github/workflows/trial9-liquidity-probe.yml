@@ -1,0 +1,30 @@
+name: Trial 9 Liquidity Probe
+
+on:
+  pull_request:
+    paths:
+      - "research/crypto/bitnomial-liquidity-probe.mjs"
+      - "research/crypto/lib/bitnomial-book.js"
+      - "research/crypto/lib/bitnomial-internal-carry-identity.js"
+      - "research/crypto/manifests/bitnomial-internal-carry-v1.json"
+      - ".github/workflows/trial9-liquidity-probe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      TRIAL9_PROBE_SECONDS: "120"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Measure public two-sided/depth availability without candidate values
+        run: node research/crypto/bitnomial-liquidity-probe.mjs

@@ -1,0 +1,110 @@
+{
+  "experimentId": "bitnomial-internal-carry-v1",
+  "trialNumber": 9,
+  "family": "same-exchange-spot-perpetual-funding-carry",
+  "status": "DEVELOPMENT_UNFROZEN",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "scientificMode": "prospective-after-freeze",
+  "hypothesis": "A static equal-BTC long Bitnomial BTCUSD spot / short Bitnomial Bitcoin USD Centi perpetual position can earn positive net carry because positive perpetual funding paid to shorts survives same-exchange execution costs, basis movement, collateral requirements, and conservative execution stress. Using the same venue materially reduces the Coinbase retail-fee hurdle and cross-venue basis mismatch present in Trial 8.",
+  "evidenceDesign": {
+    "viabilityScreenDays": 7,
+    "primaryForwardDays": 30,
+    "extendedValidationDays": 90,
+    "viabilityScreenMayPromote": false,
+    "primaryForwardStrongestClassification": "PROMISING_FORWARD_30D_ONLY",
+    "extendedValidationStrongestClassification": "PROMOTION_ELIGIBLE_RESEARCH_ONLY",
+    "freezeRequiredBeforeCandidateRecording": true,
+    "promotionRequiresVerifiedActualIntermediaryFeeSchedule": true
+  },
+  "venues": {
+    "spotLong": {
+      "venue": "bitnomial",
+      "productName": "Bitcoin US Dollar Spot",
+      "symbol": "BTCUSD",
+      "expectedApiType": "spot",
+      "contractSizeBtc": 0.00001,
+      "publishedExchangeClearingFeeBpsPerSide": 2,
+      "financingUsed": false,
+      "financingCostModeled": 0
+    },
+    "perpetualShort": {
+      "venue": "bitnomial",
+      "productName": "Perpetual Bitcoin US Dollar Centi Future",
+      "productCodePrefix": "PBTCUC",
+      "fundingBaseSymbol": "BTCUC",
+      "expectedApiType": "perpetual",
+      "contractSizeBtc": 0.01,
+      "publishedExchangeClearingFeeUsdPerContractPerSide": 0.10
+    }
+  },
+  "publicData": {
+    "restBase": "https://bitnomial.com/exchange/api/v1/prod",
+    "fundingEndpoint": "https://bitnomial.com/exchange/api/v1/funding-rates/",
+    "websocket": "wss://bitnomial.com/exchange/ws",
+    "websocketChannel": "book",
+    "displayedBookDepth": "top-10-levels-per-side",
+    "bookSnapshotTimeoutSeconds": 20
+  },
+  "portfolio": {
+    "startingEquityUsd": 10000,
+    "targetNotionalPctOfStartingEquityPerLeg": 0.20,
+    "maximumActualNotionalPctPerLeg": 0.25,
+    "perpetualCollateralReservePctOfStartingEquity": 0.30,
+    "equalBtcUnits": true,
+    "spotCapitalRule": "The spot long is fully cash-funded from starting equity. Trial 9 assumes no Bitnomial spot financing, borrowing, leverage, or financing credit. The full spot purchase notional must fit within available starting cash in addition to the frozen perpetual collateral reserve and execution costs.",
+    "perpetualContractCountRule": "floor(targetNotionalUsd / (entryPerpetualVwapUsd * 0.01 BTC)), with one contract allowed only if one-contract notional is <=25% of starting equity",
+    "spotQuantityRule": "perpetual contract count * 0.01 BTC",
+    "rebalancing": false,
+    "compounding": false,
+    "fundingThreshold": null,
+    "directionSwitching": false,
+    "assetSelection": false,
+    "unusedCapitalRemainsCash": true,
+    "unusedCashReturn": 0
+  },
+  "executionModel": {
+    "primary": "Use the complete public top-10 Bitnomial book snapshot for exact frozen-quantity VWAP at entry and exit. Buy spot against asks, sell spot against bids, sell perpetual against bids, buy perpetual against asks. Insufficient displayed top-10 depth fails the execution gate; do not extrapolate depth. Primary known-cost accounting includes published Bitnomial Exchange+Clearinghouse fees only and is not labeled fully all-in until an actual FCM/intermediary customer fee schedule is verified.",
+    "publishedSpotExchangeClearingFeeBpsPerSide": 2,
+    "publishedPerpetualExchangeClearingFeeUsdPerContractPerSide": 0.10,
+    "additionalPrimarySlippageBps": 0,
+    "stressAdditionalAdverseBpsPerOrder": 10,
+    "stressUnverifiedIntermediaryCostBpsPerSpotOrder": 10,
+    "stressUnverifiedIntermediaryCostUsdPerPerpetualContractPerSide": 1.00,
+    "ordersInRoundTrip": 4,
+    "intermediaryFeeStatus": "UNVERIFIED",
+    "intermediaryFeeRule": "Bitnomial states posted fees include Exchange and Clearinghouse fees, while futures customers trade through an FCM/intermediary that may charge separate commission. Until an actual applicable customer fee schedule is verified, the primary result is known-venue-cost economics only; the stress case reserves 10 bps per spot order plus $1.00 per perpetual contract per side for unverified intermediary cost, and no result may become promotion-eligible research solely from the known-cost primary scenario."
+  },
+  "fundingAccounting": {
+    "nativeIntervalHours": 8,
+    "intervalsUtc": ["00:00", "08:00", "16:00"],
+    "shortFundingPnlRule": "For every first-party funding interval with startBoundary < interval_end <= endBoundary, credit btcQuantity * mark_price * funding_rate to the short. Positive funding means longs pay shorts.",
+    "noRateResampling": true,
+    "noInterpolation": true,
+    "noForwardFill": true
+  },
+  "dataGates": {
+    "targetHourlyObservationCadenceMinutes": 60,
+    "minimumHourlyCoverage": 0.98,
+    "maximumObservationGapMinutes": 130,
+    "entryExitToleranceMinutes": 10,
+    "bookSnapshotMaximumAgeSeconds": 30,
+    "fundingDiscoveryLookaheadMinutes": 70,
+    "requireEveryExpectedFundingInterval": true,
+    "requireInvariantSpotProductIdentity": true,
+    "requireInvariantPerpetualProductIdentity": true,
+    "requireRawSemanticAudit": true
+  },
+  "marginStress": {
+    "researchMaintenanceMarginPctOfPerpetualNotional": 0.15,
+    "adverseRelativeBasisShockPct": [0.05, 0.10, 0.20]
+  },
+  "antiLeakage": {
+    "trial8ResultMayTuneTrial9": false,
+    "trial8ProspectiveObservationsMayTuneTrial9": false,
+    "developmentConnectivityMayInspectCandidatePrices": false,
+    "screenMayChangeSpecification": false,
+    "noOutcomeDrivenRetuning": true,
+    "failureRule": "After Trial 9 is frozen and the first candidate observation is written, any change to instruments, direction, sizing, costs, book execution rule, collateral, funding accounting, timing, data substitution, or stress rules requires a new trial number."
+  }
+}

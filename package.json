@@ -38,6 +38,7 @@
     "research:t8:health": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/trial8-recorder-health.mjs",
     "research:t8:evaluate": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/evaluate-bitnomial-carry.mjs",
     "research:t8:report": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/report-bitnomial-carry.mjs",
+    "research:t9:connectivity": "node research/crypto/bitnomial-internal-carry-connectivity.mjs",
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {
