@@ -1,8 +1,8 @@
 import crypto from "node:crypto";
 
 export const TRIAL8_CANONICAL_MANIFEST_PATH = "research/crypto/manifests/bitnomial-carry-v1.json";
-export const TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1 = "06d6d41e976513aea3fe4fb9378e171562e99be8";
-export const TRIAL8_FINAL_PREOBSERVATION_FREEZE_AT = "2026-08-20T02:01:09Z";
+export const TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1 = "3be434dba3c732ee26df471224197466b6b7dbd7";
+export const TRIAL8_FINAL_PREOBSERVATION_FREEZE_AT = "2026-08-20T02:08:00Z";
 
 export function gitBlobSha1(bytes) {
   const buffer = Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
