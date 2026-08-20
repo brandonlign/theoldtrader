@@ -24,7 +24,9 @@
       "symbol": "BTCUSD",
       "expectedApiType": "spot",
       "contractSizeBtc": 0.00001,
-      "publishedExchangeClearingFeeBpsPerSide": 2
+      "publishedExchangeClearingFeeBpsPerSide": 2,
+      "financingUsed": false,
+      "financingCostModeled": 0
     },
     "perpetualShort": {
       "venue": "bitnomial",
@@ -41,6 +43,7 @@
     "fundingEndpoint": "https://bitnomial.com/exchange/api/v1/funding-rates/",
     "websocket": "wss://bitnomial.com/exchange/ws",
     "websocketChannel": "book",
+    "displayedBookDepth": "top-10-levels-per-side",
     "bookSnapshotTimeoutSeconds": 20
   },
   "portfolio": {
@@ -49,6 +52,7 @@
     "maximumActualNotionalPctPerLeg": 0.25,
     "perpetualCollateralReservePctOfStartingEquity": 0.30,
     "equalBtcUnits": true,
+    "spotCapitalRule": "The spot long is fully cash-funded from starting equity. Trial 9 assumes no Bitnomial spot financing, borrowing, leverage, or financing credit. The full spot purchase notional must fit within available starting cash in addition to the frozen perpetual collateral reserve and execution costs.",
     "perpetualContractCountRule": "floor(targetNotionalUsd / (entryPerpetualVwapUsd * 0.01 BTC)), with one contract allowed only if one-contract notional is <=25% of starting equity",
     "spotQuantityRule": "perpetual contract count * 0.01 BTC",
     "rebalancing": false,
@@ -56,10 +60,11 @@
     "fundingThreshold": null,
     "directionSwitching": false,
     "assetSelection": false,
-    "unusedCapitalRemainsCash": true
+    "unusedCapitalRemainsCash": true,
+    "unusedCashReturn": 0
   },
   "executionModel": {
-    "primary": "Use full public Bitnomial book snapshot VWAP for the exact frozen quantity at entry and exit. Buy spot against asks, sell spot against bids, sell perpetual against bids, buy perpetual against asks. Insufficient displayed depth fails the execution gate; do not extrapolate depth. Primary known-cost accounting includes published Bitnomial Exchange+Clearinghouse fees only and is not labeled fully all-in until an actual FCM/intermediary customer fee schedule is verified.",
+    "primary": "Use the complete public top-10 Bitnomial book snapshot for exact frozen-quantity VWAP at entry and exit. Buy spot against asks, sell spot against bids, sell perpetual against bids, buy perpetual against asks. Insufficient displayed top-10 depth fails the execution gate; do not extrapolate depth. Primary known-cost accounting includes published Bitnomial Exchange+Clearinghouse fees only and is not labeled fully all-in until an actual FCM/intermediary customer fee schedule is verified.",
     "publishedSpotExchangeClearingFeeBpsPerSide": 2,
     "publishedPerpetualExchangeClearingFeeUsdPerContractPerSide": 0.10,
     "additionalPrimarySlippageBps": 0,
