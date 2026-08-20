@@ -87,8 +87,8 @@
     "bffTickUsdPerBtc": 5,
     "stress": {
       "ibitEntryAndExitHalfSpreadBps": 5,
-      "bffOpeningFeeReserveUsdPerContract": 1,
-      "bffExpirationFeeReserveUsdPerContract": 1,
+      "bffOpeningFeeReserveUsdPerContract": 1.0,
+      "bffExpirationFeeReserveUsdPerContract": 1.0,
       "bffAdverseEntryTicks": 20
     },
     "ibitSponsorFeeAccounting": "informational only for observed share-price P&L: the 0.25% sponsor fee is already reflected in IBIT NAV/share prices and must not be deducted a second time"
