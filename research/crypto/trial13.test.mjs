@@ -12,23 +12,28 @@ import {
 test('frozen manifest identity is exact', () => {
   const m = loadFrozenManifest();
   assert.equal(m.trialNumber, 13);
+  assert.equal(m.implementationFreezeRevision.revision, 2);
   assert.equal(m.implementationFreezeRevision.preObservation, true);
   assert.match(m.costModel.ibitSponsorFeeAccounting, /must not be deducted a second time/);
+  assert.ok(m.dataRequirements.blackrock.requiredFields.includes('basketAmount'));
 });
 
-test('BlackRock parser extracts same-day close and basket fields', () => {
+test('BlackRock parser reconstructs BRRNY from same-day official basket fields', () => {
   const html = `<div>Closing Price $36.39 as of Aug 21, 2026</div>
     <div>Exchange NASDAQ</div>
     <div>Benchmark Index CME CF Bitcoin Reference Rate - New York Variant</div>
-    <div>Basket Bitcoin Amount 22.65 as of Aug 21, 2026</div>`;
-  assert.deepEqual(parseBlackRockIbit(html), {
-    closingPrice: 36.39,
-    closingPriceAsOfDate: '2026-08-21',
-    basketBitcoinAmount: 22.65,
-    basketBitcoinAmountAsOfDate: '2026-08-21',
-    benchmarkConfirmed: true,
-    exchangeConfirmed: true,
-  });
+    <div>Basket Bitcoin Amount 22.65 as of Aug 21, 2026</div>
+    <div>Basket Amount $1,468,862.44 as of Aug 21, 2026</div>`;
+  const x = parseBlackRockIbit(html);
+  assert.equal(x.closingPrice, 36.39);
+  assert.equal(x.closingPriceAsOfDate, '2026-08-21');
+  assert.equal(x.basketBitcoinAmount, 22.65);
+  assert.equal(x.basketBitcoinAmountAsOfDate, '2026-08-21');
+  assert.equal(x.basketAmountUsd, 1468862.44);
+  assert.equal(x.basketAmountAsOfDate, '2026-08-21');
+  assert.ok(Math.abs(x.benchmarkIndexUsdPerBtc - 1468862.44 / 22.65) < 1e-9);
+  assert.equal(x.benchmarkConfirmed, true);
+  assert.equal(x.exchangeConfirmed, true);
 });
 
 test('CME numeric and expiry parsing is strict', () => {
