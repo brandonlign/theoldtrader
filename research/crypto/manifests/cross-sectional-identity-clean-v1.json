@@ -102,7 +102,15 @@
     "trial3DevelopmentPnlMayNotBeUsedAsInput": true,
     "trial4DevelopmentPnlMayNotBeUsedAsInput": true,
     "noParameterTuningAfterTrial3": true,
-    "firstTrial14DevelopmentObservationMayOccurOnce": true
+    "firstTrial14DevelopmentObservationMayOccurOnce": true,
+    "finalAccessGateFrozenBeforeDevelopment": {
+      "allRequired": true,
+      "candidateNetReturnGreaterThanCash": true,
+      "medianDevelopmentFoldSharpeStrictlyPositive": true,
+      "positiveReturnFoldsStrictMajority": true,
+      "noDataIntegrityException": true,
+      "note": "Failure of this gate locks Trial 14 without opening the 2026 final holdout. Passing the gate permits, but does not itself execute, a separately protected one-shot final evaluation."
+    }
   },
   "finalPolicy": {
     "finalHoldoutStart": "2026-01-01T00:00:00Z",
@@ -110,7 +118,7 @@
     "sealedUntilDevelopmentEvidenceFrozen": true,
     "oneShot": true
   },
-  "antiRescue": "After the first Trial 14 development result is observed, no change to the identity rule, exception registry, membership, base Trial 3 mechanics, lambda, features, costs, dates, sizing, rebalance frequency, comparators, or promotion thresholds is allowed under Trial 14. Any such change is a new numbered alpha trial.",
+  "antiRescue": "After the first Trial 14 development result is observed, no change to the identity rule, exception registry, membership, base Trial 3 mechanics, lambda, features, costs, dates, sizing, rebalance frequency, comparators, development gate, or promotion thresholds is allowed under Trial 14. Any such change is a new numbered alpha trial.",
   "multipleTesting": {
     "projectWideAlphaTrialNumber": 14,
     "trials5Through13AlreadyConsumedElsewhere": true,
