@@ -21,6 +21,24 @@ function feePct(manifest) {
   return finite(manifest.costModel.feeBpsPerSide, 60) / 10_000;
 }
 
+function entryMarkLossPct(manifest) {
+  const slip = finite(manifest.costModel.slippageBpsPerSide, 5);
+  const halfSpread = finite(manifest.costModel.spreadBpsRoundTrip, 10) / 2;
+  const fillMultiple = 1 + (slip + halfSpread) / 10_000;
+  return fillMultiple * (1 + feePct(manifest)) - 1;
+}
+
+function costAdjustedTargetPerAsset(desiredPerAssetWeight, selectedCount, manifest) {
+  if (!(desiredPerAssetWeight > 0) || !(selectedCount > 0)) return 0;
+  const desiredTotalWeight = desiredPerAssetWeight * selectedCount;
+  const markLoss = Math.max(0, entryMarkLossPct(manifest));
+  // Entry slippage/spread/fees reduce marked equity immediately. If we bought the
+  // full pre-cost target, post-trade marked exposure would exceed the frozen cap.
+  // Solve W_pre / (1 - W_pre * markLoss) = W_post for W_pre.
+  const safeTotalPreCostWeight = desiredTotalWeight / (1 + desiredTotalWeight * markLoss);
+  return safeTotalPreCostWeight / selectedCount;
+}
+
 function makeState(startingCash) {
   return {
     cash: startingCash,
@@ -192,7 +210,8 @@ function rebalance(state, productData, time, predictionRows, manifest) {
   const targetWeight = finite(manifest.portfolio.targetWeightPerSelectedAsset, 0.15);
   const maxSingle = finite(manifest.portfolio.maxSinglePositionPct, 0.15);
   const maxTotal = finite(manifest.portfolio.maxTotalCryptoExposurePct, 0.45);
-  const targetPerAsset = Math.min(targetWeight, maxSingle, selected.length ? maxTotal / selected.length : 0);
+  const desiredPerAsset = Math.min(targetWeight, maxSingle, selected.length ? maxTotal / selected.length : 0);
+  const targetPerAsset = costAdjustedTargetPerAsset(desiredPerAsset, selected.length, manifest);
 
   const targets = new Map();
   for (const row of selected) {
