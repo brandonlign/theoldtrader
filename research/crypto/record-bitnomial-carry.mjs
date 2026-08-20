@@ -9,7 +9,6 @@ const MANIFEST_PATH = "research/crypto/manifests/bitnomial-carry-v1.json";
 const DEFAULT_OUTPUT = "research/crypto/data-cache/bitnomial-carry-v1-forward.ndjson";
 const COINBASE_TICKER = "https://api.exchange.coinbase.com/products/BTC-USD/ticker";
 const BITNOMIAL_PROD_BASE = "https://bitnomial.com/exchange/api/v1/prod";
-const SPECS_URL = `${BITNOMIAL_PROD_BASE}/product/specs/`;
 const FUNDING_BASE_URL = "https://bitnomial.com/exchange/api/v1/funding-rates/";
 const LOOKBACK_MS = 13 * 60 * 60 * 1000;
 
@@ -48,40 +47,46 @@ async function loadManifest() {
   }
   return { manifest, hash: sha256(bytes) };
 }
-function identifySpec(specs, manifest) {
-  if (!Array.isArray(specs)) throw new Error("Bitnomial product specs response is not an array");
-  const expected = manifest.venues.perpetualShort;
-  const productCode = String(expected.productCode).toUpperCase();
-  const fundingBase = String(expected.fundingBaseSymbol).toUpperCase();
-  const matches = specs.filter((spec) => {
-    const name = String(spec?.product_name ?? "").toLowerCase();
-    const symbol = String(spec?.symbol ?? "").toUpperCase();
-    const base = String(spec?.base_symbol ?? "").toUpperCase();
-    return String(spec?.product_status ?? "").toLowerCase() === "active"
-      && String(spec?.type ?? "").toLowerCase() === "future"
-      && (symbol === productCode
-        || symbol.startsWith(`${productCode}Z`)
-        || base === fundingBase
-        || name.includes("bitcoin us dollar centi perpetual"));
-  });
-  if (matches.length !== 1) {
-    const diagnostic = specs
-      .filter((spec) => String(spec?.product_status ?? "").toLowerCase() === "active")
-      .filter((spec) => /btc|bitcoin/i.test(`${spec?.symbol ?? ""} ${spec?.base_symbol ?? ""} ${spec?.product_name ?? ""}`))
-      .slice(0, 8)
-      .map((spec) => ({ product_id: spec.product_id, symbol: spec.symbol, base_symbol: spec.base_symbol, product_name: spec.product_name, type: spec.type }));
-    throw new Error(`Expected exactly one active Bitnomial BTC centi perpetual, found ${matches.length}; active BTC-like specs=${JSON.stringify(diagnostic)}`);
+function fundingRows(json) {
+  return Array.isArray(json?.data) ? json.data : Array.isArray(json) ? json : [];
+}
+function identifyFundingProduct(json, manifest) {
+  const rows = fundingRows(json)
+    .filter((row) => Number.isFinite(Number(row.product_id)))
+    .filter((row) => Number.isFinite(Date.parse(row.interval_end)))
+    .sort((a, b) => Date.parse(b.interval_end) - Date.parse(a.interval_end));
+  if (!rows.length) {
+    throw new Error(`Bitnomial funding feed returned no rows for frozen base_symbol=${manifest.venues.perpetualShort.fundingBaseSymbol}`);
   }
-  const spec = matches[0];
-  if (Math.abs(Number(spec.contract_size) - expected.contractSizeBtc) > 1e-12) {
-    throw new Error("Bitnomial BTC perpetual contract size does not match frozen Trial 8 identity");
+  const newestEnd = Date.parse(rows[0].interval_end);
+  const newestRows = rows.filter((row) => Date.parse(row.interval_end) === newestEnd);
+  const ids = [...new Set(newestRows.map((row) => Number(row.product_id)))];
+  if (ids.length !== 1) {
+    throw new Error(`Ambiguous Bitnomial perpetual product identity in newest funding interval: product_ids=${JSON.stringify(ids)}`);
+  }
+  return ids[0];
+}
+function validateSpec(spec, manifest, expectedProductId) {
+  if (!spec || Number(spec.product_id) !== Number(expectedProductId)) throw new Error("Bitnomial direct product spec identity mismatch");
+  const expected = manifest.venues.perpetualShort;
+  const name = String(spec.product_name ?? "").toLowerCase();
+  const symbol = String(spec.symbol ?? "").toUpperCase();
+  const cqg = String(spec.cqg_symbol ?? "").toUpperCase();
+  const base = String(spec.base_symbol ?? "").toUpperCase();
+  const identityPass = String(spec.type ?? "").toLowerCase() === "future"
+    && Math.abs(Number(spec.contract_size) - expected.contractSizeBtc) <= 1e-12
+    && (name.includes("bitcoin") && name.includes("perpetual")
+      || symbol.includes("P") && symbol.includes("BTC")
+      || cqg.includes("PBUC") || cqg.includes("PBTC")
+      || base === String(expected.fundingBaseSymbol).toUpperCase());
+  if (!identityPass) {
+    throw new Error(`Bitnomial funding-selected product ${expectedProductId} does not match frozen BTC centi perpetual identity: ${JSON.stringify({symbol: spec.symbol, cqg_symbol: spec.cqg_symbol, base_symbol: spec.base_symbol, product_name: spec.product_name, type: spec.type, contract_size: spec.contract_size})}`);
   }
   positive(spec.price_increment, "Bitnomial price increment");
   return spec;
 }
 function normalizeFunding(json, productId) {
-  const rows = Array.isArray(json?.data) ? json.data : Array.isArray(json) ? json : [];
-  return rows.filter((row) => Number(row.product_id) === Number(productId)).map((row) => ({
+  return fundingRows(json).filter((row) => Number(row.product_id) === Number(productId)).map((row) => ({
     productId: Number(row.product_id),
     priceIndex: positive(row.price_index, "Bitnomial funding price_index"),
     markPrice: positive(row.mark_price, "Bitnomial funding mark_price"),
@@ -92,17 +97,19 @@ function normalizeFunding(json, productId) {
   })).sort((a, b) => Date.parse(a.intervalEnd) - Date.parse(b.intervalEnd));
 }
 async function snapshot(nowMs, manifest) {
-  const specsRaw = await fetchRawJson(SPECS_URL);
-  const spec = identifySpec(specsRaw.json, manifest);
-  const productDataUrl = `${BITNOMIAL_PROD_BASE}/product/data/${encodeURIComponent(spec.product_id)}`;
   const begin = new Date(nowMs - LOOKBACK_MS).toISOString();
   const end = new Date(nowMs + 60_000).toISOString();
   const fundingUrl = `${FUNDING_BASE_URL}?base_symbol=${encodeURIComponent(manifest.venues.perpetualShort.fundingBaseSymbol)}&begin_time=${encodeURIComponent(begin)}&end_time=${encodeURIComponent(end)}&limit=100&order=asc`;
-  const [coinbaseRaw, productRaw, fundingRaw] = await Promise.all([
+  const fundingRaw = await fetchRawJson(fundingUrl);
+  const productId = identifyFundingProduct(fundingRaw.json, manifest);
+  const specUrl = `${BITNOMIAL_PROD_BASE}/product/spec/${encodeURIComponent(productId)}`;
+  const productDataUrl = `${BITNOMIAL_PROD_BASE}/product/data/${encodeURIComponent(productId)}`;
+  const [coinbaseRaw, specRaw, productRaw] = await Promise.all([
     fetchRawJson(COINBASE_TICKER),
-    fetchRawJson(productDataUrl),
-    fetchRawJson(fundingUrl)
+    fetchRawJson(specUrl),
+    fetchRawJson(productDataUrl)
   ]);
+  const spec = validateSpec(Array.isArray(specRaw.json) ? specRaw.json[0] : specRaw.json, manifest, productId);
 
   const cb = coinbaseRaw.json;
   const bid = positive(cb.bid, "Coinbase bid");
@@ -113,9 +120,9 @@ async function snapshot(nowMs, manifest) {
   if (!Number.isFinite(tickerTime.getTime())) throw new Error("Invalid Coinbase ticker time");
 
   const data = Array.isArray(productRaw.json)
-    ? productRaw.json.find((row) => Number(row.product_id) === Number(spec.product_id))
+    ? productRaw.json.find((row) => Number(row.product_id) === Number(productId))
     : productRaw.json;
-  if (!data || Number(data.product_id) !== Number(spec.product_id)) throw new Error("Bitnomial product data identity mismatch");
+  if (!data || Number(data.product_id) !== Number(productId)) throw new Error("Bitnomial product data identity mismatch");
   const priceIncrement = positive(spec.price_increment, "Bitnomial price increment");
   const lastPriceUsd = positive(data.last_price, "Bitnomial last price ticks") * priceIncrement;
   const lastPriceTime = new Date(data.last_price_time);
@@ -125,15 +132,21 @@ async function snapshot(nowMs, manifest) {
     compact: {
       coinbase: { product: "BTC-USD", bid, ask, last, tickerTime: tickerTime.toISOString(), hash: coinbaseRaw.sha256 },
       bitnomial: {
-        productId: Number(spec.product_id), symbol: String(spec.symbol), baseSymbol: String(spec.base_symbol),
-        productName: String(spec.product_name), contractSizeBtc: Number(spec.contract_size), priceIncrement,
-        lastPriceUsd, lastPriceTime: lastPriceTime.toISOString(), fundingEvents: normalizeFunding(fundingRaw.json, spec.product_id),
-        hashes: { specs: specsRaw.sha256, productData: productRaw.sha256, funding: fundingRaw.sha256 }
+        productId,
+        symbol: String(spec.symbol ?? ""),
+        baseSymbol: String(spec.base_symbol ?? ""),
+        productName: String(spec.product_name ?? ""),
+        contractSizeBtc: Number(spec.contract_size),
+        priceIncrement,
+        lastPriceUsd,
+        lastPriceTime: lastPriceTime.toISOString(),
+        fundingEvents: normalizeFunding(fundingRaw.json, productId),
+        hashes: { specs: specRaw.sha256, productData: productRaw.sha256, funding: fundingRaw.sha256 }
       }
     },
     raw: [
       { source: "coinbase-btc-usd-ticker", ...coinbaseRaw },
-      { source: "bitnomial-product-specs", ...specsRaw },
+      { source: "bitnomial-product-spec", ...specRaw },
       { source: "bitnomial-product-data", ...productRaw },
       { source: "bitnomial-funding-rates", ...fundingRaw }
     ].map(({ json, ...row }) => row)
@@ -148,7 +161,7 @@ async function recordOnce({ connectivityOnly = false, output = DEFAULT_OUTPUT } 
   const snap = await snapshot(started, frozen.manifest);
   const finished = Date.now();
   if (connectivityOnly) {
-    process.stdout.write(`${JSON.stringify({ connectivityOnly: true, experimentId: frozen.manifest.experimentId, trialNumber: 8, manifestSha256: frozen.hash, coinbaseSchemaValid: true, bitnomialSchemaValid: true, bitnomialProductIdentityValid: true, collectionLatencyMs: finished - started })}\n`);
+    process.stdout.write(`${JSON.stringify({ connectivityOnly: true, experimentId: frozen.manifest.experimentId, trialNumber: 8, manifestSha256: frozen.hash, coinbaseSchemaValid: true, bitnomialSchemaValid: true, bitnomialProductIdentityValid: true, bitnomialProductIdResolvedFromFunding: true, collectionLatencyMs: finished - started })}\n`);
     return;
   }
   const recordedAt = new Date(finished).toISOString();
@@ -158,7 +171,7 @@ async function recordOnce({ connectivityOnly = false, output = DEFAULT_OUTPUT } 
     const envelope = { schema: "theoldtrader-bitnomial-carry-v1-raw-v1", experimentId: frozen.manifest.experimentId, trialNumber: 8, manifestSha256: frozen.hash, recordedAt, source: row.source, url: row.url, status: row.status, sha256: row.sha256, rawText: row.rawText };
     await fs.appendFile(rawPath, gzipSync(Buffer.from(`${JSON.stringify(envelope)}\n`)));
   }
-  const compact = { schema: "theoldtrader-bitnomial-carry-v1-record-v1", experimentId: frozen.manifest.experimentId, trialNumber: 8, manifestSha256: frozen.hash, acquisition: { type: "PRIMARY_LIVE", collector: "theoldtrader-trial8-recorder-v1" }, recordedAt, collectionLatencyMs: finished - started, sources: snap.compact };
+  const compact = { schema: "theoldtrader-bitnomial-carry-v1-record-v1", experimentId: frozen.manifest.experimentId, trialNumber: 8, manifestSha256: frozen.hash, acquisition: { type: "PRIMARY_LIVE", collector: "theoldtrader-trial8-recorder-v2" }, recordedAt, collectionLatencyMs: finished - started, sources: snap.compact };
   await fs.appendFile(output, `${JSON.stringify(compact)}\n`);
   process.stdout.write(`${JSON.stringify({ output, rawOutput: rawPath, recordedAt, productId: compact.sources.bitnomial.productId })}\n`);
 }
