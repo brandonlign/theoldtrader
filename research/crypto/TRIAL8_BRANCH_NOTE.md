@@ -1,0 +1,1 @@
+Trial 8 scientific/runtime specification unchanged. A Trial 10 concept note was briefly committed to this branch by mistake and immediately removed before use; no Trial 8 manifest, recorder, evaluator, data, economics, source rules, or VM runtime checksum changed.
