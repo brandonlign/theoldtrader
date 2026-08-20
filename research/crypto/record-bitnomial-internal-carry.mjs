@@ -66,12 +66,22 @@ function dataRow(json, productId) {
   if (!row) throw new Error(`Missing Bitnomial product data for product ${productId}`);
   return row;
 }
+async function webSocketDataToText(data) {
+  if (typeof data === "string") return data;
+  if (data && typeof data.text === "function") return data.text();
+  if (data instanceof ArrayBuffer) return Buffer.from(data).toString("utf8");
+  if (ArrayBuffer.isView(data)) return Buffer.from(data.buffer, data.byteOffset, data.byteLength).toString("utf8");
+  return String(data);
+}
 
 async function getInitialBooks({ websocketUrl, specs, timeoutSeconds }) {
-  if (typeof WebSocket !== "function") throw new Error("Trial 9 recorder requires Node with global WebSocket support (Node 22+ recommended)");
+  if (typeof WebSocket !== "function") {
+    throw new Error(`Trial 9 recorder requires a Node runtime with global WebSocket support; current Node=${process.version}, WebSocket=${typeof WebSocket}`);
+  }
   return new Promise((resolve, reject) => {
     const wanted = new Map(specs.map((spec) => [String(spec.symbol), spec]));
     const result = new Map();
+    const emptySideSnapshots = Object.fromEntries([...wanted.keys()].map((symbol) => [symbol, 0]));
     const ws = new WebSocket(websocketUrl);
     let done = false;
     const finishError = (error) => {
@@ -81,33 +91,32 @@ async function getInitialBooks({ websocketUrl, specs, timeoutSeconds }) {
       try { ws.close(); } catch {}
       reject(error instanceof Error ? error : new Error(String(error)));
     };
-    const timer = setTimeout(() => finishError(new Error(`Timed out waiting for Bitnomial initial books: ${[...result.keys()].join(",") || "none"}`)), timeoutSeconds * 1000);
+    const timer = setTimeout(() => finishError(new Error(`Timed out waiting for two-sided Bitnomial initial books; twoSided=${JSON.stringify([...result.keys()])} emptySideSnapshotCounts=${JSON.stringify(emptySideSnapshots)}`)), timeoutSeconds * 1000);
     ws.addEventListener("open", () => {
       const symbols = [...wanted.keys()];
       ws.send(JSON.stringify({ type: "subscribe", product_codes: [], channels: [{ name: "book", product_codes: symbols }] }));
     });
     ws.addEventListener("message", async (event) => {
       try {
-        let rawText;
-        if (typeof event.data === "string") rawText = event.data;
-        else if (event.data && typeof event.data.text === "function") rawText = await event.data.text();
-        else if (event.data instanceof ArrayBuffer) rawText = Buffer.from(event.data).toString("utf8");
-        else if (ArrayBuffer.isView(event.data)) rawText = Buffer.from(event.data.buffer, event.data.byteOffset, event.data.byteLength).toString("utf8");
-        else rawText = String(event.data);
+        const rawText = await webSocketDataToText(event.data);
         const payload = JSON.parse(rawText);
         const messages = Array.isArray(payload) ? payload : [payload];
         for (const message of messages) {
           if (message?.type === "disconnect") return finishError(new Error(`Bitnomial WebSocket disconnected: ${message.reason ?? "unknown"}`));
           if (message?.type !== "book" || !wanted.has(String(message.symbol))) continue;
-          const spec = wanted.get(String(message.symbol));
+          const symbol = String(message.symbol);
+          if (!Array.isArray(message.asks) || !Array.isArray(message.bids)) return finishError(new Error(`Malformed Bitnomial book arrays for ${symbol}`));
+          if (message.asks.length === 0 || message.bids.length === 0) {
+            emptySideSnapshots[symbol] += 1;
+            continue;
+          }
+          const spec = wanted.get(symbol);
           const book = normalizeBookSnapshot(message, {
             symbol: spec.symbol,
             priceIncrement: spec.price_increment,
             contractSizeBtc: spec.contract_size
           });
-          if (!result.has(spec.symbol)) {
-            result.set(spec.symbol, { book, rawText, sha256: sha256(rawText) });
-          }
+          if (!result.has(spec.symbol)) result.set(spec.symbol, { book, rawText, sha256: sha256(rawText) });
         }
         if (!done && result.size === wanted.size) {
           done = true;
@@ -144,7 +153,7 @@ async function snapshot(nowMs, manifest) {
   const perpData = dataRow(perpDataRaw.json, perpId);
   const spotBook = books.get(spotSpec.symbol);
   const perpBook = books.get(perpSpec.symbol);
-  if (!spotBook || !perpBook) throw new Error("Trial 9 did not obtain both initial order books");
+  if (!spotBook || !perpBook) throw new Error("Trial 9 did not obtain both executable two-sided initial order books");
   const spotLast = positive(spotData.last_price, "spot last_price ticks") * positive(spotSpec.price_increment, "spot price increment");
   const perpLast = positive(perpData.last_price, "perpetual last_price ticks") * positive(perpSpec.price_increment, "perpetual price increment");
 
@@ -198,7 +207,7 @@ async function recordOnce({ output = DEFAULT_OUTPUT, connectivityOnly = false } 
   const snap = await snapshot(started, frozen.manifest);
   const finished = Date.now();
   if (connectivityOnly) {
-    process.stdout.write(`${JSON.stringify({ connectivityOnly: true, candidateValuesExposed: false, experimentId: frozen.manifest.experimentId, trialNumber: 9, manifestSha256: frozen.hash, spotIdentityValid: true, perpetualIdentityValid: true, fundingFeedValid: true, spotBookValid: true, perpetualBookValid: true, rawSourcesValidated: snap.raw.length, collectionLatencyMs: finished - started })}\n`);
+    process.stdout.write(`${JSON.stringify({ connectivityOnly: true, candidateValuesExposed: false, experimentId: frozen.manifest.experimentId, trialNumber: 9, manifestSha256: frozen.hash, spotIdentityValid: true, perpetualIdentityValid: true, fundingFeedValid: true, spotTwoSidedBookValid: true, perpetualTwoSidedBookValid: true, rawSourcesValidated: snap.raw.length, collectionLatencyMs: finished - started })}\n`);
     return;
   }
   const recordedAt = new Date(finished).toISOString();
