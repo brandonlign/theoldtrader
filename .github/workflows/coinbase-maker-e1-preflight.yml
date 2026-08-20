@@ -1,0 +1,37 @@
+name: Coinbase Maker E1 Load Preflight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        product: [BTC-USD, ETH-USD, SOL-USD]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Record five-minute non-scientific public stream
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="/tmp/e1-${{ matrix.product }}.ndjson.gz"
+          node research/crypto/record-coinbase-microstructure.mjs \
+            --product=${{ matrix.product }} \
+            --duration-minutes=5 \
+            --output="$out"
+          test -s "$out"
+          bytes=$(stat -c%s "$out")
+          echo "product=${{ matrix.product }} compressed_bytes_5m=$bytes projected_7d_bytes=$((bytes * 2016))"
+
+# This workflow is an engineering/load preflight only. Five-minute files are
+# intentionally ephemeral and may not be used for E1 scientific execution
+# claims. The frozen E1 protocol still requires its full 168-hour window.
