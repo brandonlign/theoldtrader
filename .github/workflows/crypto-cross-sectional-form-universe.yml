@@ -6,6 +6,10 @@ on:
     branches: [research/crypto-oos-v1]
     paths:
       - '.github/workflows/crypto-cross-sectional-form-universe.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/crypto-cross-sectional-form-universe.yml'
 
 permissions:
   contents: write
