@@ -8,9 +8,9 @@ import { gzipSync } from "node:zlib";
 const MANIFEST_PATH = "research/crypto/manifests/bitnomial-carry-v1.json";
 const DEFAULT_OUTPUT = "research/crypto/data-cache/bitnomial-carry-v1-forward.ndjson";
 const COINBASE_TICKER = "https://api.exchange.coinbase.com/products/BTC-USD/ticker";
-const BITNOMIAL_BASE = "https://bitnomial.com/exchange/api/v1/prod";
-const SPECS_URL = `${BITNOMIAL_BASE}/product/specs/?active=true`;
-const FUNDING_BASE_URL = `${BITNOMIAL_BASE}/funding-rates/`;
+const BITNOMIAL_PROD_BASE = "https://bitnomial.com/exchange/api/v1/prod";
+const SPECS_URL = `${BITNOMIAL_PROD_BASE}/product/specs/?active=true`;
+const FUNDING_BASE_URL = "https://bitnomial.com/exchange/api/v1/funding-rates/";
 const LOOKBACK_MS = 13 * 60 * 60 * 1000;
 
 function argValue(name, fallback = null) {
@@ -85,7 +85,7 @@ async function loadManifest() {
 async function snapshot(nowMs, manifest) {
   const specsRaw = await fetchRawJson(SPECS_URL);
   const spec = identifyBitnomialSpec(specsRaw.json, manifest);
-  const productDataUrl = `${BITNOMIAL_BASE}/product/data/${encodeURIComponent(spec.product_id)}`;
+  const productDataUrl = `${BITNOMIAL_PROD_BASE}/product/data/${encodeURIComponent(spec.product_id)}`;
   const begin = new Date(nowMs - LOOKBACK_MS).toISOString();
   const end = new Date(nowMs + 60_000).toISOString();
   const fundingUrl = `${FUNDING_BASE_URL}?base_symbol=${encodeURIComponent(manifest.venues.perpetualShort.fundingBaseSymbol)}&begin_time=${encodeURIComponent(begin)}&end_time=${encodeURIComponent(end)}&limit=100&order=asc`;
