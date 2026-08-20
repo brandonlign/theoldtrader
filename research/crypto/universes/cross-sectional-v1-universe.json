@@ -1,0 +1,2475 @@
+{
+  "eligibleRanking": [
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2663686104.0825615,
+      "sourceArchiveCount": 12,
+      "symbol": "BTCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1206555998.567904,
+      "sourceArchiveCount": 12,
+      "symbol": "ETHUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 171918309.3804,
+      "sourceArchiveCount": 12,
+      "symbol": "BNBUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 164782709.5099,
+      "sourceArchiveCount": 12,
+      "symbol": "SOLUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 144029120.1394,
+      "sourceArchiveCount": 12,
+      "symbol": "XRPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 89151003.9477,
+      "sourceArchiveCount": 12,
+      "symbol": "ADAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 85166976.6884,
+      "sourceArchiveCount": 12,
+      "symbol": "AVAXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 79186482.4230802,
+      "sourceArchiveCount": 12,
+      "symbol": "SHIBUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 78769279.941,
+      "sourceArchiveCount": 12,
+      "symbol": "DOGEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 71142548.08048,
+      "sourceArchiveCount": 12,
+      "symbol": "MATICUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 59980326.3985,
+      "sourceArchiveCount": 12,
+      "symbol": "NEARUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 56882983.149,
+      "sourceArchiveCount": 12,
+      "symbol": "DOTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 54657390.951808,
+      "sourceArchiveCount": 12,
+      "symbol": "TRXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-03-09T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 49725479.588549,
+      "sourceArchiveCount": 10,
+      "symbol": "GMTUSDT",
+      "validDailyBars": 298
+    },
+    {
+      "firstBar": "2022-03-17T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 49409212.989759505,
+      "sourceArchiveCount": 10,
+      "symbol": "APEUSDT",
+      "validDailyBars": 290
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 48453212.0303,
+      "sourceArchiveCount": 12,
+      "symbol": "FTMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 46427949.84714,
+      "sourceArchiveCount": 12,
+      "symbol": "ATOMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 46402668.38198,
+      "sourceArchiveCount": 12,
+      "symbol": "GALAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 45422401.31609,
+      "sourceArchiveCount": 12,
+      "symbol": "LINKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 42087943.3395,
+      "sourceArchiveCount": 12,
+      "symbol": "SANDUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 41216082.968693,
+      "sourceArchiveCount": 12,
+      "symbol": "LUNAUSDT",
+      "validDailyBars": 348
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 39952210.6632,
+      "sourceArchiveCount": 12,
+      "symbol": "LTCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 34066573.5113,
+      "sourceArchiveCount": 12,
+      "symbol": "ETCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 29151646.3655,
+      "sourceArchiveCount": 12,
+      "symbol": "FILUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-06-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 25163160.724545002,
+      "sourceArchiveCount": 7,
+      "symbol": "OPUSDT",
+      "validDailyBars": 214
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 24727229.846,
+      "sourceArchiveCount": 12,
+      "symbol": "MANAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 23460922.3873,
+      "sourceArchiveCount": 12,
+      "symbol": "CHZUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 22352997.0148,
+      "sourceArchiveCount": 12,
+      "symbol": "RUNEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 20953422.4765,
+      "sourceArchiveCount": 12,
+      "symbol": "AXSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 20616139.27056,
+      "sourceArchiveCount": 12,
+      "symbol": "WAVESUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 20016429.6128,
+      "sourceArchiveCount": 12,
+      "symbol": "EOSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 20014117.975171,
+      "sourceArchiveCount": 12,
+      "symbol": "VETUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 18628608.35629,
+      "sourceArchiveCount": 12,
+      "symbol": "PEOPLEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 18205970.0616222,
+      "sourceArchiveCount": 12,
+      "symbol": "JASMYUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 17342259.1028,
+      "sourceArchiveCount": 12,
+      "symbol": "CRVUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 17246424.2544,
+      "sourceArchiveCount": 12,
+      "symbol": "UNIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 17019917.822018,
+      "sourceArchiveCount": 12,
+      "symbol": "ROSEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 16900123.7185,
+      "sourceArchiveCount": 12,
+      "symbol": "AAVEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 16827549.9805,
+      "sourceArchiveCount": 12,
+      "symbol": "ALGOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 16374410.9805,
+      "sourceArchiveCount": 12,
+      "symbol": "EGLDUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 16220675.54866,
+      "sourceArchiveCount": 12,
+      "symbol": "DYDXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 16164055.2873,
+      "sourceArchiveCount": 12,
+      "symbol": "ICPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 15567913.5124,
+      "sourceArchiveCount": 12,
+      "symbol": "ENSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 14091225.5363,
+      "sourceArchiveCount": 12,
+      "symbol": "BCHUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 13803390.6338,
+      "sourceArchiveCount": 12,
+      "symbol": "THETAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 13723864.4258,
+      "sourceArchiveCount": 12,
+      "symbol": "XMRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 13082264.477132,
+      "sourceArchiveCount": 12,
+      "symbol": "ONEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 12246770.548,
+      "sourceArchiveCount": 12,
+      "symbol": "SUSHIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 10378887.5383,
+      "sourceArchiveCount": 12,
+      "symbol": "LRCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 10159711.40866,
+      "sourceArchiveCount": 12,
+      "symbol": "ALICEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 10115927.56953,
+      "sourceArchiveCount": 12,
+      "symbol": "ZILUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 9783582.2866,
+      "sourceArchiveCount": 12,
+      "symbol": "GRTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 9599892.1118,
+      "sourceArchiveCount": 12,
+      "symbol": "XLMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 9053734.33,
+      "sourceArchiveCount": 12,
+      "symbol": "ARUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-05-05T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 9018374.30061,
+      "sourceArchiveCount": 8,
+      "symbol": "GALUSDT",
+      "validDailyBars": 241
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 8946187.7272,
+      "sourceArchiveCount": 12,
+      "symbol": "SNXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 8555016.3986,
+      "sourceArchiveCount": 12,
+      "symbol": "ZECUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 8528238.49234,
+      "sourceArchiveCount": 12,
+      "symbol": "SLPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 8052904.9241,
+      "sourceArchiveCount": 12,
+      "symbol": "UNFIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 7723510.780633,
+      "sourceArchiveCount": 12,
+      "symbol": "JSTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 7700187.1506,
+      "sourceArchiveCount": 12,
+      "symbol": "FLOWUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 7663758.43251,
+      "sourceArchiveCount": 12,
+      "symbol": "CAKEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 7473223.2883,
+      "sourceArchiveCount": 12,
+      "symbol": "KAVAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 7247531.3991,
+      "sourceArchiveCount": 12,
+      "symbol": "ENJUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6847438.89635,
+      "sourceArchiveCount": 12,
+      "symbol": "DARUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6841173.9557,
+      "sourceArchiveCount": 12,
+      "symbol": "XTZUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6534512.5309,
+      "sourceArchiveCount": 12,
+      "symbol": "CELOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6526463.008632,
+      "sourceArchiveCount": 12,
+      "symbol": "RSRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6522476.9566573,
+      "sourceArchiveCount": 12,
+      "symbol": "WINUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-10T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6513118.533295,
+      "sourceArchiveCount": 12,
+      "symbol": "IMXUSDT",
+      "validDailyBars": 356
+    },
+    {
+      "firstBar": "2022-01-11T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6508542.86903,
+      "sourceArchiveCount": 12,
+      "symbol": "GLMRUSDT",
+      "validDailyBars": 355
+    },
+    {
+      "firstBar": "2022-05-09T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6295248.84952,
+      "sourceArchiveCount": 8,
+      "symbol": "LDOUSDT",
+      "validDailyBars": 237
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6172271.052195,
+      "sourceArchiveCount": 12,
+      "symbol": "HOTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6077604.0952,
+      "sourceArchiveCount": 12,
+      "symbol": "TLMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6072117.379,
+      "sourceArchiveCount": 12,
+      "symbol": "KNCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5939108.4023,
+      "sourceArchiveCount": 12,
+      "symbol": "BATUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5894384.2271,
+      "sourceArchiveCount": 12,
+      "symbol": "CHRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5889547.5094,
+      "sourceArchiveCount": 12,
+      "symbol": "MINAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5842886.787,
+      "sourceArchiveCount": 12,
+      "symbol": "QNTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5828176.6338,
+      "sourceArchiveCount": 12,
+      "symbol": "COMPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5764157.7553,
+      "sourceArchiveCount": 12,
+      "symbol": "KLAYUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5626621.47502,
+      "sourceArchiveCount": 12,
+      "symbol": "DASHUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5532279.1288,
+      "sourceArchiveCount": 12,
+      "symbol": "HBARUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5515621.9711,
+      "sourceArchiveCount": 12,
+      "symbol": "MASKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5498357.3890418,
+      "sourceArchiveCount": 12,
+      "symbol": "YFIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5273616.88552,
+      "sourceArchiveCount": 12,
+      "symbol": "PYRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5266694.9036,
+      "sourceArchiveCount": 12,
+      "symbol": "SXPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-25T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5170768.8606949,
+      "sourceArchiveCount": 12,
+      "symbol": "BTTCUSDT",
+      "validDailyBars": 341
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5163202.2906,
+      "sourceArchiveCount": 12,
+      "symbol": "OGNUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5136828.294,
+      "sourceArchiveCount": 12,
+      "symbol": "1INCHUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 5061292.9133,
+      "sourceArchiveCount": 12,
+      "symbol": "NEOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4902877.1209,
+      "sourceArchiveCount": 12,
+      "symbol": "KSMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4871239.208387,
+      "sourceArchiveCount": 12,
+      "symbol": "RVNUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4859891.671725,
+      "sourceArchiveCount": 12,
+      "symbol": "CELRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4817646.94846,
+      "sourceArchiveCount": 12,
+      "symbol": "IOTXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4804878.0675,
+      "sourceArchiveCount": 12,
+      "symbol": "C98USDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4730990.226427,
+      "sourceArchiveCount": 12,
+      "symbol": "REEFUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4634803.3206,
+      "sourceArchiveCount": 12,
+      "symbol": "IOTAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4564224.628821,
+      "sourceArchiveCount": 12,
+      "symbol": "ANKRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4420530.7586,
+      "sourceArchiveCount": 12,
+      "symbol": "BAKEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-02-08T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4315929.48063,
+      "sourceArchiveCount": 11,
+      "symbol": "WOOUSDT",
+      "validDailyBars": 327
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4294490.74411,
+      "sourceArchiveCount": 12,
+      "symbol": "SUNUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-20T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4264147.631990001,
+      "sourceArchiveCount": 12,
+      "symbol": "LOKAUSDT",
+      "validDailyBars": 346
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4227823.8111,
+      "sourceArchiveCount": 12,
+      "symbol": "ANTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4087507.4157,
+      "sourceArchiveCount": 12,
+      "symbol": "TWTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4054845.869619,
+      "sourceArchiveCount": 12,
+      "symbol": "DENTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4022765.9242,
+      "sourceArchiveCount": 12,
+      "symbol": "LITUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 4019334.6198,
+      "sourceArchiveCount": 12,
+      "symbol": "OMGUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3996310.7815263,
+      "sourceArchiveCount": 12,
+      "symbol": "LINAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3980515.693,
+      "sourceArchiveCount": 12,
+      "symbol": "DUSKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3969363.1607,
+      "sourceArchiveCount": 12,
+      "symbol": "BNXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3861386.4354842,
+      "sourceArchiveCount": 12,
+      "symbol": "SPELLUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3794362.55011,
+      "sourceArchiveCount": 12,
+      "symbol": "SANTOSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3741063.6986,
+      "sourceArchiveCount": 12,
+      "symbol": "COTIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-03-11T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3718689.65686,
+      "sourceArchiveCount": 10,
+      "symbol": "KDAUSDT",
+      "validDailyBars": 296
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3711923.7151,
+      "sourceArchiveCount": 12,
+      "symbol": "OCEANUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3605960.929761,
+      "sourceArchiveCount": 12,
+      "symbol": "LAZIOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3592172.3394,
+      "sourceArchiveCount": 12,
+      "symbol": "INJUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3584059.4254,
+      "sourceArchiveCount": 12,
+      "symbol": "AUDIOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3565305.40416,
+      "sourceArchiveCount": 12,
+      "symbol": "IOSTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3545564.156132,
+      "sourceArchiveCount": 12,
+      "symbol": "PORTOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3531816.6401,
+      "sourceArchiveCount": 12,
+      "symbol": "BETAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3530874.5931,
+      "sourceArchiveCount": 12,
+      "symbol": "FETUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3523911.0633,
+      "sourceArchiveCount": 12,
+      "symbol": "SFPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3455791.3413,
+      "sourceArchiveCount": 12,
+      "symbol": "MBOXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3284822.4867,
+      "sourceArchiveCount": 12,
+      "symbol": "KP3RUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3275908.5623,
+      "sourceArchiveCount": 12,
+      "symbol": "GTCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3237751.11615345,
+      "sourceArchiveCount": 12,
+      "symbol": "XECUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-02-21T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3209800.8082029996,
+      "sourceArchiveCount": 11,
+      "symbol": "ALPINEUSDT",
+      "validDailyBars": 314
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3174008.5417,
+      "sourceArchiveCount": 12,
+      "symbol": "PAXGUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3109161.2471,
+      "sourceArchiveCount": 12,
+      "symbol": "VOXELUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3050590.2569,
+      "sourceArchiveCount": 12,
+      "symbol": "RENUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3047540.07292,
+      "sourceArchiveCount": 12,
+      "symbol": "RNDRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 3015564.667,
+      "sourceArchiveCount": 12,
+      "symbol": "MKRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2994272.4748,
+      "sourceArchiveCount": 12,
+      "symbol": "SKLUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2927439.6038,
+      "sourceArchiveCount": 12,
+      "symbol": "QTUMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2887068.7929,
+      "sourceArchiveCount": 12,
+      "symbol": "ATAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2809482.12713,
+      "sourceArchiveCount": 12,
+      "symbol": "YGGUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2787691.9104,
+      "sourceArchiveCount": 12,
+      "symbol": "ONTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-10T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2759332.9490750004,
+      "sourceArchiveCount": 12,
+      "symbol": "ACHUSDT",
+      "validDailyBars": 356
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2752534.318356,
+      "sourceArchiveCount": 12,
+      "symbol": "ARPAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2727824.9553,
+      "sourceArchiveCount": 12,
+      "symbol": "BANDUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2705753.9985,
+      "sourceArchiveCount": 12,
+      "symbol": "CTSIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2702989.7715756,
+      "sourceArchiveCount": 12,
+      "symbol": "PONDUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2699669.8194,
+      "sourceArchiveCount": 12,
+      "symbol": "BLZUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2641817.44369,
+      "sourceArchiveCount": 12,
+      "symbol": "DODOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2562546.8167,
+      "sourceArchiveCount": 12,
+      "symbol": "TFUELUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2523659.3429,
+      "sourceArchiveCount": 12,
+      "symbol": "STORJUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2511184.6712,
+      "sourceArchiveCount": 12,
+      "symbol": "BURGERUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-21T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2503321.02625,
+      "sourceArchiveCount": 12,
+      "symbol": "API3USDT",
+      "validDailyBars": 345
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2487994.176074,
+      "sourceArchiveCount": 12,
+      "symbol": "IDEXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2482108.0523,
+      "sourceArchiveCount": 12,
+      "symbol": "QIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2471911.68506,
+      "sourceArchiveCount": 12,
+      "symbol": "HIGHUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2439056.95404,
+      "sourceArchiveCount": 12,
+      "symbol": "BICOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2423117.0563,
+      "sourceArchiveCount": 12,
+      "symbol": "BELUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2402747.5596,
+      "sourceArchiveCount": 12,
+      "symbol": "YFIIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-25T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2382931.14611,
+      "sourceArchiveCount": 12,
+      "symbol": "ACAUSDT",
+      "validDailyBars": 341
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2379224.3068,
+      "sourceArchiveCount": 12,
+      "symbol": "ZENUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2365971.4039,
+      "sourceArchiveCount": 12,
+      "symbol": "FXSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2350721.72958,
+      "sourceArchiveCount": 12,
+      "symbol": "OOKIUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2271712.2207,
+      "sourceArchiveCount": 12,
+      "symbol": "MOVRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2231129.7902,
+      "sourceArchiveCount": 12,
+      "symbol": "TRBUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-02-28T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2216325.32282,
+      "sourceArchiveCount": 11,
+      "symbol": "ASTRUSDT",
+      "validDailyBars": 307
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2198571.5358,
+      "sourceArchiveCount": 12,
+      "symbol": "ICXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2166128.2991,
+      "sourceArchiveCount": 12,
+      "symbol": "ZRXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2166013.68892,
+      "sourceArchiveCount": 12,
+      "symbol": "CVXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2140103.1678,
+      "sourceArchiveCount": 12,
+      "symbol": "COCOSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2095168.6043,
+      "sourceArchiveCount": 12,
+      "symbol": "WAXPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2075892.9442,
+      "sourceArchiveCount": 12,
+      "symbol": "MTLUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2070736.22,
+      "sourceArchiveCount": 12,
+      "symbol": "CTKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2052977.9968,
+      "sourceArchiveCount": 12,
+      "symbol": "RLCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2046352.3556,
+      "sourceArchiveCount": 12,
+      "symbol": "SUPERUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 2030200.5487,
+      "sourceArchiveCount": 12,
+      "symbol": "SYSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1955224.4965,
+      "sourceArchiveCount": 12,
+      "symbol": "ALPHAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1951826.5174,
+      "sourceArchiveCount": 12,
+      "symbol": "FLMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-03-21T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1930144.64781,
+      "sourceArchiveCount": 10,
+      "symbol": "BSWUSDT",
+      "validDailyBars": 286
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1929137.6413,
+      "sourceArchiveCount": 12,
+      "symbol": "PERPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1898648.9717,
+      "sourceArchiveCount": 12,
+      "symbol": "VGXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1891933.9956,
+      "sourceArchiveCount": 12,
+      "symbol": "UMAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1879557.77922,
+      "sourceArchiveCount": 12,
+      "symbol": "FLUXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1793577.9908,
+      "sourceArchiveCount": 12,
+      "symbol": "LPTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1775035.4363,
+      "sourceArchiveCount": 12,
+      "symbol": "ADXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1743902.3617,
+      "sourceArchiveCount": 12,
+      "symbol": "RAYUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1709714.16534,
+      "sourceArchiveCount": 12,
+      "symbol": "VIDTUSDT",
+      "validDailyBars": 357
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1695871.87828,
+      "sourceArchiveCount": 12,
+      "symbol": "FIDAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1680599.3648,
+      "sourceArchiveCount": 12,
+      "symbol": "CTXCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1675252.3442,
+      "sourceArchiveCount": 12,
+      "symbol": "OGUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1638739.514,
+      "sourceArchiveCount": 12,
+      "symbol": "STXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1633156.2503,
+      "sourceArchiveCount": 12,
+      "symbol": "HARDUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1622665.003489,
+      "sourceArchiveCount": 12,
+      "symbol": "KEYUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1611395.0803,
+      "sourceArchiveCount": 12,
+      "symbol": "PSGUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1607934.352835,
+      "sourceArchiveCount": 12,
+      "symbol": "DGBUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1567287.0807,
+      "sourceArchiveCount": 12,
+      "symbol": "RADUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1563301.80214,
+      "sourceArchiveCount": 12,
+      "symbol": "MDXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1554696.6952,
+      "sourceArchiveCount": 12,
+      "symbol": "TVKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1528154.1819,
+      "sourceArchiveCount": 12,
+      "symbol": "CHESSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1526122.2283,
+      "sourceArchiveCount": 12,
+      "symbol": "AGLDUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1513681.1534,
+      "sourceArchiveCount": 12,
+      "symbol": "WINGUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-21T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1508188.253,
+      "sourceArchiveCount": 12,
+      "symbol": "SCRTUSDT",
+      "validDailyBars": 345
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1497738.727595,
+      "sourceArchiveCount": 12,
+      "symbol": "CLVUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1477510.6646,
+      "sourceArchiveCount": 12,
+      "symbol": "REQUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1471902.5272,
+      "sourceArchiveCount": 12,
+      "symbol": "ILVUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1460273.33203,
+      "sourceArchiveCount": 12,
+      "symbol": "STMXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1458896.78829,
+      "sourceArchiveCount": 12,
+      "symbol": "SCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1458627.6128,
+      "sourceArchiveCount": 12,
+      "symbol": "XVSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1441091.0667,
+      "sourceArchiveCount": 12,
+      "symbol": "ERNUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1427059.8759,
+      "sourceArchiveCount": 12,
+      "symbol": "BONDUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1423631.96089,
+      "sourceArchiveCount": 12,
+      "symbol": "AKROUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1420478.40933,
+      "sourceArchiveCount": 12,
+      "symbol": "BALUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1418801.2601,
+      "sourceArchiveCount": 12,
+      "symbol": "WRXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1383656.09191,
+      "sourceArchiveCount": 12,
+      "symbol": "RAREUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1359652.488801,
+      "sourceArchiveCount": 12,
+      "symbol": "TROYUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1333651.4633,
+      "sourceArchiveCount": 12,
+      "symbol": "CITYUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1333642.3173,
+      "sourceArchiveCount": 12,
+      "symbol": "NULSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1324013.6882,
+      "sourceArchiveCount": 12,
+      "symbol": "HIVEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1323770.086,
+      "sourceArchiveCount": 12,
+      "symbol": "DEGOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1297346.12227,
+      "sourceArchiveCount": 12,
+      "symbol": "JOEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1269796.2892,
+      "sourceArchiveCount": 12,
+      "symbol": "NKNUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1267100.67461,
+      "sourceArchiveCount": 12,
+      "symbol": "CKBUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1261487.913771,
+      "sourceArchiveCount": 12,
+      "symbol": "MDTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1242628.7625,
+      "sourceArchiveCount": 12,
+      "symbol": "CFXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1223014.3337,
+      "sourceArchiveCount": 12,
+      "symbol": "DREPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1204953.780044,
+      "sourceArchiveCount": 12,
+      "symbol": "COSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1182986.1737,
+      "sourceArchiveCount": 12,
+      "symbol": "FORTHUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1175599.6482,
+      "sourceArchiveCount": 12,
+      "symbol": "XEMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1172028.7342,
+      "sourceArchiveCount": 12,
+      "symbol": "BADGERUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1158943.3351,
+      "sourceArchiveCount": 12,
+      "symbol": "POWRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1128278.52406,
+      "sourceArchiveCount": 12,
+      "symbol": "AMPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1125024.9755,
+      "sourceArchiveCount": 12,
+      "symbol": "FRONTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1123174.0362,
+      "sourceArchiveCount": 12,
+      "symbol": "ASRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1122812.0814,
+      "sourceArchiveCount": 12,
+      "symbol": "TOMOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1117686.0269,
+      "sourceArchiveCount": 12,
+      "symbol": "FISUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1096356.3951,
+      "sourceArchiveCount": 12,
+      "symbol": "TKOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1093653.8325,
+      "sourceArchiveCount": 12,
+      "symbol": "ORNUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-04-29T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1087539.56915,
+      "sourceArchiveCount": 9,
+      "symbol": "NEXOUSDT",
+      "validDailyBars": 247
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1078941.95046,
+      "sourceArchiveCount": 12,
+      "symbol": "FORUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1054776.1275,
+      "sourceArchiveCount": 12,
+      "symbol": "FARMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1054517.4904,
+      "sourceArchiveCount": 12,
+      "symbol": "STRAXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1044987.010016,
+      "sourceArchiveCount": 12,
+      "symbol": "MFTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-05-23T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1040731.746546,
+      "sourceArchiveCount": 8,
+      "symbol": "EPXUSDT",
+      "validDailyBars": 223
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1035557.650838,
+      "sourceArchiveCount": 12,
+      "symbol": "MBLUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1033715.7753,
+      "sourceArchiveCount": 12,
+      "symbol": "LTOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1031016.6957,
+      "sourceArchiveCount": 12,
+      "symbol": "PUNDIXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1025936.9637,
+      "sourceArchiveCount": 12,
+      "symbol": "PHAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 1008140.552,
+      "sourceArchiveCount": 12,
+      "symbol": "TRUUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 998021.5111,
+      "sourceArchiveCount": 12,
+      "symbol": "UTKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 982955.9864,
+      "sourceArchiveCount": 12,
+      "symbol": "JUVUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 972866.0316,
+      "sourceArchiveCount": 12,
+      "symbol": "ACMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 972352.25,
+      "sourceArchiveCount": 12,
+      "symbol": "BARUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-02-25T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 942777.60369,
+      "sourceArchiveCount": 11,
+      "symbol": "TUSDT",
+      "validDailyBars": 310
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 937084.13967,
+      "sourceArchiveCount": 12,
+      "symbol": "ELFUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 936234.7356,
+      "sourceArchiveCount": 12,
+      "symbol": "BEAMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 931633.8184,
+      "sourceArchiveCount": 12,
+      "symbol": "AUCTIONUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 929882.5204,
+      "sourceArchiveCount": 12,
+      "symbol": "OXTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 925733.0905,
+      "sourceArchiveCount": 12,
+      "symbol": "AUTOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 901729.8058,
+      "sourceArchiveCount": 12,
+      "symbol": "DIAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-05-04T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 900300.21526,
+      "sourceArchiveCount": 8,
+      "symbol": "REIUSDT",
+      "validDailyBars": 242
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 893227.4564,
+      "sourceArchiveCount": 12,
+      "symbol": "WTCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 888523.79538,
+      "sourceArchiveCount": 12,
+      "symbol": "ALPACAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 876501.8783,
+      "sourceArchiveCount": 12,
+      "symbol": "PNTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 874752.2961,
+      "sourceArchiveCount": 12,
+      "symbol": "CVPUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 856368.659543,
+      "sourceArchiveCount": 12,
+      "symbol": "DATAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 850252.1185,
+      "sourceArchiveCount": 12,
+      "symbol": "QUICKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 849161.68915,
+      "sourceArchiveCount": 12,
+      "symbol": "BTSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 842616.558177,
+      "sourceArchiveCount": 12,
+      "symbol": "PERLUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 834711.70577,
+      "sourceArchiveCount": 12,
+      "symbol": "PLAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 811423.973051,
+      "sourceArchiveCount": 12,
+      "symbol": "VTHOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 810838.3165,
+      "sourceArchiveCount": 12,
+      "symbol": "ATMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 787197.328376,
+      "sourceArchiveCount": 12,
+      "symbol": "VITEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 785855.2032,
+      "sourceArchiveCount": 12,
+      "symbol": "DFUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 775861.9911,
+      "sourceArchiveCount": 12,
+      "symbol": "POLSUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 775359.3434,
+      "sourceArchiveCount": 12,
+      "symbol": "AIONUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 767177.9662,
+      "sourceArchiveCount": 12,
+      "symbol": "DEXEUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 764301.77741,
+      "sourceArchiveCount": 12,
+      "symbol": "ALCXUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 748953.58501,
+      "sourceArchiveCount": 12,
+      "symbol": "XVGUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 744865.4525,
+      "sourceArchiveCount": 12,
+      "symbol": "FIROUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 717842.70633,
+      "sourceArchiveCount": 12,
+      "symbol": "MCUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 691055.5569,
+      "sourceArchiveCount": 12,
+      "symbol": "BNTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-28T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 681200.22783,
+      "sourceArchiveCount": 12,
+      "symbol": "XNOUSDT",
+      "validDailyBars": 338
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 657467.6295,
+      "sourceArchiveCount": 12,
+      "symbol": "OMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 644170.4514,
+      "sourceArchiveCount": 12,
+      "symbol": "AVAUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 639190.7839,
+      "sourceArchiveCount": 12,
+      "symbol": "NMRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 635436.440533,
+      "sourceArchiveCount": 12,
+      "symbol": "IRISUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 632877.289249,
+      "sourceArchiveCount": 12,
+      "symbol": "STPTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-04-29T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 612858.80001,
+      "sourceArchiveCount": 9,
+      "symbol": "MOBUSDT",
+      "validDailyBars": 247
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 605715.2949,
+      "sourceArchiveCount": 12,
+      "symbol": "FIOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-04-06T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 599447.17736,
+      "sourceArchiveCount": 9,
+      "symbol": "MULTIUSDT",
+      "validDailyBars": 270
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 580762.3858,
+      "sourceArchiveCount": 12,
+      "symbol": "ONGUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 579610.5756,
+      "sourceArchiveCount": 12,
+      "symbol": "LSKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 575288.9445,
+      "sourceArchiveCount": 12,
+      "symbol": "WNXMUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 573311.1786,
+      "sourceArchiveCount": 12,
+      "symbol": "MLNUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 565297.8303,
+      "sourceArchiveCount": 12,
+      "symbol": "WANUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 495861.58735,
+      "sourceArchiveCount": 12,
+      "symbol": "DOCKUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-04-22T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 489046.801935,
+      "sourceArchiveCount": 9,
+      "symbol": "STEEMUSDT",
+      "validDailyBars": 254
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 479721.5294,
+      "sourceArchiveCount": 12,
+      "symbol": "KMDUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 430663.9868,
+      "sourceArchiveCount": 12,
+      "symbol": "DCRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-04-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 420176.9457,
+      "sourceArchiveCount": 9,
+      "symbol": "BIFIUSDT",
+      "validDailyBars": 275
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 325588.8953,
+      "sourceArchiveCount": 12,
+      "symbol": "RIFUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 311548.109,
+      "sourceArchiveCount": 12,
+      "symbol": "GHSTUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 307346.4549,
+      "sourceArchiveCount": 12,
+      "symbol": "ARDRUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 300750.52885,
+      "sourceArchiveCount": 12,
+      "symbol": "FUNUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 252130.2854,
+      "sourceArchiveCount": 12,
+      "symbol": "GNOUSDT",
+      "validDailyBars": 365
+    },
+    {
+      "firstBar": "2022-03-11T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "medianDailyQuoteVolume": 6435.91119,
+      "sourceArchiveCount": 10,
+      "symbol": "NBTUSDT",
+      "validDailyBars": 277
+    }
+  ],
+  "experimentId": "cross-sectional-v1",
+  "formationInformationEndExclusive": "2023-01-01T00:00:00Z",
+  "formationSourceManifest": "research/crypto/universes/cross-sectional-v1-formation-sources.json",
+  "formationSourceManifestSha256": "51f69e8b3ad0d8e150c785582322a53cedb23622b06484d1c33d195fa8a629af",
+  "formedAt": "2026-08-20T16:45:10.385950Z",
+  "membership": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "BNBUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ADAUSDT",
+    "AVAXUSDT",
+    "SHIBUSDT",
+    "DOGEUSDT",
+    "MATICUSDT",
+    "NEARUSDT",
+    "DOTUSDT",
+    "TRXUSDT",
+    "GMTUSDT",
+    "APEUSDT",
+    "FTMUSDT",
+    "ATOMUSDT",
+    "GALAUSDT",
+    "LINKUSDT",
+    "SANDUSDT",
+    "LUNAUSDT",
+    "LTCUSDT",
+    "ETCUSDT",
+    "FILUSDT",
+    "OPUSDT",
+    "MANAUSDT",
+    "CHZUSDT",
+    "RUNEUSDT",
+    "AXSUSDT",
+    "WAVESUSDT"
+  ],
+  "membershipSize": 30,
+  "postFormationDataInspected": false,
+  "ruleSummary": {
+    "liquidityMeasure": "median daily quote-asset volume across all valid 2022 one-day bars",
+    "minimumValidDailyBarsIn2022": 180,
+    "mustHaveBarOnOrAfter": "2022-12-30T00:00:00Z",
+    "quoteAsset": "USDT",
+    "tieBreak": "symbol lexicographic"
+  },
+  "status": "UNIVERSE_FORMED_PRE_DEVELOPMENT"
+}
