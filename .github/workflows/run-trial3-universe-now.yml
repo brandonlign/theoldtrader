@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/run-trial3-universe-now.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/run-trial3-universe-now.yml'
 
 permissions:
   contents: write
