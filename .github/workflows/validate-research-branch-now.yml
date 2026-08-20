@@ -45,7 +45,7 @@ jobs:
         run: |
           python -m py_compile research/crypto/prepare-cross-sectional-data.py
           python -m py_compile research/crypto/prepare-cross-sectional-development-data.py
-          python -m unittest tests/test_cross_sectional_universe.py
+          python -m unittest tests/test_cross_sectional_universe.py tests/test_cross_sectional_development_wrapper.py
 
       - name: Run Trial 4 REST-builder firewall tests
         id: py4
