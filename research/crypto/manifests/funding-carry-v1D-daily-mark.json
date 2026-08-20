@@ -1,0 +1,55 @@
+{
+  "experimentId": "funding-carry-v1D-daily-mark",
+  "replicationOf": "funding-carry-v1",
+  "administrativeId": "Trial 2D",
+  "frozenAt": "2026-08-20T13:43:22Z",
+  "status": "FROZEN_SOURCE_REPLICATION_BEFORE_ANY_TRIAL2D_ECONOMICS",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "baseManifest": {
+    "path": "research/crypto/manifests/funding-carry-v1.json",
+    "gitBlobSha": "f1ae2172e1e56de118613389cab5906c6c041020"
+  },
+  "reason": "The untouched Trial 2 primary acquisition was finally executed after GitHub Actions became available. Every official archive checksum passed, but the frozen MONTHLY Binance Vision markPrice 8h source lacked 24 exact scheduled rows across eight calendar days, so Trial 2 primary stopped at its no-interpolation data gate before economics. A forensic probe performed before any Trial 2/2D economic result established that official Binance Vision DAILY markPrice 8h archives exist for all eight gap days and each passed its adjacent official .CHECKSUM. Trial 2D therefore tests the same candidate with daily markPrice archives used uniformly over the entire frozen window, rather than patching only missing monthly rows.",
+  "observedBeforeFreeze": {
+    "trial2EconomicResultObserved": false,
+    "trial2DEconomicResultObserved": false,
+    "primaryMonthlyMarkMissingRows": 24,
+    "primaryMonthlyMarkGapDays": [
+      "2021-07-01",
+      "2021-07-24",
+      "2021-07-25",
+      "2021-07-26",
+      "2021-07-27",
+      "2022-07-31",
+      "2022-10-02",
+      "2023-02-24"
+    ],
+    "dailyGapDaySourceProbe": "All eight official daily markPrice archives available and checksum-valid; no prices, funding values, returns, basis, or P&L were inspected by the probe."
+  },
+  "onlyAllowedDifferenceFromBase": {
+    "field": "dataRequirements.primarySources.perpetualMark",
+    "base": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT 8h markPriceKlines",
+    "replication": "checksum-verified Binance Vision DAILY USD-M BTCUSDT 8h markPriceKlines for every day in the full frozen window"
+  },
+  "inheritedWithoutChange": [
+    "historicalRobustnessWindow",
+    "candidate position and direction",
+    "entry and exit rules",
+    "15% starting-equity spot sizing",
+    "equal BTC-unit perpetual short sizing",
+    "20% futures collateral reserve",
+    "no rebalancing",
+    "funding accounting and timestamp normalization",
+    "spot source",
+    "perpetual execution source",
+    "all execution costs and slippage",
+    "maintenance margin and gap stresses",
+    "comparators",
+    "evaluation metrics",
+    "anti-rescue rule"
+  ],
+  "sourceRule": "Use DAILY markPrice archives for every calendar day from the base manifest startInclusive through endExclusive. Never combine monthly and daily mark rows, never patch only gaps, never interpolate, never forward-fill, and require exact scheduled-boundary coverage for the entire funding grid.",
+  "classificationRule": "Trial 2D is a source replication / robustness result. Even if positive, it is not pristine validation and cannot by itself authorize live trading or promotion because the historical carry family was motivated using prior whole-sample funding summaries.",
+  "antiRescueRule": "After this freeze, no change to dates, economics, source granularity, costs, sizing, direction, funding rules, exact-boundary rules, or gap handling is allowed under Trial 2D. Any further source/economic change requires a separately identified replication or new trial."
+}
