@@ -140,7 +140,7 @@ function strictTrailingBars(index, decisionTime, days) {
   return rows;
 }
 
-function rawFeaturesForAsset(candles, index, decisionTime) {
+function rawFeaturesForAsset(candles, index, decisionTime, firstObservedTime = null) {
   const prior90 = strictTrailingBars(index, decisionTime, 91);
   if (!prior90) return null;
   const recent30 = prior90.slice(-30);
@@ -162,9 +162,10 @@ function rawFeaturesForAsset(candles, index, decisionTime) {
     amihud.push(Math.abs(sr) / finite(now.quoteVolume));
   }
 
-  const first = candles?.[0];
-  if (!first || finite(first.time) >= decisionTime) return null;
-  const ageDays = Math.max(0, (decisionTime - finite(first.time)) / 86400);
+  const fallbackFirst = candles?.[0] ? finite(candles[0].time, NaN) : NaN;
+  const firstTime = Number.isFinite(Number(firstObservedTime)) ? Number(firstObservedTime) : fallbackFirst;
+  if (!Number.isFinite(firstTime) || firstTime >= decisionTime) return null;
+  const ageDays = Math.max(0, (decisionTime - firstTime) / 86400);
   const quoteVolumes = recent30.map((row) => finite(row.quoteVolume)).filter((value) => value > 0);
   if (quoteVolumes.length !== 30) return null;
   quoteVolumes.sort((a, b) => a - b);
@@ -206,9 +207,15 @@ export function winsorizeAndZscore(rows, lowerProbability = 0.05, upperProbabili
 export function buildCrossSectionalPanel(dataset, manifest, membership) {
   const members = [...membership];
   if (!members.length || new Set(members).size !== members.length) throw new Error('Frozen membership is empty or non-unique');
+  const firstObservedTimeBySymbol = dataset?.firstObservedTimeBySymbol ?? {};
   const data = Object.fromEntries(members.map((symbol) => {
     const candles = [...(dataset?.products?.[symbol] ?? [])].sort((a, b) => finite(a.time) - finite(b.time));
-    return [symbol, { candles, index: byTime(candles) }];
+    const firstObservedTime = Number(firstObservedTimeBySymbol[symbol]);
+    return [symbol, {
+      candles,
+      index: byTime(candles),
+      firstObservedTime: Number.isFinite(firstObservedTime) ? firstObservedTime : null
+    }];
   }));
   const startIso = manifest.historicalData.developmentStart;
   const endIso = manifest.historicalData.finalHoldoutEndExclusive;
@@ -219,10 +226,10 @@ export function buildCrossSectionalPanel(dataset, manifest, membership) {
     const next = nextMonthStart(time);
     const crossSection = [];
     for (const symbol of members) {
-      const { candles, index } = data[symbol];
+      const { candles, index, firstObservedTime } = data[symbol];
       const openRow = index.get(time);
       if (!openRow || finite(openRow.open) <= 0) continue;
-      const rawFeatures = rawFeaturesForAsset(candles, index, time);
+      const rawFeatures = rawFeaturesForAsset(candles, index, time, firstObservedTime);
       if (!rawFeatures) continue;
       const nextOpen = index.get(next);
       const target = nextOpen && finite(nextOpen.open) > 0
