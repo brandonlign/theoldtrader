@@ -15,7 +15,6 @@ No 2026-01-01-or-later Trial 3 price row is requested during development.
 from __future__ import annotations
 
 import gzip
-import hashlib
 import json
 import runpy
 import sys
@@ -32,9 +31,8 @@ S3_NS = {"s3": "http://s3.amazonaws.com/doc/2006-03-01/"}
 
 def deterministic_gzip_write(path: Path, payload: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("wb") as raw:
-        with gzip.GzipFile(fileobj=raw, mode="wb", compresslevel=9, mtime=0) as handle:
-            handle.write(payload)
+    with gzip.GzipFile(filename=path, mode="wb", compresslevel=9, mtime=0) as handle:
+        handle.write(payload)
 
 
 def list_first_archive(symbol: str, fetch) -> tuple[str, bytes, str]:
@@ -90,9 +88,6 @@ def attach_first_observations(out_path: Path, sources_path: Path, builder_global
             )
         rows = parse_archive(archive_payload, 0, feature_start_ms)
         if not rows:
-            # If the lexicographically first monthly archive begins at/after the
-            # feature cache boundary, parse it without the boundary solely to
-            # establish the first observed timestamp.
             rows = parse_archive(archive_payload, 0, 2**63 - 1)
         if not rows:
             raise RuntimeError(f"Earliest daily archive contained no valid bars for {symbol}: {archive_url}")
@@ -177,9 +172,7 @@ def main() -> None:
             if kwargs:
                 raise TypeError(f"Unexpected gzip.open arguments: {sorted(kwargs)}")
             if mtime is not None and "b" in mode:
-                raw_mode = "wb" if "w" in mode else "rb"
-                raw = open(filename, raw_mode)
-                return gzip.GzipFile(fileobj=raw, mode=mode, compresslevel=compresslevel, mtime=mtime)
+                return gzip.GzipFile(filename=filename, mode=mode, compresslevel=compresslevel, mtime=mtime)
             return original_gzip_open(
                 filename, mode, compresslevel=compresslevel,
                 encoding=encoding, errors=errors, newline=newline,
