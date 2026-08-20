@@ -1,0 +1,88 @@
+name: Run Frozen Trial 2 Carry Primary
+
+on:
+  pull_request:
+    branches: [research/crypto-oos-v1]
+    paths:
+      - '.github/workflows/run-trial2-carry-primary.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frozen-trial2-carry-primary
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out frozen Trial 2 branch, not PR merge code
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - name: Set up frozen-era Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refuse if primary result already exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f research/crypto/results/funding-carry-v1/summary.json ]; then
+            echo 'Frozen Trial 2 primary result already exists; refusing overwrite.'
+            exit 3
+          fi
+
+      - name: Static and deterministic frozen checks
+        run: |
+          python -m py_compile research/crypto/prepare-carry-data.py
+          node --check research/crypto/carry-evaluate.js
+          node --check research/crypto/carry-report.js
+          python -m unittest tests/test_prepare_carry_data.py
+          node --test tests/crypto-carry-evaluate.test.js
+
+      - name: Download and checksum official Binance Vision archives
+        run: >-
+          python research/crypto/prepare-carry-data.py
+          research/crypto/manifests/funding-carry-v1.json
+          research/crypto/data-cache/funding-carry-v1-synchronized.csv
+          research/crypto/data-cache/funding-carry-v1-sources.json
+
+      - name: Evaluate frozen Trial 2 exactly once in this run
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p research/crypto/results/funding-carry-v1
+          node research/crypto/carry-evaluate.js \
+            research/crypto/manifests/funding-carry-v1.json \
+            research/crypto/data-cache/funding-carry-v1-synchronized.csv \
+            > research/crypto/results/funding-carry-v1/summary.json
+          node research/crypto/carry-report.js \
+            research/crypto/results/funding-carry-v1/summary.json \
+            research/crypto/results/funding-carry-v1
+
+      - name: Upload immutable evidence bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-carry-v1-primary-evidence
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            research/crypto/manifests/funding-carry-v1.json
+            research/crypto/data-cache/funding-carry-v1-synchronized.csv
+            research/crypto/data-cache/funding-carry-v1-sources.json
+            research/crypto/results/funding-carry-v1
+
+# Orchestration only. This workflow deliberately checks out research/crypto-oos-v1,
+# so PR branch contents cannot alter the frozen Trial 2 manifest/evaluator/data builder.
+# It uploads evidence rather than writing results back to the frozen branch.
