@@ -1,0 +1,127 @@
+{
+  "experimentId": "kalshi-coinbase-carry-v1",
+  "trialNumber": 11,
+  "frozenAt": "2026-08-20T14:08:04Z",
+  "status": "FROZEN_HISTORICAL_DEVELOPMENT_UNOBSERVED",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "strategyFamily": "market-neutral spot/perpetual funding carry",
+  "motivation": "Trial 2U provided positive multi-year historical evidence that BTC funding carry can survive conservative friction, while its frozen capitalization failed discontinuous mark-gap stress. Trial 11 tests the same broad economic mechanism on a distinct US-regulated perpetual venue with public first-party funding/bid/ask history, 0.0001 BTC contract granularity, and deliberately safer collateralization. This is a new trial, not a retune or rescue of Trial 2/8/9/10.",
+  "preFreezeEvidence": {
+    "economicsObserved": false,
+    "fundingValuesObserved": false,
+    "pricesObserved": false,
+    "pnlObserved": false,
+    "publicSourceQualificationRun": 32377984601,
+    "schemaOnlyRun": 32378247770,
+    "sourceFactsKnownBeforeFreeze": {
+      "kalshiTicker": "KXBTCPERP",
+      "contractSizeBtc": 0.0001,
+      "marketStatus": "active",
+      "twoSidedCurrentBook": true,
+      "oneAndTenContractsExecutableBothSides": true,
+      "fundingBoundaryCount": 234,
+      "fundingStart": "2026-06-03T20:00:00Z",
+      "fundingEnd": "2026-08-20T12:00:00Z",
+      "fundingIntervals": 233,
+      "allIntervalsEightHours": true,
+      "kalshiBoundaryCandles": 234,
+      "kalshiUsableBidAskBoundaryCandles": 234,
+      "coinbaseExactBoundarySpotCandles": 234,
+      "fundingRowKeys": ["funding_rate", "funding_time", "mark_price", "market_ticker"],
+      "candleTopLevelKeys": ["ask", "bid", "end_period_ts", "open_interest", "open_interest_notional_value_dollars", "price", "volume", "volume_notional_value_dollars"]
+    }
+  },
+  "historicalDevelopmentWindow": {
+    "startInclusive": "2026-06-03T20:00:00Z",
+    "endInclusive": "2026-08-20T12:00:00Z",
+    "selectionRule": "Use the entire exact common public-data interval known from timestamp-only pre-freeze coverage. Do not select a favorable subwindow after observing values.",
+    "role": "historical development screen only; cannot promote or validate the strategy regardless of result"
+  },
+  "candidate": {
+    "startingEquityUsd": 10000,
+    "position": "long Coinbase Exchange BTC-USD spot and short equal BTC units of Kalshi KXBTCPERP",
+    "entryRule": "enter both legs once at the first frozen funding boundary using the exact Coinbase 1h candle open and Kalshi historical bid close at that boundary",
+    "exitRule": "exit both legs once at the final frozen funding boundary using the exact Coinbase 1h candle open and Kalshi historical ask close at that boundary",
+    "spotTargetNotionalPctStartingEquity": 0.15,
+    "contractSizeBtc": 0.0001,
+    "sizingRule": "determine BTC quantity from 15% of starting equity divided by the adverse-cost-adjusted Coinbase entry price, round DOWN to a whole 0.0001 BTC Kalshi contract, then buy and short exactly that BTC quantity",
+    "perpetualCollateralReservePctStartingEquity": 0.30,
+    "rebalancing": "none",
+    "compounding": "none",
+    "fundingThreshold": "none",
+    "fundingSignTiming": "none",
+    "assetSelection": "none",
+    "unusedCashInterest": 0,
+    "fundingAtEntry": "not earned",
+    "fundingAccounting": "for every later frozen funding boundary, positive funding pays the short and negative funding is paid by the short; payment equals equal BTC units times public Kalshi mark_price times public funding_rate",
+    "basisAccounting": "mark Coinbase spot independently using exact hourly opens and Kalshi short independently using the public funding-row mark price through time; entry/exit execution uses the frozen execution references and all frozen costs"
+  },
+  "dataRequirements": {
+    "kalshi": {
+      "base": "https://external-api.kalshi.com/trade-api/v2/margin",
+      "ticker": "KXBTCPERP",
+      "contractSizeBtc": 0.0001,
+      "funding": "public /funding_rates/historical?ticker=KXBTCPERP; require exactly one row at every frozen 8h boundary and fields market_ticker,funding_time,funding_rate,mark_price",
+      "execution": "public 60-minute KXBTCPERP candlesticks; require exact boundary candle and positive bid.close and ask.close",
+      "identity": "active market must contain exactly ticker KXBTCPERP and contract_size exactly 0.0001"
+    },
+    "coinbase": {
+      "product": "BTC-USD",
+      "source": "public Coinbase Exchange 1h candles",
+      "priceRule": "require exact candle start at every frozen 8h boundary and use open price; no nearest candle or interpolation"
+    },
+    "rejectEvaluationIf": [
+      "Kalshi exact ticker/contract-size identity fails",
+      "the funding series does not contain exactly 234 distinct frozen boundaries from start through end on an exact 8-hour grid",
+      "any funding_rate or mark_price is missing, non-finite, or invalid",
+      "any exact Kalshi boundary bid/ask candle is missing or non-positive",
+      "any exact Coinbase boundary spot open is missing or non-positive",
+      "any later observation is substituted for a frozen boundary",
+      "the compact synchronized input cannot be SHA-256 hashed"
+    ]
+  },
+  "costModel": {
+    "primary": {
+      "coinbaseSpotFeeBpsPerOrder": 60,
+      "coinbaseAdverseSlippageBpsPerOrder": 10,
+      "kalshiExecutionReference": "historical bid close to enter short; historical ask close to exit short, so displayed spread is already paid",
+      "kalshiAllInFeeReserveBpsPerOrder": 20,
+      "kalshiAdditionalSlippageBpsPerOrder": 0,
+      "rationale": "The 20 bps Kalshi reserve is intentionally above both the June FCM-applied exchange schedule and the newly certified self-clearing base tiers because a current public Kinetics retail all-in commission schedule was not verified before freeze. It is a conservative research proxy, not a claim about actual customer fees."
+    },
+    "stress": {
+      "coinbaseAllInBpsPerOrder": 100,
+      "kalshiAllInFeeReserveBpsPerOrder": 40,
+      "kalshiAdditionalAdverseSlippageBpsPerOrder": 10
+    },
+    "feeVerificationFirewall": "No later Trial 11 result may be described as executable retail net performance or promotion-eligible unless the applicable Kinetics/FCM all-in fee schedule is independently verified. Historical development classification is unchanged regardless."
+  },
+  "riskModel": {
+    "researchMaintenanceMarginPctCurrentPerpNotional": 0.15,
+    "maintenanceIsConservativeResearchStressNotExchangeTierClaim": true,
+    "futuresEquity": "30% starting-equity collateral reserve plus cumulative short mark-to-market P&L plus cumulative funding minus Kalshi entry fee",
+    "historicalMarginFailure": "fail at first boundary where futures equity is below 15% of current perp mark notional",
+    "additionalInstantaneousAdversePerpMarkShocksPct": [0.10, 0.25, 0.50],
+    "shockRule": "at every historical boundary, apply each positive shock to the Kalshi mark while holding the Coinbase spot hedge outside the futures collateral account; report worst futures margin excess. This tests venue-local liquidation vulnerability, not total portfolio solvency."
+  },
+  "evaluation": {
+    "primaryQuestions": [
+      "Was net total-account P&L positive under frozen primary costs?",
+      "Was total funding income positive and larger than total friction plus residual hedge/basis loss?",
+      "Did the realized historical futures collateral path avoid the research maintenance threshold?",
+      "Did the 25% instantaneous mark shock avoid a margin breach?",
+      "Was the high-cost stress net P&L positive?"
+    ],
+    "developmentPassRequires": {
+      "primaryNetPnlPositive": true,
+      "totalFundingPositive": true,
+      "historicalMarginFailure": false,
+      "shock25PctMarginFailure": false,
+      "highCostStressNetPnlPositive": true
+    },
+    "maximumLabel": "PROMISING_HISTORICAL_DEVELOPMENT_ONLY",
+    "cannotPromote": true
+  },
+  "antiRescueRule": "After the first Trial 11 economic output, do not change the window, funding interpretation, 15% spot target, 30% collateral reserve, 0.0001 BTC rounding, fees, slippage, execution references, maintenance threshold, shocks, or pass criteria under Trial 11. Any changed strategy/economic assumption requires a new trial number."
+}
