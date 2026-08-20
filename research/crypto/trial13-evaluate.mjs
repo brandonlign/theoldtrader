@@ -1,10 +1,13 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { MANIFEST_SHA256, loadFrozenManifest } from './trial13-record.mjs';
 
 const ROOT='research/crypto/evidence/trial13';
 const readJson=p=>JSON.parse(readFileSync(p,'utf8'));
 const median=xs=>{const a=[...xs].sort((x,y)=>x-y);if(!a.length)return null;const i=Math.floor(a.length/2);return a.length%2?a[i]:(a[i-1]+a[i])/2;};
+const addDays=(iso,n)=>{const d=new Date(`${iso}T12:00:00Z`);d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
+const weekday=iso=>new Date(`${iso}T12:00:00Z`).getUTCDay();
 
 function rollSummaries(){
   if(!existsSync(ROOT))return[];
@@ -12,95 +15,104 @@ function rollSummaries(){
     .map(x=>path.join(ROOT,x.name,'summary.json')).filter(existsSync).map(readJson).sort((a,b)=>a.targetDate.localeCompare(b.targetDate));
 }
 function riskSummaries(){
-  const r=path.join(ROOT,'risk'); if(!existsSync(r))return[];
-  return readdirSync(r,{withFileTypes:true}).filter(x=>x.isDirectory()&&/^\d{4}-\d{2}-\d{2}$/.test(x.name))
-    .map(x=>path.join(r,x.name,'summary.json')).filter(existsSync).map(readJson).sort((a,b)=>a.targetDate.localeCompare(b.targetDate));
+  const root=path.join(ROOT,'risk'); if(!existsSync(root))return[];
+  return readdirSync(root,{withFileTypes:true}).filter(x=>x.isDirectory()&&/^\d{4}-\d{2}-\d{2}$/.test(x.name))
+    .map(x=>path.join(root,x.name,'summary.json')).filter(existsSync).map(readJson).sort((a,b)=>a.targetDate.localeCompare(b.targetDate));
 }
-
 function expectedRollDates(m,n){
-  const adjustments=new Map((m.schedule.holidayAdjustedRollDates??[]).map(x=>[x.nominalFriday,x.terminationDate]));
+  const adj=new Map((m.schedule.holidayAdjustedRollDates??[]).map(x=>[x.nominalFriday,x.terminationDate]));
   const out=[];let d=new Date(`${m.schedule.startSettlementDate}T12:00:00Z`);
-  for(let i=0;i<n;i++){const nominal=d.toISOString().slice(0,10);out.push(adjustments.get(nominal)??nominal);d.setUTCDate(d.getUTCDate()+7);}return out;
+  for(let i=0;i<n;i++){const nominal=d.toISOString().slice(0,10);out.push(adj.get(nominal)??nominal);d.setUTCDate(d.getUTCDate()+7);}return out;
+}
+function checkEvidenceIdentity(items){for(const x of items)if(x.manifestSha256!==MANIFEST_SHA256)throw new Error(`Evidence manifest mismatch on ${x.targetDate}`);}
+
+function marginCheck({m,entryPx,markPx,cumulativeRealized,cumulativeFees,shock=0}){
+  const px=markPx*(1+shock);
+  const openPnl=m.instruments.shortCarry.contractSizeBtc*(entryPx-px);
+  const equity=m.account.futuresCollateralReserveUsd+cumulativeRealized+openPnl-cumulativeFees;
+  const maintenance=m.riskModel.researchMaintenanceMarginPctCurrentBffNotional*m.instruments.shortCarry.contractSizeBtc*px;
+  return {equity,maintenance,pass:equity>=maintenance};
 }
 
 export function evaluateTrial13(){
-  const m=loadFrozenManifest(); const rolls=rollSummaries(); const risks=riskSummaries();
-  for(const x of [...rolls,...risks]) if(x.manifestSha256!==MANIFEST_SHA256) throw new Error(`Evidence manifest mismatch on ${x.targetDate}`);
-  if(!rolls.length) return {experimentId:m.experimentId,status:'UNOBSERVED',completedRolls:0};
+  const m=loadFrozenManifest(), rolls=rollSummaries(), risks=riskSummaries();
+  checkEvidenceIdentity([...rolls,...risks]);
+  if(!rolls.length)return{experimentId:m.experimentId,status:'UNOBSERVED',completedRolls:0};
   const expected=expectedRollDates(m,rolls.length);
-  assert: for(let i=0;i<rolls.length;i++) if(rolls[i].targetDate!==expected[i]) throw new Error(`Roll evidence sequence gap: expected ${expected[i]}, got ${rolls[i].targetDate}`);
-  const first=rolls[0]; if(first.targetDate!==m.schedule.startSettlementDate) throw new Error('Trial 13 start evidence is missing');
-  const shares=first.frozenHypotheticalExecution.initialIbitShares;
-  if(!(shares>0)) throw new Error('Initial IBIT share count missing');
+  for(let i=0;i<rolls.length;i++)if(rolls[i].targetDate!==expected[i])throw new Error(`Roll evidence sequence gap: expected ${expected[i]}, got ${rolls[i].targetDate}`);
+  const first=rolls[0]; if(first.targetDate!==m.schedule.startSettlementDate)throw new Error('Trial 13 start evidence is missing');
+  const shares=first.frozenHypotheticalExecution.initialIbitShares; if(!(shares>0))throw new Error('Initial IBIT share count missing');
+  const completedRolls=rolls.length-1, latest=rolls.at(-1);
 
-  let primaryFutures=0,stressFutures=0,primaryFees=0,stressFees=0;
-  const weeklyPrimary=[]; const weeklyStress=[];
-  for(let i=0;i<rolls.length-1;i++){
-    const open=rolls[i], close=rolls[i+1];
-    if(close.cme?.current?.expiryDate!==open.cme?.next?.expiryDate) throw new Error(`BFF chain mismatch ${open.targetDate}->${close.targetDate}`);
-    const p=m.instruments.shortCarry.contractSizeBtc*(open.frozenHypotheticalExecution.primaryBffShortEntryPrice-close.cme.current.settle);
-    const s=m.instruments.shortCarry.contractSizeBtc*(open.frozenHypotheticalExecution.stressBffShortEntryPrice-close.cme.current.settle);
+  let primaryFuturesGross=0,stressFuturesGross=0,primaryFees=0,stressFees=0;
+  const primaryBasisCarryAfterCosts=[],stressBasisCarryAfterCosts=[];
+  for(let i=0;i<completedRolls;i++){
+    const open=rolls[i],close=rolls[i+1];
+    if(close.cme?.current?.expiryDate!==open.cme?.next?.expiryDate)throw new Error(`BFF chain mismatch ${open.targetDate}->${close.targetDate}`);
+    const pEntry=open.frozenHypotheticalExecution.primaryBffShortEntryPrice;
+    const sEntry=open.frozenHypotheticalExecution.stressBffShortEntryPrice;
+    const exit=close.cme.current.settle, btc=m.instruments.shortCarry.contractSizeBtc;
     const pf=m.costModel.bffOpeningFeeReserveUsdPerContract+m.costModel.bffExpirationFeeReserveUsdPerContract;
     const sf=m.costModel.stress.bffOpeningFeeReserveUsdPerContract+m.costModel.stress.bffExpirationFeeReserveUsdPerContract;
-    primaryFutures+=p; stressFutures+=s; primaryFees+=pf; stressFees+=sf;
-    weeklyPrimary.push(p-pf); weeklyStress.push(s-sf);
+    primaryFuturesGross+=btc*(pEntry-exit); stressFuturesGross+=btc*(sEntry-exit); primaryFees+=pf; stressFees+=sf;
+    const benchmark=open.frozenHypotheticalExecution.officialBenchmarkIndexUsdPerBtc;
+    if(!(benchmark>0))throw new Error(`Missing official opening BRRNY reconstruction on ${open.targetDate}`);
+    primaryBasisCarryAfterCosts.push(btc*(pEntry-benchmark)-pf);
+    stressBasisCarryAfterCosts.push(btc*(sEntry-benchmark)-sf);
   }
-  const completedRolls=rolls.length-1;
-  const latest=rolls.at(-1);
+
   const primaryIbitExit=latest.ibit.closingPrice*(1-m.costModel.ibitFinalExitAdverseHalfSpreadBps/10000);
   const stressIbitExit=latest.ibit.closingPrice*(1-m.costModel.stress.ibitEntryAndExitHalfSpreadBps/10000);
   const primaryIbit=shares*(primaryIbitExit-first.frozenHypotheticalExecution.primaryIbitEntryPrice);
   const stressIbit=shares*(stressIbitExit-first.frozenHypotheticalExecution.stressIbitEntryPrice);
-  const primaryNet=primaryIbit+primaryFutures-primaryFees;
-  const stressNet=stressIbit+stressFutures-stressFees;
+  const primaryNet=primaryIbit+primaryFuturesGross-primaryFees;
+  const stressNet=stressIbit+stressFuturesGross-stressFees;
 
-  const riskByDate=new Map(risks.map(x=>[x.targetDate,x]));
-  let cumulativeRealized=0,cumulativeFees=0; let noMarginBreach=true,shock25PctNoBreach=true; const missingRisk=[];
-  for(let i=0;i<rolls.length;i++){
-    const open=rolls[i]; const expiry=open.cme.next.expiryDate; const entry=open.frozenHypotheticalExecution.primaryBffShortEntryPrice;
-    if(i>0){const prev=rolls[i-1];cumulativeRealized+=m.instruments.shortCarry.contractSizeBtc*(prev.frozenHypotheticalExecution.primaryBffShortEntryPrice-open.cme.current.settle);cumulativeFees+=m.costModel.bffExpirationFeeReserveUsdPerContract;}
+  const riskMap=new Map(risks.map(x=>[x.targetDate,x]));
+  const missingRisk=[]; let noMarginBreach=true,shock25PctNoBreach=true;
+  let cumulativeRealized=0,cumulativeFees=0;
+  for(let i=0;i<completedRolls;i++){
+    const open=rolls[i],close=rolls[i+1],entry=open.frozenHypotheticalExecution.primaryBffShortEntryPrice;
     cumulativeFees+=m.costModel.bffOpeningFeeReserveUsdPerContract;
-    const start=new Date(`${open.targetDate}T12:00:00Z`), end=new Date(`${expiry}T12:00:00Z`);
-    for(let d=new Date(start);d<=end;d.setUTCDate(d.getUTCDate()+1)){
-      const iso=d.toISOString().slice(0,10), dow=d.getUTCDay(); if(dow===0||dow===6)continue;
-      const holidayAdj=(m.schedule.holidayAdjustedRollDates??[]).find(x=>x.nominalFriday===iso);
-      if(holidayAdj) continue;
-      let mark;
-      if(iso===open.targetDate) mark=open.cme.next;
-      else if(iso===expiry && i+1<rolls.length) mark=rolls[i+1].cme.current;
-      else mark=riskByDate.get(iso)?.mark;
-      if(!mark){if(iso<=latest.targetDate) missingRisk.push(`${iso}:${expiry}`);continue;}
-      const px=mark.settle;
-      const openPnl=m.instruments.shortCarry.contractSizeBtc*(entry-px);
-      const equity=m.account.futuresCollateralReserveUsd+cumulativeRealized+openPnl-cumulativeFees;
-      const maintenance=m.riskModel.researchMaintenanceMarginPctCurrentBffNotional*m.instruments.shortCarry.contractSizeBtc*px;
-      if(equity<maintenance)noMarginBreach=false;
-      const shocked=px*1.25;
-      const shockPnl=m.instruments.shortCarry.contractSizeBtc*(entry-shocked);
-      const shockEquity=m.account.futuresCollateralReserveUsd+cumulativeRealized+shockPnl-cumulativeFees;
-      const shockMaint=m.riskModel.researchMaintenanceMarginPctCurrentBffNotional*m.instruments.shortCarry.contractSizeBtc*shocked;
-      if(shockEquity<shockMaint)shock25PctNoBreach=false;
+    const checkPoint=(date,markPx,source)=>{
+      const normal=marginCheck({m,entryPx:entry,markPx,cumulativeRealized,cumulativeFees,shock:0});
+      const shock=marginCheck({m,entryPx:entry,markPx,cumulativeRealized,cumulativeFees,shock:0.25});
+      if(!normal.pass)noMarginBreach=false;if(!shock.pass)shock25PctNoBreach=false;
+      return {date,source,normal,shock25:shock};
+    };
+    checkPoint(open.targetDate,open.cme.next.settle,'roll-open');
+    for(let date=addDays(open.targetDate,1);date<close.targetDate;date=addDays(date,1)){
+      const dow=weekday(date); if(dow===0||dow===6)continue;
+      const r=riskMap.get(date);
+      if(!r){missingRisk.push(`${date}:${open.cme.next.expiryDate}`);continue;}
+      if(r.state==='NO_SETTLEMENT')continue;
+      if(r.state!=='MARK'||r.openExpiry!==open.cme.next.expiryDate||!(r.mark?.settle>0)){missingRisk.push(`${date}:invalid-risk-record`);continue;}
+      checkPoint(date,r.mark.settle,'daily-final-settlement');
     }
+    checkPoint(close.targetDate,close.cme.current.settle,'roll-close');
+    cumulativeRealized+=m.instruments.shortCarry.contractSizeBtc*(entry-close.cme.current.settle);
+    cumulativeFees+=m.costModel.bffExpirationFeeReserveUsdPerContract;
   }
   const riskCoverageComplete=missingRisk.length===0;
+  const primaryBasisTotal=primaryBasisCarryAfterCosts.reduce((a,b)=>a+b,0);
+  const stressBasisTotal=stressBasisCarryAfterCosts.reduce((a,b)=>a+b,0);
   const gates={
     primaryNetPnlPositive:primaryNet>0,
     stressNetPnlPositive:stressNet>0,
     netPnlPositive:primaryNet>0,
-    realizedBffCarryBeforeIbitDirectionalResidualPositive:weeklyPrimary.reduce((a,b)=>a+b,0)>0,
+    realizedBffCarryBeforeIbitDirectionalResidualPositive:primaryBasisTotal>0,
     noMarginBreach:riskCoverageComplete&&noMarginBreach,
     shock25PctNoBreach:riskCoverageComplete&&shock25PctNoBreach,
-    positiveMedianWeeklyCarryAfterReservedBffCosts:(median(weeklyPrimary)??-Infinity)>0,
+    positiveMedianWeeklyCarryAfterReservedBffCosts:(median(primaryBasisCarryAfterCosts)??-Infinity)>0,
   };
-  let checkpoint=null,label='FORWARD_COLLECTION_IN_PROGRESS',pass=null;
-  const checks=[['twentySixWeek',26],['thirteenWeek',13],['fourWeek',4]];
-  for(const [name,n] of checks){if(completedRolls>=n){checkpoint=name;const spec=m.evaluation[name];pass=spec.passRequires.every(k=>gates[k]===true);label=pass?spec.labelIfPass:`${name.toUpperCase()}_FAIL`;break;}}
-  return {
-    experimentId:m.experimentId,status:label,checkpoint,pass,completedRolls,latestDate:latest.targetDate,
-    primary:{netPnlUsd:primaryNet,returnPct:100*primaryNet/m.account.startingEquityUsd,ibitPnlUsd:primaryIbit,bffGrossPnlUsd:primaryFutures,bffReservedFeesUsd:primaryFees,medianWeeklyBffAfterFeesUsd:median(weeklyPrimary)},
-    stress:{netPnlUsd:stressNet,returnPct:100*stressNet/m.account.startingEquityUsd,ibitPnlUsd:stressIbit,bffGrossPnlUsd:stressFutures,bffReservedFeesUsd:stressFees,medianWeeklyBffAfterFeesUsd:median(weeklyStress)},
-    risk:{riskCoverageComplete,missingRiskCount:missingRisk.length,missingRisk:missingRisk.slice(0,20),noMarginBreach,shock25PctNoBreach},gates
+  let checkpoint=null,status='FORWARD_COLLECTION_IN_PROGRESS',pass=null;
+  for(const [name,n] of [['twentySixWeek',26],['thirteenWeek',13],['fourWeek',4]])if(completedRolls>=n){checkpoint=name;const spec=m.evaluation[name];pass=spec.passRequires.every(k=>gates[k]===true);status=pass?spec.labelIfPass:`${name.toUpperCase()}_FAIL`;break;}
+  return{
+    experimentId:m.experimentId,status,checkpoint,pass,completedRolls,latestDate:latest.targetDate,
+    primary:{netPnlUsd:primaryNet,returnPct:100*primaryNet/m.account.startingEquityUsd,ibitPnlUsd:primaryIbit,bffGrossPnlUsd:primaryFuturesGross,bffReservedFeesUsd:primaryFees,basisCarryAfterBffCostsUsd:primaryBasisTotal,medianWeeklyBasisCarryAfterCostsUsd:median(primaryBasisCarryAfterCosts)},
+    stress:{netPnlUsd:stressNet,returnPct:100*stressNet/m.account.startingEquityUsd,ibitPnlUsd:stressIbit,bffGrossPnlUsd:stressFuturesGross,bffReservedFeesUsd:stressFees,basisCarryAfterBffCostsUsd:stressBasisTotal,medianWeeklyBasisCarryAfterCostsUsd:median(stressBasisCarryAfterCosts)},
+    risk:{riskCoverageComplete,missingRiskCount:missingRisk.length,missingRisk:missingRisk.slice(0,30),noMarginBreach,shock25PctNoBreach},gates
   };
 }
 
-if(import.meta.url===new URL(`file://${path.resolve(process.argv[1]??'')}`).href) console.log(JSON.stringify(evaluateTrial13(),null,2));
+if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href)console.log(JSON.stringify(evaluateTrial13(),null,2));
