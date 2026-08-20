@@ -45,6 +45,7 @@ async function getBookSnapshots({ url, specs, timeoutSeconds }) {
     const ws = new WebSocket(url);
     const wanted = new Map(specs.map((spec) => [String(spec.symbol), spec]));
     const books = new Map();
+    const emptySideSnapshots = Object.fromEntries([...wanted.keys()].map((symbol) => [symbol, 0]));
     let settled = false;
     const finishError = (error) => {
       if (settled) return;
@@ -54,7 +55,8 @@ async function getBookSnapshots({ url, specs, timeoutSeconds }) {
       reject(error instanceof Error ? error : new Error(String(error)));
     };
     const timer = setTimeout(() => {
-      finishError(new Error(`Timed out waiting for Bitnomial book snapshots: got ${[...books.keys()].join(",") || "none"}`));
+      const twoSided = [...books.keys()];
+      finishError(new Error(`Timed out waiting for two-sided Bitnomial books; twoSided=${JSON.stringify(twoSided)} emptySideSnapshotCounts=${JSON.stringify(emptySideSnapshots)}`));
     }, timeoutSeconds * 1000);
 
     ws.addEventListener("open", () => {
@@ -75,7 +77,15 @@ async function getBookSnapshots({ url, specs, timeoutSeconds }) {
             return finishError(new Error(`Bitnomial WebSocket disconnected: ${message.reason ?? "unknown"}`));
           }
           if (message?.type !== "book" || !wanted.has(String(message.symbol))) continue;
-          const spec = wanted.get(String(message.symbol));
+          const symbol = String(message.symbol);
+          if (!Array.isArray(message.asks) || !Array.isArray(message.bids)) {
+            return finishError(new Error(`Malformed Bitnomial book arrays for ${symbol}`));
+          }
+          if (message.asks.length === 0 || message.bids.length === 0) {
+            emptySideSnapshots[symbol] += 1;
+            continue;
+          }
+          const spec = wanted.get(symbol);
           const book = normalizeBookSnapshot(message, {
             symbol: spec.symbol,
             priceIncrement: spec.price_increment,
@@ -87,7 +97,7 @@ async function getBookSnapshots({ url, specs, timeoutSeconds }) {
           settled = true;
           clearTimeout(timer);
           try { ws.close(1000, "trial9-connectivity-complete"); } catch {}
-          resolve(books);
+          resolve({ books, emptySideSnapshots });
         }
       } catch (error) {
         finishError(error);
@@ -116,15 +126,15 @@ async function main() {
   if (spotCandidates.length !== 1) throw new Error(`Expected one active Bitnomial BTCUSD spot spec, found ${spotCandidates.length}`);
   const spotSpec = validateInternalCarrySpotSpec(spotCandidates[0]);
 
-  const books = await getBookSnapshots({
+  const snapshot = await getBookSnapshots({
     url: manifest.publicData.websocket,
     specs: [spotSpec, perpSpec],
     timeoutSeconds: manifest.publicData.bookSnapshotTimeoutSeconds
   });
 
   for (const spec of [spotSpec, perpSpec]) {
-    const book = books.get(spec.symbol);
-    if (!book || !book.bids.length || !book.asks.length) throw new Error(`Missing validated book for ${spec.symbol}`);
+    const book = snapshot.books.get(spec.symbol);
+    if (!book || !book.bids.length || !book.asks.length) throw new Error(`Missing validated two-sided book for ${spec.symbol}`);
   }
 
   process.stdout.write(`${JSON.stringify({
@@ -140,8 +150,9 @@ async function main() {
     perpetualIdentityValid: true,
     perpetualProductIdResolvedFromFunding: true,
     publicWebSocketValid: true,
-    spotBookValid: true,
-    perpetualBookValid: true,
+    spotTwoSidedBookValid: true,
+    perpetualTwoSidedBookValid: true,
+    emptySideSnapshotsSkipped: snapshot.emptySideSnapshots,
     productsResolved: 2
   }, null, 2)}\n`);
 }
