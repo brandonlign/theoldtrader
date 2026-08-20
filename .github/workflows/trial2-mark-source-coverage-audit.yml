@@ -1,0 +1,26 @@
+name: Trial 2 Mark Source Coverage Audit
+
+on:
+  pull_request:
+    branches: [research/crypto-oos-v1]
+    paths:
+      - 'research/crypto/trial2-mark-source-coverage-audit.py'
+      - '.github/workflows/trial2-mark-source-coverage-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Audit official monthly/daily mark coverage and overlap equality
+        run: python research/crypto/trial2-mark-source-coverage-audit.py
+
+# Source availability/consistency only. No strategy economics, funding values,
+# prices, returns, or P&L are emitted.
