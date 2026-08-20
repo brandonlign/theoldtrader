@@ -64,7 +64,10 @@ jobs:
           python -m py_compile research/crypto/prepare-cross-sectional-data.py
           python -m py_compile research/crypto/prepare-cross-sectional-development-data.py
           python -m py_compile research/crypto/prepare-cross-sectional-final-data.py
-          python -m unittest tests/test_cross_sectional_universe.py tests/test_cross_sectional_development_wrapper.py
+          python -m unittest \
+            tests/test_cross_sectional_universe.py \
+            tests/test_cross_sectional_development_wrapper.py \
+            tests/test_cross_sectional_final_wrapper.py
 
       - name: Acquire checksum-verified full dataset including sealed final holdout
         run: >-
@@ -73,6 +76,7 @@ jobs:
           research/crypto/universes/cross-sectional-v1-universe.json
           /tmp/cross-sectional-v1-final.json.gz
           /tmp/cross-sectional-v1-final-sources.json
+          --confirm-final YES
 
       - name: Verify frozen final boundaries and age provenance before economics
         run: |
