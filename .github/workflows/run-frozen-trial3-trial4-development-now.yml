@@ -45,7 +45,14 @@ jobs:
         run: |
           set -euo pipefail
           npm install
-          npm test
+          node --test \
+            tests/crypto-cross-sectional-portfolio.test.js \
+            tests/crypto-cross-sectional.test.js \
+            tests/crypto-ctrend.test.js \
+            tests/crypto-ctrend-windowed.test.js \
+            tests/crypto-ctrend-promotion.test.js \
+            tests/crypto-research-metrics.test.js \
+            tests/crypto-research.test.js
           python -m unittest tests/test_cross_sectional_universe.py
           node --check research/crypto/cross-sectional-evaluate.js
           node --check research/crypto/ctrend-evaluate-rest.js
