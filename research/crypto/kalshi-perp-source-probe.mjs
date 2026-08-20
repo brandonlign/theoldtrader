@@ -36,6 +36,12 @@ function executable(side, contracts) {
   return Array.isArray(side) && side.reduce((sum, row) => sum + row.quantity, 0) >= contracts;
 }
 
+function primitiveMetadata(object, keyPattern) {
+  if (!object || typeof object !== 'object') return {};
+  return Object.fromEntries(Object.entries(object)
+    .filter(([key, value]) => keyPattern.test(key) && (value == null || ['string', 'number', 'boolean'].includes(typeof value))));
+}
+
 let markets;
 try {
   markets = await getJson(`${BASE}/markets?status=active`);
@@ -96,6 +102,14 @@ const distinctFundingTimes = [...new Set(fundingTimes)];
 const intervalsHours = distinctFundingTimes.slice(1).map((t, i) => (t - distinctFundingTimes[i]) / 3_600_000);
 const regularEightHourIntervals = intervalsHours.filter((hours) => Math.abs(hours - 8) < 1e-9).length;
 
+const schedule = market?.schedule;
+const scheduleObject = schedule && typeof schedule === 'object' && !Array.isArray(schedule) ? schedule : null;
+const scheduleMetadata = primitiveMetadata(scheduleObject, /open|close|start|end|status|maintenance|trade/i);
+const statusMetadata = primitiveMetadata(market, /status|open|close|start|end|maintenance|trade.*time|updated|created/i);
+const feeMetadata = primitiveMetadata(market, /fee|maker|taker|commission|rebate/i);
+const scheduleHasIsOpen = scheduleObject ? Object.prototype.hasOwnProperty.call(scheduleObject, 'is_open') : false;
+const marketOpen = scheduleHasIsOpen ? Boolean(scheduleObject.is_open) : null;
+
 console.log(JSON.stringify({
   developmentProbeOnly: true,
   economicsCalculated: false,
@@ -107,7 +121,15 @@ console.log(JSON.stringify({
   ticker,
   title: market.title,
   contractSize,
-  marketOpen: Boolean(market?.schedule?.is_open),
+  marketStatusMetadata: statusMetadata,
+  schedulePresent: schedule != null,
+  scheduleType: Array.isArray(schedule) ? 'array' : typeof schedule,
+  scheduleKeys: scheduleObject ? Object.keys(scheduleObject).sort() : [],
+  scheduleMetadata,
+  scheduleHasIsOpen,
+  marketOpen,
+  feeMetadata,
+  marketTopLevelKeys: Object.keys(market).sort(),
   orderbookShapeValid: bookShapeValid,
   twoSidedOrderbook: twoSided,
   oneContractBothSidesExecutable: oneContractBoth,
