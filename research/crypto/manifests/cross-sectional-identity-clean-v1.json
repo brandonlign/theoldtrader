@@ -1,0 +1,119 @@
+{
+  "experimentId": "cross-sectional-identity-clean-v1",
+  "trialNumber": 14,
+  "createdAt": "2026-08-20T18:54:17Z",
+  "status": "FROZEN_PRE_DEVELOPMENT",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "strategyFamily": "identity-clean successor to Trial 3 low-turnover cross-sectional spot expected-return selection",
+  "reasonForNewTrial": "Trial 3 development was already observed when a material universe data-identity exception was discovered: Binance LUNAUSDT history spans old-LUNA/LUNC and new-LUNA underlying assets. The frozen Trial 3 no-data-integrity-exception promotion criterion therefore failed. Trial 14 repairs only the prospective universe identity rule under a new numbered trial; it does not alter Trial 3 in place.",
+  "baseSpecification": {
+    "path": "research/crypto/manifests/cross-sectional-v1.json",
+    "gitBlobSha": "831f1b3f14935bbb149eff4beda2ef9fb4c085e1",
+    "inheritExactly": [
+      "historicalData dates and frequency",
+      "decision schedule and one-month embargo",
+      "six feature definitions",
+      "cross-sectional 5/95 winsorization and z-scoring",
+      "pooled ridge model with lambda 10 and 12-month minimum training",
+      "monthly top-three long-only selection",
+      "15% per-asset and 45% total exposure caps",
+      "starting cash and cash-reserve semantics",
+      "140-bps frozen round-trip cost model",
+      "development fold structure",
+      "comparators",
+      "promotion criteria except experiment/trial identity",
+      "2026-01-01 through 2026-08-01 one-shot final holdout boundary"
+    ],
+    "permittedDifferences": [
+      "experiment/trial identity",
+      "universe identity-stability filter and resulting membership",
+      "provenance fields required to document the identity repair"
+    ]
+  },
+  "sourceUniverse": {
+    "path": "research/crypto/universes/cross-sectional-v1-universe.json",
+    "gitBlobSha": "76ed24730ab9c23a2381901d185058a89753f0c2",
+    "formationSourceManifestSha256": "51f69e8b3ad0d8e150c785582322a53cedb23622b06484d1c33d195fa8a629af",
+    "informationEndExclusive": "2023-01-01T00:00:00Z"
+  },
+  "identityStabilityRule": {
+    "definition": "A ranked symbol is eligible only if the exchange ticker represents one continuous economically equivalent underlying asset throughout every formation/history row used under that symbol. Exclude a symbol if first-party issuer/exchange evidence shows that, during the relevant history, the same ticker was reassigned across distinct chains/tokens or the exchange's historical kline endpoint intentionally concatenates predecessor and successor underlying assets.",
+    "evidenceMustBeExternalToPerformance": true,
+    "performanceMayNotDetermineExclusion": true,
+    "frozenIdentityExceptions": [
+      {
+        "symbol": "LUNAUSDT",
+        "exclude": true,
+        "reason": "Original Terra LUNA became Luna Classic/LUNC and a distinct new Terra chain/token assumed ticker LUNA in May 2022; Binance historical LUNA/USDT klines include the pre-2022-05-31 Terra Classic history.",
+        "sources": [
+          "https://docs.terra.money/migration/exchange-migration/",
+          "https://www.binance.tr/tr/blog/duyurular/72bb2d8ded7144c1b81aacd770d1efa5",
+          "https://www.coincarp.com/zh/exchange/announcement/binance-8d1fe8552fa24726b27caf640cbcefbb/"
+        ]
+      }
+    ],
+    "membershipRule": "Starting from the already-frozen Trial 3 2022-only eligible liquidity ranking, remove every frozen identity exception, preserve original rank order for all remaining rows, and select the first 30.",
+    "membershipSize": 30,
+    "becomesImmutableBeforeDevelopment": true
+  },
+  "frozenMembership": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "BNBUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ADAUSDT",
+    "AVAXUSDT",
+    "SHIBUSDT",
+    "DOGEUSDT",
+    "MATICUSDT",
+    "NEARUSDT",
+    "DOTUSDT",
+    "TRXUSDT",
+    "GMTUSDT",
+    "APEUSDT",
+    "FTMUSDT",
+    "ATOMUSDT",
+    "GALAUSDT",
+    "LINKUSDT",
+    "SANDUSDT",
+    "LTCUSDT",
+    "ETCUSDT",
+    "FILUSDT",
+    "OPUSDT",
+    "MANAUSDT",
+    "CHZUSDT",
+    "RUNEUSDT",
+    "AXSUSDT",
+    "WAVESUSDT",
+    "EOSUSDT"
+  ],
+  "membershipDeltaFromTrial3": {
+    "removed": ["LUNAUSDT"],
+    "added": ["EOSUSDT"],
+    "addedSourceRank": 31,
+    "addedSource2022MedianDailyQuoteVolume": 20016429.6128,
+    "addedSource2022ValidDailyBars": 365
+  },
+  "developmentPolicy": {
+    "developmentEndExclusive": "2026-01-01T00:00:00Z",
+    "finalHoldoutRowsMayBeAcquired": false,
+    "trial3DevelopmentPnlMayNotBeUsedAsInput": true,
+    "trial4DevelopmentPnlMayNotBeUsedAsInput": true,
+    "noParameterTuningAfterTrial3": true,
+    "firstTrial14DevelopmentObservationMayOccurOnce": true
+  },
+  "finalPolicy": {
+    "finalHoldoutStart": "2026-01-01T00:00:00Z",
+    "finalHoldoutEndExclusive": "2026-08-01T00:00:00Z",
+    "sealedUntilDevelopmentEvidenceFrozen": true,
+    "oneShot": true
+  },
+  "antiRescue": "After the first Trial 14 development result is observed, no change to the identity rule, exception registry, membership, base Trial 3 mechanics, lambda, features, costs, dates, sizing, rebalance frequency, comparators, or promotion thresholds is allowed under Trial 14. Any such change is a new numbered alpha trial.",
+  "multipleTesting": {
+    "projectWideAlphaTrialNumber": 14,
+    "trials5Through13AlreadyConsumedElsewhere": true,
+    "selectionBiasWarningRequired": true
+  }
+}
