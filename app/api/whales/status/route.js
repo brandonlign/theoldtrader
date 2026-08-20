@@ -2,7 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const baseUrl = process.env.MONEYMOG_WORKER_URL;
+  const baseUrl = process.env.THEOLDTRADER_WORKER_URL;
   if (!baseUrl) {
     return Response.json({ configured: false, enabled: false, message: "Free worker not connected yet." }, {
       headers: { "cache-control": "no-store" }

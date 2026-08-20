@@ -1,19 +1,31 @@
-# TheOldTrader crypto research status — 2026-08-18
+# TheOldTrader crypto research status — 2026-08-19
 
-Authoritative research branch: `research/crypto-oos-v1`  
-Draft PR: `#8`  
+Authoritative research branch: `research/tsmom-v1`  
+Draft PR: `#14` stacked on research PR `#8`  
 Frozen live/paper v2 execution code modified by this branch: **no**  
 Real-money trading enabled: **no**
 
 ## Current conclusion
 
-**No new strategy has yet earned promotion over frozen TheOldTrader crypto v2.** Trial 1's completed robustness replication was weak/negative. Trial 2 carry remains economically interesting but its primary checksum-archive evaluation is still unobserved. Trial 3 cross-sectional selection and Trial 4 CTREND-inspired selection are both frozen before their development results and remain blocked on the immutable 2022-only universe formation. E1 maker execution remains a separate unobserved execution experiment.
+**No new strategy has yet earned promotion over frozen TheOldTrader crypto v2.** Trial 1's completed robustness replication was weak/negative. Trials 5 (`tsmom-v1`) and 6 (`lowvol-v1`) both failed their frozen development gates on first evaluation and are locked against rescue. Trial 3 and Trial 4 remain frozen/unobserved behind their immutable-universe/data-acquisition requirements.
 
-The correct next scientific action is to execute the already-frozen experiments, not tune them or invent outcome-driven rescue variants.
+The current **flagship strategy research candidate is Trial 2 `funding-carry-v1`**, not because it has been proven profitable, but because it is a genuinely different, low-turnover, delta-neutral return source with an already-frozen primary protocol. The primary checksum-archive Trial 2 result remains unobserved. Its observed official-REST replication 2R remains non-promotion evidence and still requires canonical reproduction.
 
-## Frozen live baseline
+E1 `coinbase-maker-execution-v1` remains the parallel flagship **execution** experiment. It must not be treated as alpha evidence or used to retroactively lower the cost model of Trials 1–6.
 
-TheOldTrader crypto v2 remains the paper-only live baseline. This research branch does not modify `src/crypto/strategy.js`, `src/crypto/risk.js`, or `cloudflare/crypto-engine.js`. Research candidates must pass their own frozen development/final gates before any separate promotion proposal can exist.
+The correct next scientific actions are therefore to execute the already-frozen primary carry experiment and E1 evidence collection, not tune failed spot-price families or freeze an opportunistic Trial 7.
+
+## Flagship carry decision
+
+`FLAGSHIP_CARRY.md` records the current prioritization and evidence ladder. Nothing in that decision changes Trial 2 economics.
+
+A result-agnostic audit is now available through:
+
+```bash
+npm run research:carry:flagship -- research/crypto/results/funding-carry-v1/summary.json
+```
+
+The audit can only return historical rejection or `PROMISING_HISTORICAL_ONLY`; it can never promote the strategy. It rejects broken exact-grid provenance, any historical maintenance-margin breach, any failure of the already-frozen +25%/+50%/+100% gap stresses, incomplete P&L/fee decomposition, or non-positive net return versus cash. Even its strongest historical label still requires a later untouched forward or independently sealed validation.
 
 ## Trial 1 — `crypto-oos-v1`
 
@@ -23,15 +35,15 @@ TheOldTrader crypto v2 remains the paper-only live baseline. This research branc
 
 The frozen BTCUSDT Binance replication produced zero ridge holdout trades, negative forecast/realized-return correlation, and did not support rescuing the same candle information set with a more complex model. Frozen v2 and a simple trend comparator lost money in that replication while low-exposure BTC buy-and-hold was positive. Trial 1 may not be retuned after that observed robustness result.
 
-## Trial 2 — `funding-carry-v1`
+## Trial 2 — `funding-carry-v1` — FLAGSHIP STRATEGY RESEARCH CANDIDATE
 
 **Family:** market-neutral BTC spot / BTCUSDT perpetual funding-and-basis carry.  
 **Primary:** frozen, unobserved, checksum-archive acquisition pending.  
 **Replication 2R:** official Binance REST exact-family replication observed and locked; non-promotion only.
 
-The frozen economics remain: 15% starting-equity BTC spot purchase, short exactly the same BTC units in the perpetual, 20% starting-equity futures collateral reserve, no rebalancing or funding-sign/timing optimization, both-leg TheOldTrader friction, standard contract prices for execution, mark price for funding/valuation/margin, exact 8-hour schedule, no interpolation, and frozen gap/margin stress.
+The frozen economics remain unchanged: 15% starting-equity BTC spot purchase, short exactly the same BTC units in the perpetual, 20% starting-equity futures collateral reserve, no rebalancing or funding-sign/timing optimization, both-leg TheOldTrader friction, standard contract prices for execution, mark price for funding/valuation/margin, exact 8-hour schedule, no interpolation, and frozen gap/margin stress.
 
-2R passed its 5,295-row official REST data gate before its first economic result was observed. The exact originating result bundle still requires canonical repository reproduction. 2R cannot replace the primary Trial 2 and cannot authorize a live change.
+The flagship label is a research-priority label only. Primary historical robustness must be produced canonically, pass the result-agnostic audit, and then survive untouched forward or independently sealed validation before any separate promotion proposal can exist.
 
 ## Trial 3 — `cross-sectional-v1`
 
@@ -39,88 +51,53 @@ The frozen economics remain: 15% starting-equity BTC spot purchase, short exactl
 **Status:** frozen before universe formation and before any 2023+ Trial 3 result.  
 **Development/final performance observed:** no.
 
-Trial 3 first forms an immutable 30-symbol Binance USDT universe using **2022 information only**: historically enumerated symbols, deterministic stable/fiat/leveraged-token exclusions, minimum data continuity, and ranking by median 2022 daily quote volume. Current survivors may not be substituted.
-
-After membership is committed, the frozen candidate uses six cross-sectional characteristics, pooled ridge (`lambda=10`), a one-month embargo, monthly top-three long-only selection, 15% per asset, 45% total exposure, and the same 140-bps round-trip friction. Development acquisition is physically capped before `2026-01-01`; the `2026-01-01` to `2026-08-01` holdout is separate and one-shot.
+Trial 3 remains blocked on immutable 2022-only historical-universe formation. Its frozen design and holdout firewall remain unchanged.
 
 ## Trial 4 — `ctrend-v1`
 
 **Family:** CTREND-inspired cross-sectional aggregate technical-trend expected-return selection.  
-**Status:** frozen before the shared 2022-only universe was formed and before any Trial 4 post-2022 performance was observed.  
+**Status:** frozen before shared 2022-only universe formation and before any Trial 4 post-2022 performance.  
 **Development/final performance observed:** no.
 
-Trial 4 was added prospectively after literature review rather than as a Trial 1/3 parameter tweak. It reuses exactly Trial 3's immutable 30-member 2022-only universe but does **not** use Trial 3 P&L, coefficients, picks, or holdout results.
+Trial 4 remains frozen and unobserved. It may not use Trial 3 P&L, coefficients, picks, or holdout results as inputs.
 
-Frozen candidate mechanics:
+## Trial 5 — `tsmom-v1`
 
-- 28 daily price/volume technical indicators: momentum oscillators, price moving-average/MACD signals, volume moving-average/MACD/money-flow signals, and Bollinger/volatility signals;
-- exact 201-day trailing continuity, strict pre-decision feature cutoff, no interpolation;
-- contemporaneous cross-sectional average-rank transform mapped to `[-0.5, 0.5]`;
-- weekly Monday 00:00 UTC decisions;
-- one causal fixed 52-week training window with a one-week embargo;
-- 28 univariate cross-sectional first-stage forecasts with 52-week coefficient smoothing;
-- second-stage elastic net with `alpha=0.5`, training-only feature standardization, deterministic 50-point log lambda path, and AICc selection;
-- retain only strictly positive forecast-selection coefficients, then equally average the surviving first-stage forecasts;
-- top three long-only forecasts only when expected gross log return clears the frozen 140-bps hurdle;
-- 15% target per asset, 45% maximum total exposure, unallocated capital in cash.
+**Status:** **FAILED development on first frozen evaluation.**  
+No parameter, cadence, lookback, volatility target, asset-set, cost, or entry-rule rescue is permitted under Trial 5.
 
-### Pre-result implementation correction
+## Trial 6 — `lowvol-v1`
 
-The first authored helper accidentally nested a second independent 52-week out-of-sample forecast history on top of the 52-week first-stage window. Before any Trial 4 universe/data/performance was observed, this was identified as an implementation interpretation error and corrected to a **single 52-week rolling parameter-estimation window**, consistent with the frozen statistical intent. The correction is recorded explicitly in `TRIAL4_IMPLEMENTATION_REVISION_1.md`; scientific evaluation must call `walkForwardCtrendWindowedPredictions` from `lib/ctrend-windowed.js`.
-
-### Pre-result data-source correction
-
-The first Trial 4 data-builder draft reused Trial 3's monthly Binance Vision archive helper. Before any Trial 4 data or performance was observed, that was rejected because the research record already documents historical monthly-SPOT archive discrepancies and the Trial 4 specification intended an official daily/market-data source. `TRIAL4_DATA_REVISION_1.md` records the correction.
-
-The authoritative Trial 4 builder is now `prepare-ctrend-rest-data.py`, using only the immutable 2022-formed membership and Binance's market-data-only REST daily klines. Every raw REST response page is preserved with its URL and SHA-256, the normalized dataset is separately hashed, no current `exchangeInfo` survivor list is consulted, and no interpolation is permitted. Development mode physically stops before `2026-01-01`; final acquisition is separate and requires explicit confirmation.
-
-Scientific evaluation is additionally wrapped by `ctrend-evaluate-rest.js`, which refuses any Trial 4 dataset unless it identifies the frozen official REST source. The superseded monthly-helper builder remains only as transparent Git history and must not be used for scientific evaluation.
-
-Trial 4 now has:
-
-- frozen manifest and anti-rescue marker;
-- explicit numerical implementation freeze plus the pre-result rolling-window correction log;
-- explicit pre-result data-provenance correction log;
-- tested 28-signal/embargo/elastic-net core;
-- REST-only holdout-safe data builder with raw-page hashes;
-- REST-source-enforcing scientific evaluator with 21-day weekly momentum, cash, major-coin buy/hold, and static-liquidity comparators;
-- 13-week fold diagnostics, signal-selection frequency, first-stage stability, fee/turnover/exposure and per-asset contribution diagnostics;
-- frozen promotion checker;
-- manual development and one-shot final workflows that preserve page-level provenance and raw response artifacts.
-
-No Trial 4 result exists yet.
+**Status:** **FAILED development on first frozen evaluation.**  
+No formation-window, holding-period, universe, exposure, cost, or selector rescue is permitted under Trial 6.
 
 ## Execution experiment E1 — `coinbase-maker-execution-v1`
 
-**Question:** can post-only maker execution reduce TheOldTrader implementation cost after queue position, non-fills, full-book depth and adverse selection?  
+**Question:** can post-only maker execution reduce implementation cost after queue position, non-fills, full-book depth and adverse selection?  
 **Status:** frozen forward-data protocol; scientific data acquisition pending.
 
 E1 remains separate from alpha research. The first scientific window requires at least 168 hours for each BTC/ETH/SOL feed plus frozen hash, coverage, sequence, queue and independent taker-VWAP audit rules. No E1 scientific result has been observed.
 
+The three-product runner now emits 30-second progress heartbeats, child-process state, and bytes written so an engineering/scientific recording cannot silently die while appearing active.
+
+## Microstructure-alpha note
+
+Recent quarter-hour/order-imbalance research is scientifically relevant to the L2/trade data E1 already records, especially multi-hour return predictability after quarter-hour opening flow. It is **not** promoted to Trial 7 here. The reported signal magnitude is measured in basis points and its direct opening-return trading effect is smaller still, while TheOldTrader's current retail friction is much larger. A new microstructure-alpha trial should be frozen only if execution evidence first makes the economics credible; E1 itself must not be mined as alpha training data after its outcomes are observed without a separate prospective protocol.
+
 ## Infrastructure state
 
-GitHub Actions was retried on 2026-08-18 and still failed **before any workflow step started**, consistent with the account Actions billing/spending-limit block. That prevents the official universe-formation and checksum/REST workflows from running. The current execution environment also cannot resolve the official Binance archive or market-data REST hosts directly, so the immutable 2022 universe and Trial 4 development data cannot honestly be acquired here as a substitute.
+GitHub Actions has been blocked before workflow steps by the account Actions billing/spending-limit condition. That still blocks the manual canonical primary carry workflow and several official-data workflows.
 
-This is an infrastructure blocker, not a strategy result. Do not infer performance from it and do not weaken provenance rules to bypass it.
-
-## Tested implementation state on 2026-08-18
-
-Local deterministic validation completed before any Trial 4 performance was observed:
-
-- 13 JavaScript tests passed covering signal count, tie ranking, no-future feature cutoff, daily-gap rejection, weekly schedule, 52-week/embargo logic, elastic-net/AICc behavior, corrected one-window estimation, and promotion-gate behavior;
-- 3 legacy Python firewall tests passed for the superseded builder, covering development cutoff, explicit final confirmation, and boundary-mismatch abort behavior;
-- 3 additional authoritative REST-builder tests are committed for development/final separation, exact daily-kline normalization, and non-midnight timestamp rejection and are required by both Trial 4 workflows;
-- syntax/compile checks were completed for the Trial 4 model, corrected windowed estimator, evaluator, REST-source wrapper, promotion checker and authoritative REST data builder.
-
-These are implementation/provenance checks only. They are **not** evidence that Trial 4 is profitable.
+Vercel preview builds are functioning and provide repository-wide deterministic validation. The flagship-audit addition passed the existing project test/build path; it does not substitute for the missing official carry data acquisition.
 
 ## Required next execution order
 
-1. Run the existing Trial 3 universe-formation workflow and commit the immutable 2022-only 30-symbol membership/source hashes.
-2. Run Trial 3 development and Trial 4 development independently; neither may access 2026 rows. Trial 4 must use the authoritative REST builder/evaluator only.
-3. Reproduce carry 2R canonically and run primary Trial 2 when checksum-archive compute is available.
-4. Only after a candidate's development evidence is frozen may its separate one-shot final holdout be opened.
-5. Apply the pre-frozen promotion checker. A failure creates a recorded failed trial; it does not authorize parameter rescue under the same trial number.
-6. Keep E1 execution evidence separate from alpha evidence.
+1. **Primary Trial 2:** run the existing checksum-archive carry workflow exactly once when provenance-preserving execution is available; do not change the frozen candidate.
+2. Run the new result-agnostic carry flagship audit on that immutable summary. Historical failure closes the frozen flagship candidate; historical success remains `PROMISING_HISTORICAL_ONLY`.
+3. Canonically reproduce the already-observed exact-family 2R result without changing 2R.
+4. Continue E1 engineering/scientific acquisition independently; execution evidence cannot rewrite prior alpha/carry results.
+5. If carry clears historical evidence, commit a later untouched forward or independently sealed validation protocol **before viewing its result**. Only that unchanged validation can support a future promotion proposal.
+6. Keep Trials 3/4 frozen until their existing provenance/data blockers can be resolved. Do not use their unobserved state as permission for outcome-driven redesign.
+7. Do not create Trial 7 merely to keep trying variants. A new candidate should introduce a defensible new return source and be frozen before its first result.
 
-Until those steps produce qualifying evidence, frozen v2 remains the paper baseline and no research candidate is promoted.
+Until qualifying evidence exists, frozen v2 remains the paper baseline and no research candidate is promoted.
