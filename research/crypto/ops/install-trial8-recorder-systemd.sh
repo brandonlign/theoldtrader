@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SERVICE_NAME="theoldtrader-trial7-recorder"
-REQUIRED_BRANCH="research/cross-venue-funding-v1-current"
+SERVICE_NAME="theoldtrader-trial8-recorder"
+REQUIRED_BRANCH="research/bitnomial-carry-v1"
 SERVICE_USER="${1:-$(id -un)}"
 
 if [[ "$(uname -s)" != "Linux" ]]; then
-  echo "Trial 7 recorder must be installed on the persistent Linux host, not this $(uname -s) machine." >&2
+  echo "Trial 8 recorder must be installed on a persistent Linux host." >&2
   exit 1
 fi
 
@@ -16,38 +16,17 @@ NPM_BIN="$(command -v npm || true)"
 NODE_BIN="$(command -v node || true)"
 SHA256SUM_BIN="$(command -v sha256sum || true)"
 
-if [[ -z "$NPM_BIN" || -z "$NODE_BIN" ]]; then
-  echo "node and npm are required" >&2
-  exit 1
-fi
-if [[ -z "$SHA256SUM_BIN" ]]; then
-  echo "sha256sum is required" >&2
-  exit 1
-fi
-if ! command -v systemctl >/dev/null 2>&1; then
-  echo "systemd/systemctl is required for sealed Trial 7 deployment" >&2
-  exit 1
-fi
-if [[ "$CURRENT_BRANCH" != "$REQUIRED_BRANCH" ]]; then
-  echo "Refusing Trial 7 install from branch '$CURRENT_BRANCH'; required '$REQUIRED_BRANCH'" >&2
-  exit 1
-fi
-if ! git -C "$ROOT" diff --quiet || ! git -C "$ROOT" diff --cached --quiet; then
-  echo "Refusing Trial 7 install from a dirty worktree" >&2
-  exit 1
-fi
-if ! id "$SERVICE_USER" >/dev/null 2>&1; then
-  echo "Service user '$SERVICE_USER' does not exist" >&2
-  exit 1
-fi
+[[ -n "$NPM_BIN" && -n "$NODE_BIN" ]] || { echo "node and npm are required" >&2; exit 1; }
+[[ -n "$SHA256SUM_BIN" ]] || { echo "sha256sum is required" >&2; exit 1; }
+command -v systemctl >/dev/null 2>&1 || { echo "systemd/systemctl is required" >&2; exit 1; }
+[[ "$CURRENT_BRANCH" == "$REQUIRED_BRANCH" ]] || { echo "Refusing Trial 8 install from branch '$CURRENT_BRANCH'; required '$REQUIRED_BRANCH'" >&2; exit 1; }
+git -C "$ROOT" diff --quiet && git -C "$ROOT" diff --cached --quiet || { echo "Refusing Trial 8 install from a dirty worktree" >&2; exit 1; }
+id "$SERVICE_USER" >/dev/null 2>&1 || { echo "Service user '$SERVICE_USER' does not exist" >&2; exit 1; }
 
 cd "$ROOT"
-
-# Trial 7 acquisition/evaluation uses Node built-ins only. Dependency mutation
-# during scientific deployment is unnecessary for the sealed collector.
 npm test
-npm run research:cv:prestart
-npm run research:cv:connectivity
+npm run research:t8:freeze-guard
+npm run research:t8:connectivity
 
 DATA_DIR="$ROOT/research/crypto/data-cache"
 mkdir -p "$DATA_DIR"
@@ -60,23 +39,19 @@ fi
 
 RUNTIME_FILES=(
   "package.json"
-  "research/crypto/manifests/cross-venue-funding-v1.json"
-  "research/crypto/trial7-manifest-guard.mjs"
-  "research/crypto/trial7-recorder-start.mjs"
-  "research/crypto/record-cross-venue-funding.mjs"
-  "research/crypto/lib/trial7-freeze-identity.js"
-  "research/crypto/lib/trial7-collection-schedule.js"
-  "research/crypto/lib/cross-venue-record.js"
+  "research/crypto/manifests/bitnomial-carry-v1.json"
+  "research/crypto/trial8-manifest-guard.mjs"
+  "research/crypto/record-bitnomial-carry.mjs"
+  "research/crypto/lib/trial8-freeze-identity.js"
 )
 CHECKSUM_CONTENT="$(for relative in "${RUNTIME_FILES[@]}"; do "$SHA256SUM_BIN" "$ROOT/$relative"; done)"
 CHECKSUM_PATH="/etc/${SERVICE_NAME}.sha256"
 UNIT_PATH="/etc/systemd/system/${SERVICE_NAME}.service"
 NODE_DIR="$(dirname "$NODE_BIN")"
 SYSTEM_PATH="${NODE_DIR}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-
 UNIT_CONTENT="$(cat <<UNIT
 [Unit]
-Description=TheOldTrader Trial 7 sealed cross-venue funding recorder
+Description=TheOldTrader Trial 8 sealed Bitnomial carry recorder
 After=network-online.target
 Wants=network-online.target
 
@@ -86,7 +61,7 @@ User=${SERVICE_USER}
 WorkingDirectory=${ROOT}
 Environment=PATH=${SYSTEM_PATH}
 ExecStartPre=${SHA256SUM_BIN} -c ${CHECKSUM_PATH}
-ExecStart=${NPM_BIN} run research:cv:record
+ExecStart=${NPM_BIN} run research:t8:record
 Restart=on-failure
 RestartSec=30
 TimeoutStopSec=30
@@ -127,25 +102,10 @@ else
 fi
 
 cat <<EOF
-
-Trial 7 recorder service installed.
-
-Scientific outputs (gitignored):
-  ${DATA_DIR}/cross-venue-funding-v1-forward.ndjson
-  ${DATA_DIR}/cross-venue-funding-v1-forward.raw.ndjson.gz
-
-Runtime identity snapshot:
-  ${CHECKSUM_PATH}
-  Every service start verifies these acquisition files before network access.
-
-Node runtime:
-  ${NODE_BIN} ($(${NODE_BIN} --version))
-
-Sealed health check:
-  cd ${ROOT} && npm run research:cv:health
-
-Journal:
-  sudo journalctl -u ${SERVICE_NAME} -f
-
-This service uses public market-data endpoints only. It has no order path and no exchange credentials.
+Trial 8 recorder installed.
+Data: ${DATA_DIR}/bitnomial-carry-v1-forward.ndjson
+Raw:  ${DATA_DIR}/bitnomial-carry-v1-forward.raw.ndjson.gz
+Health: cd ${ROOT} && npm run research:t8:health
+Logs: sudo journalctl -u ${SERVICE_NAME} -f
+This is public-data collection only. It has no order path and uses no exchange credentials.
 EOF
