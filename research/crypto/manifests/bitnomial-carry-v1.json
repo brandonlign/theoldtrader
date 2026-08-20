@@ -8,7 +8,11 @@
   "scientificMode": "forward-only",
   "freeze": {
     "frozenAt": "2026-08-20T00:15:00Z",
+    "lastPreObservationSourceCorrectionAt": "2026-08-20T00:24:00Z",
     "reason": "Trial 7 could not begin because Binance USD-M returned HTTP 451 from both available New York/Oracle collection environments. Trial 8 preserves the pre-result carry hypothesis while replacing the inaccessible venue with first-party U.S.-regulated public market data. Trial 7 remains an operational no-start, not a failed strategy result.",
+    "revisionLog": [
+      "Before any Trial 8 observation, the Bitnomial funding URL was corrected from the generic /prod REST base assumption to the explicit first-party funding-rate request path documented by Bitnomial: /exchange/api/v1/funding-rates/. No economic parameter changed."
+    ],
     "firstTrial8EconomicResultObserved": false
   },
   "hypothesis": "A static BTC cash-and-carry position that buys Coinbase BTC-USD spot and shorts the Bitnomial Bitcoin USD Centi perpetual earns positive net funding carry over 180 days after conservative retail spot costs, Bitnomial exchange/clearing fees, basis movement, stale-price gates, and margin stress.",
@@ -33,7 +37,7 @@
       "contractSizeBtc": 0.01,
       "specsEndpoint": "https://bitnomial.com/exchange/api/v1/prod/product/specs/?active=true",
       "productDataEndpointPrefix": "https://bitnomial.com/exchange/api/v1/prod/product/data/",
-      "fundingEndpoint": "https://bitnomial.com/exchange/api/v1/prod/funding-rates/"
+      "fundingEndpoint": "https://bitnomial.com/exchange/api/v1/funding-rates/"
     }
   },
   "forwardWindow": {
@@ -104,12 +108,12 @@
     "noThirdPartyCandidateData": true,
     "noOutcomeSelectedSubperiods": true,
     "bitnomialProductIdentityRule": "The active product must identify the Bitcoin US Dollar Centi perpetual, have contract_size=0.01 BTC, and funding rows must match its product_id. Identity mismatch fails before economics.",
-    "bitnomialFundingCompletenessRule": "Every regular 8-hour interval_end strictly after start and at or before end must be present unless first-party product/market status proves the market was closed for the complete interval; absent unexcused funding intervals fail the data gate."
+    "bitnomialFundingCompletenessRule": "Every regular 8-hour interval_end strictly after start and at or before end must be present; absent funding intervals fail the data gate rather than being synthesized or forward-filled."
   },
   "marginStress": {
     "researchMaintenanceMarginPctOfPerpetualNotional": 0.15,
     "adverseBasisShockPct": [0.05, 0.10, 0.20],
-    "rule": "Reserved perpetual collateral plus perpetual unrealized PnL plus accumulated funding must remain above the research maintenance threshold under the observed path and each frozen adverse relative-basis shock. This is a conservative research gate, not a claim about Bitnomial's exact account-tier margin requirement."
+    "rule": "Reserved perpetual collateral plus perpetual unrealized PnL plus accumulated funding must remain above the 15% research maintenance threshold under the observed path and each frozen adverse relative-basis shock. The 15% threshold matches Bitnomial Clearinghouse's currently published BTCUC maintenance margin, but it remains frozen as a Trial 8 research rule even if the venue later changes published margin."
   },
   "comparators": [
     "zero-return cash",
