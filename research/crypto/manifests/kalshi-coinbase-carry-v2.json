@@ -1,0 +1,84 @@
+{
+  "experimentId": "kalshi-coinbase-carry-v2",
+  "trialNumber": 12,
+  "frozenAt": "2026-08-20T14:27:25Z",
+  "status": "FROZEN_HISTORICAL_UNIT_REPLICATION_UNOBSERVED",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "parentTrial": 11,
+  "reasonForNewTrial": "Trial 11's first economic output exposed a source-unit error: Kalshi KXBTCPERP bid/ask/mark fields are USD per 0.0001-BTC contract, not BTC/USD. Trial 12 freezes the deterministic unit correction before corrected P&L is calculated. No threshold, window, sizing target, fee, collateral, shock, or pass gate is changed.",
+  "preFreezeUnitEvidence": {
+    "trial11EconomicOutputInvalid": true,
+    "rawKalshiTicker": "KXBTCPERP",
+    "contractSizeBtc": 0.0001,
+    "rawMarketTitle": "0.0001 BTC",
+    "quoteUnit": "USD per 0.0001 BTC contract",
+    "economicallyCorrectRelation": "one Kalshi contract quote is approximately BTCUSD * 0.0001; perp dollar P&L, funding notional, fees and margin therefore scale by whole contract count, not BTC quantity",
+    "correctedPnlObservedBeforeFreeze": false
+  },
+  "historicalDevelopmentWindow": {
+    "startInclusive": "2026-06-03T20:00:00Z",
+    "endInclusive": "2026-08-20T12:00:00Z",
+    "expectedBoundaries": 234,
+    "intervalHours": 8,
+    "role": "unit-corrected historical replication only; cannot promote regardless of result"
+  },
+  "candidate": {
+    "startingEquityUsd": 10000,
+    "spotTargetNotionalPctStartingEquity": 0.15,
+    "perpetualCollateralReservePctStartingEquity": 0.30,
+    "contractSizeBtc": 0.0001,
+    "sizingRule": "target 15% starting-equity Coinbase BTC spot notional after frozen adverse entry slippage, round down to whole Kalshi contracts, then spot quantity BTC = contracts * 0.0001",
+    "entryRule": "first frozen boundary: buy Coinbase spot at exact 1h open plus frozen adverse slippage; short Kalshi at exact historical bid close",
+    "exitRule": "last frozen boundary: sell Coinbase spot at exact 1h open minus frozen adverse slippage; cover Kalshi short at exact historical ask close",
+    "fundingAtEntry": "not earned",
+    "fundingRule": "for each later boundary, funding USD = contracts * Kalshi USD-per-contract mark_price * funding_rate",
+    "perpPricePnlRule": "contracts * (entry USD-per-contract quote - current/exit USD-per-contract quote)",
+    "rebalancing": "none",
+    "compounding": "none",
+    "fundingThreshold": "none",
+    "unusedCashInterest": 0
+  },
+  "costModel": {
+    "primary": {
+      "coinbaseSpotFeeBpsPerOrder": 60,
+      "coinbaseAdverseSlippageBpsPerOrder": 10,
+      "kalshiAllInFeeReserveBpsPerOrder": 20,
+      "kalshiAdditionalSlippageBpsPerOrder": 0
+    },
+    "stress": {
+      "coinbaseAllInBpsPerOrder": 100,
+      "kalshiAllInFeeReserveBpsPerOrder": 40,
+      "kalshiAdditionalAdverseSlippageBpsPerOrder": 10
+    },
+    "feeVerificationFirewall": "No result may be described as executable retail net performance until the applicable current Kinetics/FCM all-in fee schedule is independently verified."
+  },
+  "riskModel": {
+    "researchMaintenanceMarginPctCurrentPerpNotional": 0.15,
+    "perpNotionalRule": "contracts * Kalshi USD-per-contract mark",
+    "futuresEquityRule": "30% starting-equity reserve plus cumulative contract-dollar short mark P&L plus cumulative contract-dollar funding minus Kalshi entry fee",
+    "additionalInstantaneousAdversePerpMarkShocksPct": [0.10, 0.25, 0.50]
+  },
+  "evaluation": {
+    "developmentPassRequires": {
+      "primaryNetPnlPositive": true,
+      "totalFundingPositive": true,
+      "historicalMarginFailure": false,
+      "shock25PctMarginFailure": false,
+      "highCostStressNetPnlPositive": true
+    },
+    "maximumLabel": "PROMISING_HISTORICAL_UNIT_REPLICATION_ONLY",
+    "cannotPromote": true
+  },
+  "dataRequirements": {
+    "kalshiTicker": "KXBTCPERP",
+    "coinbaseProduct": "BTC-USD",
+    "requireExact234Boundaries": true,
+    "requireExactEightHourGrid": true,
+    "requirePositiveKalshiBidAskMark": true,
+    "requireExactContractSizeBtc": 0.0001,
+    "requireRawSourceHashes": true,
+    "noInterpolation": true
+  },
+  "antiRescueRule": "After the first Trial 12 economic output, no change to window, unit interpretation, position target, collateral, costs, funding rule, maintenance threshold, shocks or pass criteria is allowed under Trial 12. Any further economic change requires a new trial."
+}
