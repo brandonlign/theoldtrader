@@ -1,0 +1,150 @@
+name: Execute frozen Trial 14 identity-clean development
+
+on:
+  push:
+    branches: [research/cross-sectional-identity-clean-v1]
+    paths:
+      - '.github/workflows/run-trial14-development.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: execute-trial14-identity-clean-development
+  cancel-in-progress: false
+
+jobs:
+  evaluate-development:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - name: Check out frozen Trial 14 branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/cross-sectional-identity-clean-v1
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Require pristine Trial 14 development slot and sealed final
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/cross-sectional-identity-clean-v1-development/summary.json
+          test ! -e research/crypto/results/cross-sectional-identity-clean-v1-final/summary.json
+          test ! -e research/crypto/TRIAL14_FINAL_ACCESS_AUTHORIZED.md
+
+      - name: Verify Trial 14 was frozen before development
+        run: |
+          set -euo pipefail
+          node research/crypto/trial14-freeze-audit.js
+          node --check research/crypto/cross-sectional-identity-clean-evaluate.js
+          node --check research/crypto/validate-trial14-development-data.js
+          python -m py_compile research/crypto/prepare-cross-sectional-identity-clean-development-data.py
+
+      - name: Validate inherited Trial 3 mechanics without unrelated app tests
+        run: |
+          set -euo pipefail
+          npm install
+          node --test \
+            tests/crypto-cross-sectional-portfolio.test.js \
+            tests/crypto-cross-sectional.test.js \
+            tests/crypto-research-metrics.test.js \
+            tests/crypto-research.test.js
+          python -m unittest \
+            tests/test_cross_sectional_universe.py \
+            tests/test_cross_sectional_development_wrapper.py
+
+      - name: Acquire Trial 14 development data only
+        run: >-
+          python research/crypto/prepare-cross-sectional-identity-clean-development-data.py
+          research/crypto/manifests/cross-sectional-identity-clean-v1.json
+          research/crypto/universes/cross-sectional-identity-clean-v1-universe.json
+          /tmp/cross-sectional-identity-clean-v1-development.json.gz
+          /tmp/cross-sectional-identity-clean-v1-development-sources.json
+
+      - name: Fail closed on data integrity before observing economics
+        run: >-
+          node research/crypto/validate-trial14-development-data.js
+          --manifest research/crypto/manifests/cross-sectional-identity-clean-v1.json
+          --universe research/crypto/universes/cross-sectional-identity-clean-v1-universe.json
+          --data /tmp/cross-sectional-identity-clean-v1-development.json.gz
+
+      - name: Independently verify final holdout is absent
+        run: |
+          python - <<'PY'
+          import gzip, json
+          from datetime import datetime, timezone
+          boundary = int(datetime(2026, 1, 1, tzinfo=timezone.utc).timestamp())
+          with gzip.open('/tmp/cross-sectional-identity-clean-v1-development.json.gz', 'rt', encoding='utf-8') as handle:
+              data = json.load(handle)
+          assert data['experimentId'] == 'cross-sectional-identity-clean-v1'
+          assert data['trialNumber'] == 14
+          assert data['endExclusive'] == '2026-01-01T00:00:00Z'
+          assert 'LUNAUSDT' not in data['universeMembership']
+          assert 'EOSUSDT' in data['universeMembership']
+          assert all(row['time'] < boundary for rows in data['products'].values() for row in rows)
+          print('Trial 14 final-holdout firewall verified before economics.')
+          PY
+
+      - name: Observe frozen Trial 14 development result once
+        run: >-
+          node research/crypto/cross-sectional-identity-clean-evaluate.js
+          --mode development
+          --manifest research/crypto/manifests/cross-sectional-identity-clean-v1.json
+          --universe research/crypto/universes/cross-sectional-identity-clean-v1-universe.json
+          --data /tmp/cross-sectional-identity-clean-v1-development.json.gz
+          --out research/crypto/results/cross-sectional-identity-clean-v1-development/summary.json
+
+      - name: Preserve Trial 14 provenance and frozen development gate
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          source_path = Path('/tmp/cross-sectional-identity-clean-v1-development-sources.json')
+          sources = json.loads(source_path.read_text())
+          summary_path = Path('research/crypto/results/cross-sectional-identity-clean-v1-development/summary.json')
+          summary = json.loads(summary_path.read_text())
+          result_dir = summary_path.parent
+          provenance = {
+              'experimentId': 'cross-sectional-identity-clean-v1',
+              'trialNumber': 14,
+              'mode': 'development',
+              'finalHoldoutRowsAcquired': 0,
+              'datasetCanonicalJsonSha256': sources['datasetCanonicalJsonSha256'],
+              'coreTrial3CompatibleDatasetCanonicalJsonSha256': sources['coreTrial3CompatibleDatasetCanonicalJsonSha256'],
+              'formationSourceManifestSha256': sources['formationSourceManifestSha256'],
+              'universeMembershipSha256': sources['universeMembershipSha256'],
+              'sourceArchiveCount': sources['sourceArchiveCount'],
+              'firstObservationSourceCount': sources['firstObservationSourceCount'],
+              'identityExcludedSymbols': sources['identityExcludedSymbols'],
+              'sourceManifestSha256': hashlib.sha256(source_path.read_bytes()).hexdigest(),
+          }
+          (result_dir / 'provenance.json').write_text(json.dumps(provenance, indent=2, sort_keys=True) + '\n')
+          (result_dir / 'development-gate.json').write_text(json.dumps(summary['developmentGateForFinalAccess'], indent=2, sort_keys=True) + '\n')
+          PY
+
+      - name: Commit immutable Trial 14 development evidence
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- \
+            research/crypto/results/cross-sectional-identity-clean-v1-development/summary.json \
+            research/crypto/results/cross-sectional-identity-clean-v1-development/provenance.json \
+            research/crypto/results/cross-sectional-identity-clean-v1-development/development-gate.json
+          git commit -m 'Observe Trial 14 identity-clean development result'
+          git push origin HEAD:research/cross-sectional-identity-clean-v1
+
+      - name: Upload immutable Trial 14 development evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-sectional-identity-clean-v1-development
+          path: research/crypto/results/cross-sectional-identity-clean-v1-development
+          if-no-files-found: error
