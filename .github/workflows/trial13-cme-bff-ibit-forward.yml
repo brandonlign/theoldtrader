@@ -20,11 +20,8 @@ on:
         type: choice
         options: [all, record, risk, evaluate]
   schedule:
-    # Primary weekday collection after the 4 PM New York settlement.
     - cron: '17 22 * * 1-5'
-    # Second attempt later the same New York evening if official sources lag.
     - cron: '17 1 * * 2-6'
-    # Weekend retries preserve Friday observations if BlackRock publishes late.
     - cron: '17 4,8,12,16,20 * * 6'
     - cron: '17 12 * * 0'
 
@@ -84,7 +81,6 @@ jobs:
           NODE
 
       - name: Record official roll evidence when eligible
-        id: roll
         if: (inputs.mode == '' || inputs.mode == 'all' || inputs.mode == 'record') && steps.cal.outputs.is_roll == 'true'
         env:
           TARGET: ${{ steps.cal.outputs.target_date }}
@@ -99,13 +95,11 @@ jobs:
           fi
           exit "$code"
 
-      - name: Record daily CME margin mark
-        id: risk
+      - name: Record current daily CME margin mark
         if: inputs.mode == '' || inputs.mode == 'all' || inputs.mode == 'risk'
         env:
           TARGET: ${{ steps.cal.outputs.target_date }}
         run: |
-          # Weekend schedule exists only to recover Friday roll evidence; do not fabricate weekend marks.
           dow=$(date -u -d "$TARGET" +%u)
           if [ "$dow" -gt 5 ]; then exit 0; fi
           set +e
@@ -113,10 +107,14 @@ jobs:
           code=$?
           set -e
           if [ "$code" -eq 75 ]; then
-            echo "Official daily risk source/open position is not ready for this date."
+            echo "Current risk mark is not required or official source is not ready yet."
             exit 0
           fi
           exit "$code"
+
+      - name: Recover prior missing daily CME risk evidence
+        if: inputs.mode == '' || inputs.mode == 'all' || inputs.mode == 'risk'
+        run: node research/crypto/trial13-risk-record.mjs --recover
 
       - name: Remove recorder scratch files
         run: find research/crypto/evidence/trial13 -type f -name '*.tmp-*' -delete 2>/dev/null || true
@@ -137,16 +135,7 @@ jobs:
             echo 'No new evidence to commit.'
             exit 0
           fi
-          # Scientific writes are evidence-only. Refuse accidental code/manifest mutation.
           bad=$(git diff --cached --name-only | grep -Ev '^research/crypto/evidence/trial13/' || true)
           if [ -n "$bad" ]; then echo "Refusing non-evidence write: $bad"; exit 9; fi
           git commit -m "Trial 13: preserve official forward evidence for $TARGET"
           git push origin HEAD:main
-
-      - name: Upload current evaluation
-        if: always() && hashFiles('/tmp/trial13-evaluation.json') != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: trial13-evaluation-${{ steps.cal.outputs.target_date }}
-          path: /tmp/trial13-evaluation.json
-          retention-days: 90
