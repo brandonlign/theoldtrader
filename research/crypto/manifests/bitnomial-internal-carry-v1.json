@@ -14,7 +14,8 @@
     "viabilityScreenMayPromote": false,
     "primaryForwardStrongestClassification": "PROMISING_FORWARD_30D_ONLY",
     "extendedValidationStrongestClassification": "PROMOTION_ELIGIBLE_RESEARCH_ONLY",
-    "freezeRequiredBeforeCandidateRecording": true
+    "freezeRequiredBeforeCandidateRecording": true,
+    "promotionRequiresVerifiedActualIntermediaryFeeSchedule": true
   },
   "venues": {
     "spotLong": {
@@ -23,7 +24,7 @@
       "symbol": "BTCUSD",
       "expectedApiType": "spot",
       "contractSizeBtc": 0.00001,
-      "spotFeeBpsPerSide": 2
+      "publishedExchangeClearingFeeBpsPerSide": 2
     },
     "perpetualShort": {
       "venue": "bitnomial",
@@ -32,7 +33,7 @@
       "fundingBaseSymbol": "BTCUC",
       "expectedApiType": "perpetual",
       "contractSizeBtc": 0.01,
-      "exchangeClearingFeeUsdPerContractPerSide": 0.10
+      "publishedExchangeClearingFeeUsdPerContractPerSide": 0.10
     }
   },
   "publicData": {
@@ -58,12 +59,16 @@
     "unusedCapitalRemainsCash": true
   },
   "executionModel": {
-    "primary": "Use full public Bitnomial book snapshot VWAP for the exact frozen quantity at entry and exit. Buy spot against asks, sell spot against bids, sell perpetual against bids, buy perpetual against asks. Insufficient displayed depth fails the execution gate; do not extrapolate depth.",
-    "spotFeeBpsPerSide": 2,
-    "perpetualFeeUsdPerContractPerSide": 0.10,
+    "primary": "Use full public Bitnomial book snapshot VWAP for the exact frozen quantity at entry and exit. Buy spot against asks, sell spot against bids, sell perpetual against bids, buy perpetual against asks. Insufficient displayed depth fails the execution gate; do not extrapolate depth. Primary known-cost accounting includes published Bitnomial Exchange+Clearinghouse fees only and is not labeled fully all-in until an actual FCM/intermediary customer fee schedule is verified.",
+    "publishedSpotExchangeClearingFeeBpsPerSide": 2,
+    "publishedPerpetualExchangeClearingFeeUsdPerContractPerSide": 0.10,
     "additionalPrimarySlippageBps": 0,
     "stressAdditionalAdverseBpsPerOrder": 10,
-    "ordersInRoundTrip": 4
+    "stressUnverifiedIntermediaryCostBpsPerSpotOrder": 10,
+    "stressUnverifiedIntermediaryCostUsdPerPerpetualContractPerSide": 1.00,
+    "ordersInRoundTrip": 4,
+    "intermediaryFeeStatus": "UNVERIFIED",
+    "intermediaryFeeRule": "Bitnomial states posted fees include Exchange and Clearinghouse fees, while futures customers trade through an FCM/intermediary that may charge separate commission. Until an actual applicable customer fee schedule is verified, the primary result is known-venue-cost economics only; the stress case reserves 10 bps per spot order plus $1.00 per perpetual contract per side for unverified intermediary cost, and no result may become promotion-eligible research solely from the known-cost primary scenario."
   },
   "fundingAccounting": {
     "nativeIntervalHours": 8,
