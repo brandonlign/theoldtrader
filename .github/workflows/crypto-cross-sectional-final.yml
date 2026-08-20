@@ -40,6 +40,7 @@ jobs:
           test -f research/crypto/universes/cross-sectional-v1-formation-sources.json
           test -f research/crypto/results/cross-sectional-v1-development/summary.json
           test -f research/crypto/results/cross-sectional-v1-development/provenance.json
+          test -f research/crypto/TRIAL3_IMPLEMENTATION_REVISION_3.md
           for path in \
             research/crypto/results/cross-sectional-v1-final/summary.json \
             research/crypto/results/cross-sectional-v1-final/provenance.json \
@@ -55,17 +56,19 @@ jobs:
           npm ci
           npm test
           python -m py_compile research/crypto/prepare-cross-sectional-data.py
-          python -m unittest tests/test_cross_sectional_universe.py
+          python -m py_compile research/crypto/prepare-cross-sectional-development-data.py
+          python -m py_compile research/crypto/prepare-cross-sectional-final-data.py
+          python -m unittest tests/test_cross_sectional_universe.py tests/test_cross_sectional_development_wrapper.py
 
       - name: Acquire checksum-verified full dataset including sealed final holdout
         run: >-
-          python research/crypto/prepare-cross-sectional-data.py
+          python research/crypto/prepare-cross-sectional-final-data.py
           research/crypto/manifests/cross-sectional-v1.json
           research/crypto/universes/cross-sectional-v1-universe.json
           /tmp/cross-sectional-v1-final.json.gz
           /tmp/cross-sectional-v1-final-sources.json
 
-      - name: Verify frozen final boundaries before economics
+      - name: Verify frozen final boundaries and age provenance before economics
         run: |
           python - <<'PY'
           import gzip, json
@@ -75,10 +78,12 @@ jobs:
           with gzip.open('/tmp/cross-sectional-v1-final.json.gz', 'rt', encoding='utf-8') as handle:
               data = json.load(handle)
           assert data['endExclusive'] == '2026-08-01T00:00:00Z'
+          assert len(data['firstObservedTimeBySymbol']) == 30
+          assert all(symbol in data['firstObservedTimeBySymbol'] for symbol in data['universeMembership'])
           final_rows = [row for rows in data['products'].values() for row in rows if start <= row['time'] < end]
           assert final_rows, 'No final-holdout rows were acquired'
           assert all(row['time'] < end for rows in data['products'].values() for row in rows)
-          print(f'Final holdout acquisition gate passed with {len(final_rows)} member-day rows.')
+          print(f'Final holdout acquisition gate passed with {len(final_rows)} member-day rows and 30 age anchors.')
           PY
 
       - name: Evaluate final holdout exactly once
@@ -108,6 +113,8 @@ jobs:
               'formationSourceManifestSha256': sources['formationSourceManifestSha256'],
               'universeMembershipSha256': sources['universeMembershipSha256'],
               'sourceArchiveCount': sources['sourceArchiveCount'],
+              'firstObservationSourceCount': sources['firstObservationSourceCount'],
+              'assetAgeSource': sources['assetAgeSource'],
               'sourceManifestSha256': hashlib.sha256(source_path.read_bytes()).hexdigest(),
           }
           out.write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n')
