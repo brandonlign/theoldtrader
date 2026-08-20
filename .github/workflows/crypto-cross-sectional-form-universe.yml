@@ -93,5 +93,5 @@ jobs:
             research/crypto/universes/cross-sectional-v1-formation-sources.json
           if-no-files-found: error
 
-# Final explicit pre-result rerun after completing the implementation-conformance
-# audit. No further research-branch edits should supersede this run before it ends.
+# Explicit rerun after Unicode path transport was corrected before any universe
+# or post-2022 Trial 3 performance was observed.
