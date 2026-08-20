@@ -31,10 +31,13 @@
     "research:cv:health": "node research/crypto/trial7-manifest-guard.mjs >/dev/null && node research/crypto/trial7-recorder-health.mjs",
     "research:cv:evaluate": "node research/crypto/trial7-manifest-guard.mjs >/dev/null && node research/crypto/cross-venue-funding-evaluate.mjs",
     "research:cv:report": "node research/crypto/trial7-manifest-guard.mjs >/dev/null && node research/crypto/cross-venue-funding-report.mjs",
-    "research:t8:connectivity": "node research/crypto/record-bitnomial-carry.mjs --connectivity-only",
-    "research:t8:once": "node research/crypto/record-bitnomial-carry.mjs --once",
-    "research:t8:record": "node research/crypto/record-bitnomial-carry.mjs",
-    "research:t8:evaluate": "node research/crypto/evaluate-bitnomial-carry.mjs",
+    "research:t8:freeze-guard": "node research/crypto/trial8-manifest-guard.mjs",
+    "research:t8:connectivity": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/record-bitnomial-carry.mjs --connectivity-only",
+    "research:t8:once": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/record-bitnomial-carry.mjs --once",
+    "research:t8:record": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/record-bitnomial-carry.mjs",
+    "research:t8:health": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/trial8-recorder-health.mjs",
+    "research:t8:evaluate": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/evaluate-bitnomial-carry.mjs",
+    "research:t8:report": "node research/crypto/trial8-manifest-guard.mjs >/dev/null && node research/crypto/report-bitnomial-carry.mjs",
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {
