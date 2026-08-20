@@ -13,7 +13,9 @@ test("Trial 7 systemd installer is valid bash", () => {
   assert.equal(result.status, 0, result.stderr || result.stdout);
 });
 
-test("Trial 7 installer refuses branch drift and dirty worktree", () => {
+test("Trial 7 installer refuses non-Linux hosts, branch drift and dirty worktree", () => {
+  assert.match(script, /uname -s/);
+  assert.match(script, /must be installed on the persistent Linux host/);
   assert.match(script, /REQUIRED_BRANCH="research\/cross-venue-funding-v1-current"/);
   assert.match(script, /CURRENT_BRANCH.*REQUIRED_BRANCH/s);
   assert.match(script, /git -C "\$ROOT" diff --quiet/);
@@ -22,15 +24,14 @@ test("Trial 7 installer refuses branch drift and dirty worktree", () => {
   assert.match(script, /Refusing Trial 7 install from a dirty worktree/);
 });
 
-test("Trial 7 installer runs deterministic preflight before enabling service", () => {
-  const npmCi = script.indexOf("npm ci");
+test("Trial 7 installer avoids dependency mutation and runs deterministic preflight before enabling service", () => {
+  assert.doesNotMatch(script, /npm ci|npm install/);
   const tests = script.indexOf("npm test");
   const prestart = script.indexOf("npm run research:cv:prestart");
   const connectivity = script.indexOf("npm run research:cv:connectivity");
   const checksumSnapshot = script.indexOf("CHECKSUM_CONTENT=");
   const enable = script.indexOf("enable --now");
-  assert.ok(npmCi >= 0);
-  assert.ok(tests > npmCi);
+  assert.ok(tests >= 0);
   assert.ok(prestart > tests);
   assert.ok(connectivity > prestart);
   assert.ok(checksumSnapshot > connectivity);
@@ -38,7 +39,7 @@ test("Trial 7 installer runs deterministic preflight before enabling service", (
 });
 
 test("installed service invokes only the sealed research recorder and no trading command", () => {
-  assert.match(script, /ExecStart=.*npm run research:cv:record/);
+  assert.match(script, /ExecStart=\$\{NPM_BIN\} run research:cv:record/);
   assert.doesNotMatch(script, /paper:run|paper:once|scan:all|whales:observe/);
   assert.doesNotMatch(script, /API_KEY|API_SECRET|PRIVATE_KEY|seed phrase|mnemonic/i);
 });
