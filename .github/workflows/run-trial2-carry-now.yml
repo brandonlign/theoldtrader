@@ -1,0 +1,95 @@
+name: Execute Frozen Trial 2 Carry
+
+on:
+  push:
+    branches: [ops/run-trial2-carry]
+    paths:
+      - '.github/workflows/run-trial2-carry-now.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: frozen-trial2-carry-primary
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out frozen Trial 2 branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify frozen scientific implementation identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object research/crypto/manifests/funding-carry-v1.json)" = "f1ae2172e1e56de118613389cab5906c6c041020"
+          test "$(git hash-object research/crypto/prepare-carry-data.py)" = "7a0616e6d0e9d0c9a9eb5da0e1bc716eb57f0139"
+          test "$(git hash-object research/crypto/carry-evaluate.js)" = "7a01f80e9bf2396a464c25cb041f3164ce2ed87b"
+          test "$(git hash-object research/crypto/carry-report.js)" = "756b78ef02be399c11976aa17686b9f38a41afac"
+
+      - name: Refuse overwrite
+        run: |
+          test ! -f research/crypto/results/funding-carry-v1/summary.json || { echo 'Trial 2 primary result already exists'; exit 1; }
+
+      - name: Static and deterministic checks
+        run: |
+          python -m py_compile research/crypto/prepare-carry-data.py
+          node --check research/crypto/carry-evaluate.js
+          node --check research/crypto/carry-report.js
+          python -m unittest tests/test_prepare_carry_data.py
+          node --test tests/crypto-carry-evaluate.test.js
+
+      - name: Download and checksum exact official Binance archives
+        run: >-
+          python research/crypto/prepare-carry-data.py
+          research/crypto/manifests/funding-carry-v1.json
+          research/crypto/data-cache/funding-carry-v1-synchronized.csv
+          research/crypto/data-cache/funding-carry-v1-sources.json
+
+      - name: Evaluate frozen candidate exactly once
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p research/crypto/results/funding-carry-v1
+          node research/crypto/carry-evaluate.js \
+            research/crypto/manifests/funding-carry-v1.json \
+            research/crypto/data-cache/funding-carry-v1-synchronized.csv \
+            > research/crypto/results/funding-carry-v1/summary.json
+          node research/crypto/carry-report.js \
+            research/crypto/results/funding-carry-v1/summary.json \
+            research/crypto/results/funding-carry-v1
+
+      - name: Commit immutable evidence to frozen research branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add \
+            research/crypto/data-cache/funding-carry-v1-synchronized.csv \
+            research/crypto/data-cache/funding-carry-v1-sources.json \
+            research/crypto/results/funding-carry-v1
+          git commit -m 'Record frozen funding-carry-v1 robustness evaluation'
+          git push origin HEAD:research/crypto-oos-v1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: funding-carry-v1-evidence
+          path: |
+            research/crypto/data-cache/funding-carry-v1-synchronized.csv
+            research/crypto/data-cache/funding-carry-v1-sources.json
+            research/crypto/results/funding-carry-v1
+          if-no-files-found: error
