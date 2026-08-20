@@ -13,8 +13,8 @@ const bytes = fs.readFileSync(TRIAL8_CANONICAL_MANIFEST_PATH);
 const manifest = JSON.parse(bytes.toString("utf8"));
 
 test("Trial 8 exact manifest bytes remain frozen", () => {
-  assert.equal(TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1, "3bb0261f909129a9892f0958105decabcaacd39b");
-  assert.equal(TRIAL8_FINAL_PREOBSERVATION_FREEZE_AT, "2026-08-20T00:16:31Z");
+  assert.equal(TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1, "06d6d41e976513aea3fe4fb9378e171562e99be8");
+  assert.equal(TRIAL8_FINAL_PREOBSERVATION_FREEZE_AT, "2026-08-20T02:01:09Z");
   assert.equal(gitBlobSha1(bytes), TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1);
   assert.equal(verifyTrial8CanonicalManifestBytes(bytes), TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1);
 });
@@ -24,9 +24,10 @@ test("Trial 8 economics, timing and safety remain frozen", () => {
   assert.equal(manifest.trialNumber, 8);
   assert.equal(manifest.paperOnly, true);
   assert.equal(manifest.livePromotionAllowed, false);
-  assert.equal(manifest.forwardWindow.startInclusive, "2026-08-20T02:00:00.000Z");
-  assert.equal(manifest.forwardWindow.screeningEndExclusive, "2026-11-18T02:00:00.000Z");
-  assert.equal(manifest.forwardWindow.finalEndExclusive, "2027-02-16T02:00:00.000Z");
+  assert.equal(manifest.freeze.firstTrial8EconomicResultObserved, false);
+  assert.equal(manifest.forwardWindow.startInclusive, "2026-08-20T03:00:00.000Z");
+  assert.equal(manifest.forwardWindow.screeningEndExclusive, "2026-11-18T03:00:00.000Z");
+  assert.equal(manifest.forwardWindow.finalEndExclusive, "2027-02-16T03:00:00.000Z");
   assert.equal(manifest.portfolio.targetNotionalPctOfStartingEquityPerLeg, 0.20);
   assert.equal(manifest.portfolio.contractSizeBtc, 0.01);
   assert.equal(manifest.portfolio.maximumActualNotionalPctPerLeg, 0.25);
@@ -43,10 +44,14 @@ test("Trial 8 economics, timing and safety remain frozen", () => {
   assert.equal(manifest.finalGate.strongestPossibleClassification, "PROMOTION_ELIGIBLE_RESEARCH_ONLY");
 });
 
-test("Trial 8 source paths use documented public first-party interfaces", () => {
+test("Trial 8 product identity is funding-first and first-party only", () => {
   assert.equal(manifest.venues.spotLong.tickerEndpoint, "https://api.exchange.coinbase.com/products/BTC-USD/ticker");
-  assert.equal(manifest.venues.perpetualShort.specsEndpoint, "https://bitnomial.com/exchange/api/v1/prod/product/specs/");
+  assert.equal(manifest.venues.perpetualShort.productSpecEndpointPrefix, "https://bitnomial.com/exchange/api/v1/prod/product/spec/");
+  assert.equal(manifest.venues.perpetualShort.productDataEndpointPrefix, "https://bitnomial.com/exchange/api/v1/prod/product/data/");
   assert.equal(manifest.venues.perpetualShort.fundingEndpoint, "https://bitnomial.com/exchange/api/v1/funding-rates/");
+  assert.equal(manifest.venues.perpetualShort.fundingBaseSymbol, "BTCUC");
+  assert.match(manifest.sourceRules.bitnomialProductDiscoveryRule, /funding endpoint/);
+  assert.match(manifest.sourceRules.bitnomialProductDiscoveryRule, /product_id/);
   assert.equal(manifest.sourceRules.noApiKeysRequired, true);
   assert.equal(manifest.sourceRules.noThirdPartyCandidateData, true);
   assert.equal(manifest.antiLeakage.noOutcomeDrivenRetuning, true);
