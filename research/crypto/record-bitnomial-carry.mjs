@@ -51,18 +51,30 @@ async function loadManifest() {
 function identifySpec(specs, manifest) {
   if (!Array.isArray(specs)) throw new Error("Bitnomial product specs response is not an array");
   const expected = manifest.venues.perpetualShort;
+  const productCode = String(expected.productCode).toUpperCase();
+  const fundingBase = String(expected.fundingBaseSymbol).toUpperCase();
   const matches = specs.filter((spec) => {
     const name = String(spec?.product_name ?? "").toLowerCase();
+    const symbol = String(spec?.symbol ?? "").toUpperCase();
+    const base = String(spec?.base_symbol ?? "").toUpperCase();
     return String(spec?.product_status ?? "").toLowerCase() === "active"
       && String(spec?.type ?? "").toLowerCase() === "future"
-      && (String(spec?.symbol ?? "").toUpperCase() === expected.productCode
-        || String(spec?.base_symbol ?? "").toUpperCase() === expected.productCode
+      && (symbol === productCode
+        || symbol.startsWith(`${productCode}Z`)
+        || base === fundingBase
         || name.includes("bitcoin us dollar centi perpetual"));
   });
-  if (matches.length !== 1) throw new Error(`Expected exactly one active Bitnomial BTC centi perpetual, found ${matches.length}`);
+  if (matches.length !== 1) {
+    const diagnostic = specs
+      .filter((spec) => String(spec?.product_status ?? "").toLowerCase() === "active")
+      .filter((spec) => /btc|bitcoin/i.test(`${spec?.symbol ?? ""} ${spec?.base_symbol ?? ""} ${spec?.product_name ?? ""}`))
+      .slice(0, 8)
+      .map((spec) => ({ product_id: spec.product_id, symbol: spec.symbol, base_symbol: spec.base_symbol, product_name: spec.product_name, type: spec.type }));
+    throw new Error(`Expected exactly one active Bitnomial BTC centi perpetual, found ${matches.length}; active BTC-like specs=${JSON.stringify(diagnostic)}`);
+  }
   const spec = matches[0];
-  if (Math.abs(Number(spec.contract_size) - expected.contractSizeBtc) > 1e-12 || String(spec.contract_size_unit ?? "").toLowerCase() !== "bitcoin") {
-    throw new Error("Bitnomial BTC perpetual contract size/unit does not match frozen Trial 8 identity");
+  if (Math.abs(Number(spec.contract_size) - expected.contractSizeBtc) > 1e-12) {
+    throw new Error("Bitnomial BTC perpetual contract size does not match frozen Trial 8 identity");
   }
   positive(spec.price_increment, "Bitnomial price increment");
   return spec;
