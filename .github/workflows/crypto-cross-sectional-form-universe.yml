@@ -2,10 +2,6 @@ name: TheOldTrader Cross-Sectional Trial 3 Universe Formation
 
 on:
   workflow_dispatch:
-  push:
-    branches: [research/crypto-oos-v1]
-    paths:
-      - '.github/workflows/crypto-cross-sectional-form-universe.yml'
   pull_request:
     branches: [main]
     paths:
@@ -93,5 +89,5 @@ jobs:
             research/crypto/universes/cross-sectional-v1-formation-sources.json
           if-no-files-found: error
 
-# Explicit rerun after Unicode path transport was corrected before any universe
-# or post-2022 Trial 3 performance was observed.
+# PR-triggered execution only: avoids duplicate push/PR formation jobs racing to
+# freeze the same immutable universe evidence.
