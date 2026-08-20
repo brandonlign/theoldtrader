@@ -1,0 +1,152 @@
+{
+  "experimentId": "bitnomial-carry-v1",
+  "trialNumber": 8,
+  "family": "us-regulated-spot-perpetual-funding-carry",
+  "status": "FROZEN_FORWARD_BEFORE_FIRST_TRIAL8_OBSERVATION",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "scientificMode": "forward-only",
+  "freeze": {
+    "frozenAt": "2026-08-20T00:15:00Z",
+    "reason": "Trial 7 could not begin because Binance USD-M returned HTTP 451 from both available New York/Oracle collection environments. Trial 8 preserves the pre-result carry hypothesis while replacing the inaccessible venue with first-party U.S.-regulated public market data. Trial 7 remains an operational no-start, not a failed strategy result.",
+    "firstTrial8EconomicResultObserved": false
+  },
+  "hypothesis": "A static BTC cash-and-carry position that buys Coinbase BTC-USD spot and shorts the Bitnomial Bitcoin USD Centi perpetual earns positive net funding carry over 180 days after conservative retail spot costs, Bitnomial exchange/clearing fees, basis movement, stale-price gates, and margin stress.",
+  "motivation": {
+    "mechanism": "positive Bitnomial perpetual funding transfers value from longs to shorts while equal BTC units hedge first-order BTC direction",
+    "publishedEvidenceRole": "mechanism and hypothesis motivation only; no external historical return may score Trial 8",
+    "whyBitnomial": "Bitnomial is a CFTC-registered designated contract market and publishes first-party public perpetual funding history containing interval timestamps, funding rate, mark price and price index.",
+    "whyCoinbaseSpot": "Coinbase BTC-USD provides first-party public spot ticker/book data accessible in the user's normal U.S. environment."
+  },
+  "venues": {
+    "spotLong": {
+      "venue": "coinbase-exchange",
+      "product": "BTC-USD",
+      "tickerEndpoint": "https://api.exchange.coinbase.com/products/BTC-USD/ticker",
+      "bookEndpoint": "https://api.exchange.coinbase.com/products/BTC-USD/book?level=1"
+    },
+    "perpetualShort": {
+      "venue": "bitnomial",
+      "productName": "Bitcoin US Dollar Centi Perpetual Futures",
+      "productCode": "PBTCUC",
+      "fundingBaseSymbol": "BTCUC",
+      "contractSizeBtc": 0.01,
+      "specsEndpoint": "https://bitnomial.com/exchange/api/v1/prod/product/specs/?active=true",
+      "productDataEndpointPrefix": "https://bitnomial.com/exchange/api/v1/prod/product/data/",
+      "fundingEndpoint": "https://bitnomial.com/exchange/api/v1/prod/funding-rates/"
+    }
+  },
+  "forwardWindow": {
+    "startInclusive": "2026-08-20T02:00:00.000Z",
+    "screeningEndExclusive": "2026-11-18T02:00:00.000Z",
+    "finalEndExclusive": "2027-02-16T02:00:00.000Z",
+    "screeningDurationDays": 90,
+    "finalDurationDays": 180,
+    "primaryCollectionOffsetSecondsAfterUtcHour": 15,
+    "entryExitSelectionRule": "firstValidOfficialObservationAtOrAfterBoundary",
+    "entryExitToleranceMinutes": 10,
+    "minimumHourlyContextCoverage": 0.98,
+    "maximumContextGapMinutes": 130,
+    "maximumBitnomialLastTradeAgeMinutes": 30,
+    "fundingDiscoveryLookaheadMinutes": 70,
+    "earliestEvaluationDelayMinutesAfterBoundary": 70
+  },
+  "portfolio": {
+    "startingEquityUsd": 10000,
+    "targetNotionalPctOfStartingEquityPerLeg": 0.20,
+    "contractSizeBtc": 0.01,
+    "contractCountRule": "floor(targetNotionalUsd / (entryBitnomialPriceUsd * contractSizeBtc)), minimum 1 only when one contract notional is <= 25% of starting equity",
+    "spotBtcQuantityRule": "contractCount * contractSizeBtc",
+    "equalBtcUnits": true,
+    "maximumActualNotionalPctPerLeg": 0.25,
+    "perpetualCollateralReservePctOfStartingEquity": 0.30,
+    "rebalancing": false,
+    "compounding": false,
+    "fundingThreshold": null,
+    "directionSwitching": false,
+    "assetSelection": false,
+    "unusedCapitalRemainsCash": true
+  },
+  "executionModel": {
+    "coinbaseSpotFeeBpsPerOrder": 60,
+    "coinbaseSpotExtraSlippageBpsPerOrder": 10,
+    "bitnomialExchangeClearingFeeUsdPerContractPerSide": 0.10,
+    "bitnomialExtraSlippageBpsPerOrder": 10,
+    "stressCoinbaseSpotAllInBpsPerOrder": 100,
+    "stressBitnomialSlippageBpsPerOrder": 25,
+    "ordersInRoundTrip": 4,
+    "comment": "Coinbase spot uses the published low-volume 60 bps taker tier plus a frozen 10 bps adverse-slippage allowance. Bitnomial exchange/clearing fee uses the published non-participant $0.10 per contract per side plus a frozen 10 bps price-slippage allowance. The stress case raises Coinbase spot all-in friction to 100 bps/order and Bitnomial slippage to 25 bps/order while retaining the fixed per-contract fee."
+  },
+  "fundingAccounting": {
+    "nativeIntervalHours": 8,
+    "intervalsUtc": ["00:00", "08:00", "16:00"],
+    "shortFundingPnlRule": "For each first-party Bitnomial funding interval whose interval_end satisfies startBoundary < interval_end <= endBoundary, short funding PnL = btcQuantity * mark_price * funding_rate.",
+    "positiveFundingMeaning": "longs pay shorts",
+    "useFundingEventMarkPrice": true,
+    "noRateResampling": true,
+    "noInterpolation": true,
+    "noForwardFill": true
+  },
+  "priceAccounting": {
+    "coinbaseSpotEntry": "first valid BTC-USD ticker at or after start boundary; buy fill is ask plus frozen adverse slippage",
+    "coinbaseSpotExit": "first valid BTC-USD ticker at or after evaluation boundary; sell fill is bid minus frozen adverse slippage",
+    "bitnomialPerpetualEntry": "first valid Bitnomial product last_price at or after start boundary with last_price_time no older than maximumBitnomialLastTradeAgeMinutes; short fill receives adverse lower price slippage",
+    "bitnomialPerpetualExit": "first valid Bitnomial product last_price at or after evaluation boundary with last_price_time no older than maximumBitnomialLastTradeAgeMinutes; buy-to-close fill pays adverse higher price slippage",
+    "decomposition": "netPnl = spotPricePnl + perpetualPricePnl + fundingPnl - explicitFees; report spot, perpetual, funding, basis and friction separately"
+  },
+  "sourceRules": {
+    "officialFirstPartyDataOnly": true,
+    "preserveRawResponses": true,
+    "sha256EveryRawResponse": true,
+    "coinbasePublicDataOnly": true,
+    "bitnomialPublicDataOnly": true,
+    "noApiKeysRequired": true,
+    "noThirdPartyCandidateData": true,
+    "noOutcomeSelectedSubperiods": true,
+    "bitnomialProductIdentityRule": "The active product must identify the Bitcoin US Dollar Centi perpetual, have contract_size=0.01 BTC, and funding rows must match its product_id. Identity mismatch fails before economics.",
+    "bitnomialFundingCompletenessRule": "Every regular 8-hour interval_end strictly after start and at or before end must be present unless first-party product/market status proves the market was closed for the complete interval; absent unexcused funding intervals fail the data gate."
+  },
+  "marginStress": {
+    "researchMaintenanceMarginPctOfPerpetualNotional": 0.15,
+    "adverseBasisShockPct": [0.05, 0.10, 0.20],
+    "rule": "Reserved perpetual collateral plus perpetual unrealized PnL plus accumulated funding must remain above the research maintenance threshold under the observed path and each frozen adverse relative-basis shock. This is a conservative research gate, not a claim about Bitnomial's exact account-tier margin requirement."
+  },
+  "comparators": [
+    "zero-return cash",
+    "Coinbase BTC-USD buy-and-hold using the identical BTC quantity and frozen Coinbase spot execution model",
+    "funding-only contribution before spot/perpetual basis and execution friction"
+  ],
+  "screeningGate": {
+    "afterDays": 90,
+    "promotionAllowed": false,
+    "requirements": [
+      "all first-party identity, raw-hash, hourly-context, stale-price and funding-completeness gates pass",
+      "primary net PnL is positive",
+      "funding contribution is positive",
+      "no observed or frozen-stress research margin breach"
+    ]
+  },
+  "finalGate": {
+    "afterDays": 180,
+    "automaticLivePromotion": false,
+    "strongestPossibleClassification": "PROMOTION_ELIGIBLE_RESEARCH_ONLY",
+    "requirements": [
+      "all first-party identity, raw-hash, hourly-context, stale-price and funding-completeness gates pass",
+      "primary net PnL is positive",
+      "annualized net return on total starting equity exceeds zero-return cash by at least 1 percentage point",
+      "at least two of three consecutive non-overlapping 60-day contribution windows have positive PnL",
+      "maximum drawdown on total starting equity is below 10%",
+      "frozen high-cost stress remains net positive",
+      "funding contribution is positive",
+      "no observed or frozen-stress research margin breach"
+    ],
+    "afterPass": "A pass permits only a separate proposal to replace the paper baseline. It never authorizes real-money trading."
+  },
+  "antiLeakage": {
+    "trial7ResultMayTuneTrial8": false,
+    "publishedHistoricalReturnMayScoreTrial8": false,
+    "screeningMayChangeSpecification": false,
+    "noOutcomeDrivenRetuning": true,
+    "failureRule": "After the first Trial 8 candidate observation, any change to venues, direction, BTC quantity rule, costs, collateral, window, funding accounting, stale-price rule, data substitution or stress rules requires a new trial number."
+  }
+}
