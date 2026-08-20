@@ -31,6 +31,14 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Require explicit shared-universe integrity authorization
+        run: |
+          set -euo pipefail
+          if [ ! -f research/crypto/TRIAL4_FINAL_ACCESS_AUTHORIZED.md ]; then
+            echo 'Trial 4 final holdout is intentionally blocked pending shared-universe and development integrity review. Do not bypass this gate.' >&2
+            exit 1
+          fi
+
       - name: Require observed Trial 4 development and pristine final slot
         shell: bash
         run: |
