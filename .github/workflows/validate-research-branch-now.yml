@@ -1,0 +1,64 @@
+name: Validate frozen crypto research branch now
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/validate-research-branch-now.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out authoritative research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run full JavaScript research and baseline test suite
+        id: js
+        continue-on-error: true
+        run: npm test
+
+      - name: Run Trial 3 Python firewall tests
+        id: py3
+        continue-on-error: true
+        run: python -m unittest tests/test_cross_sectional_universe.py
+
+      - name: Run Trial 4 REST-builder firewall tests
+        id: py4
+        continue-on-error: true
+        run: python -m unittest tests/test_prepare_ctrend_rest_data.py
+
+      - name: Report validation result on research PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JS_OUTCOME: ${{ steps.js.outcome }}
+          PY3_OUTCOME: ${{ steps.py3.outcome }}
+          PY4_OUTCOME: ${{ steps.py4.outcome }}
+        run: |
+          set -euo pipefail
+          HEAD_SHA=$(git rev-parse HEAD)
+          gh pr comment 8 --repo "$GITHUB_REPOSITORY" --body "ENGINEERING_VALIDATION: research head \`$HEAD_SHA\`; npm test=$JS_OUTCOME; Trial3 Python=$PY3_OUTCOME; Trial4 REST Python=$PY4_OUTCOME. This is implementation/provenance validation only, not strategy-performance evidence."
+          test "$JS_OUTCOME" = success
+          test "$PY3_OUTCOME" = success
+          test "$PY4_OUTCOME" = success
