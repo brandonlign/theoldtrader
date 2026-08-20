@@ -69,18 +69,19 @@ function identifyFundingProduct(json, manifest) {
 function validateSpec(spec, manifest, expectedProductId) {
   if (!spec || Number(spec.product_id) !== Number(expectedProductId)) throw new Error("Bitnomial direct product spec identity mismatch");
   const expected = manifest.venues.perpetualShort;
-  const name = String(spec.product_name ?? "").toLowerCase();
   const symbol = String(spec.symbol ?? "").toUpperCase();
   const cqg = String(spec.cqg_symbol ?? "").toUpperCase();
   const base = String(spec.base_symbol ?? "").toUpperCase();
-  const identityPass = String(spec.type ?? "").toLowerCase() === "future"
-    && Math.abs(Number(spec.contract_size) - expected.contractSizeBtc) <= 1e-12
-    && (name.includes("bitcoin") && name.includes("perpetual")
-      || symbol.includes("P") && symbol.includes("BTC")
-      || cqg.includes("PBUC") || cqg.includes("PBTC")
-      || base === String(expected.fundingBaseSymbol).toUpperCase());
+  const type = String(spec.type ?? "").toLowerCase();
+  const expectedPrefix = String(expected.productCodePrefix ?? "PBTCUC").toUpperCase();
+  const expectedBase = String(expected.fundingBaseSymbol).toUpperCase();
+  const expectedType = String(expected.expectedApiType ?? "perpetual").toLowerCase();
+  const identityPass = type === expectedType
+    && base === expectedBase
+    && (symbol.startsWith(expectedPrefix) || cqg.startsWith(expectedPrefix))
+    && Math.abs(Number(spec.contract_size) - expected.contractSizeBtc) <= 1e-12;
   if (!identityPass) {
-    throw new Error(`Bitnomial funding-selected product ${expectedProductId} does not match frozen BTC centi perpetual identity: ${JSON.stringify({symbol: spec.symbol, cqg_symbol: spec.cqg_symbol, base_symbol: spec.base_symbol, product_name: spec.product_name, type: spec.type, contract_size: spec.contract_size})}`);
+    throw new Error(`Bitnomial funding-selected product ${expectedProductId} does not match frozen BTC centi perpetual machine identity: ${JSON.stringify({symbol: spec.symbol, cqg_symbol: spec.cqg_symbol, base_symbol: spec.base_symbol, product_name: spec.product_name, type: spec.type, contract_size: spec.contract_size})}`);
   }
   positive(spec.price_increment, "Bitnomial price increment");
   return spec;
