@@ -1,0 +1,26 @@
+name: Kalshi Perp Public Source Probe
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'research/crypto/kalshi-perp-source-probe.mjs'
+      - '.github/workflows/kalshi-perp-source-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  source-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify public BTC perpetual market, book, and funding source
+        run: node research/crypto/kalshi-perp-source-probe.mjs
+
+# Development source qualification only. It deliberately does not expose prices,
+# funding-rate values, basis, returns, or P&L and does not freeze a strategy.
