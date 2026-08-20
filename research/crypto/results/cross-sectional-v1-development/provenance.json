@@ -1,0 +1,10 @@
+{
+  "datasetCanonicalJsonSha256": "70fef58f47c63f8d6dc45c7c3c439531cfac317851168a2ef2e736b500c1d00d",
+  "experimentId": "cross-sectional-v1",
+  "finalHoldoutRowsAcquired": 0,
+  "formationSourceManifestSha256": "51f69e8b3ad0d8e150c785582322a53cedb23622b06484d1c33d195fa8a629af",
+  "mode": "development",
+  "sourceArchiveCount": 1126,
+  "sourceManifestSha256": "90e01438b25de486d901176f8ae11cab82e5422ac0e5c2d6306c6def86fb47f8",
+  "universeMembershipSha256": "0bf259aea7d434e7e05f78f4f6df9dcc7d1974062485894ffb70460fc20d5081"
+}
