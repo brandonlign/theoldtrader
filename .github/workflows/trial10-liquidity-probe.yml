@@ -1,0 +1,30 @@
+name: Trial 10 Term Carry Liquidity Probe
+
+on:
+  pull_request:
+    paths:
+      - 'research/crypto/TRIAL10_RESEARCH_NOTE.md'
+      - 'research/crypto/bitnomial-term-carry-liquidity-probe.mjs'
+      - 'research/crypto/lib/bitnomial-book.js'
+      - '.github/workflows/trial10-liquidity-probe.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  feasibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      TRIAL10_PROBE_SECONDS: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Qualify active BUC and PBTCUC public displayed liquidity
+        run: node research/crypto/bitnomial-term-carry-liquidity-probe.mjs
+
+# Development-only. The probe intentionally outputs no prices, funding rates,
+# dated/perpetual basis, or P&L. A pass permits economic protocol design only.
