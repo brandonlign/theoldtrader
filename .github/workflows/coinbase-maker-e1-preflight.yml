@@ -2,6 +2,10 @@ name: Coinbase Maker E1 Load Preflight
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'research/crypto/record-coinbase-microstructure.mjs'
+      - '.github/workflows/coinbase-maker-e1-preflight.yml'
 
 permissions:
   contents: read
@@ -32,6 +36,6 @@ jobs:
           bytes=$(stat -c%s "$out")
           echo "product=${{ matrix.product }} compressed_bytes_5m=$bytes projected_7d_bytes=$((bytes * 2016))"
 
-# This workflow is an engineering/load preflight only. Five-minute files are
-# intentionally ephemeral and may not be used for E1 scientific execution
-# claims. The frozen E1 protocol still requires its full 168-hour window.
+# Engineering/load preflight only. Five-minute files are ephemeral and may not
+# be used for E1 scientific execution claims. The frozen E1 protocol still
+# requires the full 168-hour scientific window.
