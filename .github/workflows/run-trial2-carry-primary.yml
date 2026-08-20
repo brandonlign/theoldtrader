@@ -68,11 +68,13 @@ jobs:
           python - <<'PY'
           import importlib.util
           import json
+          import sys
           from datetime import datetime
 
           path = 'research/crypto/prepare-carry-data.py'
           spec = importlib.util.spec_from_file_location('carry_prepare', path)
           mod = importlib.util.module_from_spec(spec)
+          sys.modules[spec.name] = mod
           spec.loader.exec_module(mod)
 
           manifest = json.load(open('research/crypto/manifests/funding-carry-v1.json'))
@@ -86,21 +88,25 @@ jobs:
           funding_times = sorted(funding)
           mark_times = sorted(marks)
           missing = [t for t in funding_times if t not in marks]
+
+          nearest = []
+          for t in missing:
+            previous = max((m for m in mark_times if m < t), default=None)
+            following = min((m for m in mark_times if m > t), default=None)
+            nearest.append({
+              'boundary': mod.iso_ms(t),
+              'previous': mod.iso_ms(previous) if previous is not None else None,
+              'next': mod.iso_ms(following) if following is not None else None,
+              'previousDeltaHours': ((t - previous) / 3_600_000) if previous is not None else None,
+              'nextDeltaHours': ((following - t) / 3_600_000) if following is not None else None,
+            })
+
           print(json.dumps({
             'forensicOnly': True,
             'economicsCalculated': False,
             'missingMarkCount': len(missing),
             'missingBoundaries': [mod.iso_ms(t) for t in missing],
-            'nearestMarks': [
-              {
-                'boundary': mod.iso_ms(t),
-                'previous': mod.iso_ms(max((m for m in mark_times if m < t), default=t)) if any(m < t for m in mark_times) else None,
-                'next': mod.iso_ms(min((m for m in mark_times if m > t), default=t)) if any(m > t for m in mark_times) else None,
-                'previousDeltaHours': ((t - max((m for m in mark_times if m < t), default=t)) / 3_600_000) if any(m < t for m in mark_times) else None,
-                'nextDeltaHours': ((min((m for m in mark_times if m > t), default=t) - t) / 3_600_000) if any(m > t for m in mark_times) else None,
-              }
-              for t in missing
-            ]
+            'nearestMarks': nearest
           }, indent=2))
           PY
           exit 1
