@@ -1,0 +1,141 @@
+name: Trial 13 CME BFF + IBIT Forward Evidence
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'research/crypto/manifests/cme-bff-ibit-carry-v1.json'
+      - 'research/crypto/trial13-*.mjs'
+      - '.github/workflows/trial13-cme-bff-ibit-forward.yml'
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: 'Explicit YYYY-MM-DD recovery date; blank uses New York current/previous Friday rules'
+        required: false
+        type: string
+      mode:
+        description: 'record, risk, evaluate, or all'
+        required: false
+        default: all
+        type: choice
+        options: [all, record, risk, evaluate]
+  schedule:
+    - cron: '17 22 * * 1-5'
+    - cron: '17 1 * * 2-6'
+    - cron: '17 4,8,12,16,20 * * 6'
+    - cron: '17 12 * * 0'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trial13-forward-evidence
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Frozen Trial 13 regression tests
+        run: node --test research/crypto/trial13.test.mjs
+      - name: Evaluator must be safe before evidence exists
+        run: node research/crypto/trial13-evaluate.mjs
+
+  collect:
+    if: github.event_name != 'pull_request'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Resolve New York date and frozen roll eligibility
+        id: cal
+        env:
+          EXPLICIT_DATE: ${{ inputs.target_date }}
+        run: |
+          node <<'NODE' >> "$GITHUB_OUTPUT"
+          const fs=require('fs');
+          const m=JSON.parse(fs.readFileSync('research/crypto/manifests/cme-bff-ibit-carry-v1.json','utf8'));
+          const explicit=process.env.EXPLICIT_DATE?.trim();
+          const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(new Date());
+          const get=t=>parts.find(p=>p.type===t)?.value;
+          const ny=`${get('year')}-${get('month')}-${get('day')}`;
+          let target=explicit||ny;
+          if(!explicit && (get('weekday')==='Sat'||get('weekday')==='Sun')) {
+            const d=new Date(`${ny}T12:00:00Z`); d.setUTCDate(d.getUTCDate()-(get('weekday')==='Sat'?1:2)); target=d.toISOString().slice(0,10);
+          }
+          const holiday=(m.schedule.holidayAdjustedRollDates||[]).some(x=>x.terminationDate===target);
+          const weekday=new Intl.DateTimeFormat('en-US',{timeZone:'UTC',weekday:'short'}).format(new Date(`${target}T12:00:00Z`));
+          console.log(`target_date=${target}`);
+          console.log(`is_roll=${weekday==='Fri'||holiday?'true':'false'}`);
+          NODE
+
+      - name: Record official roll evidence when eligible
+        if: (inputs.mode == '' || inputs.mode == 'all' || inputs.mode == 'record') && steps.cal.outputs.is_roll == 'true'
+        env:
+          TARGET: ${{ steps.cal.outputs.target_date }}
+        run: |
+          set +e
+          node research/crypto/trial13-record.mjs --date="$TARGET"
+          code=$?
+          set -e
+          if [ "$code" -eq 75 ]; then
+            echo "Official roll sources are not ready yet; a later scheduled attempt will retry."
+            exit 0
+          fi
+          exit "$code"
+
+      - name: Record current daily CME margin mark
+        if: inputs.mode == '' || inputs.mode == 'all' || inputs.mode == 'risk'
+        env:
+          TARGET: ${{ steps.cal.outputs.target_date }}
+        run: |
+          dow=$(date -u -d "$TARGET" +%u)
+          if [ "$dow" -gt 5 ]; then exit 0; fi
+          set +e
+          node research/crypto/trial13-risk-record.mjs --date="$TARGET"
+          code=$?
+          set -e
+          if [ "$code" -eq 75 ]; then
+            echo "Current risk mark is not required or official source is not ready yet."
+            exit 0
+          fi
+          exit "$code"
+
+      - name: Recover prior missing daily CME risk evidence
+        if: inputs.mode == '' || inputs.mode == 'all' || inputs.mode == 'risk'
+        run: node research/crypto/trial13-risk-record.mjs --recover
+
+      - name: Remove recorder scratch files
+        run: find research/crypto/evidence/trial13 -type f -name '*.tmp-*' -delete 2>/dev/null || true
+
+      - name: Evaluate current sealed evidence
+        if: inputs.mode == '' || inputs.mode == 'all' || inputs.mode == 'evaluate'
+        run: node research/crypto/trial13-evaluate.mjs | tee /tmp/trial13-evaluation.json
+
+      - name: Commit newly acquired immutable evidence
+        env:
+          TARGET: ${{ steps.cal.outputs.target_date }}
+        run: |
+          if [ ! -d research/crypto/evidence/trial13 ]; then exit 0; fi
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'theoldtrader-research-bot@users.noreply.github.com'
+          git add -- research/crypto/evidence/trial13
+          if git diff --cached --quiet; then
+            echo 'No new evidence to commit.'
+            exit 0
+          fi
+          bad=$(git diff --cached --name-only | grep -Ev '^research/crypto/evidence/trial13/' || true)
+          if [ -n "$bad" ]; then echo "Refusing non-evidence write: $bad"; exit 9; fi
+          git commit -m "Trial 13: preserve official forward evidence for $TARGET"
+          git push origin HEAD:main

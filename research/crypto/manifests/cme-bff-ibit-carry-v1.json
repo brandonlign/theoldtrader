@@ -1,0 +1,178 @@
+{
+  "experimentId": "cme-bff-ibit-carry-v1",
+  "trialNumber": 13,
+  "frozenAt": "2026-08-20T15:04:44Z",
+  "status": "FROZEN_PROSPECTIVE_UNOBSERVED",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "researchThesis": "Capture the weekly CME Bitcoin Friday Futures premium with a benchmark-matched long IBIT hedge, avoiding Coinbase spot trading friction. BFF and IBIT both reference BRRNY at the Friday 4 PM New York settlement benchmark.",
+  "preFreezeEvidence": {
+    "economicValuesObserved": false,
+    "bffHistoricalOrCurrentSettlePricesObserved": false,
+    "bffCurrentBasisObserved": false,
+    "productIdentity": {
+      "cmeProductId": 10878,
+      "globexCode": "BFF",
+      "contractSizeBtc": 0.02,
+      "financialSettlementBenchmark": "CME CF Bitcoin Reference Rate New York Variant (BRRNY)",
+      "publicSettlementReportCode": "FUT"
+    },
+    "sourceQualification": "CME public final-settlement JSON produced recent BFF rows without exposing prices during qualification; BlackRock publishes IBIT closing price, BRRNY benchmark identity, basket Bitcoin amount and 40,000-share basket definition.",
+    "knownCostEvidence": "Conservatively reserve $0.60 per BFF side for broker/exchange cost and charge it both at opening and cash settlement even though expiration is not a market close; also reserve 10 BFF ticks adverse entry execution."
+  },
+  "account": {
+    "startingEquityUsd": 10000,
+    "futuresCollateralReserveUsd": 3000,
+    "unusedCashInterestPctAnnual": 0
+  },
+  "instruments": {
+    "longHedge": {
+      "ticker": "IBIT",
+      "exchange": "NASDAQ",
+      "benchmark": "BRRNY",
+      "basketShares": 40000,
+      "sponsorFeePctAnnual": 0.0025,
+      "fractionalSharesAllowedInResearch": true
+    },
+    "shortCarry": {
+      "ticker": "BFF",
+      "exchange": "CME",
+      "contractSizeBtc": 0.02,
+      "minimumTickUsdPerBtc": 5,
+      "minimumTickUsdPerContract": 0.1,
+      "contracts": 1
+    }
+  },
+  "schedule": {
+    "startSettlementDate": "2026-08-21",
+    "initialShortExpiry": "2026-08-28",
+    "rollDay": "FRIDAY",
+    "settlementTimeZone": "America/New_York",
+    "settlementLocalTime": "16:00:00",
+    "fourWeekDiagnosticDate": "2026-09-18",
+    "thirteenWeekCheckpointDate": "2026-11-20",
+    "twentySixWeekCheckpointDate": "2027-02-19",
+    "rollRule": "Roll on each official CME BFF termination date. Normally Friday; if that Friday is not a business day in both London and the U.S., use the preceding day that is a business day in both, exactly as CME specifies.",
+    "holidayAdjustedRollDates": [
+      {
+        "nominalFriday": "2026-12-25",
+        "terminationDate": "2026-12-24"
+      },
+      {
+        "nominalFriday": "2027-01-01",
+        "terminationDate": "2026-12-31"
+      }
+    ]
+  },
+  "positionRule": {
+    "initialIbitShares": "0.02 / (official BlackRock basketBitcoinAmount at entry / 40000)",
+    "ibitEntryPrice": "official IBIT closing price on 2026-08-21 plus frozen adverse half-spread reserve",
+    "ibitHolding": "hold the initial fractional share count continuously; no weekly ETF rebalancing",
+    "bffEntry": "on each Friday use the official CME final settlement for the next-Friday BFF contract minus 10 minimum ticks in USD/BTC as the hypothetical short execution price",
+    "bffExpiry": "cash-settle the expiring BFF at its official BRRNY-linked final settlement; no discretionary close",
+    "nextContract": "the earliest listed BFF expiry after the current BFF termination date; no discretionary expiry selection; holiday-adjusted termination follows the frozen CME business-day rule",
+    "threshold": "none",
+    "marketTiming": "none",
+    "compounding": "none",
+    "leverageScaling": "none"
+  },
+  "costModel": {
+    "ibitEntryAdverseHalfSpreadBps": 1.5,
+    "ibitFinalExitAdverseHalfSpreadBps": 1.5,
+    "ibitSponsorFeePctAnnual": 0.0025,
+    "ibitBrokerCommissionUsd": 0,
+    "bffOpeningFeeReserveUsdPerContract": 0.6,
+    "bffExpirationFeeReserveUsdPerContract": 0.6,
+    "bffAdverseEntryTicks": 10,
+    "bffTickUsdPerBtc": 5,
+    "stress": {
+      "ibitEntryAndExitHalfSpreadBps": 5,
+      "bffOpeningFeeReserveUsdPerContract": 1.0,
+      "bffExpirationFeeReserveUsdPerContract": 1.0,
+      "bffAdverseEntryTicks": 20
+    },
+    "ibitSponsorFeeAccounting": "informational only for observed share-price P&L: the 0.25% sponsor fee is already reflected in IBIT NAV/share prices and must not be deducted a second time"
+  },
+  "riskModel": {
+    "researchMaintenanceMarginPctCurrentBffNotional": 0.2,
+    "futuresEquity": "$3000 reserve + cumulative realized BFF PnL + current open-short mark PnL - cumulative reserved BFF fees",
+    "instantaneousAdverseBffMarkShocksPct": [
+      0.1,
+      0.25,
+      0.5
+    ],
+    "failOnHistoricalOrForwardMarginBreach": true,
+    "doNotCreditUnusedCashYield": true
+  },
+  "dataRequirements": {
+    "cme": {
+      "source": "official CME public final settlement JSON",
+      "productId": 10878,
+      "reportCode": "FUT",
+      "requireReportType": "Final",
+      "requiredFields": [
+        "tradeDate",
+        "month",
+        "settle"
+      ],
+      "noImputedSettlements": true
+    },
+    "blackrock": {
+      "source": "official iShares IBIT product data",
+      "requiredFields": [
+        "closingPrice",
+        "basketBitcoinAmount",
+        "basketAmount",
+        "asOfDate"
+      ],
+      "requireBasketShares": 40000,
+      "noThirdPartyPriceSubstitution": true
+    },
+    "rawResponsesMustBePreserved": true,
+    "sha256RawResponses": true
+  },
+  "evaluation": {
+    "fourWeek": {
+      "minimumCompletedRolls": 4,
+      "labelIfPass": "EARLY_VIABILITY_ONLY",
+      "canPromote": false,
+      "passRequires": [
+        "netPnlPositive",
+        "realizedBffCarryBeforeIbitDirectionalResidualPositive",
+        "noMarginBreach"
+      ]
+    },
+    "thirteenWeek": {
+      "minimumCompletedRolls": 13,
+      "labelIfPass": "PROMISING_FORWARD_ONLY",
+      "canPromote": false,
+      "passRequires": [
+        "primaryNetPnlPositive",
+        "stressNetPnlPositive",
+        "noMarginBreach",
+        "shock25PctNoBreach"
+      ]
+    },
+    "twentySixWeek": {
+      "minimumCompletedRolls": 26,
+      "labelIfPass": "PROMOTION_ELIGIBLE_RESEARCH",
+      "canPromote": true,
+      "passRequires": [
+        "primaryNetPnlPositive",
+        "stressNetPnlPositive",
+        "noMarginBreach",
+        "shock25PctNoBreach",
+        "positiveMedianWeeklyCarryAfterReservedBffCosts"
+      ]
+    }
+  },
+  "antiRescueRule": "After the 2026-08-21 first scientific settlement is observed, no changes to instrument choice, start date, official-expiry rule, hedge size formula, roll schedule, costs, collateral, shocks, benchmark decomposition, accounting clarifications or pass gates are allowed under Trial 13. Any economic change requires a new trial number.",
+  "implementationFreezeRevision": {
+    "revision": 2,
+    "revisedAt": "2026-08-20T15:04:44Z",
+    "preObservation": true,
+    "reason": "Before the first scientific settlement, require BlackRock's official same-day Basket Amount in addition to Basket Bitcoin Amount so BRRNY can be reconstructed as Basket Amount / Basket Bitcoin Amount. This makes the frozen carry gate direction-neutral: captured BFF basis after reserved execution costs is evaluated separately from IBIT hedge/tracking residual. Retains the revision-1 sponsor-fee and holiday-expiry clarifications.",
+    "economicResultObservedBeforeRevision": false,
+    "supersedesRevision": 1
+  }
+}
