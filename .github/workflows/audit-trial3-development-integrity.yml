@@ -1,0 +1,78 @@
+name: Audit Trial 3 development integrity without final access
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-trial3-development-integrity.yml'
+      - 'research/crypto/audit-cross-sectional-development-integrity.js'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out authoritative research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Require observed development evidence and pristine final holdout
+        run: |
+          set -euo pipefail
+          test -f research/crypto/results/cross-sectional-v1-development/summary.json
+          test -f research/crypto/results/cross-sectional-v1-development/provenance.json
+          test ! -e research/crypto/results/cross-sectional-v1-final/summary.json
+          node --check research/crypto/audit-cross-sectional-development-integrity.js
+          python -m py_compile research/crypto/prepare-cross-sectional-development-data.py
+
+      - name: Reacquire development data only
+        run: >-
+          python research/crypto/prepare-cross-sectional-development-data.py
+          research/crypto/manifests/cross-sectional-v1.json
+          research/crypto/universes/cross-sectional-v1-universe.json
+          /tmp/cross-sectional-v1-development-audit.json.gz
+          /tmp/cross-sectional-v1-development-audit-sources.json
+
+      - name: Verify final holdout remains sealed
+        run: |
+          python - <<'PY'
+          import gzip, json
+          from datetime import datetime, timezone
+          boundary = int(datetime(2026, 1, 1, tzinfo=timezone.utc).timestamp())
+          with gzip.open('/tmp/cross-sectional-v1-development-audit.json.gz', 'rt', encoding='utf-8') as handle:
+              data = json.load(handle)
+          assert data['endExclusive'] == '2026-01-01T00:00:00Z'
+          assert all(row['time'] < boundary for rows in data['products'].values() for row in rows)
+          print('Trial 3 audit final-holdout firewall verified.')
+          PY
+
+      - name: Run exact-dataset continuity and concentration audit
+        run: >-
+          node research/crypto/audit-cross-sectional-development-integrity.js
+          --manifest research/crypto/manifests/cross-sectional-v1.json
+          --universe research/crypto/universes/cross-sectional-v1-universe.json
+          --data /tmp/cross-sectional-v1-development-audit.json.gz
+          --summary research/crypto/results/cross-sectional-v1-development/summary.json
+          --provenance research/crypto/results/cross-sectional-v1-development/provenance.json
+          --out /tmp/cross-sectional-v1-development-integrity-audit.json
+
+      - name: Upload non-promotional audit evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-sectional-v1-development-integrity-audit-1
+          path: /tmp/cross-sectional-v1-development-integrity-audit.json
+          if-no-files-found: error
