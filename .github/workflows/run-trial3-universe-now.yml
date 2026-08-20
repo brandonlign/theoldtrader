@@ -1,0 +1,81 @@
+name: Execute frozen Trial 3 universe formation now
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/run-trial3-universe-now.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/run-trial3-universe-now.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: execute-frozen-trial3-universe-now
+  cancel-in-progress: false
+
+jobs:
+  form-universe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out authoritative research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refuse overwrite and validate frozen implementation
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/universes/cross-sectional-v1-universe.json
+          test ! -e research/crypto/universes/cross-sectional-v1-formation-sources.json
+          python -m py_compile research/crypto/form-cross-sectional-universe.py
+          python -m py_compile research/crypto/form-cross-sectional-universe-entry.py
+          python -m unittest tests/test_cross_sectional_universe.py
+
+      - name: Form immutable 2022-only universe
+        run: >-
+          python research/crypto/form-cross-sectional-universe-entry.py
+          research/crypto/manifests/cross-sectional-v1.json
+          research/crypto/universes/cross-sectional-v1-universe.json
+          research/crypto/universes/cross-sectional-v1-formation-sources.json
+
+      - name: Verify firewall and membership
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          u=json.loads(Path('research/crypto/universes/cross-sectional-v1-universe.json').read_text())
+          assert u['status']=='UNIVERSE_FORMED_PRE_DEVELOPMENT'
+          assert u['formationInformationEndExclusive']=='2023-01-01T00:00:00Z'
+          assert u['postFormationDataInspected'] is False
+          assert len(u['membership'])==30
+          assert len(set(u['membership']))==30
+          PY
+
+      - name: Commit immutable formation evidence to research branch
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- \
+            research/crypto/universes/cross-sectional-v1-universe.json \
+            research/crypto/universes/cross-sectional-v1-formation-sources.json
+          git commit -m 'Freeze cross-sectional-v1 2022 liquidity universe'
+          git push origin HEAD:research/crypto-oos-v1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cross-sectional-v1-universe-formation
+          path: |
+            research/crypto/universes/cross-sectional-v1-universe.json
+            research/crypto/universes/cross-sectional-v1-formation-sources.json
+          if-no-files-found: error
