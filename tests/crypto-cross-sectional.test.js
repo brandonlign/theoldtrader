@@ -119,6 +119,30 @@ test('panel features use only strict pre-rebalance daily bars and label on next 
   );
 });
 
+test('asset age uses preserved first-observed Binance time rather than the feature-cache boundary', () => {
+  const products = {
+    AAAUSDT: dailySeries('2022-09-01', '2023-03-02', () => 100),
+    BBBUSDT: dailySeries('2022-09-01', '2023-03-02', () => 200)
+  };
+  const data = {
+    products,
+    firstObservedTimeBySymbol: {
+      AAAUSDT: utc('2020-01-01'),
+      BBBUSDT: utc('2022-01-01')
+    }
+  };
+  const m = manifest();
+  m.historicalData.finalHoldoutEndExclusive = '2023-02-01T00:00:00Z';
+  const january = buildCrossSectionalPanel(data, m, ['AAAUSDT', 'BBBUSDT'])
+    .filter((row) => row.time === utc('2023-01-01'));
+  assert.equal(january.length, 2);
+  const aaa = january.find((row) => row.symbol === 'AAAUSDT');
+  const bbb = january.find((row) => row.symbol === 'BBBUSDT');
+  assert.ok(aaa.rawFeatures[5] > bbb.rawFeatures[5]);
+  assert.ok(Math.abs(aaa.rawFeatures[5] - Math.log1p((utc('2023-01-01') - utc('2020-01-01')) / 86400)) < 1e-12);
+  assert.ok(Math.abs(bbb.rawFeatures[5] - Math.log1p((utc('2023-01-01') - utc('2022-01-01')) / 86400)) < 1e-12);
+});
+
 test('a gap in the strict trailing history makes an asset ineligible for that rebalance', () => {
   const products = {
     AAAUSDT: dailySeries('2022-09-01', '2023-03-02', () => 100),
