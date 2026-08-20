@@ -25,7 +25,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -53,8 +52,15 @@ jobs:
 
       - name: Validate frozen implementation before first final access
         run: |
-          npm ci
-          npm test
+          set -euo pipefail
+          npm install
+          node --test \
+            tests/crypto-cross-sectional-portfolio.test.js \
+            tests/crypto-cross-sectional.test.js \
+            tests/crypto-research-metrics.test.js \
+            tests/crypto-research.test.js
+          node --check research/crypto/cross-sectional-evaluate.js
+          node --check research/crypto/cross-sectional-promotion-check.js
           python -m py_compile research/crypto/prepare-cross-sectional-data.py
           python -m py_compile research/crypto/prepare-cross-sectional-development-data.py
           python -m py_compile research/crypto/prepare-cross-sectional-final-data.py
@@ -134,7 +140,7 @@ jobs:
           set -euo pipefail
           git config user.name 'theoldtrader-research-bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add \
+          git add -- \
             research/crypto/results/cross-sectional-v1-final/summary.json \
             research/crypto/results/cross-sectional-v1-final/provenance.json \
             research/crypto/results/cross-sectional-v1-final/promotion.json
