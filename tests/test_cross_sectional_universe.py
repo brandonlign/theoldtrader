@@ -1,3 +1,4 @@
+import builtins
 import csv
 import importlib.util
 import io
@@ -12,6 +13,11 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "research" / "crypto" / "form-cross-sectional-universe.py"
+# Match the already-frozen compatibility entrypoint used by scientific universe
+# formation. The original builder contains the documented Python spelling
+# `false`; exposing it as False is a mechanical serialization compatibility fix,
+# not a data-selection or ranking change.
+builtins.false = False
 spec = importlib.util.spec_from_file_location("form_cross_sectional_universe", SCRIPT)
 module = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = module
