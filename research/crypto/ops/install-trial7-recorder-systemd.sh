@@ -43,9 +43,8 @@ fi
 
 cd "$ROOT"
 
-# Trial 7 acquisition/evaluation uses Node built-ins only. Do not run npm install
-# during scientific deployment: this repo intentionally has no package-lock.json,
-# and mutating the dependency graph is unnecessary for the sealed collector.
+# Trial 7 acquisition/evaluation uses Node built-ins only. Dependency mutation
+# during scientific deployment is unnecessary for the sealed collector.
 npm test
 npm run research:cv:prestart
 npm run research:cv:connectivity
@@ -59,10 +58,6 @@ else
   sudo chown "$SERVICE_USER":"$(id -gn "$SERVICE_USER")" "$DATA_DIR"
 fi
 
-# Snapshot the exact acquisition runtime after all preflight checks. The
-# root-owned checksum file prevents a later pull/edit from silently changing
-# the recorder on a systemd restart. These are the complete files reachable by
-# the acquisition command before public HTTP requests are made.
 RUNTIME_FILES=(
   "package.json"
   "research/crypto/manifests/cross-venue-funding-v1.json"
