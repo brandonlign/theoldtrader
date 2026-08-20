@@ -1,7 +1,7 @@
 {
   "experimentId": "cme-bff-ibit-carry-v1",
   "trialNumber": 13,
-  "frozenAt": "2026-08-20T14:55:49Z",
+  "frozenAt": "2026-08-20T15:04:44Z",
   "status": "FROZEN_PROSPECTIVE_UNOBSERVED",
   "paperOnly": true,
   "livePromotionAllowed": false,
@@ -122,6 +122,7 @@
       "requiredFields": [
         "closingPrice",
         "basketBitcoinAmount",
+        "basketAmount",
         "asOfDate"
       ],
       "requireBasketShares": 40000,
@@ -165,12 +166,13 @@
       ]
     }
   },
-  "antiRescueRule": "After the 2026-08-21 first scientific settlement is observed, no changes to instrument choice, start date, official-expiry rule, hedge size formula, roll schedule, costs, collateral, shocks, accounting clarifications or pass gates are allowed under Trial 13. Any economic change requires a new trial number.",
+  "antiRescueRule": "After the 2026-08-21 first scientific settlement is observed, no changes to instrument choice, start date, official-expiry rule, hedge size formula, roll schedule, costs, collateral, shocks, benchmark decomposition, accounting clarifications or pass gates are allowed under Trial 13. Any economic change requires a new trial number.",
   "implementationFreezeRevision": {
-    "revision": 1,
-    "revisedAt": "2026-08-20T14:55:49Z",
+    "revision": 2,
+    "revisedAt": "2026-08-20T15:04:44Z",
     "preObservation": true,
-    "reason": "Clarify two implementation details before the first scientific settlement: IBIT sponsor fees are already embedded in observed IBIT share prices and must not be deducted a second time; CME BFF expiries use CME's published preceding-business-day holiday rule rather than an impossible literal-Friday rule on exchange holidays.",
-    "economicResultObservedBeforeRevision": false
+    "reason": "Before the first scientific settlement, require BlackRock's official same-day Basket Amount in addition to Basket Bitcoin Amount so BRRNY can be reconstructed as Basket Amount / Basket Bitcoin Amount. This makes the frozen carry gate direction-neutral: captured BFF basis after reserved execution costs is evaluated separately from IBIT hedge/tracking residual. Retains the revision-1 sponsor-fee and holiday-expiry clarifications.",
+    "economicResultObservedBeforeRevision": false,
+    "supersedesRevision": 1
   }
 }
