@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'research/crypto/kalshi-perp-source-probe.mjs'
+      - 'research/crypto/kalshi-perp-history-coverage.mjs'
       - '.github/workflows/kalshi-perp-source-probe.yml'
 
 permissions:
@@ -13,7 +14,7 @@ permissions:
 jobs:
   source-probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,6 +22,8 @@ jobs:
           node-version: 22
       - name: Verify public BTC perpetual market, book, and funding source
         run: node research/crypto/kalshi-perp-source-probe.mjs
+      - name: Verify launch-to-now Kalshi/CB historical boundary coverage
+        run: node research/crypto/kalshi-perp-history-coverage.mjs
 
 # Development source qualification only. It deliberately does not expose prices,
 # funding-rate values, basis, returns, or P&L and does not freeze a strategy.
