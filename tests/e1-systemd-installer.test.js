@@ -20,8 +20,9 @@ test("E1 installer is branch-locked, clean-worktree, Linux-only and one-shot", (
   assert.match(script, /refusing to create a second scientific run/i);
 });
 
-test("E1 installer requires disk headroom and validates code before enablement", () => {
-  assert.match(script, /MIN_FREE_GIB=15/);
+test("E1 installer requires measured disk headroom and validates code before enablement", () => {
+  assert.match(script, /MIN_FREE_GIB=22/);
+  assert.match(script, /13\.4 GB compressed total/);
   assert.match(script, /df -Pk/);
   const tests = script.indexOf("npm test");
   const runner = script.indexOf("node --check research/crypto/run-coinbase-maker-e1.mjs");
