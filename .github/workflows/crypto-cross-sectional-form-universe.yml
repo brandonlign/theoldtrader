@@ -92,3 +92,6 @@ jobs:
             research/crypto/universes/cross-sectional-v1-universe.json
             research/crypto/universes/cross-sectional-v1-formation-sources.json
           if-no-files-found: error
+
+# Re-triggered after restoring the frozen builder and aligning its existing
+# compatibility shim with the deterministic unit test; no universe/result observed.
