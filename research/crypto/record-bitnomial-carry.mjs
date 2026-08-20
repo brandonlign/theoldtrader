@@ -209,6 +209,15 @@ function msUntilNextCollection(now = new Date(), offsetSeconds = 15) {
   if (target <= now) target.setUTCHours(target.getUTCHours() + 1);
   return target.getTime() - now.getTime();
 }
+function criticalBoundaryCatchUp(manifest, nowMs) {
+  const toleranceMs = manifest.forwardWindow.entryExitToleranceMinutes * 60_000;
+  const normalOffsetMs = manifest.forwardWindow.primaryCollectionOffsetSecondsAfterUtcHour * 1000;
+  for (const value of [manifest.forwardWindow.startInclusive, manifest.forwardWindow.screeningEndExclusive, manifest.forwardWindow.finalEndExclusive]) {
+    const boundary = Date.parse(value);
+    if (nowMs > boundary + normalOffsetMs && nowMs <= boundary + toleranceMs) return { boundary: new Date(boundary).toISOString(), eligible: true };
+  }
+  return { boundary: null, eligible: false };
+}
 async function main() {
   const connectivityOnly = process.argv.includes("--connectivity-only");
   const once = process.argv.includes("--once");
@@ -218,6 +227,15 @@ async function main() {
   const frozen = await loadManifest();
   const startMs = Date.parse(frozen.manifest.forwardWindow.startInclusive);
   if (Date.now() < startMs) await new Promise((resolve) => setTimeout(resolve, startMs - Date.now()));
+  const catchUp = criticalBoundaryCatchUp(frozen.manifest, Date.now());
+  if (catchUp.eligible) {
+    try {
+      await recordOnce({ output });
+      console.error(`[Trial8] critical-boundary catch-up captured for ${catchUp.boundary}`);
+    } catch (error) {
+      console.error(`[Trial8] critical-boundary catch-up failed:`, error);
+    }
+  }
   for (;;) {
     const wait = msUntilNextCollection(new Date(), frozen.manifest.forwardWindow.primaryCollectionOffsetSecondsAfterUtcHour);
     await new Promise((resolve) => setTimeout(resolve, wait));
