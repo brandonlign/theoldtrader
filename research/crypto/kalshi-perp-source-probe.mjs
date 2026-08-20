@@ -1,5 +1,6 @@
 const BASE = 'https://external-api.kalshi.com/trade-api/v2/margin';
-const EXPECTED_TICKER = 'KXBTCPERP1';
+const EXPECTED_TICKER = 'KXBTCPERP';
+const EXPECTED_CONTRACT_SIZE_BTC = 0.0001;
 
 async function getJson(url) {
   const response = await fetch(url, { headers: { 'user-agent': 'TheOldTrader-Research/1.0' } });
@@ -60,8 +61,7 @@ try {
 if (!Array.isArray(markets.markets)) throw new Error('Kalshi active markets response missing markets array');
 const exact = markets.markets.filter((row) => String(row?.ticker ?? '') === EXPECTED_TICKER);
 const btcLike = markets.markets.filter((row) => /bitcoin|btc/i.test(`${row?.title ?? ''} ${row?.ticker ?? ''}`) && /perp/i.test(`${row?.title ?? ''} ${row?.ticker ?? ''}`));
-const candidates = exact.length === 1 ? exact : btcLike;
-if (candidates.length !== 1) {
+if (exact.length !== 1) {
   console.log(JSON.stringify({
     developmentProbeOnly: true,
     economicsCalculated: false,
@@ -69,15 +69,30 @@ if (candidates.length !== 1) {
     publicRestAccessible: true,
     productIdentityValid: false,
     expectedTicker: EXPECTED_TICKER,
+    exactTickerMatches: exact.length,
     btcPerpCandidateIdentities: btcLike.map((row) => ({ ticker: row.ticker, title: row.title, contractSize: row.contract_size }))
   }, null, 2));
   process.exit(3);
 }
 
-const market = candidates[0];
+const market = exact[0];
 const ticker = String(market.ticker);
 const contractSize = positive(market.contract_size);
-if (contractSize == null) throw new Error('Kalshi BTC perp contract_size is not positive numeric');
+const contractSizeValid = contractSize === EXPECTED_CONTRACT_SIZE_BTC;
+if (!contractSizeValid) {
+  console.log(JSON.stringify({
+    developmentProbeOnly: true,
+    economicsCalculated: false,
+    candidateValuesExposed: false,
+    publicRestAccessible: true,
+    productIdentityValid: false,
+    expectedTicker: EXPECTED_TICKER,
+    observedTicker: ticker,
+    expectedContractSize: EXPECTED_CONTRACT_SIZE_BTC,
+    observedContractSize: contractSize
+  }, null, 2));
+  process.exit(3);
+}
 
 const [bookPayload, fundingPayload] = await Promise.all([
   getJson(`${BASE}/markets/${encodeURIComponent(ticker)}/orderbook?depth=0`),
@@ -109,6 +124,7 @@ const statusMetadata = primitiveMetadata(market, /status|open|close|start|end|ma
 const feeMetadata = primitiveMetadata(market, /fee|maker|taker|commission|rebate/i);
 const scheduleHasIsOpen = scheduleObject ? Object.prototype.hasOwnProperty.call(scheduleObject, 'is_open') : false;
 const marketOpen = scheduleHasIsOpen ? Boolean(scheduleObject.is_open) : null;
+const identityValid = ticker === EXPECTED_TICKER && contractSizeValid;
 
 console.log(JSON.stringify({
   developmentProbeOnly: true,
@@ -117,7 +133,7 @@ console.log(JSON.stringify({
   pricesExposed: false,
   fundingValuesExposed: false,
   publicRestAccessible: true,
-  productIdentityValid: ticker === EXPECTED_TICKER || btcLike.length === 1,
+  productIdentityValid: identityValid,
   ticker,
   title: market.title,
   contractSize,
@@ -139,7 +155,7 @@ console.log(JSON.stringify({
   latestFundingTime: distinctFundingTimes.length ? new Date(distinctFundingTimes.at(-1)).toISOString() : null,
   eightHourIntervalsObserved: regularEightHourIntervals,
   intervalCountObserved: intervalsHours.length,
-  sourceQualificationPass: twoSided && oneContractBoth && distinctFundingTimes.length >= 3
+  sourceQualificationPass: identityValid && twoSided && oneContractBoth && distinctFundingTimes.length >= 3
 }, null, 2));
 
-if (!(twoSided && oneContractBoth && distinctFundingTimes.length >= 3)) process.exit(4);
+if (!(identityValid && twoSided && oneContractBoth && distinctFundingTimes.length >= 3)) process.exit(4);
