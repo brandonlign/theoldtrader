@@ -1,6 +1,10 @@
 name: Execute frozen Trial 14 identity-clean development
 
 on:
+  pull_request:
+    branches: [research/crypto-oos-v1]
+    paths:
+      - '.github/workflows/run-trial14-development.yml'
   push:
     branches: [research/cross-sectional-identity-clean-v1]
     paths:
