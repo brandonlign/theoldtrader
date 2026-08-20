@@ -123,7 +123,7 @@ fi
 cat <<EOF
 E1 scientific recorder installed.
 Frozen duration: 168 hours across BTC-USD, ETH-USD, SOL-USD.
-Measured five-minute preflights project roughly 13.4 GB compressed total for seven days (BTC ~6.04 GB, ETH ~5.45 GB, SOL ~1.88 GB); installer requires ${MIN_FREE_GIB} GiB free before start for filesystem/log/headroom.
+Observed 5-minute preflight projected roughly 13.4 GB compressed total for seven days; installer requires ${MIN_FREE_GIB} GiB free before start.
 Health: cd ${ROOT} && node research/crypto/e1-recorder-health.mjs
 Logs: sudo journalctl -u ${SERVICE_NAME} -f
 The service is deliberately low-priority (Nice=10, CPUWeight=20, IOWeight=20) and exits after the frozen scientific window.
