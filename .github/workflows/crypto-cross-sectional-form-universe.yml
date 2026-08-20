@@ -2,6 +2,10 @@ name: TheOldTrader Cross-Sectional Trial 3 Universe Formation
 
 on:
   workflow_dispatch:
+  push:
+    branches: [research/crypto-oos-v1]
+    paths:
+      - '.github/workflows/crypto-cross-sectional-form-universe.yml'
 
 permissions:
   contents: write
