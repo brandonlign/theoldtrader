@@ -1,0 +1,25 @@
+name: Trial 11 Kalshi Source Schema Probe
+
+on:
+  pull_request:
+    branches: [research/kalshi-perp-source-probe]
+    paths:
+      - 'research/crypto/trial11-kalshi-schema-probe.mjs'
+      - '.github/workflows/trial11-kalshi-schema-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Inspect public source field names only
+        run: node research/crypto/trial11-kalshi-schema-probe.mjs
+
+# Schema-only development probe. It prints keys/types, never market values or P&L.

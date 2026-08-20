@@ -1,0 +1,95 @@
+name: Trial 11 Frozen Kalshi Coinbase Carry Screen
+
+on:
+  pull_request:
+    branches: [research/kalshi-perp-source-probe]
+    paths:
+      - 'research/crypto/manifests/kalshi-coinbase-carry-v1.json'
+      - 'research/crypto/prepare-kalshi-coinbase-carry.mjs'
+      - 'research/crypto/evaluate-kalshi-coinbase-carry.mjs'
+      - 'tests/kalshi-coinbase-carry.test.js'
+      - '.github/workflows/trial11-historical-screen.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frozen-trial11-kalshi-coinbase-carry
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate frozen manifest and evaluator
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check research/crypto/prepare-kalshi-coinbase-carry.mjs
+          node --check research/crypto/evaluate-kalshi-coinbase-carry.mjs
+          node --test tests/kalshi-coinbase-carry.test.js
+          node - <<'NODE'
+          const fs = require('fs');
+          const m = JSON.parse(fs.readFileSync('research/crypto/manifests/kalshi-coinbase-carry-v1.json'));
+          if (m.trialNumber !== 11 || m.status !== 'FROZEN_HISTORICAL_DEVELOPMENT_UNOBSERVED' || m.frozenAt !== '2026-08-20T14:08:04Z') process.exit(2);
+          NODE
+
+      - name: Acquire exact first-party frozen-window evidence
+        run: >-
+          node research/crypto/prepare-kalshi-coinbase-carry.mjs
+          research/crypto/data-cache/kalshi-coinbase-carry-v1-synchronized.json
+          research/crypto/data-cache/kalshi-coinbase-carry-v1-sources.json
+          research/crypto/data-cache/kalshi-coinbase-carry-v1-raw
+
+      - name: Evaluate frozen Trial 11 economics once
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p research/crypto/results/kalshi-coinbase-carry-v1
+          node research/crypto/evaluate-kalshi-coinbase-carry.mjs \
+            research/crypto/data-cache/kalshi-coinbase-carry-v1-synchronized.json \
+            research/crypto/data-cache/kalshi-coinbase-carry-v1-sources.json \
+            > research/crypto/results/kalshi-coinbase-carry-v1/summary.json
+
+      - name: Print compact frozen result
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const s = JSON.parse(require('fs').readFileSync('research/crypto/results/kalshi-coinbase-carry-v1/summary.json'));
+          console.log(JSON.stringify({
+            experimentId: s.experimentId,
+            classification: s.classification,
+            developmentPass: s.developmentPass,
+            rows: s.window.rows,
+            elapsedDays: s.window.elapsedDays,
+            contracts: s.sizing.contracts,
+            quantityBtc: s.sizing.quantityBtc,
+            primary: s.primary,
+            stress: s.stress,
+            shocks: s.shocks,
+            developmentChecks: s.developmentChecks,
+            feeVerificationFirewallSatisfied: s.feeVerificationFirewallSatisfied,
+            sourceIntegrity: s.sourceIntegrity
+          }, null, 2));
+          NODE
+
+      - name: Upload immutable Trial 11 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: kalshi-coinbase-carry-v1-historical-evidence
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            research/crypto/manifests/kalshi-coinbase-carry-v1.json
+            research/crypto/data-cache/kalshi-coinbase-carry-v1-synchronized.json
+            research/crypto/data-cache/kalshi-coinbase-carry-v1-sources.json
+            research/crypto/data-cache/kalshi-coinbase-carry-v1-raw
+            research/crypto/results/kalshi-coinbase-carry-v1/summary.json
+
+# Historical development only. This workflow cannot promote or authorize trading.
