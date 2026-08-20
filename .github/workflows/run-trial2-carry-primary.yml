@@ -52,13 +52,61 @@ jobs:
           node --test tests/crypto-carry-evaluate.test.js
 
       - name: Download and checksum official Binance Vision archives
+        id: acquire
+        continue-on-error: true
         run: >-
           python research/crypto/prepare-carry-data.py
           research/crypto/manifests/funding-carry-v1.json
           research/crypto/data-cache/funding-carry-v1-synchronized.csv
           research/crypto/data-cache/funding-carry-v1-sources.json
 
+      - name: Forensic audit of exact mark-price gaps only
+        if: steps.acquire.outcome == 'failure'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import importlib.util
+          import json
+          from datetime import datetime
+
+          path = 'research/crypto/prepare-carry-data.py'
+          spec = importlib.util.spec_from_file_location('carry_prepare', path)
+          mod = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+
+          manifest = json.load(open('research/crypto/manifests/funding-carry-v1.json'))
+          window = manifest['historicalRobustnessWindow']
+          start_ms = int(datetime.fromisoformat(window['startInclusive'].replace('Z', '+00:00')).timestamp() * 1000)
+          end_ms = int(datetime.fromisoformat(window['endExclusive'].replace('Z', '+00:00')).timestamp() * 1000)
+          tolerance = int(manifest['dataRequirements']['fundingTimestampNormalization']['maximumAbsoluteSkewMs'])
+          months = list(mod.month_range(start_ms, end_ms))
+          marks, _ = mod.download_many('mark_monthly', months, start_ms, end_ms, tolerance)
+          funding, _ = mod.download_many('funding_monthly', months, start_ms, end_ms, tolerance)
+          funding_times = sorted(funding)
+          mark_times = sorted(marks)
+          missing = [t for t in funding_times if t not in marks]
+          print(json.dumps({
+            'forensicOnly': True,
+            'economicsCalculated': False,
+            'missingMarkCount': len(missing),
+            'missingBoundaries': [mod.iso_ms(t) for t in missing],
+            'nearestMarks': [
+              {
+                'boundary': mod.iso_ms(t),
+                'previous': mod.iso_ms(max((m for m in mark_times if m < t), default=t)) if any(m < t for m in mark_times) else None,
+                'next': mod.iso_ms(min((m for m in mark_times if m > t), default=t)) if any(m > t for m in mark_times) else None,
+                'previousDeltaHours': ((t - max((m for m in mark_times if m < t), default=t)) / 3_600_000) if any(m < t for m in mark_times) else None,
+                'nextDeltaHours': ((min((m for m in mark_times if m > t), default=t) - t) / 3_600_000) if any(m > t for m in mark_times) else None,
+              }
+              for t in missing
+            ]
+          }, indent=2))
+          PY
+          exit 1
+
       - name: Evaluate frozen Trial 2 exactly once in this run
+        if: steps.acquire.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -72,6 +120,7 @@ jobs:
             research/crypto/results/funding-carry-v1
 
       - name: Upload immutable evidence bundle
+        if: steps.acquire.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: funding-carry-v1-primary-evidence
@@ -85,4 +134,4 @@ jobs:
 
 # Orchestration only. This workflow deliberately checks out research/crypto-oos-v1,
 # so PR branch contents cannot alter the frozen Trial 2 manifest/evaluator/data builder.
-# It uploads evidence rather than writing results back to the frozen branch.
+# The failure-only forensic step diagnoses source timestamp coverage and never computes economics.
