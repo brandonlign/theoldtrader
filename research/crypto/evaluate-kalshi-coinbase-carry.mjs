@@ -41,7 +41,11 @@ export function evaluateTrial11({ manifest, synchronized, sourceManifest }) {
     if (Math.abs(rows[i].fundingRate) > 0.02 + 1e-12) throw new Error(`Funding rate exceeds 2% sanity cap at row ${i}`);
     if (i > 0 && Date.parse(rows[i].timestamp) - Date.parse(rows[i - 1].timestamp) !== 8 * 3600 * 1000) throw new Error(`Non-8h row interval at ${i}`);
   }
-  if (rows[0].timestamp !== manifest.historicalDevelopmentWindow.startInclusive || rows.at(-1).timestamp !== manifest.historicalDevelopmentWindow.endInclusive) {
+  const frozenStartMs = Date.parse(manifest.historicalDevelopmentWindow.startInclusive);
+  const frozenEndMs = Date.parse(manifest.historicalDevelopmentWindow.endInclusive);
+  if (!Number.isFinite(frozenStartMs) || !Number.isFinite(frozenEndMs)
+    || Date.parse(rows[0].timestamp) !== frozenStartMs
+    || Date.parse(rows.at(-1).timestamp) !== frozenEndMs) {
     throw new Error('Synchronized endpoints differ from frozen Trial 11 window');
   }
 
