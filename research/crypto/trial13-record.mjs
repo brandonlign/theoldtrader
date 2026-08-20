@@ -5,7 +5,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 export const MANIFEST_PATH = 'research/crypto/manifests/cme-bff-ibit-carry-v1.json';
-export const MANIFEST_SHA256 = 'c4a54e47b8a46f35db99255145b59c11075a137ff4b130d74def247b80d037cd';
+export const MANIFEST_SHA256 = '9f4222cac1d6e5b2c9d91b32b72a1aaafead5ff4441d4d07a8780270acc6220d';
 export const BLACKROCK_URL = 'https://www.ishares.com/us/products/333011/ishares-bitcoin-trust-etf';
 export const CME_PRODUCT_ID = 10878;
 const UA = 'Mozilla/5.0 TheOldTrader-Research/1.0';
@@ -36,17 +36,24 @@ export function parseBlackRockIbit(html) {
   const pick = (label,re) => {
     const i=text.toLowerCase().indexOf(label.toLowerCase());
     if(i<0) throw new Error(`BlackRock field missing: ${label}`);
-    const m=text.slice(i,i+600).match(re);
+    const m=text.slice(i,i+700).match(re);
     if(!m) throw new Error(`BlackRock field unparsable: ${label}`);
     return m;
   };
   const close=pick('Closing Price',/Closing Price\s*\$?\s*([0-9,]+(?:\.[0-9]+)?)\s*as of\s*([A-Za-z]{3}\s+\d{1,2},\s+\d{4})/i);
   const basket=pick('Basket Bitcoin Amount',/Basket Bitcoin Amount\s*([0-9,]+(?:\.[0-9]+)?)\s*as of\s*([A-Za-z]{3}\s+\d{1,2},\s+\d{4})/i);
+  const basketUsdMatch=text.match(/(?:^|\s)Basket Amount\s*\$+\s*([0-9,]+(?:\.[0-9]+)?)\s*as of\s*([A-Za-z]{3}\s+\d{1,2},\s+\d{4})/i);
+  if(!basketUsdMatch) throw new Error('BlackRock field unparsable: Basket Amount');
+  const basketBitcoinAmount=Number(basket[1].replaceAll(',',''));
+  const basketAmountUsd=Number(basketUsdMatch[1].replaceAll(',',''));
   return {
     closingPrice:Number(close[1].replaceAll(',','')),
     closingPriceAsOfDate:isoFromUsText(close[2]),
-    basketBitcoinAmount:Number(basket[1].replaceAll(',','')),
+    basketBitcoinAmount,
     basketBitcoinAmountAsOfDate:isoFromUsText(basket[2]),
+    basketAmountUsd,
+    basketAmountAsOfDate:isoFromUsText(basketUsdMatch[2]),
+    benchmarkIndexUsdPerBtc:basketAmountUsd/basketBitcoinAmount,
     benchmarkConfirmed:/CME CF Bitcoin Reference Rate\s*-?\s*New York Variant/i.test(text),
     exchangeConfirmed:/Exchange\s+NASDAQ/i.test(text),
   };
@@ -102,10 +109,7 @@ export function defaultTargetDate(now=new Date()) {
 
 function adjustmentMaps(manifest) {
   const rows=manifest.schedule.holidayAdjustedRollDates??[];
-  return {
-    byNominal:new Map(rows.map(x=>[x.nominalFriday,x.terminationDate])),
-    byTermination:new Map(rows.map(x=>[x.terminationDate,x.nominalFriday])),
-  };
+  return {byNominal:new Map(rows.map(x=>[x.nominalFriday,x.terminationDate])),byTermination:new Map(rows.map(x=>[x.terminationDate,x.nominalFriday]))};
 }
 export function officialRollDates(manifest,throughDate) {
   const {byNominal}=adjustmentMaps(manifest), out=[];
@@ -123,9 +127,7 @@ export function validateTargetDate(manifest,targetDate) {
   if(!allowed.includes(targetDate)) throw new Error(`${targetDate} is not a frozen Trial 13 BFF termination date`);
   return allowed;
 }
-function nominalExpiryForTermination(manifest,targetDate) {
-  return adjustmentMaps(manifest).byTermination.get(targetDate)??targetDate;
-}
+function nominalExpiryForTermination(manifest,targetDate) { return adjustmentMaps(manifest).byTermination.get(targetDate)??targetDate; }
 function selectCurrentAndNext(manifest,contracts,targetDate,isStart) {
   const nominal=nominalExpiryForTermination(manifest,targetDate);
   const current=contracts.find(c=>c.expiryDate===nominal)??null;
@@ -149,8 +151,8 @@ export async function recordTrial13({targetDate=defaultTargetDate(),fetcher=fetc
 
   const brRaw=await fetcher(BLACKROCK_URL), ibit=parseBlackRockIbit(brRaw);
   if(!ibit.benchmarkConfirmed||!ibit.exchangeConfirmed) throw new Error('BlackRock IBIT benchmark/exchange identity check failed');
-  if(ibit.closingPriceAsOfDate!==targetDate||ibit.basketBitcoinAmountAsOfDate!==targetDate) {
-    const e=new Error(`BLACKROCK_NOT_READY target=${targetDate} closeAsOf=${ibit.closingPriceAsOfDate} basketAsOf=${ibit.basketBitcoinAmountAsOfDate}`); e.code='SOURCE_NOT_READY'; throw e;
+  if(ibit.closingPriceAsOfDate!==targetDate||ibit.basketBitcoinAmountAsOfDate!==targetDate||ibit.basketAmountAsOfDate!==targetDate) {
+    const e=new Error(`BLACKROCK_NOT_READY target=${targetDate} closeAsOf=${ibit.closingPriceAsOfDate} basketBtcAsOf=${ibit.basketBitcoinAmountAsOfDate} basketUsdAsOf=${ibit.basketAmountAsOfDate}`); e.code='SOURCE_NOT_READY'; throw e;
   }
 
   const cmeUrl=`https://www.cmegroup.com/CmeWS/mvc/Settlements/Futures/Settlements/${CME_PRODUCT_ID}/FUT?tradeDate=${encodeURIComponent(usDate(targetDate))}&strategy=DEFAULT&pageSize=100`;
@@ -168,6 +170,8 @@ export async function recordTrial13({targetDate=defaultTargetDate(),fetcher=fetc
     stressIbitEntryPrice:isStart?ibit.closingPrice*(1+manifest.costModel.stress.ibitEntryAndExitHalfSpreadBps/10000):null,
     primaryBffShortEntryPrice:next.settle-manifest.costModel.bffAdverseEntryTicks*manifest.costModel.bffTickUsdPerBtc,
     stressBffShortEntryPrice:next.settle-manifest.costModel.stress.bffAdverseEntryTicks*manifest.costModel.bffTickUsdPerBtc,
+    rawBffNextSettlement:next.settle,
+    officialBenchmarkIndexUsdPerBtc:ibit.benchmarkIndexUsdPerBtc,
   };
   const summary={experimentId:manifest.experimentId,trialNumber:13,manifestSha256:MANIFEST_SHA256,targetDate,recordedAt:new Date().toISOString(),
     sourceProvenance:{blackrock:{url:BLACKROCK_URL,sha256:sha256(brRaw),asOfDate:targetDate},cme:{url:cmeUrl,sha256:sha256(cmeRaw),reportType:'Final',tradeDate:targetDate}},
