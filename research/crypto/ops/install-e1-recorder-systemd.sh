@@ -2,6 +2,7 @@
 set -euo pipefail
 
 SERVICE_NAME="theoldtrader-e1-recorder"
+TRIAL8_SERVICE="theoldtrader-trial8-recorder.service"
 REQUIRED_BRANCH="research/execution-e1-ops"
 SERVICE_USER="${1:-$(id -un)}"
 MIN_FREE_GIB=22
@@ -11,7 +12,7 @@ if [[ "$(uname -s)" != "Linux" ]]; then
   exit 1
 fi
 
-ROOT="$(git rev-parse --show-toplevel)"
+ROOT="$(realpath "$(git rev-parse --show-toplevel)")"
 CURRENT_BRANCH="$(git -C "$ROOT" branch --show-current)"
 NPM_BIN="$(command -v npm || true)"
 NODE_BIN="$(command -v node || true)"
@@ -23,6 +24,15 @@ command -v systemctl >/dev/null 2>&1 || { echo "systemd/systemctl is required" >
 [[ "$CURRENT_BRANCH" == "$REQUIRED_BRANCH" ]] || { echo "Refusing E1 install from branch '$CURRENT_BRANCH'; required '$REQUIRED_BRANCH'" >&2; exit 1; }
 git -C "$ROOT" diff --quiet && git -C "$ROOT" diff --cached --quiet || { echo "Refusing E1 install from a dirty worktree" >&2; exit 1; }
 id "$SERVICE_USER" >/dev/null 2>&1 || { echo "Service user '$SERVICE_USER' does not exist" >&2; exit 1; }
+
+# Trial 8 is a sealed live prospective recorder. E1 must never be installed from
+# the same checkout because changing that checkout's branch/files could invalidate
+# Trial 8's root-owned runtime hashes or break a later restart.
+TRIAL8_ROOT="$(systemctl show -p WorkingDirectory --value "$TRIAL8_SERVICE" 2>/dev/null || true)"
+if [[ -n "$TRIAL8_ROOT" ]] && [[ "$(realpath -m "$TRIAL8_ROOT")" == "$ROOT" ]]; then
+  echo "Refusing E1 install from the Trial 8 working directory '$ROOT'. Use a separate clone/worktree (for example ~/theoldtrader-e1)." >&2
+  exit 1
+fi
 
 cd "$ROOT"
 
@@ -121,7 +131,7 @@ else
 fi
 
 cat <<EOF
-E1 scientific recorder installed.
+E1 scientific recorder installed from isolated checkout: ${ROOT}
 Frozen duration: 168 hours across BTC-USD, ETH-USD, SOL-USD.
 Observed 5-minute preflight projected roughly 13.4 GB compressed total for seven days; installer requires ${MIN_FREE_GIB} GiB free before start.
 Health: cd ${ROOT} && node research/crypto/e1-recorder-health.mjs
