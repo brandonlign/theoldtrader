@@ -64,7 +64,7 @@ function normalizeRawFunding(json, productId) {
     intervalEnd: new Date(row.interval_end).toISOString()
   })).sort((a, b) => Date.parse(a.intervalEnd) - Date.parse(b.intervalEnd));
 }
-function auditSemantics(records, rowsByHash) {
+function auditSemantics(records, rowsByHash, manifest) {
   for (const record of records) {
     const cb = record.sources.coinbase;
     const bt = record.sources.bitnomial;
@@ -80,6 +80,17 @@ function auditSemantics(records, rowsByHash) {
     close(bt.contractSizeBtc, spec.contract_size, "Bitnomial contract size");
     close(bt.priceIncrement, spec.price_increment, "Bitnomial price increment");
     if (String(bt.symbol) !== String(spec.symbol ?? "") || String(bt.productName) !== String(spec.product_name ?? "")) throw new Error("Trial 8 Bitnomial spec semantic mismatch");
+    const expected = manifest.venues.perpetualShort;
+    const symbol = String(spec.symbol ?? "").toUpperCase();
+    const cqg = String(spec.cqg_symbol ?? "").toUpperCase();
+    const base = String(spec.base_symbol ?? "").toUpperCase();
+    const type = String(spec.type ?? "").toLowerCase();
+    if (type !== String(expected.expectedApiType).toLowerCase()
+      || base !== String(expected.fundingBaseSymbol).toUpperCase()
+      || !(symbol.startsWith(String(expected.productCodePrefix).toUpperCase()) || cqg.startsWith(String(expected.productCodePrefix).toUpperCase()))
+      || Math.abs(Number(spec.contract_size) - Number(expected.contractSizeBtc)) > 1e-12) {
+      throw new Error("Trial 8 raw Bitnomial perpetual machine identity mismatch");
+    }
 
     const dataJson = JSON.parse(rawFor(record, "bitnomial-product-data", bt.hashes.productData, rowsByHash).rawText);
     const data = Array.isArray(dataJson) ? dataJson.find((row) => Number(row.product_id) === Number(bt.productId)) : dataJson;
@@ -98,7 +109,7 @@ function auditSemantics(records, rowsByHash) {
       close(a.fundingRate, b.fundingRate, `funding rate[${i}]`);
     }
   }
-  return { pass: true, compactRowsAudited: records.length, productIdentitySource: "funding product_id -> direct product spec" };
+  return { pass: true, compactRowsAudited: records.length, productIdentitySource: "funding product_id -> direct product spec -> exact perpetual machine identity" };
 }
 
 async function main() {
@@ -114,7 +125,7 @@ async function main() {
   if (Date.now() < notBefore) throw new Error(`Refusing Trial 8 ${mode} evaluation before ${new Date(notBefore).toISOString()}`);
   const records = await readCompact(compactPath, startMs, discoveryEndMs);
   const raw = await readRaw(rawPath, manifestHash);
-  const semanticAudit = auditSemantics(records, raw.rowsByHash);
+  const semanticAudit = auditSemantics(records, raw.rowsByHash, manifest);
   const result = evaluateBitnomialCarry({ manifest, manifestHash, records, availableRawHashes: raw.hashes, mode, evaluationNowMs: Date.now() });
   process.stdout.write(`${JSON.stringify({
     ...result,
