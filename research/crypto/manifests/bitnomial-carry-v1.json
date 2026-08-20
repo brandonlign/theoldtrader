@@ -7,11 +7,13 @@
   "livePromotionAllowed": false,
   "scientificMode": "forward-only",
   "freeze": {
-    "frozenAt": "2026-08-20T00:15:00Z",
-    "lastPreObservationSourceCorrectionAt": "2026-08-20T00:24:00Z",
+    "initialFreezeAt": "2026-08-20T00:15:00Z",
+    "finalPreObservationFreezeAt": "2026-08-20T00:16:31Z",
     "reason": "Trial 7 could not begin because Binance USD-M returned HTTP 451 from both available New York/Oracle collection environments. Trial 8 preserves the pre-result carry hypothesis while replacing the inaccessible venue with first-party U.S.-regulated public market data. Trial 7 remains an operational no-start, not a failed strategy result.",
     "revisionLog": [
-      "Before any Trial 8 observation, the Bitnomial funding URL was corrected from the generic /prod REST base assumption to the explicit first-party funding-rate request path documented by Bitnomial: /exchange/api/v1/funding-rates/. No economic parameter changed."
+      "Before any Trial 8 observation, the Bitnomial funding URL was corrected from the generic /prod REST base assumption to the explicit first-party funding-rate request path documented by Bitnomial: /exchange/api/v1/funding-rates/. No economic parameter changed.",
+      "Before any Trial 8 observation, the Bitnomial product-spec request was changed from the undocumented ?active=true query to the documented /product/specs/ endpoint; the recorder itself filters product_status=active. No economic parameter changed.",
+      "Before any Trial 8 observation, an accidentally future-dated source-correction timestamp was replaced with the actual final pre-observation freeze time. This is provenance correction only."
     ],
     "firstTrial8EconomicResultObserved": false
   },
@@ -20,14 +22,13 @@
     "mechanism": "positive Bitnomial perpetual funding transfers value from longs to shorts while equal BTC units hedge first-order BTC direction",
     "publishedEvidenceRole": "mechanism and hypothesis motivation only; no external historical return may score Trial 8",
     "whyBitnomial": "Bitnomial is a CFTC-registered designated contract market and publishes first-party public perpetual funding history containing interval timestamps, funding rate, mark price and price index.",
-    "whyCoinbaseSpot": "Coinbase BTC-USD provides first-party public spot ticker/book data accessible in the user's normal U.S. environment."
+    "whyCoinbaseSpot": "Coinbase BTC-USD provides first-party public spot ticker data accessible in the user's normal U.S. environment."
   },
   "venues": {
     "spotLong": {
       "venue": "coinbase-exchange",
       "product": "BTC-USD",
-      "tickerEndpoint": "https://api.exchange.coinbase.com/products/BTC-USD/ticker",
-      "bookEndpoint": "https://api.exchange.coinbase.com/products/BTC-USD/book?level=1"
+      "tickerEndpoint": "https://api.exchange.coinbase.com/products/BTC-USD/ticker"
     },
     "perpetualShort": {
       "venue": "bitnomial",
@@ -35,7 +36,7 @@
       "productCode": "PBTCUC",
       "fundingBaseSymbol": "BTCUC",
       "contractSizeBtc": 0.01,
-      "specsEndpoint": "https://bitnomial.com/exchange/api/v1/prod/product/specs/?active=true",
+      "specsEndpoint": "https://bitnomial.com/exchange/api/v1/prod/product/specs/",
       "productDataEndpointPrefix": "https://bitnomial.com/exchange/api/v1/prod/product/data/",
       "fundingEndpoint": "https://bitnomial.com/exchange/api/v1/funding-rates/"
     }
