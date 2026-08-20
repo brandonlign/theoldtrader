@@ -11,10 +11,12 @@ import {
 
 const bytes = fs.readFileSync(TRIAL8_CANONICAL_MANIFEST_PATH);
 const manifest = JSON.parse(bytes.toString("utf8"));
+const recorder = fs.readFileSync("research/crypto/record-bitnomial-carry.mjs", "utf8");
+const evaluator = fs.readFileSync("research/crypto/evaluate-bitnomial-carry.mjs", "utf8");
 
 test("Trial 8 exact manifest bytes remain frozen", () => {
-  assert.equal(TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1, "06d6d41e976513aea3fe4fb9378e171562e99be8");
-  assert.equal(TRIAL8_FINAL_PREOBSERVATION_FREEZE_AT, "2026-08-20T02:01:09Z");
+  assert.equal(TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1, "3be434dba3c732ee26df471224197466b6b7dbd7");
+  assert.equal(TRIAL8_FINAL_PREOBSERVATION_FREEZE_AT, "2026-08-20T02:08:00Z");
   assert.equal(gitBlobSha1(bytes), TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1);
   assert.equal(verifyTrial8CanonicalManifestBytes(bytes), TRIAL8_CANONICAL_MANIFEST_GIT_BLOB_SHA1);
 });
@@ -44,14 +46,20 @@ test("Trial 8 economics, timing and safety remain frozen", () => {
   assert.equal(manifest.finalGate.strongestPossibleClassification, "PROMOTION_ELIGIBLE_RESEARCH_ONLY");
 });
 
-test("Trial 8 product identity is funding-first and first-party only", () => {
+test("Trial 8 product identity is funding-first and matches the observed live Bitnomial machine schema", () => {
   assert.equal(manifest.venues.spotLong.tickerEndpoint, "https://api.exchange.coinbase.com/products/BTC-USD/ticker");
   assert.equal(manifest.venues.perpetualShort.productSpecEndpointPrefix, "https://bitnomial.com/exchange/api/v1/prod/product/spec/");
   assert.equal(manifest.venues.perpetualShort.productDataEndpointPrefix, "https://bitnomial.com/exchange/api/v1/prod/product/data/");
   assert.equal(manifest.venues.perpetualShort.fundingEndpoint, "https://bitnomial.com/exchange/api/v1/funding-rates/");
   assert.equal(manifest.venues.perpetualShort.fundingBaseSymbol, "BTCUC");
-  assert.match(manifest.sourceRules.bitnomialProductDiscoveryRule, /funding endpoint/);
-  assert.match(manifest.sourceRules.bitnomialProductDiscoveryRule, /product_id/);
+  assert.equal(manifest.venues.perpetualShort.productCodePrefix, "PBTCUC");
+  assert.equal(manifest.venues.perpetualShort.expectedApiType, "perpetual");
+  assert.equal(manifest.venues.perpetualShort.contractSizeBtc, 0.01);
+  assert.match(manifest.sourceRules.bitnomialProductDiscoveryRule, /type=perpetual/);
+  assert.match(manifest.sourceRules.bitnomialProductDiscoveryRule, /PBTCUC/);
+  assert.match(recorder, /type === expectedType/);
+  assert.match(recorder, /symbol\.startsWith\(expectedPrefix\)/);
+  assert.match(evaluator, /raw Bitnomial perpetual machine identity mismatch/);
   assert.equal(manifest.sourceRules.noApiKeysRequired, true);
   assert.equal(manifest.sourceRules.noThirdPartyCandidateData, true);
   assert.equal(manifest.antiLeakage.noOutcomeDrivenRetuning, true);
