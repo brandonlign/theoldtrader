@@ -166,7 +166,6 @@ jobs:
             research/crypto/results/ctrend-v1-final/summary.json
             research/crypto/results/ctrend-v1-final/provenance.json
             research/crypto/results/ctrend-v1-final/source-pages.json
-            research/crypto/results/ctrend-v1-final/provenance.json
             research/crypto/results/ctrend-v1-final/promotion.json
             /tmp/ctrend-v1-final-pages
           if-no-files-found: error
