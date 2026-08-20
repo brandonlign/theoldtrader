@@ -15,12 +15,6 @@ function close(a, b, label, tolerance = 1e-10) {
     throw new Error(`Trial 8 raw semantic mismatch for ${label}: ${a} vs ${b}`);
   }
 }
-function identifySpec(specs, productId) {
-  if (!Array.isArray(specs)) throw new Error("Raw Bitnomial specs are not an array");
-  const matches = specs.filter((spec) => Number(spec.product_id) === Number(productId));
-  if (matches.length !== 1) throw new Error(`Raw Bitnomial spec identity count ${matches.length}`);
-  return matches[0];
-}
 async function readCompact(file, startMs, discoveryEndMs) {
   const records = [];
   const rl = readline.createInterface({ input: fs.createReadStream(file), crlfDelay: Infinity });
@@ -80,11 +74,12 @@ function auditSemantics(records, rowsByHash) {
     close(cb.last, cbRaw.price, "Coinbase last");
     if (new Date(cbRaw.time).toISOString() !== cb.tickerTime) throw new Error("Trial 8 Coinbase ticker timestamp semantic mismatch");
 
-    const specsRaw = JSON.parse(rawFor(record, "bitnomial-product-specs", bt.hashes.specs, rowsByHash).rawText);
-    const spec = identifySpec(specsRaw, bt.productId);
+    const specJson = JSON.parse(rawFor(record, "bitnomial-product-spec", bt.hashes.specs, rowsByHash).rawText);
+    const spec = Array.isArray(specJson) ? specJson[0] : specJson;
+    if (!spec || Number(spec.product_id) !== Number(bt.productId)) throw new Error("Trial 8 raw Bitnomial direct spec product_id mismatch");
     close(bt.contractSizeBtc, spec.contract_size, "Bitnomial contract size");
     close(bt.priceIncrement, spec.price_increment, "Bitnomial price increment");
-    if (String(bt.symbol) !== String(spec.symbol) || String(bt.productName) !== String(spec.product_name)) throw new Error("Trial 8 Bitnomial spec semantic mismatch");
+    if (String(bt.symbol) !== String(spec.symbol ?? "") || String(bt.productName) !== String(spec.product_name ?? "")) throw new Error("Trial 8 Bitnomial spec semantic mismatch");
 
     const dataJson = JSON.parse(rawFor(record, "bitnomial-product-data", bt.hashes.productData, rowsByHash).rawText);
     const data = Array.isArray(dataJson) ? dataJson.find((row) => Number(row.product_id) === Number(bt.productId)) : dataJson;
@@ -103,7 +98,7 @@ function auditSemantics(records, rowsByHash) {
       close(a.fundingRate, b.fundingRate, `funding rate[${i}]`);
     }
   }
-  return { pass: true, compactRowsAudited: records.length };
+  return { pass: true, compactRowsAudited: records.length, productIdentitySource: "funding product_id -> direct product spec" };
 }
 
 async function main() {
@@ -121,7 +116,7 @@ async function main() {
   const raw = await readRaw(rawPath, manifestHash);
   const semanticAudit = auditSemantics(records, raw.rowsByHash);
   const result = evaluateBitnomialCarry({ manifest, manifestHash, records, availableRawHashes: raw.hashes, mode, evaluationNowMs: Date.now() });
-  const output = {
+  process.stdout.write(`${JSON.stringify({
     ...result,
     provenance: {
       manifestPath: MANIFEST_PATH,
@@ -135,7 +130,6 @@ async function main() {
       discoveryCutoff: new Date(discoveryEndMs).toISOString(),
       firstPartyOnly: true
     }
-  };
-  process.stdout.write(`${JSON.stringify(output, null, 2)}\n`);
+  }, null, 2)}\n`);
 }
 main().catch((error) => { console.error(error?.stack || error); process.exitCode = 1; });
