@@ -23,21 +23,40 @@ if (manifest.confirmationWindow.startInclusive !== '2026-03-01T00:00:00Z' || man
 }
 if (manifest.candidate.futuresCollateralReservePct !== 0.50) throw new Error('Trial 16 frozen collateral drift');
 
+// The core evaluator also emits metadata from the original Trial 2 evaluation
+// block. Reuse that already-frozen manifest as a compatibility template and
+// override only the prospectively frozen Trial 16 identity/window/capitalization
+// fields. This does not alter any economic calculation.
+const baseManifestPath = path.join(path.dirname(manifestPath), 'funding-carry-v1.json');
+const baseManifest = JSON.parse(fs.readFileSync(baseManifestPath, 'utf8'));
+if (baseManifest.experimentId !== 'funding-carry-v1' || baseManifest.trialNumber !== 2) {
+  throw new Error('Frozen Trial 2 core manifest unavailable for Trial 16 compatibility');
+}
 const coreManifest = {
+  ...baseManifest,
   experimentId: 'funding-carry-v1',
   trialNumber: 16,
   paperOnly: true,
   livePromotionAllowed: false,
   historicalRobustnessWindow: {
+    ...baseManifest.historicalRobustnessWindow,
     startInclusive: manifest.confirmationWindow.startInclusive,
-    endExclusive: manifest.confirmationWindow.endExclusive
+    endExclusive: manifest.confirmationWindow.endExclusive,
+    reason: 'Trial 16 sealed confirmation window; no Trial 16 economic row was observed at freeze.'
   },
   dataRequirements: {
+    ...baseManifest.dataRequirements,
     fundingTimestampNormalization: manifest.dataRequirements.fundingTimestampNormalization
   },
   candidate: manifest.candidate,
   costModel: manifest.costModel,
-  marginStress: manifest.marginStress
+  marginStress: manifest.marginStress,
+  evaluation: {
+    ...baseManifest.evaluation,
+    historicalHoldoutIntegrity: 'Trial 16 uses the separately frozen 2026-03-01 through 2026-08-01 confirmation window, which was not part of Trial 2U carry economics.',
+    promotionRequires: manifest.promotionCriteria.interpretation
+  },
+  antiRescueRule: manifest.antiRescueRule
 };
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'theoldtrader-trial16-'));
