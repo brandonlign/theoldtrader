@@ -1,0 +1,38 @@
+name: Watch Trial 30
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/watch-trial30.yml']
+permissions:
+  actions: read
+  contents: write
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Watch latest Trial 30 execution and capture status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          sleep 5
+          id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow retrigger-carry-recovery.yml --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+          echo "Trial 30 carrier run id: $id"
+          if [ "$id" = 0 ]; then exit 2; fi
+          gh run watch "$id" --repo "$GITHUB_REPOSITORY" --interval 10 || true
+          gh run view "$id" --repo "$GITHUB_REPOSITORY" --json status,conclusion,jobs > /tmp/t30-status.json || true
+          gh run view "$id" --repo "$GITHUB_REPOSITORY" --log > /tmp/t30.log 2>&1 || true
+          git fetch origin research/proactive-stress-buffer-crossvenue-v1
+          git checkout -B research/proactive-stress-buffer-crossvenue-v1 origin/research/proactive-stress-buffer-crossvenue-v1
+          mkdir -p research/crypto/results/proactive-stress-buffer-crossvenue-v1-ops
+          cp /tmp/t30-status.json research/crypto/results/proactive-stress-buffer-crossvenue-v1-ops/latest-run-status.json
+          tail -n 700 /tmp/t30.log > research/crypto/results/proactive-stress-buffer-crossvenue-v1-ops/latest-run-tail.txt
+          printf '%s\n' "$id" > research/crypto/results/proactive-stress-buffer-crossvenue-v1-ops/latest-run-id.txt
+          git config user.name theoldtrader-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add research/crypto/results/proactive-stress-buffer-crossvenue-v1-ops
+          git commit -m 'Ops: capture Trial 30 execution status' || true
+          git pull --rebase origin research/proactive-stress-buffer-crossvenue-v1 || true
+          git push origin HEAD:research/proactive-stress-buffer-crossvenue-v1
