@@ -1,5 +1,6 @@
 name: Execute frozen Trial 14 identity-clean development
 
+# Operational rerun after deterministic gzip-header repair; scientific rules unchanged.
 on:
   pull_request:
     branches: [research/crypto-oos-v1]
