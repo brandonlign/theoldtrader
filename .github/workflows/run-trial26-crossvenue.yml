@@ -1,0 +1,94 @@
+name: Execute frozen Trial 26 cross-venue funding spread
+on:
+  push:
+    branches: [research/cross-venue-funding-spread-v1]
+    paths: ['.github/workflows/run-trial26-crossvenue.yml']
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/run-trial26-crossvenue.yml']
+permissions:
+  contents: write
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/cross-venue-funding-spread-v1
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight frozen Trial 26
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/cross-venue-funding-spread-v1-development/summary.json
+          test ! -e research/crypto/results/cross-venue-funding-spread-v1-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/cross-venue-funding-spread-v1.json'))
+          assert m['experimentId']=='cross-venue-funding-spread-v1' and m['trialNumber']==26 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assets']==['BTC','ETH']
+          assert m['developmentWindow']['marketRowsObservedAtFreeze'] is False
+          assert m['finalHoldout']['marketRowsObservedAtFreeze'] is False
+          assert m['candidate']['lookback8hBoundaries']==90
+          assert abs(m['capital']['approximateInitialLeveragePerVenue']-3.0)<1e-12
+          assert m['realMoneyAllowed'] is False
+          PY
+          python -m py_compile research/crypto/trial26_crossvenue.py
+      - name: Acquire exact development sources without economics
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t26-dev
+          python research/crypto/trial26_crossvenue.py prepare research/crypto/manifests/cross-venue-funding-spread-v1.json development BTC /tmp/t26-dev/btc.csv /tmp/t26-dev/btc-sources.json
+          python research/crypto/trial26_crossvenue.py prepare research/crypto/manifests/cross-venue-funding-spread-v1.json development ETH /tmp/t26-dev/eth.csv /tmp/t26-dev/eth-sources.json
+          python - <<'PY'
+          import json
+          for coin in ['btc','eth']:
+            x=json.load(open(f'/tmp/t26-dev/{coin}-sources.json'))
+            assert x['experimentId']=='cross-venue-funding-spread-v1' and x['trialNumber']==26 and x['mode']=='development'
+            assert x['economicResultCalculated'] is False and x['rows']==x['expectedRows']
+          PY
+      - name: Observe frozen Trial 26 development once
+        run: |
+          python research/crypto/trial26_crossvenue.py evaluate research/crypto/manifests/cross-venue-funding-spread-v1.json development /tmp/t26-dev/btc.csv,/tmp/t26-dev/eth.csv research/crypto/results/cross-venue-funding-spread-v1-development/summary.json
+          python research/crypto/trial26_crossvenue.py gate research/crypto/manifests/cross-venue-funding-spread-v1.json development research/crypto/results/cross-venue-funding-spread-v1-development/summary.json research/crypto/results/cross-venue-funding-spread-v1-development/gate.json
+          cp /tmp/t26-dev/btc-sources.json research/crypto/results/cross-venue-funding-spread-v1-development/btc-sources.json
+          cp /tmp/t26-dev/eth-sources.json research/crypto/results/cross-venue-funding-spread-v1-development/eth-sources.json
+      - name: Commit immutable development evidence
+        id: dev
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/cross-venue-funding-spread-v1-development
+          git commit -m 'Observe Trial 26 cross-venue development'
+          git push origin HEAD:research/cross-venue-funding-spread-v1
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          g=json.load(open('research/crypto/results/cross-venue-funding-spread-v1-development/gate.json'))
+          print('pass=' + ('true' if g['developmentGatePass'] else 'false'))
+          PY
+      - name: Acquire untouched one-shot final sources
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t26-final
+          python research/crypto/trial26_crossvenue.py prepare research/crypto/manifests/cross-venue-funding-spread-v1.json final BTC /tmp/t26-final/btc.csv /tmp/t26-final/btc-sources.json
+          python research/crypto/trial26_crossvenue.py prepare research/crypto/manifests/cross-venue-funding-spread-v1.json final ETH /tmp/t26-final/eth.csv /tmp/t26-final/eth-sources.json
+      - name: Observe frozen Trial 26 final exactly once
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          python research/crypto/trial26_crossvenue.py evaluate research/crypto/manifests/cross-venue-funding-spread-v1.json final /tmp/t26-final/btc.csv,/tmp/t26-final/eth.csv research/crypto/results/cross-venue-funding-spread-v1-final/summary.json
+          python research/crypto/trial26_crossvenue.py gate research/crypto/manifests/cross-venue-funding-spread-v1.json final research/crypto/results/cross-venue-funding-spread-v1-final/summary.json research/crypto/results/cross-venue-funding-spread-v1-final/promotion.json
+          cp /tmp/t26-final/btc-sources.json research/crypto/results/cross-venue-funding-spread-v1-final/btc-sources.json
+          cp /tmp/t26-final/eth-sources.json research/crypto/results/cross-venue-funding-spread-v1-final/eth-sources.json
+      - name: Commit immutable final evidence
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          git pull --ff-only origin research/cross-venue-funding-spread-v1
+          git add research/crypto/results/cross-venue-funding-spread-v1-final
+          git commit -m 'Observe Trial 26 cross-venue final'
+          git push origin HEAD:research/cross-venue-funding-spread-v1
