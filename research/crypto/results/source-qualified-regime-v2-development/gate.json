@@ -1,0 +1,43 @@
+{
+  "experimentId": "source-qualified-regime-v2",
+  "trialNumber": 24,
+  "mode": "development",
+  "generatedAt": "2026-08-22T03:55:09.553Z",
+  "checks": {
+    "positiveBasketNetReturn": {
+      "pass": true,
+      "observed": 0.008882780438143945
+    },
+    "minimumBasketSharpe": {
+      "pass": true,
+      "observed": 1.8719110479603644,
+      "threshold": 0.8
+    },
+    "maximumAllowedBasketDrawdown": {
+      "pass": true,
+      "observed": -0.0013002209815611288,
+      "threshold": -0.02
+    },
+    "minimumCompletedRoundTrips": {
+      "pass": true,
+      "observed": 14,
+      "threshold": 2
+    },
+    "minimumSleevesWithActivity": {
+      "pass": true,
+      "observed": 2,
+      "threshold": 1
+    },
+    "allFrozenRiskChecks": {
+      "pass": true
+    },
+    "exactSourceUnionForBothSleeves": {
+      "pass": true
+    }
+  },
+  "developmentGatePass": true,
+  "finalAccessAuthorizedByGate": true,
+  "promotionScope": "none",
+  "realMoneyAllowed": false,
+  "antiRescueRule": "After first Trial 24 development economic output, no scientific parameter or gate may change under Trial 24."
+}
