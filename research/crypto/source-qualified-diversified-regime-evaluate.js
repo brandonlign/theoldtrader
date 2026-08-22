@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawnSync} from 'node:child_process';
+const a=process.argv.slice(2);if(a.length<7)throw new Error('usage: source-qualified-diversified-regime-evaluate.js <manifest> <development|final> <avax.csv> <dot.csv> <atom.csv> <etc.csv> <out> [--confirm-final YES]');
+const [mp,mode,avax,dot,atom,etc,out]=a;if(!['development','final'].includes(mode))throw new Error('bad mode');if(mode==='final'&&!(a[7]==='--confirm-final'&&a[8]==='YES'))throw new Error('final requires confirmation');if(mode==='development'&&a.includes('--confirm-final'))throw new Error('final flag forbidden');if(fs.existsSync(out))throw new Error('refusing overwrite');
+const m=JSON.parse(fs.readFileSync(mp,'utf8'));if(m.experimentId!=='source-qualified-diversified-regime-v1'||m.trialNumber!==25||m.status!=='FROZEN_PRE_DEVELOPMENT')throw new Error('wrong Trial 25 manifest');if(JSON.stringify(m.assetSelection.symbols)!==JSON.stringify(['AVAXUSDT','DOTUSDT','ATOMUSDT','ETCUSDT']))throw new Error('asset drift');
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'theoldtrader-trial25-'));
+try{
+ const compat=structuredClone(m);compat.experimentId='risk-capped-funding-regime-v1';compat.trialNumber=22;compat.status='FROZEN_PRE_DEVELOPMENT';compat.assetSelection={...compat.assetSelection,symbols:['LINKUSDT','BCHUSDT','EOSUSDT','UNIUSDT']};
+ const cm=path.join(tmp,'manifest.json'),co=path.join(tmp,'summary.json');fs.writeFileSync(cm,JSON.stringify(compat,null,2)+'\n');
+ const child=[path.join(path.dirname(new URL(import.meta.url).pathname),'risk-capped-funding-regime-evaluate.js'),cm,mode,avax,dot,atom,etc,co];if(mode==='final')child.push('--confirm-final','YES');
+ const run=spawnSync(process.execPath,child,{encoding:'utf8'});if(run.status!==0)throw new Error(`frozen Trial 22 mechanics failed:\n${run.stdout}\n${run.stderr}`);
+ const r=JSON.parse(fs.readFileSync(co,'utf8'));if(r.experimentId!=='risk-capped-funding-regime-v1'||r.trialNumber!==22||r.mode!==mode)throw new Error('compat identity mismatch');
+ const map={LINKUSDT:'AVAXUSDT',BCHUSDT:'DOTUSDT',EOSUSDT:'ATOMUSDT',UNIUSDT:'ETCUSDT'},sleeves={};for(const [oldName,newName] of Object.entries(map)){const x=r.sleeves[oldName];if(!x)throw new Error(`missing compat sleeve ${oldName}`);x.symbol=newName;sleeves[newName]=x;}
+ const result={...r,experimentId:m.experimentId,trialNumber:25,window:mode==='development'?m.developmentWindow:m.finalHoldout,signal:m.signal,riskControl:m.riskControl,sleeves,antiRescueRule:m.antiRescueRule,implementationProvenance:{mechanics:'Frozen Trial 22 risk-capped evaluator compatibility adapter',validatedEvaluator:'research/crypto/risk-capped-funding-regime-evaluate.js',assetMapping:map,scientificParametersFrom:'Trial 25 frozen manifest'}};
+ fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out,JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({experimentId:result.experimentId,trialNumber:25,mode,basket:result.basket,completedRoundTrips:result.completedRoundTrips,sleevesWithActivity:result.sleevesWithActivity,sleeveReturns:Object.fromEntries(Object.entries(sleeves).map(([k,v])=>[k,v.metrics.netReturn]))},null,2));
+}finally{fs.rmSync(tmp,{recursive:true,force:true});}
