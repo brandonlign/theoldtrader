@@ -15,7 +15,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -uo pipefail
-          for workflow in recover-trial20-venue-native.yml run-trial22-now.yml run-trial23-source-qualified.yml run-trial24-source-qualified-regime.yml run-trial25-diversified-regime.yml; do
+          for workflow in recover-trial20-venue-native.yml run-trial22-now.yml run-trial23-source-qualified.yml run-trial24-source-qualified-regime.yml run-trial25-diversified-regime.yml run-trial26-crossvenue.yml; do
             id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" --limit 1 --json databaseId --jq '.[0].databaseId // 0')
             echo "$workflow latest run: $id"
             if [ "$id" != 0 ]; then
