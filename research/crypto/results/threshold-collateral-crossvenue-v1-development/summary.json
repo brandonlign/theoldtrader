@@ -1,0 +1,69 @@
+{
+  "experimentId": "threshold-collateral-crossvenue-v1",
+  "trialNumber": 29,
+  "mode": "development",
+  "generatedAt": "2026-08-22T05:29:04.556324Z",
+  "basket": {
+    "netReturn": 0.1528658236238949,
+    "annualizedReturn": 0.07369847552651465,
+    "sharpe": 5.6335488420182935,
+    "maxDrawdown": -0.002918634854643831,
+    "startValue": 10000,
+    "endValue": 11528.658236238949,
+    "elapsedDays": 730.6666666666666,
+    "assetsWithActivity": 2,
+    "anyMarginBreach": false,
+    "allGapStressPass": false,
+    "totalModeledCosts": 117.69045325482425
+  },
+  "sleeves": {
+    "BTC": {
+      "netReturn": 0.1711335948881354,
+      "annualizedReturn": 0.0821697626799156,
+      "sharpe": 5.078401596908394,
+      "maxDrawdown": -0.006013551179264387,
+      "startValue": 5000,
+      "endValue": 5855.667974440677,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": false,
+      "active": true,
+      "collateralRebalances": 104,
+      "riskTriggeredReanchors": 1,
+      "grossCollateralTransferred": 24252.065819899104,
+      "transferCosts": 12.126032909949545,
+      "tradingCosts": 60.54700390790943,
+      "totalModeledCosts": 72.67303681785897,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    },
+    "ETH": {
+      "netReturn": 0.13459805235965439,
+      "annualizedReturn": 0.0651597868041296,
+      "sharpe": 3.971413232905936,
+      "maxDrawdown": -0.003939476615958282,
+      "startValue": 5000,
+      "endValue": 5672.990261798272,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": false,
+      "active": true,
+      "collateralRebalances": 104,
+      "riskTriggeredReanchors": 0,
+      "grossCollateralTransferred": 38134.69497459706,
+      "transferCosts": 19.067347487298527,
+      "tradingCosts": 25.95006894966675,
+      "totalModeledCosts": 45.01741643696528,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    }
+  },
+  "implementation": "weekly-collateral-plus-threshold-delever-v1",
+  "realMoneyAllowed": false
+}

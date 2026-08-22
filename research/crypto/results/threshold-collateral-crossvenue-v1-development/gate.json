@@ -1,0 +1,31 @@
+{
+  "experimentId": "threshold-collateral-crossvenue-v1",
+  "trialNumber": 29,
+  "mode": "development",
+  "checks": {
+    "positive": true,
+    "annualizedReturn": true,
+    "sharpe": true,
+    "drawdown": true,
+    "margin": true,
+    "stress": false,
+    "activity": true
+  },
+  "developmentGatePass": false,
+  "finalAccessAuthorizedByGate": false,
+  "basket": {
+    "netReturn": 0.1528658236238949,
+    "annualizedReturn": 0.07369847552651465,
+    "sharpe": 5.6335488420182935,
+    "maxDrawdown": -0.002918634854643831,
+    "startValue": 10000,
+    "endValue": 11528.658236238949,
+    "elapsedDays": 730.6666666666666,
+    "assetsWithActivity": 2,
+    "anyMarginBreach": false,
+    "allGapStressPass": false,
+    "totalModeledCosts": 117.69045325482425
+  },
+  "realMoneyAllowed": false,
+  "antiRescueRule": "After the first Trial 29 development economic output, no scientific parameter, asset, notional, trigger, collateral target, transfer cadence, cost, clock rule, or gate may change under Trial 29."
+}

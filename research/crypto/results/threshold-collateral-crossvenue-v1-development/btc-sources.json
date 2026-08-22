@@ -1,0 +1,764 @@
+{
+  "coin": "BTC",
+  "economicResultCalculated": false,
+  "expectedRows": 2193,
+  "experimentId": "threshold-collateral-crossvenue-v1",
+  "generatedAt": "2026-08-22T05:26:55.534794Z",
+  "hyperliquidSettlementCountDistribution": {
+    "7": 21,
+    "8": 2152,
+    "9": 20
+  },
+  "mode": "development",
+  "rows": 2193,
+  "sha256": "b403c2d9c99b6ace261fb4b1802cd715d2e81bf8abbead08d811c58a5f33642f",
+  "sources": [
+    {
+      "bytes": 5547,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2023-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2023-12",
+      "sha256": "1c3877efcee92ac25c00903ab2aaa9825da9184b93c931a028f5aadab2917c22",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2023-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5623,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-01",
+      "sha256": "c45c93cd0a75f2fbf9d0bf32eb49f8604fae2f33094b2f9a5bd2e648414844d0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5294,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-02",
+      "sha256": "037ae7d65dc6f0434fef18dc4b4dd7b2666f0359fe2977c19bb675c18162e2f7",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5672,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-03",
+      "sha256": "3e57362f148a445ec253a13f47faaa6cfffade5d68c355438adb135625de1b62",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5462,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-04",
+      "sha256": "209da6f09622f90a53f548a6bda3bef09743ebc0b2a04a3f22102ce402265da1",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5561,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-05",
+      "sha256": "7c9b8d1c0beaa974e516cba5915ebe7ddb56ce5e413aff3b0f25935196cffbb1",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5346,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-06",
+      "sha256": "6403c931c966fcab26a7c2d93f12f4b96f647fb4f5402fced3bce1596551d299",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5551,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-07",
+      "sha256": "37a7718bd8d7949774c02eb1ac552d4fbebe6a48f5bd63b880d3a0242643f02f",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5609,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-08",
+      "sha256": "23453c3992a0206aa8ebd28dfbfc3fca3cec078701cdf963fcca74a65f4cca1e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5397,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-09",
+      "sha256": "167ed4f9f3b7c8089e4ca35106d07eb4b836a6644155e9d2b014ac0227f77a3a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5534,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-10",
+      "sha256": "cbeba0329cc681b5b03bf574640f309caabe10ae39c71e92170745cb2488746e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5482,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-11",
+      "sha256": "88c981b40cf82a42f47bb659872667e8b578b4b16dfb400e12dd0bb3cd7fcd43",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5611,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-12",
+      "sha256": "b1709b9816acab2b8428a32aa7fa6551aa8e30452a0a80398d444edcbb542373",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5611,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-01",
+      "sha256": "e3547fb88b8a0ac17e4ae16f09f31c801bb0fc9e7e4d4a3fcdf76d45b2c306a1",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5063,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-02",
+      "sha256": "719f84c11ee31eefaddb8610e8466c148275e800a24716b0df0b3aadbdf59239",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5610,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-03",
+      "sha256": "6859bfc4546c32ba5424eb69184ab9321a7cc15eac4f1f3ab55f403b5531c9f0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5416,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-04",
+      "sha256": "381671f4fb25c7c64869ed195a3a43cfc9e4780aef4f5ac4c0280139677ce39e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5593,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-05",
+      "sha256": "07f5693db66708e85bcbbf9df00d1bf8c76b4a65a3a5acb868b987b2edb123cd",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5433,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-06",
+      "sha256": "5079b8f5a6cbc955c77b6cde9d5d4e7fb308b3d727641da67a318d68e497fa67",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5577,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-07",
+      "sha256": "216e952426af6832677309d9bce7fa1564dba0cd1fccade808b8d1da4f3b0c6d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5592,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-08",
+      "sha256": "eabf2beb89a5bb7d5058e82ba05327bf728e3f31977192d0b854ed469529bafc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5406,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-09",
+      "sha256": "4b46c137cb8e0c2e885d3fc27e5d88b604c4dfb65b5f87c4e6c7fa21db5098f0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5632,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-10",
+      "sha256": "4746e2a346cf9e5f93f7f64977d21207f6e640147407a39f081d7d44b96f7362",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5418,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-11",
+      "sha256": "61bfdfe9b9eb6fa72f8002fed8a46766941c714bc957ecae379fcb4353c25d16",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5515,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-12",
+      "sha256": "5a205abc41e10d5c57c732ffd19c5533b6c8adcc793b9be4e875ce41168c43f0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/8h/BTCUSDT-8h-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 696,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-01",
+      "sha256": "3e0d30870672aa8f0f937881056e3cfd55913ae5c780cd50b33f2763aa0ba58e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 776,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-02",
+      "sha256": "daf1e4901e3d6436d82ad60f90d007eb5300be8047cfef121007203a7212cde6",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 939,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-03",
+      "sha256": "711dcaf2a341aedfd06447b4117b540f60adb0784c5e64a313c718e4cf092bc3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 842,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-04",
+      "sha256": "6d220b8e2815362a11d294d35dbca28568370d8295351937eceec10f2b359b85",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 830,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-05",
+      "sha256": "aef8c5fdce1493fd570b5829a72f2f17c7e459483390f25544d16c2a30be592e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 721,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-06",
+      "sha256": "43fc4473820d1fb4fe340d1b1951a87555f6841aa352e684fa95d6adffce04c6",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 847,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-07",
+      "sha256": "acab0593c1452660ce74a6c239fb215c1192b0a9c6e8c1689e6495de40a0174b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 904,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-08",
+      "sha256": "7003d29a43dd5f9357f838da8766834954939e22c1d80af682d9f33984f67b71",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 924,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-09",
+      "sha256": "6ef23b02392b481ef9c3855434bf3644289fb6e228b4f7d9a0dfc6d3cdff1116",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 801,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-10",
+      "sha256": "26db65ac8020d80ece35df79c254c5f7e24427529bcceeb2972748c4fe2d2707",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 746,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-11",
+      "sha256": "e1b19cccfe2cdcba48b022790789b7b01edd86c075f39bc152e44c267d43bd51",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 808,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-12",
+      "sha256": "069409f525ebf6370ee1c7defe475167de4b97284c5ac8e68768652968cd3dc9",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 825,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-01",
+      "sha256": "df725010d55458866eb5a47e9ee708c6796c9d7e77b14c38342cea11f381815e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 854,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-02",
+      "sha256": "e918b90fb33df3a3317feea13807a892047f1ec86eeac100bdb7b3dd83285d46",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 938,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-03",
+      "sha256": "a3b95cfb315641fbfddc61eb32adf2a2588afb7a3973a61f464aca007ad43e3f",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 929,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-04",
+      "sha256": "01dbb7bd0135f98bd63bdde6b943cde1accc1770cabf92f68a1ec0653ced3888",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 943,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-05",
+      "sha256": "e7355e2775b88009c984db1783bb8ed6b5f24ede2b52bb764151b5722d6a5e42",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 946,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-06",
+      "sha256": "a1f4a40953740fa83ee9ad97776ff8325d1958654a67f1325614071a983819d4",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 796,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-07",
+      "sha256": "b097dff828f6e43fece23db0d3cb98042a9d7bc19693b8cbfd051d88eb973b7b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 927,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-08",
+      "sha256": "1180129860b6e196e8d70bb9719e81573aa6b4acb423ba5ee7f82f10c836f7ab",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 941,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-09",
+      "sha256": "21dc6570fc6bffad0e7b5f9e99211b82ad07c95ab4f18c3a2daa3b95ec98344c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 944,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-10",
+      "sha256": "9ecdedab6344fc4cdb154763266b8e09627a71c3cc5574cf868158b541c259c2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 941,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-11",
+      "sha256": "23735400405627d610123e3a43db3e98ae7addb93459cd670e65a7659a5f081b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 963,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-12",
+      "sha256": "35318b789f020b0e04c9043112480743855554e52e1d188437cbdaa67246d51d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1767225599999,
+      "interval": "8h",
+      "kind": "candleSnapshot",
+      "rows": 2194,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1705766399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1707494399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1705766400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1709222399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1707494400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1710950399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1709222400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1712678399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1710950400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1714406399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1712678400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1716134399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1714406400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1717862399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1716134400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1719590399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1717862400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1721318399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1719590400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1723046399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1721318400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1724774399999,
+      "kind": "fundingHistory",
+      "rows": 479,
+      "startTime": 1723046400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1726502399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1724774400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1728230399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1726502400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1729958399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1728230400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1731686399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1729958400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1733414399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1731686400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1735142399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1733414400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1736870399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1735142400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1738598399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1736870400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1740326399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1738598400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1742054399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1740326400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1743782399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1742054400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1745510399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1743782400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1747238399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1745510400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1748966399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1747238400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1750694399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1748966400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1752422399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1750694400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1754150399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1752422400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1755878399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1754150400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1757606399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1755878400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1759334399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1757606400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1761062399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1759334400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1762790399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1761062400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1764518399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1762790400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1766246399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1764518400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "BTC",
+      "endTime": 1767225599999,
+      "kind": "fundingHistory",
+      "rows": 272,
+      "startTime": 1766246400000,
+      "venue": "Hyperliquid"
+    }
+  ],
+  "trialNumber": 29
+}
