@@ -1,0 +1,120 @@
+name: Recover frozen Trials 17 and 18 development
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/recover-trials17-18-development.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  trial17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    concurrency:
+      group: execute-trial17-alt-carry-development
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/alt-carry-basket-v1, fetch-depth: 1}
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Validate frozen Trial 17 before derivative access
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/alt-carry-basket-v1-development/summary.json
+          test ! -e research/crypto/results/alt-carry-basket-v1-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/alt-carry-basket-v1.json'))
+          assert m['experimentId']=='alt-carry-basket-v1' and m['trialNumber']==17 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['ETHUSDT','SOLUSDT']
+          assert m['assetSelection']['dataPreviouslyObservedAtFreeze']['fundingPerpetualExecutionMarkAndCarryEconomics'] is False
+          PY
+          npm install
+          node --check research/crypto/alt-carry-basket-evaluate.js
+          node --check research/crypto/alt-carry-basket-gate.js
+          python -m py_compile research/crypto/prepare-alt-carry-window.py
+          python -m unittest tests/test_prepare_carry_data.py
+      - name: Acquire Trial 17 development sources
+        run: |
+          python research/crypto/prepare-alt-carry-window.py research/crypto/manifests/alt-carry-basket-v1.json development ETHUSDT /tmp/t17-eth.csv /tmp/t17-eth-src.json
+          python research/crypto/prepare-alt-carry-window.py research/crypto/manifests/alt-carry-basket-v1.json development SOLUSDT /tmp/t17-sol.csv /tmp/t17-sol-src.json
+      - name: Verify, observe, and gate Trial 17 development
+        run: |
+          python - <<'PY'
+          import json
+          for symbol,p in [('ETHUSDT','eth'),('SOLUSDT','sol')]:
+            s=json.load(open(f'/tmp/t17-{p}-src.json')); c=s['coverage']
+            assert s['economicResultCalculated'] is False and s['symbol']==symbol and s['mode']=='development'
+            assert c['expectedBoundaryRows']==4383 and c['synchronizedRows']==4383 and c['overlapMismatchCount']==0
+            assert c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+          node research/crypto/alt-carry-basket-evaluate.js research/crypto/manifests/alt-carry-basket-v1.json development /tmp/t17-eth.csv /tmp/t17-sol.csv research/crypto/results/alt-carry-basket-v1-development/summary.json
+          node research/crypto/alt-carry-basket-gate.js research/crypto/manifests/alt-carry-basket-v1.json development research/crypto/results/alt-carry-basket-v1-development/summary.json /tmp/t17-eth-src.json /tmp/t17-sol-src.json research/crypto/results/alt-carry-basket-v1-development/gate.json
+          cp /tmp/t17-eth-src.json research/crypto/results/alt-carry-basket-v1-development/eth-sources.json
+          cp /tmp/t17-sol-src.json research/crypto/results/alt-carry-basket-v1-development/sol-sources.json
+      - name: Commit Trial 17 evidence
+        run: |
+          git config user.name 'theoldtrader-research-bot'; git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/alt-carry-basket-v1-development
+          git commit -m 'Observe Trial 17 ETH SOL carry development'
+          git push origin HEAD:research/alt-carry-basket-v1
+  trial18:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    concurrency:
+      group: execute-trial18-alt-carry-development
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/alt-carry-basket-v2, fetch-depth: 1}
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Validate frozen Trial 18 before derivative access
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/alt-carry-basket-v2-development/summary.json
+          test ! -e research/crypto/results/alt-carry-basket-v2-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/alt-carry-basket-v2.json'))
+          assert m['experimentId']=='alt-carry-basket-v2' and m['trialNumber']==18 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['BNBUSDT','XRPUSDT']
+          assert m['assetSelection']['dataPreviouslyObservedAtFreeze']['fundingPerpetualExecutionMarkAndCarryEconomics'] is False
+          PY
+          npm install
+          node --check research/crypto/alt-carry-basket-v2-evaluate.js
+          node --check research/crypto/alt-carry-basket-v2-gate.js
+          python -m py_compile research/crypto/prepare-alt-carry-v2-window.py
+          python -m unittest tests/test_prepare_carry_data.py
+      - name: Acquire Trial 18 development sources
+        run: |
+          python research/crypto/prepare-alt-carry-v2-window.py research/crypto/manifests/alt-carry-basket-v2.json development BNBUSDT /tmp/t18-bnb.csv /tmp/t18-bnb-src.json
+          python research/crypto/prepare-alt-carry-v2-window.py research/crypto/manifests/alt-carry-basket-v2.json development XRPUSDT /tmp/t18-xrp.csv /tmp/t18-xrp-src.json
+      - name: Verify, observe, and gate Trial 18 development
+        run: |
+          python - <<'PY'
+          import json
+          for symbol,p in [('BNBUSDT','bnb'),('XRPUSDT','xrp')]:
+            s=json.load(open(f'/tmp/t18-{p}-src.json')); c=s['coverage']
+            assert s['economicResultCalculated'] is False and s['symbol']==symbol and s['mode']=='development'
+            assert c['expectedBoundaryRows']==4383 and c['synchronizedRows']==4383 and c['overlapMismatchCount']==0
+            assert c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+          node research/crypto/alt-carry-basket-v2-evaluate.js research/crypto/manifests/alt-carry-basket-v2.json development /tmp/t18-bnb.csv /tmp/t18-xrp.csv research/crypto/results/alt-carry-basket-v2-development/summary.json
+          node research/crypto/alt-carry-basket-v2-gate.js research/crypto/manifests/alt-carry-basket-v2.json development research/crypto/results/alt-carry-basket-v2-development/summary.json /tmp/t18-bnb-src.json /tmp/t18-xrp-src.json research/crypto/results/alt-carry-basket-v2-development/gate.json
+          cp /tmp/t18-bnb-src.json research/crypto/results/alt-carry-basket-v2-development/bnb-sources.json
+          cp /tmp/t18-xrp-src.json research/crypto/results/alt-carry-basket-v2-development/xrp-sources.json
+      - name: Commit Trial 18 evidence
+        run: |
+          git config user.name 'theoldtrader-research-bot'; git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/alt-carry-basket-v2-development
+          git commit -m 'Observe Trial 18 BNB XRP carry development'
+          git push origin HEAD:research/alt-carry-basket-v2
