@@ -9,33 +9,33 @@ permissions:
 jobs:
   dispatch:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Dispatch and capture frozen Trial 26 v2.1
+      - name: Dispatch and capture frozen Trial 27
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -uo pipefail
-          gh workflow run run-trial26-crossvenue-v21.yml --repo "$GITHUB_REPOSITORY" --ref main
+          gh workflow run run-trial27-eventtime-crossvenue.yml --repo "$GITHUB_REPOSITORY" --ref main
           sleep 4
-          id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial26-crossvenue-v21.yml --limit 1 --json databaseId --jq '.[0].databaseId // 0')
-          echo "Trial 26 v2.1 run id: $id"
+          id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial27-eventtime-crossvenue.yml --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+          echo "Trial 27 run id: $id"
           if [ "$id" = 0 ]; then exit 2; fi
           gh run watch "$id" --repo "$GITHUB_REPOSITORY" --interval 10 || true
-          gh run view "$id" --repo "$GITHUB_REPOSITORY" --json status,conclusion,jobs > /tmp/t26-status.json || true
-          gh run view "$id" --repo "$GITHUB_REPOSITORY" --log > /tmp/t26.log 2>&1 || true
-          git fetch origin research/cross-venue-funding-spread-v1
-          git checkout -B research/cross-venue-funding-spread-v1 origin/research/cross-venue-funding-spread-v1
-          mkdir -p research/crypto/results/cross-venue-funding-spread-v1-ops
-          cp /tmp/t26-status.json research/crypto/results/cross-venue-funding-spread-v1-ops/latest-run-status.json
-          tail -n 400 /tmp/t26.log > research/crypto/results/cross-venue-funding-spread-v1-ops/latest-run-tail.log
-          printf '%s\n' "$id" > research/crypto/results/cross-venue-funding-spread-v1-ops/latest-run-id.txt
+          gh run view "$id" --repo "$GITHUB_REPOSITORY" --json status,conclusion,jobs > /tmp/t27-status.json || true
+          gh run view "$id" --repo "$GITHUB_REPOSITORY" --log > /tmp/t27.log 2>&1 || true
+          git fetch origin research/event-time-crossvenue-spread-v1
+          git checkout -B research/event-time-crossvenue-spread-v1 origin/research/event-time-crossvenue-spread-v1
+          mkdir -p research/crypto/results/event-time-crossvenue-spread-v1-ops
+          cp /tmp/t27-status.json research/crypto/results/event-time-crossvenue-spread-v1-ops/latest-run-status.json
+          tail -n 500 /tmp/t27.log > research/crypto/results/event-time-crossvenue-spread-v1-ops/latest-run-tail.txt
+          printf '%s\n' "$id" > research/crypto/results/event-time-crossvenue-spread-v1-ops/latest-run-id.txt
           git config user.name theoldtrader-research-bot
           git config user.email actions@users.noreply.github.com
-          git add research/crypto/results/cross-venue-funding-spread-v1-ops
-          git commit -m 'Ops: capture Trial 26 v2.1 execution status' || true
-          git pull --rebase origin research/cross-venue-funding-spread-v1 || true
-          git push origin HEAD:research/cross-venue-funding-spread-v1
+          git add research/crypto/results/event-time-crossvenue-spread-v1-ops
+          git commit -m 'Ops: capture Trial 27 execution status' || true
+          git pull --rebase origin research/event-time-crossvenue-spread-v1 || true
+          git push origin HEAD:research/event-time-crossvenue-spread-v1
