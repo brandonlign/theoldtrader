@@ -1,0 +1,108 @@
+name: Recover frozen Trial 19 funding regime carry
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/recover-trial19-funding-regime.yml']
+  workflow_dispatch:
+permissions: {contents: write}
+concurrency:
+  group: execute-trial19-funding-regime
+  cancel-in-progress: false
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/funding-regime-carry-v1, fetch-depth: 1}
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Validate frozen Trial 19 before derivative access
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/funding-regime-carry-v1-development/summary.json
+          test ! -e research/crypto/results/funding-regime-carry-v1-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/funding-regime-carry-v1.json'))
+          assert m['experimentId']=='funding-regime-carry-v1' and m['trialNumber']==19 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['ADAUSDT','DOGEUSDT']
+          assert m['assetSelection']['dataPreviouslyObservedAtFreeze']['fundingPerpetualExecutionMarkAndTrial19CarryEconomics'] is False
+          assert m['developmentWindow']['derivativeRowsObservedAtFreeze'] is False and m['finalHoldout']['derivativeRowsObservedAtFreeze'] is False
+          PY
+          npm install
+          node --check research/crypto/funding-regime-carry-evaluate.js
+          node --check research/crypto/funding-regime-carry-gate.js
+          python -m py_compile research/crypto/prepare-funding-regime-carry-window.py
+          node --test tests/funding-regime-carry.test.js
+          python -m unittest tests/test_prepare_carry_data.py
+      - name: Acquire development sources
+        run: |
+          python research/crypto/prepare-funding-regime-carry-window.py research/crypto/manifests/funding-regime-carry-v1.json development ADAUSDT /tmp/t19-ada-dev.csv /tmp/t19-ada-dev-src.json
+          python research/crypto/prepare-funding-regime-carry-window.py research/crypto/manifests/funding-regime-carry-v1.json development DOGEUSDT /tmp/t19-doge-dev.csv /tmp/t19-doge-dev-src.json
+      - name: Verify and observe development
+        id: dev
+        run: |
+          python - <<'PY'
+          import json
+          for symbol,p in [('ADAUSDT','ada'),('DOGEUSDT','doge')]:
+            s=json.load(open(f'/tmp/t19-{p}-dev-src.json')); c=s['coverage']
+            assert s['economicResultCalculated'] is False and s['symbol']==symbol and s['mode']=='development'
+            assert c['expectedBoundaryRows']==c['synchronizedRows'] and c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+          node research/crypto/funding-regime-carry-evaluate.js research/crypto/manifests/funding-regime-carry-v1.json development /tmp/t19-ada-dev.csv /tmp/t19-doge-dev.csv research/crypto/results/funding-regime-carry-v1-development/summary.json
+          node research/crypto/funding-regime-carry-gate.js research/crypto/manifests/funding-regime-carry-v1.json development research/crypto/results/funding-regime-carry-v1-development/summary.json /tmp/t19-ada-dev-src.json /tmp/t19-doge-dev-src.json research/crypto/results/funding-regime-carry-v1-development/gate.json
+          cp /tmp/t19-ada-dev-src.json research/crypto/results/funding-regime-carry-v1-development/ada-sources.json
+          cp /tmp/t19-doge-dev-src.json research/crypto/results/funding-regime-carry-v1-development/doge-sources.json
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/funding-regime-carry-v1-development/gate.json'))['developmentGatePass'] else 'false'))
+          PY
+      - name: Commit development evidence
+        run: |
+          git config user.name 'theoldtrader-research-bot'; git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/funding-regime-carry-v1-development
+          git commit -m 'Observe Trial 19 funding regime development'
+          git push origin HEAD:research/funding-regime-carry-v1
+      - name: Acquire untouched final sources
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          python research/crypto/prepare-funding-regime-carry-window.py research/crypto/manifests/funding-regime-carry-v1.json final ADAUSDT /tmp/t19-ada-final.csv /tmp/t19-ada-final-src.json --confirm-final YES
+          python research/crypto/prepare-funding-regime-carry-window.py research/crypto/manifests/funding-regime-carry-v1.json final DOGEUSDT /tmp/t19-doge-final.csv /tmp/t19-doge-final-src.json --confirm-final YES
+      - name: Observe and gate final
+        if: steps.dev.outputs.pass == 'true'
+        id: final
+        run: |
+          python - <<'PY'
+          import json
+          for symbol,p in [('ADAUSDT','ada'),('DOGEUSDT','doge')]:
+            s=json.load(open(f'/tmp/t19-{p}-final-src.json')); c=s['coverage']
+            assert s['economicResultCalculated'] is False and s['symbol']==symbol and s['mode']=='final'
+            assert c['expectedBoundaryRows']==c['synchronizedRows'] and c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+          node research/crypto/funding-regime-carry-evaluate.js research/crypto/manifests/funding-regime-carry-v1.json final /tmp/t19-ada-final.csv /tmp/t19-doge-final.csv research/crypto/results/funding-regime-carry-v1-final/summary.json --confirm-final YES
+          node research/crypto/funding-regime-carry-gate.js research/crypto/manifests/funding-regime-carry-v1.json final research/crypto/results/funding-regime-carry-v1-final/summary.json /tmp/t19-ada-final-src.json /tmp/t19-doge-final-src.json research/crypto/results/funding-regime-carry-v1-final/promotion.json
+          cp /tmp/t19-ada-final-src.json research/crypto/results/funding-regime-carry-v1-final/ada-sources.json
+          cp /tmp/t19-doge-final-src.json research/crypto/results/funding-regime-carry-v1-final/doge-sources.json
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/funding-regime-carry-v1-final/promotion.json'))['promotionEligible'] else 'false'))
+          PY
+      - name: Mark promotion
+        if: steps.dev.outputs.pass == 'true' && steps.final.outputs.pass == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.load(open('research/crypto/results/funding-regime-carry-v1-final/summary.json'))
+          Path('research/crypto/results/funding-regime-carry-v1-final/PROMOTED.md').write_text('# Trial 19 paper-baseline promotion\n\nPre-frozen final gate passed; paper baseline only, never real-money authorization.\n\nFinal net return: %.6f%%\n\nFinal Sharpe: %.4f\n\nFinal max drawdown: %.6f%%\n\nCompleted round trips: %d\n' % (100*s['basket']['netReturn'],s['basket']['sharpe'],100*s['basket']['maxDrawdown'],s['completedRoundTrips']))
+          PY
+      - name: Commit final evidence
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          git pull --ff-only origin research/funding-regime-carry-v1
+          git add research/crypto/results/funding-regime-carry-v1-final
+          git commit -m 'Observe Trial 19 funding regime final'
+          git push origin HEAD:research/funding-regime-carry-v1
