@@ -1,0 +1,117 @@
+name: Execute frozen Trial 15 liquidity-core final
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [research/cross-sectional-identity-clean-v1]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: execute-trial15-liquidity-core-final-pr2
+  cancel-in-progress: false
+
+jobs:
+  evaluate-final:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - name: Check out frozen Trial 15 branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/liquidity-core-v1
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Require frozen selection evidence and pristine final slot
+        run: |
+          set -euo pipefail
+          test -f research/crypto/manifests/liquidity-core-v1.json
+          test -f research/crypto/manifests/cross-sectional-identity-clean-v1.json
+          test -f research/crypto/universes/cross-sectional-identity-clean-v1-universe.json
+          test -f research/crypto/results/cross-sectional-identity-clean-v1-development/summary.json
+          test ! -e research/crypto/results/liquidity-core-v1-final/summary.json
+          test ! -e research/crypto/results/liquidity-core-v1-final/promotion.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/liquidity-core-v1.json'))
+          d=json.load(open('research/crypto/results/cross-sectional-identity-clean-v1-development/summary.json'))
+          assert m['experimentId']=='liquidity-core-v1' and m['trialNumber']==15 and m['status']=='FROZEN_PRE_FINAL'
+          assert m['finalHoldout']['finalRowsObservedAtFreeze'] is False
+          assert m['universe']['selectedSymbols']==['BTCUSDT','ETHUSDT','BNBUSDT']
+          o=d['comparators']['formationLiquidityTop3StaticBuyHold']
+          assert abs(o['netReturn']-m['developmentEvidence']['observedNetReturn'])<1e-12
+          assert abs(o['sharpe']-m['developmentEvidence']['observedSharpe'])<1e-12
+          PY
+      - name: Validate final implementation before first access
+        run: |
+          set -euo pipefail
+          npm install
+          node --check research/crypto/liquidity-core-evaluate.js
+          node --check research/crypto/liquidity-core-promotion-check.js
+          python -m py_compile research/crypto/prepare-cross-sectional-identity-clean-final-data.py
+          python -m py_compile research/crypto/prepare-cross-sectional-final-data.py
+          node --test tests/crypto-cross-sectional-portfolio.test.js tests/crypto-cross-sectional.test.js tests/crypto-research-metrics.test.js tests/crypto-research.test.js
+      - name: Acquire checksum-verified sealed identity-clean final data
+        run: >-
+          python research/crypto/prepare-cross-sectional-identity-clean-final-data.py
+          research/crypto/manifests/cross-sectional-identity-clean-v1.json
+          research/crypto/universes/cross-sectional-identity-clean-v1-universe.json
+          /tmp/identity-clean-final.json.gz
+          /tmp/identity-clean-final-sources.json
+          --confirm-final YES
+      - name: Verify sealed final boundary before economics
+        run: |
+          python - <<'PY'
+          import gzip,json
+          from datetime import datetime,timezone
+          s=int(datetime(2026,1,1,tzinfo=timezone.utc).timestamp()); e=int(datetime(2026,8,1,tzinfo=timezone.utc).timestamp())
+          with gzip.open('/tmp/identity-clean-final.json.gz','rt',encoding='utf-8') as f:d=json.load(f)
+          assert d['experimentId']=='cross-sectional-identity-clean-v1' and d['trialNumber']==14 and d['endExclusive']=='2026-08-01T00:00:00Z'
+          assert 'LUNAUSDT' not in d['universeMembership'] and 'EOSUSDT' in d['universeMembership']
+          rows=[r for rs in d['products'].values() for r in rs]
+          assert any(s<=r['time']<e for r in rows) and all(r['time']<e for r in rows)
+          PY
+      - name: Observe frozen Trial 15 final result once
+        run: >-
+          node research/crypto/liquidity-core-evaluate.js
+          --confirm-final YES
+          --manifest research/crypto/manifests/liquidity-core-v1.json
+          --trial14-manifest research/crypto/manifests/cross-sectional-identity-clean-v1.json
+          --universe research/crypto/universes/cross-sectional-identity-clean-v1-universe.json
+          --data /tmp/identity-clean-final.json.gz
+          --out research/crypto/results/liquidity-core-v1-final/summary.json
+      - name: Preserve compact final provenance
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          src=Path('/tmp/identity-clean-final-sources.json'); s=json.loads(src.read_text())
+          out=Path('research/crypto/results/liquidity-core-v1-final/provenance.json'); out.parent.mkdir(parents=True,exist_ok=True)
+          p={'experimentId':'liquidity-core-v1','trialNumber':15,'mode':'final','finalHoldoutStart':'2026-01-01T00:00:00Z','finalHoldoutEndExclusive':'2026-08-01T00:00:00Z','datasetCanonicalJsonSha256':s['datasetCanonicalJsonSha256'],'coreTrial3CompatibleDatasetCanonicalJsonSha256':s['coreTrial3CompatibleDatasetCanonicalJsonSha256'],'formationSourceManifestSha256':s['formationSourceManifestSha256'],'universeMembershipSha256':s['universeMembershipSha256'],'sourceArchiveCount':s['sourceArchiveCount'],'firstObservationSourceCount':s['firstObservationSourceCount'],'identityExcludedSymbols':s['identityExcludedSymbols'],'sourceManifestSha256':hashlib.sha256(src.read_bytes()).hexdigest()}
+          out.write_text(json.dumps(p,indent=2,sort_keys=True)+'\n')
+          PY
+      - name: Apply frozen Trial 15 promotion criteria
+        run: >-
+          node research/crypto/liquidity-core-promotion-check.js
+          --manifest research/crypto/manifests/liquidity-core-v1.json
+          --development research/crypto/results/cross-sectional-identity-clean-v1-development/summary.json
+          --final research/crypto/results/liquidity-core-v1-final/summary.json
+          --out research/crypto/results/liquidity-core-v1-final/promotion.json
+      - name: Commit immutable Trial 15 final evidence
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- research/crypto/results/liquidity-core-v1-final/summary.json research/crypto/results/liquidity-core-v1-final/provenance.json research/crypto/results/liquidity-core-v1-final/promotion.json
+          git commit -m 'Observe Trial 15 liquidity-core final holdout'
+          git push origin HEAD:research/liquidity-core-v1
+      - name: Upload immutable Trial 15 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: liquidity-core-v1-final
+          path: research/crypto/results/liquidity-core-v1-final
+          if-no-files-found: error

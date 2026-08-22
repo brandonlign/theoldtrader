@@ -1,0 +1,71 @@
+{
+  "experimentId": "cross-sectional-identity-clean-v1",
+  "trialNumber": 14,
+  "status": "UNIVERSE_FROZEN_PRE_DEVELOPMENT",
+  "formedAt": "2026-08-20T18:54:17Z",
+  "formationInformationEndExclusive": "2023-01-01T00:00:00Z",
+  "postFormationTrial14DataInspected": false,
+  "sourceUniverse": "research/crypto/universes/cross-sectional-v1-universe.json",
+  "sourceUniverseGitBlobSha": "76ed24730ab9c23a2381901d185058a89753f0c2",
+  "formationSourceManifest": "research/crypto/universes/cross-sectional-v1-formation-sources.json",
+  "formationSourceManifestSha256": "51f69e8b3ad0d8e150c785582322a53cedb23622b06484d1c33d195fa8a629af",
+  "ruleSummary": {
+    "baseRanking": "Trial 3 immutable 2022-only eligible ranking in original descending median daily quote-volume order",
+    "identityStability": "exclude symbols whose historical rows under one ticker span economically distinct underlying assets according to frozen issuer/exchange identity evidence",
+    "tieBreak": "unchanged Trial 3 lexicographic symbol rule",
+    "membershipSize": 30
+  },
+  "identityExclusions": [
+    {
+      "symbol": "LUNAUSDT",
+      "sourceRank": 21,
+      "reason": "Underlying-identity discontinuity: original Terra LUNA became LUNC while a distinct new Terra chain/token assumed LUNA during 2022; Binance historical LUNA/USDT klines retain predecessor history.",
+      "performanceUsedToChooseExclusion": false
+    }
+  ],
+  "replacementRows": [
+    {
+      "symbol": "EOSUSDT",
+      "sourceRank": 31,
+      "firstBar": "2022-01-01T00:00:00Z",
+      "lastBar": "2022-12-31T00:00:00Z",
+      "validDailyBars": 365,
+      "sourceArchiveCount": 12,
+      "medianDailyQuoteVolume": 20016429.6128
+    }
+  ],
+  "membership": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "BNBUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ADAUSDT",
+    "AVAXUSDT",
+    "SHIBUSDT",
+    "DOGEUSDT",
+    "MATICUSDT",
+    "NEARUSDT",
+    "DOTUSDT",
+    "TRXUSDT",
+    "GMTUSDT",
+    "APEUSDT",
+    "FTMUSDT",
+    "ATOMUSDT",
+    "GALAUSDT",
+    "LINKUSDT",
+    "SANDUSDT",
+    "LTCUSDT",
+    "ETCUSDT",
+    "FILUSDT",
+    "OPUSDT",
+    "MANAUSDT",
+    "CHZUSDT",
+    "RUNEUSDT",
+    "AXSUSDT",
+    "WAVESUSDT",
+    "EOSUSDT"
+  ],
+  "membershipSize": 30,
+  "antiRescue": "Membership is immutable for Trial 14 after this file is committed. Any later identity exclusion, addition, reorder, or replacement is a new numbered alpha trial."
+}

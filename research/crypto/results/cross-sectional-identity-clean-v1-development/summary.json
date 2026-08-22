@@ -1,0 +1,1016 @@
+{
+  "experimentId": "cross-sectional-identity-clean-v1",
+  "trialNumber": 14,
+  "mode": "development",
+  "generatedAt": "2026-08-22T02:05:44.156Z",
+  "start": "2024-01-01T00:00:00Z",
+  "endExclusive": "2026-01-01T00:00:00Z",
+  "frozenUniverseSize": 30,
+  "panelRows": 1029,
+  "predictionMonths": 23,
+  "candidate": {
+    "netReturn": 0.18516339432609286,
+    "annualizedReturn": 0.08865209976653832,
+    "sharpe": 0.4372252184881976,
+    "sortino": 0.6147707048198153,
+    "maxDrawdown": -0.2598896945064415,
+    "calmar": 0.3411143328899524,
+    "winRate": 0.5,
+    "profitFactor": 1.2953426655507283,
+    "expectancyPerTrade": 55.56281901223403,
+    "turnover": 97876.60662435797,
+    "turnoverToAverageEquity": 8.233671926926933,
+    "totalFees": 587.2596397461482,
+    "feeDrag": 0.05872596397461482,
+    "averageExposure": 0.433965454912482,
+    "closedTrades": 24,
+    "orderCount": 93,
+    "startValue": 10000,
+    "endValue": 11851.63394326093,
+    "elapsedDays": 730,
+    "numberOfTrades": 93,
+    "expectancyPerClosedPosition": 55.56281901223403,
+    "forcedExits": 0,
+    "realizedByAsset": {
+      "SOLUSDT": 3022.409124940934,
+      "CHZUSDT": 330.97447867604615,
+      "ETCUSDT": 256.0223723668853,
+      "BTCUSDT": 85.50018893260147,
+      "ETHUSDT": -61.116479373036015,
+      "DOGEUSDT": -1702.7432936941507,
+      "NEARUSDT": 263.27937680754803,
+      "FTMUSDT": -142.45082096400733,
+      "XRPUSDT": 162.77136927822573,
+      "RUNEUSDT": -784.3366602379047,
+      "ADAUSDT": 494.8852248256144
+    },
+    "perAssetContribution": {
+      "SOLUSDT": 3022.409124940934,
+      "CHZUSDT": 330.97447867604615,
+      "ETCUSDT": 256.0223723668853,
+      "BTCUSDT": 380.3955338768278,
+      "ETHUSDT": -6.541777735081951,
+      "DOGEUSDT": -1702.7432936941507,
+      "NEARUSDT": 263.27937680754803,
+      "FTMUSDT": -142.45082096400733,
+      "XRPUSDT": 162.77136927822573,
+      "RUNEUSDT": -784.3366602379047,
+      "ADAUSDT": 494.8852248256144,
+      "BNBUSDT": -423.0309848800109
+    }
+  },
+  "comparators": {
+    "cash": {
+      "netReturn": 0,
+      "annualizedReturn": 0,
+      "sharpe": 0,
+      "sortino": 0,
+      "maxDrawdown": 0,
+      "calmar": null,
+      "winRate": null,
+      "profitFactor": 0,
+      "expectancyPerTrade": 0,
+      "turnover": 0,
+      "turnoverToAverageEquity": 0,
+      "totalFees": 0,
+      "feeDrag": 0,
+      "averageExposure": 0,
+      "closedTrades": 0,
+      "orderCount": 0,
+      "startValue": 10000,
+      "endValue": 10000,
+      "elapsedDays": 730,
+      "numberOfTrades": 0,
+      "expectancyPerClosedPosition": 0,
+      "forcedExits": 0,
+      "realizedByAsset": {},
+      "perAssetContribution": {}
+    },
+    "btc15pctBuyHold": {
+      "netReturn": 0.1597112469303743,
+      "annualizedReturn": 0.07689890283646128,
+      "sharpe": 0.6910981724142764,
+      "sortino": 1.0407114409178946,
+      "maxDrawdown": -0.10958710262317095,
+      "calmar": 0.701714900711335,
+      "winRate": null,
+      "profitFactor": 0,
+      "expectancyPerTrade": 0,
+      "turnover": 1499.923730151983,
+      "turnoverToAverageEquity": 0.1309077387330442,
+      "totalFees": 8.999542380911898,
+      "feeDrag": 0.0008999542380911898,
+      "averageExposure": 0.2555081916378438,
+      "closedTrades": 0,
+      "orderCount": 1,
+      "startValue": 10000,
+      "endValue": 11597.112469303744,
+      "elapsedDays": 730,
+      "numberOfTrades": 1,
+      "expectancyPerClosedPosition": 0,
+      "forcedExits": 0,
+      "realizedByAsset": {},
+      "perAssetContribution": {
+        "BTCUSDT": 1597.1124693037432
+      }
+    },
+    "btcEthSol45pctEqualWeightBuyHold": {
+      "netReturn": 0.23618848193858644,
+      "annualizedReturn": 0.11184013326493414,
+      "sharpe": 0.48208874657313644,
+      "sortino": 0.7174220662389746,
+      "maxDrawdown": -0.29621205812479334,
+      "calmar": 0.37756779373855265,
+      "winRate": null,
+      "profitFactor": 0,
+      "expectancyPerTrade": 0,
+      "turnover": 4490.343294694815,
+      "turnoverToAverageEquity": 0.3498662644425896,
+      "totalFees": 26.94205976816889,
+      "feeDrag": 0.002694205976816889,
+      "averageExposure": 0.5669546676561903,
+      "closedTrades": 0,
+      "orderCount": 3,
+      "startValue": 10000,
+      "endValue": 12361.884819385865,
+      "elapsedDays": 730,
+      "numberOfTrades": 3,
+      "expectancyPerClosedPosition": 0,
+      "forcedExits": 0,
+      "realizedByAsset": {},
+      "perAssetContribution": {
+        "BTCUSDT": 1593.7662080735413,
+        "ETHUSDT": 441.52317515365326,
+        "SOLUSDT": 326.5954361586705
+      }
+    },
+    "sameUniverse90dMomentumTop3Monthly": {
+      "netReturn": -0.16622217703372322,
+      "annualizedReturn": -0.08688564628176132,
+      "sharpe": -0.1198436139486376,
+      "sortino": -0.1630198294775771,
+      "maxDrawdown": -0.38066016221975396,
+      "calmar": -0.22824990609761392,
+      "winRate": 0.4473684210526316,
+      "profitFactor": 0.8409887371430389,
+      "expectancyPerTrade": -34.65021275018131,
+      "turnover": 123865.76332526313,
+      "turnoverToAverageEquity": 12.24541240116162,
+      "totalFees": 743.1945799515792,
+      "feeDrag": 0.07431945799515792,
+      "averageExposure": 0.44941434532806923,
+      "closedTrades": 38,
+      "orderCount": 110,
+      "startValue": 10000,
+      "endValue": 8337.778229662768,
+      "elapsedDays": 730,
+      "numberOfTrades": 110,
+      "expectancyPerClosedPosition": -34.65021275018131,
+      "forcedExits": 0,
+      "realizedByAsset": {
+        "SOLUSDT": 508.84278953081366,
+        "NEARUSDT": 792.1648975296756,
+        "AVAXUSDT": -539.9760167400508,
+        "OPUSDT": 357.84287633265495,
+        "DOGEUSDT": -1156.4589349219077,
+        "GALAUSDT": -790.3422497451636,
+        "SHIBUSDT": -330.00267765296235,
+        "BNBUSDT": 410.9861471407471,
+        "FTMUSDT": 384.2539882704709,
+        "TRXUSDT": 402.6979503198536,
+        "ETHUSDT": 338.12520993303013,
+        "BTCUSDT": 324.56872508362994,
+        "XRPUSDT": -100.92662713196687,
+        "RUNEUSDT": -25.99905693672099,
+        "APEUSDT": 578.2452677808874,
+        "ADAUSDT": -770.3215278008812,
+        "LINKUSDT": -1174.124998267579,
+        "LTCUSDT": -526.2838472314203
+      },
+      "perAssetContribution": {
+        "SOLUSDT": 508.84278953081366,
+        "NEARUSDT": 792.1648975296756,
+        "AVAXUSDT": -539.9760167400508,
+        "OPUSDT": 357.84287633265495,
+        "DOGEUSDT": -1156.4589349219077,
+        "GALAUSDT": -790.3422497451636,
+        "SHIBUSDT": -330.00267765296235,
+        "BNBUSDT": 107.43670126149595,
+        "FTMUSDT": 384.2539882704709,
+        "TRXUSDT": 407.2900701465403,
+        "ETHUSDT": 338.12520993303013,
+        "BTCUSDT": 278.0123653058531,
+        "XRPUSDT": -100.92662713196687,
+        "RUNEUSDT": -25.99905693672099,
+        "APEUSDT": 578.2452677808874,
+        "ADAUSDT": -770.3215278008812,
+        "LINKUSDT": -1174.124998267579,
+        "LTCUSDT": -526.2838472314203
+      }
+    },
+    "formationLiquidityTop3StaticBuyHold": {
+      "netReturn": 0.4673084917014416,
+      "annualizedReturn": 0.21132509744553785,
+      "sharpe": 0.7995326468412787,
+      "sortino": 1.1362686979106835,
+      "maxDrawdown": -0.25108003309893123,
+      "calmar": 0.8416642886225484,
+      "winRate": null,
+      "profitFactor": 0,
+      "expectancyPerTrade": 0,
+      "turnover": 4490.343294694815,
+      "turnoverToAverageEquity": 0.3303018395729818,
+      "totalFees": 26.942059768168896,
+      "feeDrag": 0.0026942059768168894,
+      "averageExposure": 0.5892775631997191,
+      "closedTrades": 0,
+      "orderCount": 3,
+      "startValue": 10000,
+      "endValue": 14673.084917014416,
+      "elapsedDays": 730,
+      "numberOfTrades": 3,
+      "expectancyPerClosedPosition": 0,
+      "forcedExits": 0,
+      "realizedByAsset": {},
+      "perAssetContribution": {
+        "BTCUSDT": 1593.7662080735413,
+        "ETHUSDT": 441.52317515365326,
+        "BNBUSDT": 2637.795533787221
+      }
+    }
+  },
+  "developmentFolds": [
+    {
+      "start": "2024-01-01T00:00:00.000Z",
+      "endExclusive": "2024-07-01T00:00:00.000Z",
+      "netReturn": 0.16982826978517318,
+      "annualizedReturn": 0.37206068485298216,
+      "sharpe": 1.2609088269086677,
+      "sortino": 1.8864155102944178,
+      "maxDrawdown": -0.13968448891272633,
+      "calmar": 2.663579097070989,
+      "winRate": 0.6666666666666666,
+      "profitFactor": 3.443837229355436,
+      "expectancyPerTrade": 270.5457503791998,
+      "turnover": 38113.094290004665,
+      "turnoverToAverageEquity": 3.321107299084826,
+      "totalFees": 228.6785657400281,
+      "feeDrag": 0.02286785657400281,
+      "averageExposure": 0.38330734600356614,
+      "closedTrades": 9,
+      "orderCount": 24,
+      "startValue": 10000,
+      "endValue": 11698.282697851731,
+      "elapsedDays": 181,
+      "numberOfTrades": 24,
+      "expectancyPerClosedPosition": 270.5457503791998,
+      "forcedExits": 0,
+      "realizedByAsset": {
+        "SOLUSDT": 1939.1619778610002,
+        "CHZUSDT": 609.4931795187968,
+        "ETCUSDT": 256.0223723668853,
+        "BTCUSDT": -26.110168769095303,
+        "ETHUSDT": -198.50906709898686,
+        "DOGEUSDT": -771.7285258259355,
+        "NEARUSDT": 263.27937680754803,
+        "FTMUSDT": 363.3026085525853
+      },
+      "perAssetContribution": {
+        "SOLUSDT": 1939.1619778610002,
+        "CHZUSDT": 609.4931795187968,
+        "ETCUSDT": 256.0223723668853,
+        "BTCUSDT": -170.91023677916382,
+        "ETHUSDT": -372.3379760866287,
+        "DOGEUSDT": -1189.7286043892934,
+        "NEARUSDT": 263.27937680754803,
+        "FTMUSDT": 363.3026085525853
+      }
+    },
+    {
+      "start": "2024-07-01T00:00:00.000Z",
+      "endExclusive": "2025-01-01T00:00:00.000Z",
+      "netReturn": 0.0325748660456866,
+      "annualizedReturn": 0.06602410543746196,
+      "sharpe": 0.3604762011888318,
+      "sortino": 0.5435586084826596,
+      "maxDrawdown": -0.16931357156469784,
+      "calmar": 0.38995164313944514,
+      "winRate": 0.5,
+      "profitFactor": 1.0058980885186724,
+      "expectancyPerTrade": 0.9069996215932861,
+      "turnover": 23910.908006955346,
+      "turnoverToAverageEquity": 2.465642821302964,
+      "totalFees": 143.4654480417321,
+      "feeDrag": 0.014346544804173208,
+      "averageExposure": 0.44844354246825824,
+      "closedTrades": 6,
+      "orderCount": 24,
+      "startValue": 10000,
+      "endValue": 10325.748660456866,
+      "elapsedDays": 183,
+      "numberOfTrades": 24,
+      "expectancyPerClosedPosition": 0.9069996215932861,
+      "forcedExits": 0,
+      "realizedByAsset": {
+        "CHZUSDT": -238.0827285973612,
+        "SOLUSDT": 928.1134212477609,
+        "FTMUSDT": -432.2550708692272,
+        "ETHUSDT": 59.7361127805095,
+        "BTCUSDT": 93.60761803168296,
+        "XRPUSDT": -252.3336240516128
+      },
+      "perAssetContribution": {
+        "CHZUSDT": -238.0827285973612,
+        "SOLUSDT": 928.1134212477609,
+        "FTMUSDT": -432.2550708692272,
+        "ETHUSDT": 160.00419450674758,
+        "BTCUSDT": 582.9214699118838,
+        "XRPUSDT": -252.3336240516128,
+        "DOGEUSDT": -422.6190016913233
+      }
+    },
+    {
+      "start": "2025-01-01T00:00:00.000Z",
+      "endExclusive": "2025-07-01T00:00:00.000Z",
+      "netReturn": -0.004656960034793878,
+      "annualizedReturn": -0.009420681765837768,
+      "sharpe": 0.13653969541797883,
+      "sortino": 0.1775878348452042,
+      "maxDrawdown": -0.23883724498160042,
+      "calmar": -0.03944393918362071,
+      "winRate": 0.5,
+      "profitFactor": 1.0111334765739721,
+      "expectancyPerTrade": 3.621714082636231,
+      "turnover": 12281.285795573836,
+      "turnoverToAverageEquity": 1.2628358258520835,
+      "totalFees": 73.68771477344299,
+      "feeDrag": 0.007368771477344299,
+      "averageExposure": 0.4515905384934054,
+      "closedTrades": 2,
+      "orderCount": 20,
+      "startValue": 10000,
+      "endValue": 9953.430399652061,
+      "elapsedDays": 180,
+      "numberOfTrades": 20,
+      "expectancyPerClosedPosition": 3.621714082636231,
+      "forcedExits": 0,
+      "realizedByAsset": {
+        "BTCUSDT": 2.8192984488724804,
+        "XRPUSDT": 657.4248798546176,
+        "RUNEUSDT": -650.598949676345,
+        "ETHUSDT": -66.34104283778629
+      },
+      "perAssetContribution": {
+        "BTCUSDT": 191.8800526364862,
+        "XRPUSDT": 707.5142530047422,
+        "RUNEUSDT": -650.598949676345,
+        "ETHUSDT": -295.36495631282105
+      }
+    },
+    {
+      "start": "2025-07-01T00:00:00.000Z",
+      "endExclusive": "2026-01-01T00:00:00.000Z",
+      "netReturn": -0.013183994828644074,
+      "annualizedReturn": -0.026123546236521134,
+      "sharpe": 0.009555559376766503,
+      "sortino": 0.013668013949569291,
+      "maxDrawdown": -0.18887188643565567,
+      "calmar": -0.13831357715284337,
+      "winRate": 0.5,
+      "profitFactor": 1.2960267333377302,
+      "expectancyPerTrade": 47.100843326765045,
+      "turnover": 13232.001885260017,
+      "turnoverToAverageEquity": 1.2193944788542765,
+      "totalFees": 79.39201131156008,
+      "feeDrag": 0.007939201131156008,
+      "averageExposure": 0.45220139439050194,
+      "closedTrades": 2,
+      "orderCount": 20,
+      "startValue": 10000,
+      "endValue": 9868.16005171356,
+      "elapsedDays": 183,
+      "numberOfTrades": 20,
+      "expectancyPerClosedPosition": 47.100843326765045,
+      "forcedExits": 0,
+      "realizedByAsset": {
+        "ETHUSDT": 302.44857957866134,
+        "ADAUSDT": 412.42188788805015,
+        "BTCUSDT": 3.7059387905947005,
+        "XRPUSDT": -318.22020123452006
+      },
+      "perAssetContribution": {
+        "ETHUSDT": 435.91413117001116,
+        "ADAUSDT": 412.42188788805015,
+        "BTCUSDT": -309.72269127698155,
+        "XRPUSDT": -318.22020123452006,
+        "BNBUSDT": -352.23307483300164
+      }
+    }
+  ],
+  "developmentFoldSummary": {
+    "medianSharpe": 0.2485079483034053,
+    "positiveSharpeFolds": 4,
+    "positiveReturnFolds": 2,
+    "totalFolds": 4
+  },
+  "performanceByRegime": {
+    "btc90_positive": {
+      "days": 517,
+      "compoundedReturn": 0.25618561165692477,
+      "meanDailyReturn": 0.0005486453159859108,
+      "sharpe": 0.7145915591454282
+    },
+    "btc90_nonpositive": {
+      "days": 214,
+      "compoundedReturn": -0.05653799619401223,
+      "meanDailyReturn": -0.0001389723985628042,
+      "sharpe": -0.16220596048801228
+    }
+  },
+  "coefficientStability": [
+    {
+      "feature": "momentum_30d",
+      "mean": -0.0023925216041571257,
+      "stdev": 0.002177622223998449,
+      "min": -0.007295410334129976,
+      "max": 0.0031301733499549196
+    },
+    {
+      "feature": "momentum_90d",
+      "mean": -0.0014591310528420495,
+      "stdev": 0.003218954954031217,
+      "min": -0.0063762227852748885,
+      "max": 0.004874499716230098
+    },
+    {
+      "feature": "realized_vol_30d",
+      "mean": 0.0028922541783124468,
+      "stdev": 0.0033306072812312694,
+      "min": -0.0019267589402613226,
+      "max": 0.009423963306262235
+    },
+    {
+      "feature": "log_median_quote_volume_30d",
+      "mean": 0.015354606797729325,
+      "stdev": 0.0024234330132769447,
+      "min": 0.010211861033117,
+      "max": 0.019212031572139784
+    },
+    {
+      "feature": "amihud_illiquidity_30d",
+      "mean": 0.006360573277759277,
+      "stdev": 0.0019698033215989536,
+      "min": 0.0032234447785696708,
+      "max": 0.011038045063357637
+    },
+    {
+      "feature": "asset_age_log_days",
+      "mean": 0.009822196775281976,
+      "stdev": 0.0055449332382772575,
+      "min": -0.00017261833462285604,
+      "max": 0.016576333520407834
+    }
+  ],
+  "decisions": [
+    {
+      "time": 1706745600,
+      "trainingRows": 360,
+      "trainingMonths": 12,
+      "selected": [
+        {
+          "symbol": "SOLUSDT",
+          "prediction": 0.07598217612127878
+        },
+        {
+          "symbol": "CHZUSDT",
+          "prediction": 0.07222730780066361
+        },
+        {
+          "symbol": "ETCUSDT",
+          "prediction": 0.06448904691924626
+        }
+      ],
+      "timeIso": "2024-02-01T00:00:00.000Z"
+    },
+    {
+      "time": 1709251200,
+      "trainingRows": 390,
+      "trainingMonths": 13,
+      "selected": [
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.056011245673879564
+        },
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.0542585699760324
+        },
+        {
+          "symbol": "SOLUSDT",
+          "prediction": 0.05115258608823642
+        }
+      ],
+      "timeIso": "2024-03-01T00:00:00.000Z"
+    },
+    {
+      "time": 1711929600,
+      "trainingRows": 420,
+      "trainingMonths": 14,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.07177009107224824
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.07071119454780632
+        },
+        {
+          "symbol": "DOGEUSDT",
+          "prediction": 0.06455776659050759
+        }
+      ],
+      "timeIso": "2024-04-01T00:00:00.000Z"
+    },
+    {
+      "time": 1714521600,
+      "trainingRows": 450,
+      "trainingMonths": 15,
+      "selected": [
+        {
+          "symbol": "SOLUSDT",
+          "prediction": 0.07717188281734791
+        },
+        {
+          "symbol": "NEARUSDT",
+          "prediction": 0.07514037354713332
+        },
+        {
+          "symbol": "FTMUSDT",
+          "prediction": 0.07404369081990742
+        }
+      ],
+      "timeIso": "2024-05-01T00:00:00.000Z"
+    },
+    {
+      "time": 1717200000,
+      "trainingRows": 480,
+      "trainingMonths": 16,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.06315459290032382
+        },
+        {
+          "symbol": "DOGEUSDT",
+          "prediction": 0.056242555839554065
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.055506624806317253
+        }
+      ],
+      "timeIso": "2024-06-01T00:00:00.000Z"
+    },
+    {
+      "time": 1719792000,
+      "trainingRows": 510,
+      "trainingMonths": 17,
+      "selected": [
+        {
+          "symbol": "CHZUSDT",
+          "prediction": 0.06216128814562338
+        },
+        {
+          "symbol": "SOLUSDT",
+          "prediction": 0.06147279684750588
+        },
+        {
+          "symbol": "FTMUSDT",
+          "prediction": 0.059408696045552586
+        }
+      ],
+      "timeIso": "2024-07-01T00:00:00.000Z"
+    },
+    {
+      "time": 1722470400,
+      "trainingRows": 539,
+      "trainingMonths": 18,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.06069608322159796
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.05109856288052779
+        },
+        {
+          "symbol": "FTMUSDT",
+          "prediction": 0.04244454589176886
+        }
+      ],
+      "timeIso": "2024-08-01T00:00:00.000Z"
+    },
+    {
+      "time": 1725148800,
+      "trainingRows": 568,
+      "trainingMonths": 19,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.06828325230446416
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.06445518270749725
+        },
+        {
+          "symbol": "SOLUSDT",
+          "prediction": 0.05685621686731146
+        }
+      ],
+      "timeIso": "2024-09-01T00:00:00.000Z"
+    },
+    {
+      "time": 1727740800,
+      "trainingRows": 597,
+      "trainingMonths": 20,
+      "selected": [
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.054963769156863664
+        },
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.047283431440027626
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.043278569602568165
+        }
+      ],
+      "timeIso": "2024-10-01T00:00:00.000Z"
+    },
+    {
+      "time": 1730419200,
+      "trainingRows": 625,
+      "trainingMonths": 21,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.05066500818561126
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.04690531694455462
+        },
+        {
+          "symbol": "SOLUSDT",
+          "prediction": 0.037994381369426955
+        }
+      ],
+      "timeIso": "2024-11-01T00:00:00.000Z"
+    },
+    {
+      "time": 1733011200,
+      "trainingRows": 653,
+      "trainingMonths": 22,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.04579031371307985
+        },
+        {
+          "symbol": "DOGEUSDT",
+          "prediction": 0.04442031657126912
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.044278832040044916
+        }
+      ],
+      "timeIso": "2024-12-01T00:00:00.000Z"
+    },
+    {
+      "time": 1735689600,
+      "trainingRows": 681,
+      "trainingMonths": 23,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.0609669386309722
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.05760896090546729
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.05628775055889842
+        }
+      ],
+      "timeIso": "2025-01-01T00:00:00.000Z"
+    },
+    {
+      "time": 1738368000,
+      "trainingRows": 709,
+      "trainingMonths": 24,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.0651029830351941
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.055523719562423524
+        },
+        {
+          "symbol": "RUNEUSDT",
+          "prediction": 0.054887801243996684
+        }
+      ],
+      "timeIso": "2025-02-01T00:00:00.000Z"
+    },
+    {
+      "time": 1740787200,
+      "trainingRows": 736,
+      "trainingMonths": 25,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.07062507901560103
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.058752449253495105
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.05579436480167209
+        }
+      ],
+      "timeIso": "2025-03-01T00:00:00.000Z"
+    },
+    {
+      "time": 1743465600,
+      "trainingRows": 763,
+      "trainingMonths": 26,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.06047748349073648
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.04696398682918332
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.04597270047584597
+        }
+      ],
+      "timeIso": "2025-04-01T00:00:00.000Z"
+    },
+    {
+      "time": 1746057600,
+      "trainingRows": 790,
+      "trainingMonths": 27,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.058437170369346716
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.045555837050646766
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.041764427308472366
+        }
+      ],
+      "timeIso": "2025-05-01T00:00:00.000Z"
+    },
+    {
+      "time": 1748736000,
+      "trainingRows": 817,
+      "trainingMonths": 28,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.04772801646970065
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.04649381050437648
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.041364843471732395
+        }
+      ],
+      "timeIso": "2025-06-01T00:00:00.000Z"
+    },
+    {
+      "time": 1751328000,
+      "trainingRows": 843,
+      "trainingMonths": 29,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.05092363970541519
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.04926784131081546
+        },
+        {
+          "symbol": "ADAUSDT",
+          "prediction": 0.03927180450426878
+        }
+      ],
+      "timeIso": "2025-07-01T00:00:00.000Z"
+    },
+    {
+      "time": 1754006400,
+      "trainingRows": 869,
+      "trainingMonths": 30,
+      "selected": [
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.05739602405184877
+        },
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.047995200479445894
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.0350804412729204
+        }
+      ],
+      "timeIso": "2025-08-01T00:00:00.000Z"
+    },
+    {
+      "time": 1756684800,
+      "trainingRows": 895,
+      "trainingMonths": 31,
+      "selected": [
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.06559955146815499
+        },
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.04846227117515706
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.045591859901537364
+        }
+      ],
+      "timeIso": "2025-09-01T00:00:00.000Z"
+    },
+    {
+      "time": 1759276800,
+      "trainingRows": 921,
+      "trainingMonths": 32,
+      "selected": [
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.06338433568591598
+        },
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.05500866464310243
+        },
+        {
+          "symbol": "XRPUSDT",
+          "prediction": 0.04276475223945413
+        }
+      ],
+      "timeIso": "2025-10-01T00:00:00.000Z"
+    },
+    {
+      "time": 1761955200,
+      "trainingRows": 947,
+      "trainingMonths": 33,
+      "selected": [
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.058749907394744075
+        },
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.054552458523896244
+        },
+        {
+          "symbol": "BNBUSDT",
+          "prediction": 0.04245000309478164
+        }
+      ],
+      "timeIso": "2025-11-01T00:00:00.000Z"
+    },
+    {
+      "time": 1764547200,
+      "trainingRows": 973,
+      "trainingMonths": 34,
+      "selected": [
+        {
+          "symbol": "ETHUSDT",
+          "prediction": 0.05866105906972307
+        },
+        {
+          "symbol": "BTCUSDT",
+          "prediction": 0.05606232748495827
+        },
+        {
+          "symbol": "BNBUSDT",
+          "prediction": 0.03897015158484183
+        }
+      ],
+      "timeIso": "2025-12-01T00:00:00.000Z"
+    }
+  ],
+  "implementationFreeze": {
+    "quantileMethod": "linear interpolation at (n-1)*p",
+    "featureContinuity": "exact prior UTC daily bars required; a gap makes the asset ineligible at that rebalance",
+    "ridge": "intercept unpenalized; six already cross-section-z-scored features are not re-standardized in pooled training",
+    "costGate": "predicted log return must exceed log(1 + frozen roundTripCostBps/10000)",
+    "embargo": "training labels must end on or before the previous calendar-month rebalance boundary",
+    "regimeDefinition": "BTCUSDT strictly prior 90-day log-return sign at each UTC calendar-month boundary; exact daily continuity required; positive vs non-positive; unavailable kept separate",
+    "momentumComparator": "rank top three by raw 90d momentum each month with identical sizing/friction but no candidate cost gate",
+    "staticComparator": "enter frozen top-three 2022-liquidity members once at evaluation start and do not rebalance"
+  },
+  "identityCleanSuccessorOf": "cross-sectional-v1",
+  "projectWideAlphaTrialNumber": 14,
+  "sourceUniverseGitBlobSha": "76ed24730ab9c23a2381901d185058a89753f0c2",
+  "baseSpecificationGitBlobSha": "831f1b3f14935bbb149eff4beda2ef9fb4c085e1",
+  "identityRepair": {
+    "rule": "A ranked symbol is eligible only if the exchange ticker represents one continuous economically equivalent underlying asset throughout every formation/history row used under that symbol. Exclude a symbol if first-party issuer/exchange evidence shows that, during the relevant history, the same ticker was reassigned across distinct chains/tokens or the exchange's historical kline endpoint intentionally concatenates predecessor and successor underlying assets.",
+    "excludedSymbols": [
+      "LUNAUSDT"
+    ],
+    "membershipDeltaFromTrial3": {
+      "removed": [
+        "LUNAUSDT"
+      ],
+      "added": [
+        "EOSUSDT"
+      ],
+      "addedSourceRank": 31,
+      "addedSource2022MedianDailyQuoteVolume": 20016429.6128,
+      "addedSource2022ValidDailyBars": 365
+    },
+    "membership": [
+      "BTCUSDT",
+      "ETHUSDT",
+      "BNBUSDT",
+      "SOLUSDT",
+      "XRPUSDT",
+      "ADAUSDT",
+      "AVAXUSDT",
+      "SHIBUSDT",
+      "DOGEUSDT",
+      "MATICUSDT",
+      "NEARUSDT",
+      "DOTUSDT",
+      "TRXUSDT",
+      "GMTUSDT",
+      "APEUSDT",
+      "FTMUSDT",
+      "ATOMUSDT",
+      "GALAUSDT",
+      "LINKUSDT",
+      "SANDUSDT",
+      "LTCUSDT",
+      "ETCUSDT",
+      "FILUSDT",
+      "OPUSDT",
+      "MANAUSDT",
+      "CHZUSDT",
+      "RUNEUSDT",
+      "AXSUSDT",
+      "WAVESUSDT",
+      "EOSUSDT"
+    ]
+  },
+  "developmentGateForFinalAccess": {
+    "frozenBeforeDevelopment": true,
+    "checks": {
+      "candidateNetReturnGreaterThanCash": true,
+      "medianDevelopmentFoldSharpeStrictlyPositive": true,
+      "positiveReturnFoldsStrictMajority": false,
+      "noDataIntegrityException": true
+    },
+    "pass": false,
+    "rule": "Failure locks Trial 14 without opening the 2026 final holdout; passing permits only a separately protected one-shot final evaluation."
+  },
+  "multipleTesting": {
+    "projectWideAlphaTrialNumber": 14,
+    "trials5Through13AlreadyConsumedElsewhere": true,
+    "selectionBiasWarningRequired": true
+  },
+  "diagnosticOnlyIfIntegrityFails": false
+}
