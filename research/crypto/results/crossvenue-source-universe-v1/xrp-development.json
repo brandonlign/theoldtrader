@@ -1,0 +1,20 @@
+{
+  "coin": "XRP",
+  "completeBoundaryCount": 2193,
+  "economicResultCalculated": false,
+  "endExclusive": "2026-01-01T00:00:00Z",
+  "expectedBoundaries": 2193,
+  "firstMissing": [],
+  "generatedAt": "2026-08-22T05:45:15.854680Z",
+  "hyperliquidRawSettlementCount": 17551,
+  "missingBoundaryCount": 0,
+  "mode": "development",
+  "settlementsPer8hBucket": {
+    "7": 21,
+    "8": 2152,
+    "9": 20
+  },
+  "sourceQualified": true,
+  "sourceRequestCount": 87,
+  "startInclusive": "2024-01-01T00:00:00Z"
+}
