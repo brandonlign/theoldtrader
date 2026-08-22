@@ -1,0 +1,344 @@
+execute	Set up job	﻿2026-08-22T05:22:45.9443063Z Current runner version: '2.336.0'
+execute	Set up job	2026-08-22T05:22:45.9467409Z ##[group]Runner Image Provisioner
+execute	Set up job	2026-08-22T05:22:45.9468684Z Hosted Compute Agent
+execute	Set up job	2026-08-22T05:22:45.9469251Z Version: 20260729.566
+execute	Set up job	2026-08-22T05:22:45.9469945Z Commit: cf7153fe6e25b664e8693c24944bf2b00355d109
+execute	Set up job	2026-08-22T05:22:45.9470642Z Build Date: 2026-07-29T19:17:02Z
+execute	Set up job	2026-08-22T05:22:45.9471317Z Worker ID: {e2478ae4-34f4-423c-87cd-1cc8e7d4fb25}
+execute	Set up job	2026-08-22T05:22:45.9472019Z Azure Region: westcentralus
+execute	Set up job	2026-08-22T05:22:45.9472633Z ##[endgroup]
+execute	Set up job	2026-08-22T05:22:45.9474054Z ##[group]Operating System
+execute	Set up job	2026-08-22T05:22:45.9474646Z Ubuntu
+execute	Set up job	2026-08-22T05:22:45.9475220Z 24.04.4
+execute	Set up job	2026-08-22T05:22:45.9475771Z LTS
+execute	Set up job	2026-08-22T05:22:45.9476269Z ##[endgroup]
+execute	Set up job	2026-08-22T05:22:45.9476841Z ##[group]Runner Image
+execute	Set up job	2026-08-22T05:22:45.9477421Z Image: ubuntu-24.04
+execute	Set up job	2026-08-22T05:22:45.9478100Z Version: 20260816.277.1
+execute	Set up job	2026-08-22T05:22:45.9479156Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260816.277/images/ubuntu/Ubuntu2404-Readme.md
+execute	Set up job	2026-08-22T05:22:45.9480842Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260816.277
+execute	Set up job	2026-08-22T05:22:45.9481754Z ##[endgroup]
+execute	Set up job	2026-08-22T05:22:45.9482849Z ##[group]GITHUB_TOKEN Permissions
+execute	Set up job	2026-08-22T05:22:45.9485154Z Contents: write
+execute	Set up job	2026-08-22T05:22:45.9485843Z Metadata: read
+execute	Set up job	2026-08-22T05:22:45.9486401Z ##[endgroup]
+execute	Set up job	2026-08-22T05:22:45.9488626Z Secret source: Actions
+execute	Set up job	2026-08-22T05:22:45.9489651Z Prepare workflow directory
+execute	Set up job	2026-08-22T05:22:45.9810682Z Prepare all required actions
+execute	Set up job	2026-08-22T05:22:45.9864310Z Getting action download info
+execute	Set up job	2026-08-22T05:22:46.3012239Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+execute	Set up job	2026-08-22T05:22:46.4391293Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+execute	Set up job	2026-08-22T05:22:46.6143284Z Complete job name: execute
+execute	Run actions/checkout@v4	﻿2026-08-22T05:22:46.6908588Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6917527Z ##[group]Run actions/checkout@v4
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6918675Z with:
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6919259Z   ref: research/collateral-rebalanced-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6919969Z   fetch-depth: 1
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6920543Z   repository: brandonlign/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6924642Z   token: ***
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6925189Z   ssh-strict: true
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6925685Z   ssh-user: git
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6926193Z   persist-credentials: true
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6926768Z   clean: true
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6927276Z   sparse-checkout-cone-mode: true
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6927992Z   fetch-tags: false
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6928511Z   show-progress: true
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6929179Z   lfs: false
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6929651Z   submodules: false
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6930158Z   set-safe-directory: true
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6930749Z   allow-unsafe-pr-checkout: false
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.6931526Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8000698Z Syncing repository: brandonlign/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8003116Z ##[group]Getting Git version info
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8004249Z Working directory is '/home/runner/work/theoldtrader/theoldtrader'
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8005693Z [command]/usr/bin/git version
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8058551Z git version 2.55.0
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8080072Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8096993Z Temporarily overriding HOME='/home/runner/work/_temp/82146fc3-8598-4f45-aa82-8e2c74af32a3' before making global git config changes
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8098614Z Adding repository directory to the temporary git global config as a safe directory
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8103294Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/theoldtrader/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8160580Z Deleting the contents of '/home/runner/work/theoldtrader/theoldtrader'
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8164184Z ##[group]Initializing the repository
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8170836Z [command]/usr/bin/git init /home/runner/work/theoldtrader/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8482133Z hint: Using 'master' as the name for the initial branch. This default branch name
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8484319Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8486053Z hint: to use in all of your new repositories, which will suppress this warning,
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8487524Z hint: call:
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8488743Z hint:
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8489954Z hint: 	git config --global init.defaultBranch <name>
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8491085Z hint:
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8492264Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8493876Z hint: 'development'. The just-created branch can be renamed via this command:
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8495217Z hint:
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8496088Z hint: 	git branch -m <name>
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8496994Z hint:
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8498354Z hint: Disable this message with "git config set advice.defaultBranchName false"
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8500938Z Initialized empty Git repository in /home/runner/work/theoldtrader/theoldtrader/.git/
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8504590Z [command]/usr/bin/git remote add origin https://github.com/brandonlign/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8542352Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8543321Z ##[group]Disabling automatic garbage collection
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8548308Z [command]/usr/bin/git config --local gc.auto 0
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8580461Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8581433Z ##[group]Setting up auth
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8589525Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8619979Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8953307Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.8983241Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.9176686Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.9208952Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.9393939Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.9427801Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.9428959Z ##[group]Fetching the repository
+execute	Run actions/checkout@v4	2026-08-22T05:22:46.9438926Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/heads/research/collateral-rebalanced-crossvenue-v1*:refs/remotes/origin/research/collateral-rebalanced-crossvenue-v1* +refs/tags/research/collateral-rebalanced-crossvenue-v1*:refs/tags/research/collateral-rebalanced-crossvenue-v1*
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7291045Z From https://github.com/brandonlign/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7293447Z  * [new branch]      research/collateral-rebalanced-crossvenue-v1 -> origin/research/collateral-rebalanced-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7308127Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7309601Z ##[group]Determining the checkout info
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7311397Z [command]/usr/bin/git branch --list --remote origin/research/collateral-rebalanced-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7334130Z   origin/research/collateral-rebalanced-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7338360Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7344556Z [command]/usr/bin/git sparse-checkout disable
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7392423Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7448734Z ##[group]Checking out the ref
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7452367Z [command]/usr/bin/git checkout --progress --force -B research/collateral-rebalanced-crossvenue-v1 refs/remotes/origin/research/collateral-rebalanced-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7551733Z Switched to a new branch 'research/collateral-rebalanced-crossvenue-v1'
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7556352Z branch 'research/collateral-rebalanced-crossvenue-v1' set up to track 'origin/research/collateral-rebalanced-crossvenue-v1'.
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7564857Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7596409Z [command]/usr/bin/git log -1 --format=%H
+execute	Run actions/checkout@v4	2026-08-22T05:22:47.7619431Z 428caeec8be46d485e0ac932d8172c0ea82d9c8e
+execute	Run actions/setup-python@v5	﻿2026-08-22T05:22:47.7967410Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7974033Z ##[group]Run actions/setup-python@v5
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7975329Z with:
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7976334Z   python-version: 3.12
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7977398Z   check-latest: false
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7987903Z   token: ***
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7988950Z   update-environment: true
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7990110Z   allow-prereleases: false
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7991187Z   freethreaded: false
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.7992290Z ##[endgroup]
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.9339412Z ##[group]Installed versions
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.9433553Z (node:2300) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.9437516Z (Use `node --trace-deprecation ...` to show where the warning was created)
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.9440447Z Successfully set up CPython (3.12.14)
+execute	Run actions/setup-python@v5	2026-08-22T05:22:47.9442988Z ##[endgroup]
+execute	Preflight frozen Trial 28	﻿2026-08-22T05:22:47.9637284Z ##[group]Run set -euo pipefail
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9639475Z ^[[36;1mset -euo pipefail^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9642470Z ^[[36;1mtest ! -e research/crypto/results/collateral-rebalanced-crossvenue-v1-development/summary.json^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9645575Z ^[[36;1mpython - <<'PY'^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9646991Z ^[[36;1mimport json^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9649736Z ^[[36;1mm=json.load(open('research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json'))^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9654459Z ^[[36;1massert m['experimentId']=='collateral-rebalanced-crossvenue-v1' and m['trialNumber']==28 and m['status']=='FROZEN_PRE_DEVELOPMENT'^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9658817Z ^[[36;1massert m['realMoneyAllowed'] is False and m['assets']==['BTC','ETH']^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9661717Z ^[[36;1massert m['capital']['targetNotionalPctOfSleevePerLeg']==0.75^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9664552Z ^[[36;1massert m['strategy']['collateralRebalanceEveryBoundaries']==21^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9667522Z ^[[36;1massert m['strategy']['positionReanchorEveryBoundaries']==90^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9671286Z ^[[36;1massert m['developmentWindow']['economicOutputObservedAtFreeze'] is False^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9674559Z ^[[36;1massert m['finalHoldout']['economicOutputObservedAtFreeze'] is False^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9676981Z ^[[36;1mPY^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9679196Z ^[[36;1mpython -m py_compile research/crypto/trial28_collateral_rebalanced.py^[[0m
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9735155Z shell: /usr/bin/bash -e {0}
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9736770Z env:
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9738807Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9740874Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9742674Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9744394Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9746002Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9747673Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Preflight frozen Trial 28	2026-08-22T05:22:47.9749218Z ##[endgroup]
+execute	Acquire development sources without economics	﻿2026-08-22T05:22:48.1102632Z ##[group]Run set -euo pipefail
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1103899Z ^[[36;1mset -euo pipefail^[[0m
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1104943Z ^[[36;1mmkdir -p /tmp/t28-dev^[[0m
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1108406Z ^[[36;1mpython research/crypto/trial28_collateral_rebalanced.py prepare research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json development BTC /tmp/t28-dev/btc.csv /tmp/t28-dev/btc-sources.json^[[0m
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1113982Z ^[[36;1mpython research/crypto/trial28_collateral_rebalanced.py prepare research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json development ETH /tmp/t28-dev/eth.csv /tmp/t28-dev/eth-sources.json^[[0m
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1143148Z shell: /usr/bin/bash -e {0}
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1144177Z env:
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1145257Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1146966Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1148859Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1150466Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1152153Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1153748Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Acquire development sources without economics	2026-08-22T05:22:48.1155066Z ##[endgroup]
+execute	Acquire development sources without economics	2026-08-22T05:25:21.5885678Z {
+execute	Acquire development sources without economics	2026-08-22T05:25:21.5886432Z   "coin": "BTC",
+execute	Acquire development sources without economics	2026-08-22T05:25:21.5887909Z   "mode": "development",
+execute	Acquire development sources without economics	2026-08-22T05:25:21.5888993Z   "rows": 2193,
+execute	Acquire development sources without economics	2026-08-22T05:25:21.5890103Z   "sha256": "b403c2d9c99b6ace261fb4b1802cd715d2e81bf8abbead08d811c58a5f33642f",
+execute	Acquire development sources without economics	2026-08-22T05:25:21.5891083Z   "economicsCalculated": false
+execute	Acquire development sources without economics	2026-08-22T05:25:21.5891822Z }
+execute	Acquire development sources without economics	2026-08-22T05:27:54.9513492Z {
+execute	Acquire development sources without economics	2026-08-22T05:27:54.9515010Z   "coin": "ETH",
+execute	Acquire development sources without economics	2026-08-22T05:27:54.9515703Z   "mode": "development",
+execute	Acquire development sources without economics	2026-08-22T05:27:54.9516380Z   "rows": 2193,
+execute	Acquire development sources without economics	2026-08-22T05:27:54.9517492Z   "sha256": "16a2158993874fd50e7a10abc72a620332145ef6851886a86c1bd1a0973ab60e",
+execute	Acquire development sources without economics	2026-08-22T05:27:54.9518762Z   "economicsCalculated": false
+execute	Acquire development sources without economics	2026-08-22T05:27:54.9519355Z }
+execute	Observe frozen development exactly once	﻿2026-08-22T05:27:54.9676284Z ##[group]Run set -euo pipefail
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9676759Z ^[[36;1mset -euo pipefail^[[0m
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9678358Z ^[[36;1mpython research/crypto/trial28_collateral_rebalanced.py evaluate research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json development /tmp/t28-dev/btc.csv,/tmp/t28-dev/eth.csv research/crypto/results/collateral-rebalanced-crossvenue-v1-development/summary.json^[[0m
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9680448Z ^[[36;1mpython research/crypto/trial28_collateral_rebalanced.py gate research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json development research/crypto/results/collateral-rebalanced-crossvenue-v1-development/summary.json research/crypto/results/collateral-rebalanced-crossvenue-v1-development/gate.json^[[0m
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9681927Z ^[[36;1mcp /tmp/t28-dev/*-sources.json research/crypto/results/collateral-rebalanced-crossvenue-v1-development/^[[0m
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9710249Z shell: /usr/bin/bash -e {0}
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9710717Z env:
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9711131Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9711810Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9712336Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9712803Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9713294Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9713764Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Observe frozen development exactly once	2026-08-22T05:27:54.9714179Z ##[endgroup]
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0644159Z {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0645058Z   "experimentId": "collateral-rebalanced-crossvenue-v1",
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0645922Z   "trialNumber": 28,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0646413Z   "mode": "development",
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0646934Z   "generatedAt": "2026-08-22T05:27:55.063360Z",
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0647758Z   "basket": {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0648397Z     "netReturn": 0.007792675250520853,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0648808Z     "annualizedReturn": 0.0038878875740506746,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0649265Z     "sharpe": 0.27737764778708685,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0649978Z     "maxDrawdown": -0.02508694697331393,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0650443Z     "startValue": 10000,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0650792Z     "endValue": 10077.92675250521,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0651177Z     "elapsedDays": 730.6666666666666,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0651609Z     "assetsWithActivity": 2,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0652047Z     "anyMarginBreach": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0652455Z     "allGapStressPass": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0652835Z     "totalModeledCosts": 1189.6690151473226
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0653211Z   },
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0653509Z   "sleeves": {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0653796Z     "BTC": {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0654093Z       "netReturn": 0.025405039445877575,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0654511Z       "annualizedReturn": 0.01261995414009709,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0654949Z       "sharpe": 0.6866534836382773,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0655326Z       "maxDrawdown": -0.019320509906005423,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0655684Z       "startValue": 5000,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0656008Z       "endValue": 5127.025197229388,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0656402Z       "elapsedDays": 730.6666666666666,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0656783Z       "marginBreach": null,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0657130Z       "allGapStressPass": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0657502Z       "active": true,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0658086Z       "collateralRebalances": 104,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0658537Z       "positionReanchors": 24,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0658937Z       "grossCollateralTransferred": 19065.89330465778,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0659355Z       "transferCosts": 9.532946652328897,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0659741Z       "tradingCosts": 590.6136316900094,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0660270Z       "totalModeledCosts": 600.1465783423382,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0660679Z       "settlementCountDistribution": {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0661053Z         "7": 21,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0661334Z         "8": 2152,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0661657Z         "9": 20
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0661987Z       }
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0662307Z     },
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0662741Z     "ETH": {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0663043Z       "netReturn": -0.009819688944835758,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0663490Z       "annualizedReturn": -0.0049208373619087364,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0663982Z       "sharpe": -0.17995961346591333,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0664378Z       "maxDrawdown": -0.031343377820691076,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0664786Z       "startValue": 5000,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0665114Z       "endValue": 4950.901555275821,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0665506Z       "elapsedDays": 730.6666666666666,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0665866Z       "marginBreach": null,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0666239Z       "allGapStressPass": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0666595Z       "active": true,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0666931Z       "collateralRebalances": 104,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0667320Z       "positionReanchors": 24,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0667947Z       "grossCollateralTransferred": 29126.087250283224,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0668449Z       "transferCosts": 14.56304362514161,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0668827Z       "tradingCosts": 574.9593931798427,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0669214Z       "totalModeledCosts": 589.5224368049843,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0669650Z       "settlementCountDistribution": {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0669999Z         "7": 21,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0670301Z         "8": 2152,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0670620Z         "9": 20
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0670911Z       }
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0671183Z     }
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0671466Z   },
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0671995Z   "implementation": "weekly-collateral-rebalance-monthly-notional-reanchor-v1",
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0672546Z   "realMoneyAllowed": false
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.0672867Z }
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1301994Z {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1302738Z   "experimentId": "collateral-rebalanced-crossvenue-v1",
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1303208Z   "trialNumber": 28,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1303932Z   "mode": "development",
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1304286Z   "checks": {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1304615Z     "positive": true,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1304953Z     "annualizedReturn": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1305283Z     "sharpe": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1305658Z     "drawdown": true,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1305994Z     "margin": true,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1306567Z     "stress": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1306887Z     "activity": true
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1307201Z   },
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1307750Z   "developmentGatePass": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1308154Z   "finalAccessAuthorizedByGate": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1308523Z   "basket": {
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1308854Z     "netReturn": 0.007792675250520853,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1309241Z     "annualizedReturn": 0.0038878875740506746,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1309645Z     "sharpe": 0.27737764778708685,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1310039Z     "maxDrawdown": -0.02508694697331393,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1310385Z     "startValue": 10000,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1310781Z     "endValue": 10077.92675250521,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1311134Z     "elapsedDays": 730.6666666666666,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1311543Z     "assetsWithActivity": 2,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1311890Z     "anyMarginBreach": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1312230Z     "allGapStressPass": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1312631Z     "totalModeledCosts": 1189.6690151473226
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1312983Z   },
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1313295Z   "realMoneyAllowed": false,
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1314289Z   "antiRescueRule": "After the first Trial 28 development economic output, no scientific parameter, asset, notional, collateral target, transfer cadence, re-anchor cadence, cost, clock rule, or gate may change under Trial 28."
+execute	Observe frozen development exactly once	2026-08-22T05:27:55.1315226Z }
+execute	Commit immutable development evidence	﻿2026-08-22T05:27:55.1437532Z ##[group]Run set -euo pipefail
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1438397Z ^[[36;1mset -euo pipefail^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1438803Z ^[[36;1mgit config user.name theoldtrader-research-bot^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1439303Z ^[[36;1mgit config user.email actions@users.noreply.github.com^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1439925Z ^[[36;1mgit add research/crypto/results/collateral-rebalanced-crossvenue-v1-development^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1440562Z ^[[36;1mgit commit -m 'Observe Trial 28 collateral-rebalanced development'^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1441175Z ^[[36;1mgit pull --rebase origin research/collateral-rebalanced-crossvenue-v1^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1441888Z ^[[36;1mgit push origin HEAD:research/collateral-rebalanced-crossvenue-v1^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1442368Z ^[[36;1mpython - <<'PY' >> "$GITHUB_OUTPUT"^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1442737Z ^[[36;1mimport json^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1443499Z ^[[36;1mprint('pass=' + ('true' if json.load(open('research/crypto/results/collateral-rebalanced-crossvenue-v1-development/gate.json'))['developmentGatePass'] else 'false'))^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1444344Z ^[[36;1mPY^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1472820Z shell: /usr/bin/bash -e {0}
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1473295Z env:
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1473714Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1474220Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1474745Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1475227Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1475685Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1476154Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1476552Z ##[endgroup]
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1648799Z [research/collateral-rebalanced-crossvenue-v1 3dc805c] Observe Trial 28 collateral-rebalanced development
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1649818Z  4 files changed, 1628 insertions(+)
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1650738Z  create mode 100644 research/crypto/results/collateral-rebalanced-crossvenue-v1-development/btc-sources.json
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1651682Z  create mode 100644 research/crypto/results/collateral-rebalanced-crossvenue-v1-development/eth-sources.json
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1652515Z  create mode 100644 research/crypto/results/collateral-rebalanced-crossvenue-v1-development/gate.json
+execute	Commit immutable development evidence	2026-08-22T05:27:55.1653707Z  create mode 100644 research/crypto/results/collateral-rebalanced-crossvenue-v1-development/summary.json
+execute	Commit immutable development evidence	2026-08-22T05:27:55.6794634Z From https://github.com/brandonlign/theoldtrader
+execute	Commit immutable development evidence	2026-08-22T05:27:55.6795588Z  * branch            research/collateral-rebalanced-crossvenue-v1 -> FETCH_HEAD
+execute	Commit immutable development evidence	2026-08-22T05:27:55.6796808Z    428caee..bfbc205  research/collateral-rebalanced-crossvenue-v1 -> origin/research/collateral-rebalanced-crossvenue-v1
+execute	Commit immutable development evidence	2026-08-22T05:27:55.6909610Z Rebasing (1/1)
+execute	Commit immutable development evidence	2026-08-22T05:27:55.6910581Z Successfully rebased and updated refs/heads/research/collateral-rebalanced-crossvenue-v1.
+execute	Commit immutable development evidence	2026-08-22T05:27:56.7418529Z To https://github.com/brandonlign/theoldtrader
+execute	Commit immutable development evidence	2026-08-22T05:27:56.7656568Z    bfbc205..84d551a  HEAD -> research/collateral-rebalanced-crossvenue-v1
+execute	Post Run actions/setup-python@v5	﻿2026-08-22T05:27:56.7807192Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+execute	Post Run actions/setup-python@v5	2026-08-22T05:27:56.7808827Z Post job cleanup.
+execute	Post Run actions/setup-python@v5	2026-08-22T05:27:56.8977913Z (node:2446) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+execute	Post Run actions/setup-python@v5	2026-08-22T05:27:56.8978784Z (Use `node --trace-deprecation ...` to show where the warning was created)
+execute	Post Run actions/checkout@v4	﻿2026-08-22T05:27:56.9181033Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:56.9182347Z Post job cleanup.
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0081127Z [command]/usr/bin/git version
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0116255Z git version 2.55.0
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0153982Z Temporarily overriding HOME='/home/runner/work/_temp/ef8a2563-9acd-4fec-85c0-a66d356afc8e' before making global git config changes
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0155262Z Adding repository directory to the temporary git global config as a safe directory
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0161644Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/theoldtrader/theoldtrader
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0199638Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0239744Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0444126Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0472137Z http.https://github.com/.extraheader
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0508274Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0518928Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0737283Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+execute	Post Run actions/checkout@v4	2026-08-22T05:27:57.0771728Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+execute	Complete job	﻿2026-08-22T05:27:57.1126688Z Cleaning up orphan processes
+execute	Complete job	2026-08-22T05:27:57.1412820Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
