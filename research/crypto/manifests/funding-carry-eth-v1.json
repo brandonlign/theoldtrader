@@ -1,1 +1,69 @@
-{}
+{
+  "experimentId": "funding-carry-eth-v1",
+  "trialNumber": 17,
+  "frozenAt": "2026-08-22T02:33:00Z",
+  "status": "FROZEN_PRE_EVALUATION",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "strategyFamily": "cross-asset external replication of fully collateralized spot/perpetual funding and basis carry",
+  "selectionDisclosure": "ETHUSDT was selected before any Trial 17 ETH funding, perpetual execution, mark-price, basis, or carry P&L was acquired or observed because ETH is the highest-liquidity non-BTC crypto asset and supplies a materially independent perpetual-funding market. Trial 17 transfers the already-frozen Trial 16 mechanics without tuning: 15% spot notional, equal-coin-unit perpetual short, 50% futures collateral, one entry and one exit, no rebalancing, conservative retail friction, exact first-party source-union data, and the same margin stresses. Prior ETH spot paths were visible in unrelated cross-sectional research; this trial therefore claims cross-asset carry replication, not a pristine price-path holdout. ETH funding/basis/perpetual economics are the independent evidence being tested.",
+  "sourcePrior": {
+    "btcHistoricalEvidence": "Trial 2U was positive over 2021-05-01 through 2026-03-01 but undercapitalized under gap stress.",
+    "btcRecentConfirmation": "Trial 16 fixed capitalization but failed economics over 2026-03-01 through 2026-08-01.",
+    "reasonForAssetReplication": "A promotable carry effect should not depend on BTC-specific funding history; ETH is the strongest predeclared cross-asset replication target by liquidity."
+  },
+  "candidate": {
+    "symbol": "ETHUSDT",
+    "position": "long ETH spot and short exactly equal ETH units of Binance USD-M ETHUSDT perpetual",
+    "entryRule": "enter once at the first exact 8-hour funding boundary in the frozen evaluation window; no forecast, funding-sign filter, or timing optimization",
+    "exitRule": "exit both legs at the final exact 8-hour funding boundary strictly before the frozen end",
+    "rebalancing": "none",
+    "spotNotionalPctAtEntry": 0.15,
+    "perpetualShortSizingRule": "short exactly the ETH units purchased by the 15%-of-starting-equity spot leg",
+    "futuresCollateralReservePct": 0.50,
+    "fundingAccounting": "entry-boundary funding is excluded; later realized funding is accrued on equal ETH units times contemporaneous mark price; short receives positive funding and pays negative funding",
+    "basisAccounting": "standard perpetual contract opens are execution references; mark-price opens are valuation/funding/margin references"
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 60,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 60,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "evaluationWindow": {
+    "startInclusive": "2021-05-01T00:00:00Z",
+    "endExclusive": "2026-03-01T00:00:00Z",
+    "oneShot": true,
+    "ethCarryEconomicsObservedAtFreeze": false
+  },
+  "dataRequirements": {
+    "venue": "Binance",
+    "symbol": "ETHUSDT",
+    "fundingTimestampNormalization": {"maximumAbsoluteSkewMs": 60000},
+    "spot": "checksum-verified Binance Vision DAILY ETHUSDT 8h spot klines",
+    "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M ETHUSDT standard 8h klines",
+    "perpetualMark": "checksum-verified union of MONTHLY and DAILY USD-M ETHUSDT 8h markPriceKlines; overlap must agree exactly and every boundary must be covered",
+    "funding": "checksum-verified Binance Vision MONTHLY USD-M ETHUSDT fundingRate archives",
+    "noInterpolation": true,
+    "rejectOnAnyMissingBoundary": true
+  },
+  "comparators": ["cash", "15%-exposure ETH spot buy-and-hold"],
+  "promotionCriteria": {
+    "positiveNetReturn": true,
+    "minimumSharpe": 1.0,
+    "sharpeMustExceedSpotComparator": true,
+    "maximumAllowedDrawdown": -0.02,
+    "realizedMarginBreachAllowed": false,
+    "allFrozenGapStressesMustPass": true,
+    "sourceUnionMustHaveZeroOverlapMismatchesAndZeroMissingBoundaries": true,
+    "interpretation": "Every criterion must pass. Passing promotes Trial 17 only to paper-baseline status; never real-money trading. Failure freezes Trial 17 with no in-place rescue."
+  },
+  "antiRescueRule": "After the first Trial 17 ETH economic output, no asset, collateral, sizing, dates, costs, source rule, funding filter, entry/exit rule, or promotion threshold may change under Trial 17."
+}
