@@ -47,8 +47,6 @@ function main() {
   if (JSON.stringify(dataset.universeMembership) !== JSON.stringify(universe.membership)) throw new Error('Trial 15 dataset membership mismatch');
 
   const selected = manifest.universe.selectedSymbols;
-  const ranked = (universe.eligibleRanking ?? []).slice(0, manifest.universe.selectedCount).map((row) => row.symbol);
-  if (JSON.stringify(selected) !== JSON.stringify(ranked)) throw new Error('Trial 15 selected symbols are not the first three frozen identity-clean liquidity ranks');
   if (JSON.stringify(selected) !== JSON.stringify(['BTCUSDT', 'ETHUSDT', 'BNBUSDT'])) throw new Error('Trial 15 frozen selected-symbol identity changed');
 
   const finalStart = Date.parse(manifest.finalHoldout.startInclusive) / 1000;
@@ -63,6 +61,8 @@ function main() {
   if (JSON.stringify(derivedRanking.map((row) => row.symbol)) !== JSON.stringify(universe.membership)) {
     throw new Error('Identity-clean universe no longer derives from frozen source ranking');
   }
+  const rankedSelection = derivedRanking.slice(0, manifest.universe.selectedCount).map((row) => row.symbol);
+  if (JSON.stringify(selected) !== JSON.stringify(rankedSelection)) throw new Error('Trial 15 selected symbols are not the first three frozen identity-clean liquidity ranks');
 
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'theoldtrader-trial15-eval-'));
   try {
