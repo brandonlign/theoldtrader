@@ -4,38 +4,77 @@ on:
     branches: [main]
     paths: ['.github/workflows/retrigger-carry-recovery.yml']
 permissions:
-  actions: write
   contents: write
 jobs:
-  dispatch:
+  execute:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: research/threshold-collateral-crossvenue-v1
           fetch-depth: 1
-      - name: Dispatch and capture frozen Trial 29
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight frozen Trial 29
         run: |
-          set -uo pipefail
-          gh workflow run run-trial29-threshold-collateral.yml --repo "$GITHUB_REPOSITORY" --ref main
-          sleep 4
-          id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial29-threshold-collateral.yml --limit 1 --json databaseId --jq '.[0].databaseId // 0')
-          echo "Trial 29 run id: $id"
-          if [ "$id" = 0 ]; then exit 2; fi
-          gh run watch "$id" --repo "$GITHUB_REPOSITORY" --interval 10 || true
-          gh run view "$id" --repo "$GITHUB_REPOSITORY" --json status,conclusion,jobs > /tmp/t29-status.json || true
-          gh run view "$id" --repo "$GITHUB_REPOSITORY" --log > /tmp/t29.log 2>&1 || true
-          git fetch origin research/threshold-collateral-crossvenue-v1
-          git checkout -B research/threshold-collateral-crossvenue-v1 origin/research/threshold-collateral-crossvenue-v1
-          mkdir -p research/crypto/results/threshold-collateral-crossvenue-v1-ops
-          cp /tmp/t29-status.json research/crypto/results/threshold-collateral-crossvenue-v1-ops/latest-run-status.json
-          tail -n 600 /tmp/t29.log > research/crypto/results/threshold-collateral-crossvenue-v1-ops/latest-run-tail.txt
-          printf '%s\n' "$id" > research/crypto/results/threshold-collateral-crossvenue-v1-ops/latest-run-id.txt
+          set -euo pipefail
+          test ! -e research/crypto/results/threshold-collateral-crossvenue-v1-development/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/threshold-collateral-crossvenue-v1.json'))
+          assert m['trialNumber']==29 and m['status']=='FROZEN_PRE_DEVELOPMENT' and m['realMoneyAllowed'] is False
+          assert m['multipleTesting']['trial28EconomicOutputObservedBeforeFreeze'] is False
+          PY
+          python -m py_compile research/crypto/trial29_threshold_collateral.py
+      - name: Acquire development sources without economics
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t29-dev
+          python research/crypto/trial29_threshold_collateral.py prepare research/crypto/manifests/threshold-collateral-crossvenue-v1.json development BTC /tmp/t29-dev/btc.csv /tmp/t29-dev/btc-sources.json
+          python research/crypto/trial29_threshold_collateral.py prepare research/crypto/manifests/threshold-collateral-crossvenue-v1.json development ETH /tmp/t29-dev/eth.csv /tmp/t29-dev/eth-sources.json
+      - name: Observe development exactly once
+        run: |
+          set -euo pipefail
+          python research/crypto/trial29_threshold_collateral.py evaluate research/crypto/manifests/threshold-collateral-crossvenue-v1.json development /tmp/t29-dev/btc.csv,/tmp/t29-dev/eth.csv research/crypto/results/threshold-collateral-crossvenue-v1-development/summary.json
+          python research/crypto/trial29_threshold_collateral.py gate research/crypto/manifests/threshold-collateral-crossvenue-v1.json development research/crypto/results/threshold-collateral-crossvenue-v1-development/summary.json research/crypto/results/threshold-collateral-crossvenue-v1-development/gate.json
+          cp /tmp/t29-dev/*-sources.json research/crypto/results/threshold-collateral-crossvenue-v1-development/
+      - name: Commit development evidence
+        id: dev
+        run: |
+          set -euo pipefail
           git config user.name theoldtrader-research-bot
           git config user.email actions@users.noreply.github.com
-          git add research/crypto/results/threshold-collateral-crossvenue-v1-ops
-          git commit -m 'Ops: capture Trial 29 execution status' || true
-          git pull --rebase origin research/threshold-collateral-crossvenue-v1 || true
+          git add research/crypto/results/threshold-collateral-crossvenue-v1-development
+          git commit -m 'Observe Trial 29 threshold-collateral development'
+          git pull --rebase origin research/threshold-collateral-crossvenue-v1
+          git push origin HEAD:research/threshold-collateral-crossvenue-v1
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/threshold-collateral-crossvenue-v1-development/gate.json'))['developmentGatePass'] else 'false'))
+          PY
+      - name: Acquire untouched final sources
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t29-final
+          python research/crypto/trial29_threshold_collateral.py prepare research/crypto/manifests/threshold-collateral-crossvenue-v1.json final BTC /tmp/t29-final/btc.csv /tmp/t29-final/btc-sources.json
+          python research/crypto/trial29_threshold_collateral.py prepare research/crypto/manifests/threshold-collateral-crossvenue-v1.json final ETH /tmp/t29-final/eth.csv /tmp/t29-final/eth-sources.json
+      - name: Observe one-shot frozen final
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          python research/crypto/trial29_threshold_collateral.py evaluate research/crypto/manifests/threshold-collateral-crossvenue-v1.json final /tmp/t29-final/btc.csv,/tmp/t29-final/eth.csv research/crypto/results/threshold-collateral-crossvenue-v1-final/summary.json
+          python research/crypto/trial29_threshold_collateral.py gate research/crypto/manifests/threshold-collateral-crossvenue-v1.json final research/crypto/results/threshold-collateral-crossvenue-v1-final/summary.json research/crypto/results/threshold-collateral-crossvenue-v1-final/gate.json
+          cp /tmp/t29-final/*-sources.json research/crypto/results/threshold-collateral-crossvenue-v1-final/
+      - name: Commit final evidence
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name theoldtrader-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add research/crypto/results/threshold-collateral-crossvenue-v1-final
+          git commit -m 'Observe Trial 29 one-shot final'
+          git pull --rebase origin research/threshold-collateral-crossvenue-v1
           git push origin HEAD:research/threshold-collateral-crossvenue-v1
