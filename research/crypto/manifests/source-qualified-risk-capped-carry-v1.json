@@ -1,0 +1,20 @@
+{
+  "experimentId":"source-qualified-risk-capped-carry-v1",
+  "trialNumber":23,
+  "frozenAt":"2026-08-22T03:43:00Z",
+  "status":"FROZEN_PRE_DEVELOPMENT",
+  "paperOnly":true,
+  "realMoneyAllowed":false,
+  "assetSelection":{"symbols":["LINKUSDT","BCHUSDT"],"rule":"Use exactly the two Trial 22 assets with complete checksum-verified 2022-2025 source coverage before any Trial 22 economics; source availability only, no return or PnL selection."},
+  "portfolio":{"startingEquity":10000,"sleeveStartingEquity":5000,"spotNotionalPctOfSleeveWhenActive":0.15,"futuresCollateralReservePctOfSleeveWhenActive":0.80},
+  "signal":{"lookbackFundingBoundaries":90,"annualizationFactor":1095,"entryAnnualizedTrailingFundingThreshold":0.15,"exitAnnualizedTrailingFundingThreshold":0.05,"minimumStateBoundaries":90},
+  "riskControl":{"maximumActiveBoundariesBeforeReanchor":180,"maximumPerpetualMarkNotionalPctOfCurrentSleeveEquityBeforeReanchor":0.25},
+  "costModel":{"spotFeeBpsPerSide":10,"spotSlippageBpsPerSide":5,"spotSpreadBpsRoundTrip":10,"perpetualFeeBpsPerSide":10,"perpetualSlippageBpsPerSide":5,"perpetualSpreadBpsRoundTrip":10},
+  "marginStress":{"maintenanceMarginPctOfPerpetualNotional":0.05,"additionalGapStressPct":[0.25,0.50,1.00]},
+  "developmentWindow":{"startInclusive":"2022-01-01T00:00:00Z","endExclusive":"2026-01-01T00:00:00Z","economicOutputObservedAtFreeze":false},
+  "finalHoldout":{"startInclusive":"2026-01-01T00:00:00Z","endExclusive":"2026-08-01T00:00:00Z","oneShot":true,"derivativeRowsObservedAtFreeze":false},
+  "dataRequirements":{"fundingTimestampNormalizationMaximumAbsoluteSkewMs":60000,"noInterpolation":true,"rejectAnyMissingBoundary":true},
+  "developmentGate":{"minimumBasketSharpe":0.80,"maximumAllowedBasketDrawdown":-0.02,"minimumCompletedRoundTrips":2,"minimumSleevesWithActivity":1},
+  "promotionCriteria":{"minimumFinalBasketSharpe":0.75,"maximumAllowedFinalBasketDrawdown":-0.02,"minimumFinalCompletedRoundTrips":1,"minimumFinalSleevesWithActivity":1},
+  "antiRescueRule":"No scientific parameter may change after first Trial 23 development economic output."
+}
