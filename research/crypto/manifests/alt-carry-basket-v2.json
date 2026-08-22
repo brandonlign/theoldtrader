@@ -1,0 +1,95 @@
+{
+  "experimentId": "alt-carry-basket-v2",
+  "trialNumber": 18,
+  "frozenAt": "2026-08-22T02:43:00Z",
+  "status": "FROZEN_PRE_DEVELOPMENT",
+  "paperOnly": true,
+  "realMoneyAllowed": false,
+  "strategyFamily": "equal-sleeve BNB/XRP spot-perpetual funding and basis carry",
+  "motivation": "Prospectively test the same unconditional fully collateralized carry family on the next two high-liquidity non-BTC assets after the already-frozen Trial 17 ETH/SOL pair. No BNBUSDT or XRPUSDT funding/perpetual execution/mark/basis/carry series is queried for Trial 18 before this freeze.",
+  "assetSelection": {
+    "symbols": ["BNBUSDT", "XRPUSDT"],
+    "rule": "Starting from the already-frozen 2022 identity-clean liquidity ranking used elsewhere in the project, exclude BTC and the Trial 17 ETH/SOL replication assets; select the next two majors in rank order: BNB then XRP. Selection is fixed before Trial 18 derivative acquisition and does not use BNB/XRP carry performance.",
+    "dataPreviouslyObservedAtFreeze": {
+      "spotPriceHistoryMayHaveAppearedInOtherDirectionalResearch": true,
+      "fundingPerpetualExecutionMarkAndCarryEconomics": false,
+      "interpretation": "Trial 18 is an untouched derivative/carry replication, not a pristine spot-price-path test."
+    }
+  },
+  "portfolio": {
+    "startingEquity": 10000,
+    "sleeves": 2,
+    "sleeveWeights": {"BNBUSDT": 0.5, "XRPUSDT": 0.5},
+    "sleeveMechanics": "Each sleeve is a linearly scaled 50% subportfolio using the frozen Trial 2 carry formulas. Each sleeve buys spot equal to 15% of sleeve capital and shorts exactly the same coin units in its USD-M perpetual. Total starting spot exposure is 15% of portfolio equity.",
+    "spotNotionalPctOfSleeveAtEntry": 0.15,
+    "futuresCollateralReservePctOfSleeve": 0.50,
+    "totalSpotNotionalPctOfPortfolioAtEntry": 0.15,
+    "totalFuturesCollateralReservePctOfPortfolio": 0.50,
+    "entryRule": "One entry at the first exact 8-hour boundary in each evaluation window; no funding-sign filter or forecast.",
+    "exitRule": "One exit at the final exact 8-hour boundary strictly before the window end.",
+    "rebalancing": "none",
+    "leverage": false,
+    "unallocatedCapital": "cash inside each sleeve"
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 60,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 60,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "developmentWindow": {
+    "startInclusive": "2022-01-01T00:00:00Z",
+    "endExclusive": "2026-01-01T00:00:00Z",
+    "derivativeRowsObservedAtFreeze": false
+  },
+  "finalHoldout": {
+    "startInclusive": "2026-01-01T00:00:00Z",
+    "endExclusive": "2026-08-01T00:00:00Z",
+    "oneShot": true,
+    "derivativeRowsObservedAtFreeze": false,
+    "accessRule": "Do not acquire any final BNB/XRP derivative/funding row unless the frozen development gate passes."
+  },
+  "dataRequirements": {
+    "venue": "Binance",
+    "interval": "8h",
+    "fundingTimestampNormalizationMaximumAbsoluteSkewMs": 60000,
+    "spot": "checksum-verified Binance Vision DAILY spot 8h klines",
+    "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M standard 8h klines",
+    "perpetualMark": "checksum-verified union of MONTHLY and DAILY USD-M 8h markPriceKlines; exact overlap agreement required",
+    "funding": "checksum-verified Binance Vision MONTHLY USD-M fundingRate archives",
+    "noInterpolation": true,
+    "rejectAnyMissingBoundary": true
+  },
+  "developmentGate": {
+    "positiveBasketNetReturn": true,
+    "minimumBasketSharpe": 1.0,
+    "maximumAllowedBasketDrawdown": -0.02,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForBothSleeves": true,
+    "decision": "Every criterion must pass before final-holdout acquisition. Failure freezes Trial 18 without final access or in-place rescue."
+  },
+  "promotionCriteria": {
+    "positiveFinalBasketNetReturn": true,
+    "minimumFinalBasketSharpe": 1.0,
+    "maximumAllowedFinalBasketDrawdown": -0.02,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForBothSleeves": true,
+    "decision": "Every criterion must pass. Passing authorizes a separate paper-baseline promotion proposal only; never real-money trading. Failure freezes Trial 18 without rescue."
+  },
+  "multipleTesting": {
+    "seriousTrialNumber": 18,
+    "frozenBeforeTrial17OutcomeWasUsedToChooseBNBOrXRP": true,
+    "newInformationSet": "BNBUSDT and XRPUSDT derivative/funding/basis histories not queried by prior carry trials",
+    "noPostResultAssetSubstitution": true
+  },
+  "antiRescueRule": "After the first Trial 18 development output, no asset, sleeve weight, collateral, sizing, date, cost, source, funding filter, entry/exit rule, or gate may change under Trial 18."
+}
