@@ -12,69 +12,72 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: research/threshold-collateral-crossvenue-v1
+          ref: research/proactive-stress-buffer-crossvenue-v1
           fetch-depth: 1
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Preflight frozen Trial 29
+      - name: Preflight frozen Trial 30
         run: |
           set -euo pipefail
-          test ! -e research/crypto/results/threshold-collateral-crossvenue-v1-development/summary.json
+          test ! -e research/crypto/results/proactive-stress-buffer-crossvenue-v1-development/summary.json
+          test ! -e research/crypto/results/proactive-stress-buffer-crossvenue-v1-final/summary.json
           python - <<'PY'
           import json
-          m=json.load(open('research/crypto/manifests/threshold-collateral-crossvenue-v1.json'))
-          assert m['trialNumber']==29 and m['status']=='FROZEN_PRE_DEVELOPMENT' and m['realMoneyAllowed'] is False
-          assert m['multipleTesting']['trial28EconomicOutputObservedBeforeFreeze'] is False
+          m=json.load(open('research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json'))
+          assert m['trialNumber']==30 and m['status']=='FROZEN_PRE_DEVELOPMENT' and m['realMoneyAllowed'] is False
+          assert m['strategy']['proactiveStressBufferPctOfLegNotional']==0.10
+          assert m['multipleTesting']['trial29DevelopmentObservedBeforeDesign'] is True
+          assert m['multipleTesting']['trial29FinalObserved'] is False
           PY
-          python -m py_compile research/crypto/trial29_threshold_collateral.py
+          python -m py_compile research/crypto/trial30_proactive_stress_buffer.py
       - name: Acquire development sources without economics
         run: |
           set -euo pipefail
-          mkdir -p /tmp/t29-dev
-          python research/crypto/trial29_threshold_collateral.py prepare research/crypto/manifests/threshold-collateral-crossvenue-v1.json development BTC /tmp/t29-dev/btc.csv /tmp/t29-dev/btc-sources.json
-          python research/crypto/trial29_threshold_collateral.py prepare research/crypto/manifests/threshold-collateral-crossvenue-v1.json development ETH /tmp/t29-dev/eth.csv /tmp/t29-dev/eth-sources.json
+          mkdir -p /tmp/t30-dev
+          python research/crypto/trial30_proactive_stress_buffer.py prepare research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json development BTC /tmp/t30-dev/btc.csv /tmp/t30-dev/btc-sources.json
+          python research/crypto/trial30_proactive_stress_buffer.py prepare research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json development ETH /tmp/t30-dev/eth.csv /tmp/t30-dev/eth-sources.json
       - name: Observe development exactly once
         run: |
           set -euo pipefail
-          python research/crypto/trial29_threshold_collateral.py evaluate research/crypto/manifests/threshold-collateral-crossvenue-v1.json development /tmp/t29-dev/btc.csv,/tmp/t29-dev/eth.csv research/crypto/results/threshold-collateral-crossvenue-v1-development/summary.json
-          python research/crypto/trial29_threshold_collateral.py gate research/crypto/manifests/threshold-collateral-crossvenue-v1.json development research/crypto/results/threshold-collateral-crossvenue-v1-development/summary.json research/crypto/results/threshold-collateral-crossvenue-v1-development/gate.json
-          cp /tmp/t29-dev/*-sources.json research/crypto/results/threshold-collateral-crossvenue-v1-development/
+          python research/crypto/trial30_proactive_stress_buffer.py evaluate research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json development /tmp/t30-dev/btc.csv,/tmp/t30-dev/eth.csv research/crypto/results/proactive-stress-buffer-crossvenue-v1-development/summary.json
+          python research/crypto/trial30_proactive_stress_buffer.py gate research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json development research/crypto/results/proactive-stress-buffer-crossvenue-v1-development/summary.json research/crypto/results/proactive-stress-buffer-crossvenue-v1-development/gate.json
+          cp /tmp/t30-dev/*-sources.json research/crypto/results/proactive-stress-buffer-crossvenue-v1-development/
       - name: Commit development evidence
         id: dev
         run: |
           set -euo pipefail
           git config user.name theoldtrader-research-bot
           git config user.email actions@users.noreply.github.com
-          git add research/crypto/results/threshold-collateral-crossvenue-v1-development
-          git commit -m 'Observe Trial 29 threshold-collateral development'
-          git pull --rebase origin research/threshold-collateral-crossvenue-v1
-          git push origin HEAD:research/threshold-collateral-crossvenue-v1
+          git add research/crypto/results/proactive-stress-buffer-crossvenue-v1-development
+          git commit -m 'Observe Trial 30 proactive stress-buffer development'
+          git pull --rebase origin research/proactive-stress-buffer-crossvenue-v1
+          git push origin HEAD:research/proactive-stress-buffer-crossvenue-v1
           python - <<'PY' >> "$GITHUB_OUTPUT"
           import json
-          print('pass=' + ('true' if json.load(open('research/crypto/results/threshold-collateral-crossvenue-v1-development/gate.json'))['developmentGatePass'] else 'false'))
+          print('pass=' + ('true' if json.load(open('research/crypto/results/proactive-stress-buffer-crossvenue-v1-development/gate.json'))['developmentGatePass'] else 'false'))
           PY
       - name: Acquire untouched final sources
         if: steps.dev.outputs.pass == 'true'
         run: |
           set -euo pipefail
-          mkdir -p /tmp/t29-final
-          python research/crypto/trial29_threshold_collateral.py prepare research/crypto/manifests/threshold-collateral-crossvenue-v1.json final BTC /tmp/t29-final/btc.csv /tmp/t29-final/btc-sources.json
-          python research/crypto/trial29_threshold_collateral.py prepare research/crypto/manifests/threshold-collateral-crossvenue-v1.json final ETH /tmp/t29-final/eth.csv /tmp/t29-final/eth-sources.json
+          mkdir -p /tmp/t30-final
+          python research/crypto/trial30_proactive_stress_buffer.py prepare research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json final BTC /tmp/t30-final/btc.csv /tmp/t30-final/btc-sources.json
+          python research/crypto/trial30_proactive_stress_buffer.py prepare research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json final ETH /tmp/t30-final/eth.csv /tmp/t30-final/eth-sources.json
       - name: Observe one-shot frozen final
         if: steps.dev.outputs.pass == 'true'
         run: |
           set -euo pipefail
-          python research/crypto/trial29_threshold_collateral.py evaluate research/crypto/manifests/threshold-collateral-crossvenue-v1.json final /tmp/t29-final/btc.csv,/tmp/t29-final/eth.csv research/crypto/results/threshold-collateral-crossvenue-v1-final/summary.json
-          python research/crypto/trial29_threshold_collateral.py gate research/crypto/manifests/threshold-collateral-crossvenue-v1.json final research/crypto/results/threshold-collateral-crossvenue-v1-final/summary.json research/crypto/results/threshold-collateral-crossvenue-v1-final/gate.json
-          cp /tmp/t29-final/*-sources.json research/crypto/results/threshold-collateral-crossvenue-v1-final/
+          python research/crypto/trial30_proactive_stress_buffer.py evaluate research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json final /tmp/t30-final/btc.csv,/tmp/t30-final/eth.csv research/crypto/results/proactive-stress-buffer-crossvenue-v1-final/summary.json
+          python research/crypto/trial30_proactive_stress_buffer.py gate research/crypto/manifests/proactive-stress-buffer-crossvenue-v1.json final research/crypto/results/proactive-stress-buffer-crossvenue-v1-final/summary.json research/crypto/results/proactive-stress-buffer-crossvenue-v1-final/gate.json
+          cp /tmp/t30-final/*-sources.json research/crypto/results/proactive-stress-buffer-crossvenue-v1-final/
       - name: Commit final evidence
         if: steps.dev.outputs.pass == 'true'
         run: |
           set -euo pipefail
           git config user.name theoldtrader-research-bot
           git config user.email actions@users.noreply.github.com
-          git add research/crypto/results/threshold-collateral-crossvenue-v1-final
-          git commit -m 'Observe Trial 29 one-shot final'
-          git pull --rebase origin research/threshold-collateral-crossvenue-v1
-          git push origin HEAD:research/threshold-collateral-crossvenue-v1
+          git add research/crypto/results/proactive-stress-buffer-crossvenue-v1-final
+          git commit -m 'Observe Trial 30 one-shot final'
+          git pull --rebase origin research/proactive-stress-buffer-crossvenue-v1
+          git push origin HEAD:research/proactive-stress-buffer-crossvenue-v1
