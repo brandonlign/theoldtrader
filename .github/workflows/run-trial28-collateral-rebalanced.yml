@@ -1,0 +1,86 @@
+name: Run frozen Trial 28 collateral-rebalanced cross-venue carry
+on:
+  pull_request:
+    types: [opened]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  execute:
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'research/collateral-rebalanced-crossvenue-v1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/collateral-rebalanced-crossvenue-v1
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight frozen Trial 28
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/collateral-rebalanced-crossvenue-v1-development/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json'))
+          assert m['experimentId']=='collateral-rebalanced-crossvenue-v1' and m['trialNumber']==28 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['realMoneyAllowed'] is False and m['assets']==['BTC','ETH']
+          assert m['capital']['targetNotionalPctOfSleevePerLeg']==0.75
+          assert m['strategy']['collateralRebalanceEveryBoundaries']==21
+          assert m['strategy']['positionReanchorEveryBoundaries']==90
+          assert m['developmentWindow']['economicOutputObservedAtFreeze'] is False
+          assert m['finalHoldout']['economicOutputObservedAtFreeze'] is False
+          PY
+          python -m py_compile research/crypto/trial28_collateral_rebalanced.py
+      - name: Acquire development sources without economics
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t28-dev
+          python research/crypto/trial28_collateral_rebalanced.py prepare research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json development BTC /tmp/t28-dev/btc.csv /tmp/t28-dev/btc-sources.json
+          python research/crypto/trial28_collateral_rebalanced.py prepare research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json development ETH /tmp/t28-dev/eth.csv /tmp/t28-dev/eth-sources.json
+      - name: Observe frozen development exactly once
+        run: |
+          set -euo pipefail
+          python research/crypto/trial28_collateral_rebalanced.py evaluate research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json development /tmp/t28-dev/btc.csv,/tmp/t28-dev/eth.csv research/crypto/results/collateral-rebalanced-crossvenue-v1-development/summary.json
+          python research/crypto/trial28_collateral_rebalanced.py gate research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json development research/crypto/results/collateral-rebalanced-crossvenue-v1-development/summary.json research/crypto/results/collateral-rebalanced-crossvenue-v1-development/gate.json
+          cp /tmp/t28-dev/*-sources.json research/crypto/results/collateral-rebalanced-crossvenue-v1-development/
+      - name: Commit immutable development evidence
+        id: dev
+        run: |
+          set -euo pipefail
+          git config user.name theoldtrader-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add research/crypto/results/collateral-rebalanced-crossvenue-v1-development
+          git commit -m 'Observe Trial 28 collateral-rebalanced development'
+          git pull --rebase origin research/collateral-rebalanced-crossvenue-v1
+          git push origin HEAD:research/collateral-rebalanced-crossvenue-v1
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/collateral-rebalanced-crossvenue-v1-development/gate.json'))['developmentGatePass'] else 'false'))
+          PY
+      - name: Acquire untouched final sources
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t28-final
+          python research/crypto/trial28_collateral_rebalanced.py prepare research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json final BTC /tmp/t28-final/btc.csv /tmp/t28-final/btc-sources.json
+          python research/crypto/trial28_collateral_rebalanced.py prepare research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json final ETH /tmp/t28-final/eth.csv /tmp/t28-final/eth-sources.json
+      - name: Observe one-shot frozen final
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          python research/crypto/trial28_collateral_rebalanced.py evaluate research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json final /tmp/t28-final/btc.csv,/tmp/t28-final/eth.csv research/crypto/results/collateral-rebalanced-crossvenue-v1-final/summary.json
+          python research/crypto/trial28_collateral_rebalanced.py gate research/crypto/manifests/collateral-rebalanced-crossvenue-v1.json final research/crypto/results/collateral-rebalanced-crossvenue-v1-final/summary.json research/crypto/results/collateral-rebalanced-crossvenue-v1-final/gate.json
+          cp /tmp/t28-final/*-sources.json research/crypto/results/collateral-rebalanced-crossvenue-v1-final/
+      - name: Commit immutable final evidence
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name theoldtrader-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add research/crypto/results/collateral-rebalanced-crossvenue-v1-final
+          git commit -m 'Observe Trial 28 one-shot final'
+          git pull --rebase origin research/collateral-rebalanced-crossvenue-v1
+          git push origin HEAD:research/collateral-rebalanced-crossvenue-v1
