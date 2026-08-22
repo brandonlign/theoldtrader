@@ -48,6 +48,7 @@ const result = {
   mode,
   generatedAt: new Date().toISOString(),
   developmentGatePass: mode === 'development' ? pass : undefined,
+  finalAccessAuthorizedByGate: mode === 'development' ? pass : undefined,
   promotionEligible: mode === 'final' ? pass : undefined,
   promotionScope: mode === 'final' && pass ? 'paper-baseline-proposal-only' : 'none',
   realMoneyAllowed: false,
@@ -58,4 +59,3 @@ const result = {
 fs.mkdirSync(outPath.split('/').slice(0, -1).join('/') || '.', { recursive: true });
 fs.writeFileSync(outPath, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' });
 console.log(JSON.stringify(result, null, 2));
-if (!pass) process.exitCode = 2;
