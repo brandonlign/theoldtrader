@@ -1,0 +1,42 @@
+{
+  "experimentId": "funding-carry-v1U-source-union",
+  "trialFamily": "Trial 2 source replication",
+  "frozenAt": "2026-08-20T13:53:23Z",
+  "status": "FROZEN_SOURCE_REPLICATION_UNOBSERVED",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "economicsManifest": "research/crypto/manifests/funding-carry-v1.json",
+  "economicsManifestBlobShaAtFreeze": "f1ae2172e1e56de118613389cab5906c6c041020",
+  "economicRule": "Use the frozen Trial 2 strategy, dates, sizing, costs, execution prices, funding normalization, margin stress, comparators, and anti-rescue rule without modification.",
+  "motivation": "The original Trial 2 monthly markPrice source failed before economics because 24 required scheduled boundaries were absent. A daily-only full-window replication also failed before economics because 11 daily mark archives were unavailable. Before any Trial 2 economic result, a non-economic checksum-verified source audit established that the monthly and daily markPrice archive families agree exactly wherever both exist and their union covers the entire frozen grid.",
+  "preEconomicSourceAudit": {
+    "githubActionsRunId": 32376599797,
+    "expectedBoundaryRows": 5295,
+    "monthlyRows": 5271,
+    "dailyRows": 5262,
+    "overlapRows": 5238,
+    "overlapMismatchCount": 0,
+    "monthlyOnlyRows": 33,
+    "dailyOnlyRows": 24,
+    "unionRows": 5295,
+    "missingUnionRows": 0,
+    "dailyArchivesMissing": 11,
+    "sourceUnionPass": true,
+    "candidateValuesExposed": false,
+    "pricesExposed": false,
+    "economicsCalculated": false
+  },
+  "markPriceSourceRule": {
+    "monthly": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT 8h markPriceKlines",
+    "daily": "checksum-verified Binance Vision DAILY USD-M BTCUSDT 8h markPriceKlines when the adjacent official .CHECKSUM and archive both exist",
+    "selection": "Build both source maps independently for the entire frozen 2021-05-01 through 2026-03-01 window. At every scheduled 8-hour boundary, use the mark value if present in either source. If both sources contain the boundary they must be numerically identical; any disagreement aborts evaluation. If neither contains the boundary, abort. No interpolation, forward fill, backward fill, nearest-price substitution, or outcome-based source selection is permitted.",
+    "provenance": "Preserve archive URL, official expected SHA-256, observed SHA-256, archive granularity, period, and availability status."
+  },
+  "unchangedOtherSources": {
+    "spot": "checksum-verified Binance Vision DAILY BTCUSDT 8h spot klines, exactly as Trial 2",
+    "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT standard 8h klines, exactly as Trial 2",
+    "funding": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT fundingRate archives, exactly as Trial 2"
+  },
+  "antiRescueRule": "No strategy/economic parameter or source-selection rule may change after the first Trial 2U economic output. Any later source or strategy change requires a new labeled replication/trial.",
+  "interpretation": "A positive result is historical robustness/source-replication evidence only. It is not pristine forward validation and cannot authorize live trading."
+}

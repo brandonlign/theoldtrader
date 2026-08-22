@@ -1,0 +1,96 @@
+name: Run Frozen Trial 2U Source-Union Replication
+
+on:
+  pull_request:
+    branches: [research/crypto-oos-v1]
+    paths:
+      - 'research/crypto/manifests/funding-carry-v1U-source-union.json'
+      - 'research/crypto/prepare-carry-data-source-union.py'
+      - '.github/workflows/run-trial2u-source-union.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frozen-trial2u-source-union
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate frozen Trial 2U code and unchanged Trial 2 evaluator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m py_compile research/crypto/prepare-carry-data.py research/crypto/prepare-carry-data-source-union.py
+          node --check research/crypto/carry-evaluate.js
+          node --check research/crypto/carry-report.js
+          python -m unittest tests/test_prepare_carry_data.py
+          node --test tests/crypto-carry-evaluate.test.js
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          rep = json.loads(Path('research/crypto/manifests/funding-carry-v1U-source-union.json').read_text())
+          economics = Path('research/crypto/manifests/funding-carry-v1.json').read_bytes()
+          blob = hashlib.sha1(f'blob {len(economics)}\0'.encode() + economics).hexdigest()
+          assert rep['status'] == 'FROZEN_SOURCE_REPLICATION_UNOBSERVED'
+          assert blob == rep['economicsManifestBlobShaAtFreeze'], (blob, rep['economicsManifestBlobShaAtFreeze'])
+          PY
+
+      - name: Build checksum-verified complete source-union input
+        run: >-
+          python research/crypto/prepare-carry-data-source-union.py
+          research/crypto/data-cache/funding-carry-v1U-source-union-synchronized.csv
+          research/crypto/data-cache/funding-carry-v1U-source-union-sources.json
+
+      - name: Evaluate unchanged Trial 2 economics once
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p research/crypto/results/funding-carry-v1U-source-union
+          node research/crypto/carry-evaluate.js \
+            research/crypto/manifests/funding-carry-v1.json \
+            research/crypto/data-cache/funding-carry-v1U-source-union-synchronized.csv \
+            > research/crypto/results/funding-carry-v1U-source-union/summary.json
+          node research/crypto/carry-report.js \
+            research/crypto/results/funding-carry-v1U-source-union/summary.json \
+            research/crypto/results/funding-carry-v1U-source-union
+          cp research/crypto/manifests/funding-carry-v1U-source-union.json \
+            research/crypto/results/funding-carry-v1U-source-union/source-replication-manifest.json
+
+      - name: Print compact Trial 2U economic result
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          p='research/crypto/results/funding-carry-v1U-source-union/summary.json'
+          s=json.load(open(p))
+          keys=['netReturn','annualizedReturn','sharpe','sortino','maxDrawdown','calmar','totalFunding','basisPnL','fees','feeDrag','capitalUtilization','liquidationOrMarginBreach']
+          print(json.dumps({k:s.get(k) for k in keys}, indent=2))
+          PY
+
+      - name: Upload immutable Trial 2U evidence bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-carry-v1U-source-union-evidence
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            research/crypto/manifests/funding-carry-v1.json
+            research/crypto/manifests/funding-carry-v1U-source-union.json
+            research/crypto/data-cache/funding-carry-v1U-source-union-synchronized.csv
+            research/crypto/data-cache/funding-carry-v1U-source-union-sources.json
+            research/crypto/results/funding-carry-v1U-source-union
+
+# Trial 2U was frozen before any economic output. The workflow changes only
+# mark-price provenance; it evaluates the unchanged Trial 2 strategy/economics.
