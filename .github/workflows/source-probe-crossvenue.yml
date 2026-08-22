@@ -1,0 +1,51 @@
+name: Source-only cross-venue universe probe
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/source-probe-crossvenue.yml']
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        coin: [XRP, ADA, BNB, LTC]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/crossvenue-source-universe-v1
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Probe development coverage only
+        run: |
+          set -uo pipefail
+          mkdir -p /tmp/probe
+          coin='${{ matrix.coin }}'
+          lc=$(echo "$coin" | tr '[:upper:]' '[:lower:]')
+          if python research/crypto/crossvenue_source_probe.py "$coin" development "/tmp/probe/${lc}-development.json"; then
+            status=qualified
+          else
+            status=unqualified
+            printf '{"coin":"%s","mode":"development","sourceQualified":false,"economicResultCalculated":false,"probeError":true}\n' "$coin" > "/tmp/probe/${lc}-development.json"
+          fi
+          echo "$status"
+      - name: Commit source-only evidence
+        run: |
+          set -euo pipefail
+          coin='${{ matrix.coin }}'
+          lc=$(echo "$coin" | tr '[:upper:]' '[:lower:]')
+          git config user.name theoldtrader-research-bot
+          git config user.email actions@users.noreply.github.com
+          mkdir -p research/crypto/results/crossvenue-source-universe-v1
+          cp "/tmp/probe/${lc}-development.json" "research/crypto/results/crossvenue-source-universe-v1/${lc}-development.json"
+          git add research/crypto/results/crossvenue-source-universe-v1
+          git commit -m "Source-only: probe ${coin} cross-venue coverage"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin research/crossvenue-source-universe-v1 && git push origin HEAD:research/crossvenue-source-universe-v1 && break
+            sleep $((i*2))
+          done
