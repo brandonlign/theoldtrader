@@ -1,0 +1,93 @@
+{
+  "experimentId": "venue-native-carry-v1",
+  "trialNumber": 20,
+  "frozenAt": "2026-08-22T03:01:00Z",
+  "status": "FROZEN_PRE_DEVELOPMENT",
+  "paperOnly": true,
+  "realMoneyAllowed": false,
+  "strategyFamily": "equal-sleeve LTC/TRX spot-perpetual funding and basis carry with venue-native conservative fee assumptions",
+  "motivation": "Prior carry trials deliberately used a 60 bp per-side fee assumption on both spot and perpetual legs. Binance's 2026 educational fee documentation states a typical Spot fee of 0.10% (10 bp). Trial 20 prospectively tests the same simple fully collateralized carry economics on a new derivative information set using 10 bp per-side fees on both legs; the futures assumption is intentionally no lower than the documented Spot rate and therefore remains conservative rather than depending on a VIP discount. No LTCUSDT or TRXUSDT Trial 20 funding/perpetual/basis economics were queried before freeze.",
+  "assetSelection": {
+    "symbols": ["LTCUSDT", "TRXUSDT"],
+    "rule": "Use two longstanding high-liquidity non-BTC majors present in the project's pre-existing historical crypto universe, excluding all assets already allocated to Trials 17-19. Selection is frozen before Trial 20 derivative acquisition and is not based on LTC/TRX funding performance.",
+    "dataPreviouslyObservedAtFreeze": {
+      "spotPriceHistoryMayHaveAppearedInOtherDirectionalResearch": true,
+      "fundingPerpetualExecutionMarkAndTrial20CarryEconomics": false
+    }
+  },
+  "portfolio": {
+    "startingEquity": 10000,
+    "sleeves": 2,
+    "sleeveWeights": {"LTCUSDT": 0.5, "TRXUSDT": 0.5},
+    "spotNotionalPctOfSleeveAtEntry": 0.15,
+    "futuresCollateralReservePctOfSleeve": 0.50,
+    "entryRule": "Enter once at the first exact 8-hour funding boundary in the evaluation window; no funding-sign or price forecast filter.",
+    "exitRule": "Exit both legs at the final exact 8-hour funding boundary strictly before window end.",
+    "position": "long spot and short exactly equal coin units of the matching Binance USD-M perpetual",
+    "rebalancing": "none",
+    "leverage": false
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 10,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 10,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10,
+    "feeRationale": "10 bp per-side Spot corresponds to Binance's published typical 0.10% Spot fee. The same 10 bp is imposed on the perpetual leg as a conservative research assumption without relying on any VIP or BNB discount. Slippage and spread remain adverse and separate."
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "developmentWindow": {
+    "startInclusive": "2022-01-01T00:00:00Z",
+    "endExclusive": "2026-01-01T00:00:00Z",
+    "derivativeRowsObservedAtFreeze": false
+  },
+  "finalHoldout": {
+    "startInclusive": "2026-01-01T00:00:00Z",
+    "endExclusive": "2026-08-01T00:00:00Z",
+    "oneShot": true,
+    "derivativeRowsObservedAtFreeze": false,
+    "accessRule": "No Trial 20 final derivative/funding row may be acquired unless the frozen development gate passes."
+  },
+  "dataRequirements": {
+    "venue": "Binance",
+    "interval": "8h",
+    "fundingTimestampNormalizationMaximumAbsoluteSkewMs": 60000,
+    "spot": "checksum-verified Binance Vision DAILY spot 8h klines",
+    "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M standard 8h klines",
+    "perpetualMark": "checksum-verified union of MONTHLY and DAILY USD-M 8h markPriceKlines; exact overlap agreement required",
+    "funding": "checksum-verified Binance Vision MONTHLY USD-M fundingRate archives",
+    "noInterpolation": true,
+    "rejectAnyMissingBoundary": true
+  },
+  "developmentGate": {
+    "positiveBasketNetReturn": true,
+    "minimumBasketSharpe": 1.0,
+    "maximumAllowedBasketDrawdown": -0.015,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForBothSleeves": true,
+    "decision": "Every criterion must pass before final-holdout acquisition. Failure freezes Trial 20 without final access or in-place rescue."
+  },
+  "promotionCriteria": {
+    "positiveFinalBasketNetReturn": true,
+    "minimumFinalBasketSharpe": 1.0,
+    "maximumAllowedFinalBasketDrawdown": -0.015,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForBothSleeves": true,
+    "decision": "Every criterion must pass. Passing authorizes a separate paper-baseline promotion proposal only; never real-money trading."
+  },
+  "multipleTesting": {
+    "seriousTrialNumber": 20,
+    "selectedAfterEarlierCarryEvidence": true,
+    "newInformationSet": "LTCUSDT and TRXUSDT funding/perpetual/basis histories not queried for Trial 20 before freeze",
+    "costModelChosenBeforeTrial20DerivativeOutcomes": true,
+    "noPostResultAssetOrCostSubstitution": true
+  },
+  "antiRescueRule": "After the first Trial 20 development economic output, no asset, sleeve weight, collateral, sizing, date, cost, source rule, entry/exit rule, or gate may change under Trial 20."
+}
