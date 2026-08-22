@@ -1,0 +1,127 @@
+name: Execute frozen Trial 20 venue native carry
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/run-trial20-venue-native.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: execute-trial20-venue-native-carry
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/venue-native-carry-v1
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Verify frozen Trial 20 and implementation
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/venue-native-carry-v1-development/summary.json
+          test ! -e research/crypto/results/venue-native-carry-v1-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/venue-native-carry-v1.json'))
+          assert m['experimentId']=='venue-native-carry-v1' and m['trialNumber']==20 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['LTCUSDT','TRXUSDT']
+          assert m['assetSelection']['dataPreviouslyObservedAtFreeze']['fundingPerpetualExecutionMarkAndTrial20CarryEconomics'] is False
+          assert m['costModel']['spotFeeBpsPerSide']==10 and m['costModel']['perpetualFeeBpsPerSide']==10
+          assert m['developmentWindow']['derivativeRowsObservedAtFreeze'] is False and m['finalHoldout']['derivativeRowsObservedAtFreeze'] is False
+          PY
+          npm install
+          node --check research/crypto/venue-native-carry-evaluate.js
+          node --check research/crypto/venue-native-carry-gate.js
+          python -m py_compile research/crypto/prepare-venue-native-carry-window.py
+          node --test tests/crypto-carry-evaluate.test.js
+          python -m unittest tests/test_prepare_carry_data.py
+      - name: Acquire LTC development
+        run: python research/crypto/prepare-venue-native-carry-window.py research/crypto/manifests/venue-native-carry-v1.json development LTCUSDT /tmp/t20-ltc-dev.csv /tmp/t20-ltc-dev-src.json
+      - name: Acquire TRX development
+        run: python research/crypto/prepare-venue-native-carry-window.py research/crypto/manifests/venue-native-carry-v1.json development TRXUSDT /tmp/t20-trx-dev.csv /tmp/t20-trx-dev-src.json
+      - name: Verify development sources
+        run: |
+          python - <<'PY'
+          import json
+          for symbol,p in [('LTCUSDT','ltc'),('TRXUSDT','trx')]:
+            s=json.load(open(f'/tmp/t20-{p}-dev-src.json')); c=s['coverage']
+            assert s['experimentId']=='venue-native-carry-v1' and s['trialNumber']==20 and s['mode']=='development' and s['symbol']==symbol and s['economicResultCalculated'] is False
+            assert c['expectedBoundaryRows']==c['synchronizedRows'] and c['overlapMismatchCount']==0
+            assert c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+      - name: Observe and gate development once
+        id: dev
+        run: |
+          node research/crypto/venue-native-carry-evaluate.js research/crypto/manifests/venue-native-carry-v1.json development /tmp/t20-ltc-dev.csv /tmp/t20-trx-dev.csv research/crypto/results/venue-native-carry-v1-development/summary.json
+          node research/crypto/venue-native-carry-gate.js research/crypto/manifests/venue-native-carry-v1.json development research/crypto/results/venue-native-carry-v1-development/summary.json /tmp/t20-ltc-dev-src.json /tmp/t20-trx-dev-src.json research/crypto/results/venue-native-carry-v1-development/gate.json
+          cp /tmp/t20-ltc-dev-src.json research/crypto/results/venue-native-carry-v1-development/ltc-sources.json
+          cp /tmp/t20-trx-dev-src.json research/crypto/results/venue-native-carry-v1-development/trx-sources.json
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/venue-native-carry-v1-development/gate.json'))['developmentGatePass'] else 'false'))
+          PY
+      - name: Commit development evidence
+        run: |
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/venue-native-carry-v1-development
+          git commit -m 'Observe Trial 20 venue native carry development'
+          git push origin HEAD:research/venue-native-carry-v1
+      - name: Acquire final sources
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          python research/crypto/prepare-venue-native-carry-window.py research/crypto/manifests/venue-native-carry-v1.json final LTCUSDT /tmp/t20-ltc-final.csv /tmp/t20-ltc-final-src.json --confirm-final YES
+          python research/crypto/prepare-venue-native-carry-window.py research/crypto/manifests/venue-native-carry-v1.json final TRXUSDT /tmp/t20-trx-final.csv /tmp/t20-trx-final-src.json --confirm-final YES
+          python - <<'PY'
+          import json
+          for symbol,p in [('LTCUSDT','ltc'),('TRXUSDT','trx')]:
+            s=json.load(open(f'/tmp/t20-{p}-final-src.json')); c=s['coverage']
+            assert s['mode']=='final' and s['symbol']==symbol and c['expectedBoundaryRows']==c['synchronizedRows']
+            assert c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+      - name: Observe and gate final once
+        if: steps.dev.outputs.pass == 'true'
+        id: final
+        run: |
+          node research/crypto/venue-native-carry-evaluate.js research/crypto/manifests/venue-native-carry-v1.json final /tmp/t20-ltc-final.csv /tmp/t20-trx-final.csv research/crypto/results/venue-native-carry-v1-final/summary.json --confirm-final YES
+          node research/crypto/venue-native-carry-gate.js research/crypto/manifests/venue-native-carry-v1.json final research/crypto/results/venue-native-carry-v1-final/summary.json /tmp/t20-ltc-final-src.json /tmp/t20-trx-final-src.json research/crypto/results/venue-native-carry-v1-final/promotion.json
+          cp /tmp/t20-ltc-final-src.json research/crypto/results/venue-native-carry-v1-final/ltc-sources.json
+          cp /tmp/t20-trx-final-src.json research/crypto/results/venue-native-carry-v1-final/trx-sources.json
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/venue-native-carry-v1-final/promotion.json'))['promotionEligible'] else 'false'))
+          PY
+      - name: Mark promotion
+        if: steps.dev.outputs.pass == 'true' && steps.final.outputs.pass == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.load(open('research/crypto/results/venue-native-carry-v1-final/summary.json'))
+          Path('research/crypto/results/venue-native-carry-v1-final/PROMOTED.md').write_text('# Trial 20 paper-baseline promotion\n\nPre-frozen final gate passed; paper baseline only, never real-money authorization.\n\nFinal net return: %.6f%%\n\nFinal Sharpe: %.4f\n\nFinal max drawdown: %.6f%%\n' % (100*s['basket']['netReturn'],s['basket']['sharpe'],100*s['basket']['maxDrawdown']))
+          PY
+      - name: Commit final evidence
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          git pull --ff-only origin research/venue-native-carry-v1
+          git add research/crypto/results/venue-native-carry-v1-final
+          git commit -m 'Observe Trial 20 venue native carry final'
+          git push origin HEAD:research/venue-native-carry-v1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: venue-native-carry-v1-evidence
+          path: |
+            research/crypto/results/venue-native-carry-v1-development
+            research/crypto/results/venue-native-carry-v1-final
+          if-no-files-found: error
