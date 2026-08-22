@@ -1,3 +1,4 @@
+# v2 read-only watcher trigger
 name: Watch running Trials 20 and 22
 on:
   pull_request:
