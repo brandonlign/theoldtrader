@@ -31,8 +31,13 @@ S3_NS = {"s3": "http://s3.amazonaws.com/doc/2006-03-01/"}
 
 def deterministic_gzip_write(path: Path, payload: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with gzip.GzipFile(filename=path, mode="wb", compresslevel=9, mtime=0) as handle:
-        handle.write(payload)
+    # GzipFile(filename=path, ...) embeds the destination basename in the gzip
+    # header, so identical payloads written to differently named files are not
+    # byte-identical.  Use an explicit file object and an empty header filename
+    # to keep the artifact deterministic without changing the decompressed data.
+    with path.open("wb") as raw:
+        with gzip.GzipFile(filename="", mode="wb", fileobj=raw, compresslevel=9, mtime=0) as handle:
+            handle.write(payload)
 
 
 def list_first_archive(symbol: str, fetch) -> tuple[str, bytes, str]:
@@ -172,7 +177,27 @@ def main() -> None:
             if kwargs:
                 raise TypeError(f"Unexpected gzip.open arguments: {sorted(kwargs)}")
             if mtime is not None and "b" in mode:
-                return gzip.GzipFile(filename=filename, mode=mode, compresslevel=compresslevel, mtime=mtime)
+                # Match deterministic_gzip_write: omit the output basename from
+                # the gzip header so the same payload always yields the same bytes.
+                raw = open(filename, mode.replace("b", "") + "b")
+                try:
+                    handle = gzip.GzipFile(filename="", mode=mode, fileobj=raw, compresslevel=compresslevel, mtime=mtime)
+                except Exception:
+                    raw.close()
+                    raise
+                # Closing GzipFile does not close a caller-supplied fileobj, so
+                # wrap close to release both resources when the builder exits its
+                # context manager.
+                original_close = handle.close
+
+                def close_both():
+                    try:
+                        original_close()
+                    finally:
+                        raw.close()
+
+                handle.close = close_both
+                return handle
             return original_gzip_open(
                 filename, mode, compresslevel=compresslevel,
                 encoding=encoding, errors=errors, newline=newline,
