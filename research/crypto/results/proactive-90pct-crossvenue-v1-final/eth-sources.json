@@ -1,0 +1,250 @@
+{
+  "coin": "ETH",
+  "economicResultCalculated": false,
+  "expectedRows": 636,
+  "experimentId": "proactive-90pct-crossvenue-v1",
+  "generatedAt": "2026-08-22T05:43:42.094452Z",
+  "hyperliquidSettlementCountDistribution": {
+    "7": 5,
+    "8": 626,
+    "9": 5
+  },
+  "mode": "final",
+  "rows": 636,
+  "sha256": "5e6b98871bbb3b95bed6a87c9ad570889d903788b3e95ad40a630245e4936f6a",
+  "sources": [
+    {
+      "bytes": 5680,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2025-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-12",
+      "sha256": "c7240d5fe42d1abc6b0cb5bad4ec254f32724431fd2e53a84ba96040602cd0b1",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5679,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-01",
+      "sha256": "cf9351bc262fa6402cd4f95b9b82df404bc0a72416b7a6180f93dcbdeb259989",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5194,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-02",
+      "sha256": "1e9e9a85ed8e71c6a00dda557c5af11423bedb578d47a38d7ae5c6f91b37e5d8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5707,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-03",
+      "sha256": "770dbb9341ec21df11354c7eca55b1b89a8f7e290cc767b1855d8560d5fe31b2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5495,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-04",
+      "sha256": "08a1554a1fee329352151c8879989e5d1212629e5ecdfc16f3d1d65455e94506",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5610,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-05",
+      "sha256": "d7faaee486b8e45bdc6f9058981f1495c8ed260f803d3c366e3b7fbb84d02632",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5523,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-06",
+      "sha256": "b926e8ddf8f984a8a4d86214221c984bd0dd8c8c2cd68f7481f8cb7fafaca417",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5630,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-07",
+      "sha256": "dc228aa839419d0a8335af5f4b914da7b46e4be5875cfdf3099081045c101b9a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/8h/ETHUSDT-8h-2026-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 979,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-01",
+      "sha256": "830cf7797ea6ecdc554ac2d9047a141df1a6a544f4ea58e7028227930462b139",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 939,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-02",
+      "sha256": "e445f00c81a7fa8361d99b3660f24b4f58e5d952fe301d70bbc72c319bc01a77",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 1002,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-03",
+      "sha256": "9f5625846c503a1e94fcdecd2deb37dc8852e341add353fa48c2b9a0cc70df6a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 963,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-04",
+      "sha256": "86160f455478a8b262d96d1516f583355e6e0cec7beeb5784e69dda76f599e98",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 980,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-05",
+      "sha256": "ff926ad3fc48493c26c85af16620b19c695cc1854faa1e7f0ea2ab9fdafc2084",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 967,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-06",
+      "sha256": "cc6fb028a811bc423b711f6b89de067bf92a2eda61303e1ce0b219b5d3210e47",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 941,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-07",
+      "sha256": "ece7f6c64d0e45fbd64929dec40bae525fe365381046e367de5ca0827bc623d3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/ETHUSDT/ETHUSDT-fundingRate-2026-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1785542399999,
+      "interval": "8h",
+      "kind": "candleSnapshot",
+      "rows": 637,
+      "startTime": 1767196800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1768924799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1767196800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1770652799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1768924800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1772380799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1770652800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1774108799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1772380800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1775836799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1774108800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1777564799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1775836800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1779292799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1777564800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1781020799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1779292800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1782748799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1781020800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1784476799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1782748800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "ETH",
+      "endTime": 1785542399999,
+      "kind": "fundingHistory",
+      "rows": 296,
+      "startTime": 1784476800000,
+      "venue": "Hyperliquid"
+    }
+  ],
+  "trialNumber": 31
+}

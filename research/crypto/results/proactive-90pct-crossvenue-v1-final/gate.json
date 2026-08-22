@@ -1,0 +1,31 @@
+{
+  "experimentId": "proactive-90pct-crossvenue-v1",
+  "trialNumber": 31,
+  "mode": "final",
+  "checks": {
+    "positive": true,
+    "annualizedReturn": false,
+    "sharpe": true,
+    "drawdown": true,
+    "margin": true,
+    "stress": true,
+    "activity": true
+  },
+  "promotionEligible": false,
+  "promotionScope": "none",
+  "basket": {
+    "netReturn": 0.007124707643395123,
+    "annualizedReturn": 0.012326086032116823,
+    "sharpe": 3.488839140216975,
+    "maxDrawdown": -0.0021385056392364543,
+    "startValue": 10000,
+    "endValue": 10071.247076433952,
+    "elapsedDays": 211.66666666666666,
+    "assetsWithActivity": 2,
+    "anyMarginBreach": false,
+    "allGapStressPass": true,
+    "totalModeledCosts": 46.950288761317054
+  },
+  "realMoneyAllowed": false,
+  "antiRescueRule": "After the first Trial 31 development economic output, no scientific parameter, asset, notional, stress buffer, collateral target, transfer cost, clock rule, or gate may change under Trial 31."
+}
