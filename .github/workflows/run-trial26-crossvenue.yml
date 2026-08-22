@@ -1,5 +1,6 @@
 name: Execute frozen Trial 26 cross-venue funding spread
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths: ['.github/workflows/run-trial26-crossvenue.yml']
