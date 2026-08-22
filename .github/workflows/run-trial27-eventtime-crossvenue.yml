@@ -1,0 +1,86 @@
+name: Execute frozen Trial 27 event-time cross-venue spread
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/event-time-crossvenue-spread-v1
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preflight frozen Trial 27
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/event-time-crossvenue-spread-v1-development/summary.json
+          test ! -e research/crypto/results/event-time-crossvenue-spread-v1-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/event-time-crossvenue-spread-v1.json'))
+          assert m['experimentId']=='event-time-crossvenue-spread-v1' and m['trialNumber']==27 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assets']==['BTC','ETH'] and m['realMoneyAllowed'] is False
+          assert m['developmentWindow']['economicOutputObservedAtFreeze'] is False
+          assert m['finalHoldout']['economicOutputObservedAtFreeze'] is False
+          assert m['candidate']['lookbackBuckets']==90
+          assert m['developmentGate']['candidateMinimumAnnualizedReturn']==0.07
+          PY
+          python -m py_compile research/crypto/trial27_eventtime_crossvenue.py
+      - name: Acquire development sources without economics
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t27-dev
+          python research/crypto/trial27_eventtime_crossvenue.py prepare research/crypto/manifests/event-time-crossvenue-spread-v1.json development BTC /tmp/t27-dev/btc.csv /tmp/t27-dev/btc-sources.json
+          python research/crypto/trial27_eventtime_crossvenue.py prepare research/crypto/manifests/event-time-crossvenue-spread-v1.json development ETH /tmp/t27-dev/eth.csv /tmp/t27-dev/eth-sources.json
+          python - <<'PY'
+          import json
+          for c in ['btc','eth']:
+            x=json.load(open(f'/tmp/t27-dev/{c}-sources.json'))
+            assert x['economicResultCalculated'] is False and x['rows']==x['expectedRows']
+          PY
+      - name: Observe frozen Trial 27 development exactly once
+        run: |
+          set -euo pipefail
+          python research/crypto/trial27_eventtime_crossvenue.py evaluate research/crypto/manifests/event-time-crossvenue-spread-v1.json development /tmp/t27-dev/btc.csv,/tmp/t27-dev/eth.csv research/crypto/results/event-time-crossvenue-spread-v1-development/summary.json
+          python research/crypto/trial27_eventtime_crossvenue.py gate research/crypto/manifests/event-time-crossvenue-spread-v1.json development research/crypto/results/event-time-crossvenue-spread-v1-development/summary.json research/crypto/results/event-time-crossvenue-spread-v1-development/gate.json
+          cp /tmp/t27-dev/*-sources.json research/crypto/results/event-time-crossvenue-spread-v1-development/
+      - name: Commit immutable development evidence
+        id: dev
+        run: |
+          set -euo pipefail
+          git config user.name theoldtrader-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add research/crypto/results/event-time-crossvenue-spread-v1-development
+          git commit -m 'Observe Trial 27 event-time development'
+          git push origin HEAD:research/event-time-crossvenue-spread-v1
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/event-time-crossvenue-spread-v1-development/gate.json'))['developmentGatePass'] else 'false'))
+          PY
+      - name: Acquire untouched final sources
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t27-final
+          python research/crypto/trial27_eventtime_crossvenue.py prepare research/crypto/manifests/event-time-crossvenue-spread-v1.json final BTC /tmp/t27-final/btc.csv /tmp/t27-final/btc-sources.json
+          python research/crypto/trial27_eventtime_crossvenue.py prepare research/crypto/manifests/event-time-crossvenue-spread-v1.json final ETH /tmp/t27-final/eth.csv /tmp/t27-final/eth-sources.json
+      - name: Observe one-shot frozen final
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          python research/crypto/trial27_eventtime_crossvenue.py evaluate research/crypto/manifests/event-time-crossvenue-spread-v1.json final /tmp/t27-final/btc.csv,/tmp/t27-final/eth.csv research/crypto/results/event-time-crossvenue-spread-v1-final/summary.json
+          python research/crypto/trial27_eventtime_crossvenue.py gate research/crypto/manifests/event-time-crossvenue-spread-v1.json final research/crypto/results/event-time-crossvenue-spread-v1-final/summary.json research/crypto/results/event-time-crossvenue-spread-v1-final/promotion.json
+          cp /tmp/t27-final/*-sources.json research/crypto/results/event-time-crossvenue-spread-v1-final/
+      - name: Commit immutable final evidence
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          git pull --ff-only origin research/event-time-crossvenue-spread-v1
+          git add research/crypto/results/event-time-crossvenue-spread-v1-final
+          git commit -m 'Observe Trial 27 event-time final'
+          git push origin HEAD:research/event-time-crossvenue-spread-v1
