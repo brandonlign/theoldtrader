@@ -1,0 +1,118 @@
+name: Execute frozen Trial 21 diversified carry
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/run-trial21-diversified-carry.yml']
+  workflow_dispatch:
+permissions: {contents: write}
+concurrency:
+  group: execute-trial21-diversified-carry
+  cancel-in-progress: false
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/diversified-carry-v1, fetch-depth: 1}
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Validate frozen Trial 21 before derivative access
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/diversified-carry-v1-development/summary.json
+          test ! -e research/crypto/results/diversified-carry-v1-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/diversified-carry-v1.json'))
+          assert m['experimentId']=='diversified-carry-v1' and m['trialNumber']==21 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['AVAXUSDT','DOTUSDT','ATOMUSDT','ETCUSDT','FILUSDT','NEARUSDT']
+          assert m['assetSelection']['dataPreviouslyObservedAtFreeze']['fundingPerpetualExecutionMarkAndTrial21CarryEconomics'] is False
+          assert m['multipleTesting']['frozenBeforeTrial20RealOutcomeObserved'] is True
+          assert m['costModel']['spotFeeBpsPerSide']==10 and m['costModel']['perpetualFeeBpsPerSide']==10
+          assert m['developmentWindow']['derivativeRowsObservedAtFreeze'] is False and m['finalHoldout']['derivativeRowsObservedAtFreeze'] is False
+          PY
+          npm install
+          node --check research/crypto/diversified-carry-evaluate.js
+          node --check research/crypto/diversified-carry-gate.js
+          python -m py_compile research/crypto/prepare-diversified-carry-window.py research/crypto/lib/carry_source_union.py
+          node --test tests/diversified-carry.test.js
+          python -m unittest tests/test_prepare_carry_data.py
+      - name: Acquire all development source unions
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t21-dev-sources
+          for s in AVAXUSDT DOTUSDT ATOMUSDT ETCUSDT FILUSDT NEARUSDT; do
+            python research/crypto/prepare-diversified-carry-window.py research/crypto/manifests/diversified-carry-v1.json development "$s" "/tmp/t21-dev-$s.csv" "/tmp/t21-dev-sources/$s.json"
+          done
+      - name: Verify development sources before economics
+        run: |
+          python - <<'PY'
+          import json
+          symbols=['AVAXUSDT','DOTUSDT','ATOMUSDT','ETCUSDT','FILUSDT','NEARUSDT']
+          for s in symbols:
+            x=json.load(open(f'/tmp/t21-dev-sources/{s}.json'));c=x['coverage']
+            assert x['experimentId']=='diversified-carry-v1' and x['trialNumber']==21 and x['mode']=='development' and x['symbol']==s and x['economicResultCalculated'] is False
+            assert c['expectedBoundaryRows']==4383 and c['synchronizedRows']==4383
+            assert c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+      - name: Observe and gate Trial 21 development once
+        id: dev
+        run: |
+          node research/crypto/diversified-carry-evaluate.js research/crypto/manifests/diversified-carry-v1.json development research/crypto/results/diversified-carry-v1-development/summary.json AVAXUSDT=/tmp/t21-dev-AVAXUSDT.csv DOTUSDT=/tmp/t21-dev-DOTUSDT.csv ATOMUSDT=/tmp/t21-dev-ATOMUSDT.csv ETCUSDT=/tmp/t21-dev-ETCUSDT.csv FILUSDT=/tmp/t21-dev-FILUSDT.csv NEARUSDT=/tmp/t21-dev-NEARUSDT.csv
+          node research/crypto/diversified-carry-gate.js research/crypto/manifests/diversified-carry-v1.json development research/crypto/results/diversified-carry-v1-development/summary.json /tmp/t21-dev-sources research/crypto/results/diversified-carry-v1-development/gate.json YES
+          cp /tmp/t21-dev-sources/*.json research/crypto/results/diversified-carry-v1-development/
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/diversified-carry-v1-development/gate.json'))['developmentGatePass'] else 'false'))
+          PY
+      - name: Commit immutable development evidence
+        run: |
+          git config user.name 'theoldtrader-research-bot';git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/diversified-carry-v1-development
+          git commit -m 'Observe Trial 21 diversified carry development'
+          git push origin HEAD:research/diversified-carry-v1
+      - name: Acquire untouched final source unions
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t21-final-sources
+          for s in AVAXUSDT DOTUSDT ATOMUSDT ETCUSDT FILUSDT NEARUSDT; do
+            python research/crypto/prepare-diversified-carry-window.py research/crypto/manifests/diversified-carry-v1.json final "$s" "/tmp/t21-final-$s.csv" "/tmp/t21-final-sources/$s.json" --confirm-final YES
+          done
+          python - <<'PY'
+          import json
+          for s in ['AVAXUSDT','DOTUSDT','ATOMUSDT','ETCUSDT','FILUSDT','NEARUSDT']:
+            x=json.load(open(f'/tmp/t21-final-sources/{s}.json'));c=x['coverage']
+            assert x['mode']=='final' and x['symbol']==s and x['economicResultCalculated'] is False
+            assert c['expectedBoundaryRows']==c['synchronizedRows'] and c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+      - name: Observe and gate untouched final once
+        if: steps.dev.outputs.pass == 'true'
+        id: final
+        run: |
+          node research/crypto/diversified-carry-evaluate.js research/crypto/manifests/diversified-carry-v1.json final research/crypto/results/diversified-carry-v1-final/summary.json AVAXUSDT=/tmp/t21-final-AVAXUSDT.csv DOTUSDT=/tmp/t21-final-DOTUSDT.csv ATOMUSDT=/tmp/t21-final-ATOMUSDT.csv ETCUSDT=/tmp/t21-final-ETCUSDT.csv FILUSDT=/tmp/t21-final-FILUSDT.csv NEARUSDT=/tmp/t21-final-NEARUSDT.csv --confirm-final YES
+          node research/crypto/diversified-carry-gate.js research/crypto/manifests/diversified-carry-v1.json final research/crypto/results/diversified-carry-v1-final/summary.json /tmp/t21-final-sources research/crypto/results/diversified-carry-v1-final/promotion.json YES
+          cp /tmp/t21-final-sources/*.json research/crypto/results/diversified-carry-v1-final/
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/diversified-carry-v1-final/promotion.json'))['promotionEligible'] else 'false'))
+          PY
+      - name: Write promotion marker
+        if: steps.dev.outputs.pass == 'true' && steps.final.outputs.pass == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.load(open('research/crypto/results/diversified-carry-v1-final/summary.json'))
+          Path('research/crypto/results/diversified-carry-v1-final/PROMOTED.md').write_text('# Trial 21 paper-baseline promotion\n\nThe pre-frozen final gate passed. Paper-baseline only; no real-money authorization.\n\nFinal net return: %.6f%%\n\nFinal Sharpe: %.4f\n\nFinal max drawdown: %.6f%%\n\nPositive sleeves: %d/6\n' % (100*s['basket']['netReturn'],s['basket']['sharpe'],100*s['basket']['maxDrawdown'],s['positiveSleeveCount']))
+          PY
+      - name: Commit immutable final evidence
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          git pull --ff-only origin research/diversified-carry-v1
+          git add research/crypto/results/diversified-carry-v1-final
+          git commit -m 'Observe Trial 21 diversified carry final'
+          git push origin HEAD:research/diversified-carry-v1
