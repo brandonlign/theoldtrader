@@ -1,0 +1,100 @@
+{
+  "experimentId": "lowvol-v1",
+  "trial": 6,
+  "family": "low-volatility-cross-sectional-selection",
+  "status": "FROZEN_BEFORE_FIRST_EVALUATION",
+  "frozenAt": "2026-08-18T22:55:00.000Z",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "liveStrategyModified": false,
+  "motivation": {
+    "primaryEvidence": "Pyo and Jang, Revisiting the low-volatility anomaly in cryptocurrency markets, Finance Research Letters 97 (2026) 109851",
+    "designReason": "The 2026 study reports a post-2017 low-volatility premium strongest around 2-3 month formation and 1-month holding. Trial 6 chooses one fixed 90-day formation window and one-month holding before any TheOldTrader result, with no momentum, return forecast, ML, or volatility threshold."
+  },
+  "data": {
+    "source": "coinbase-exchange-public-candles",
+    "products": ["BTC-USD", "ETH-USD", "SOL-USD"],
+    "granularitySeconds": 86400,
+    "acquisitionStart": "2021-09-01T00:00:00.000Z",
+    "developmentStart": "2022-01-01T00:00:00.000Z",
+    "developmentEnd": "2026-01-01T00:00:00.000Z",
+    "retrospectiveDiagnosticEnd": "2026-08-01T00:00:00.000Z",
+    "prospectiveFinalStart": "2026-08-19T00:00:00.000Z",
+    "prospectiveFinalMinimumDays": 180,
+    "noInterpolation": true,
+    "requireExactDailyLookbacks": true
+  },
+  "signal": {
+    "decisionFrequency": "monthly",
+    "decisionTiming": "first UTC daily candle on the first day of each calendar month; ranking uses only closes strictly before the decision candle and execution uses that candle open",
+    "realizedVolLookbackDays": 90,
+    "annualizationDays": 365,
+    "volatilityEstimator": "sample standard deviation of exact daily log returns over the prior 90 days, annualized by sqrt(365)",
+    "selectionRule": "select exactly the eligible asset with the lowest trailing annualized volatility; ties break lexicographically by product id",
+    "selectedAssets": 1,
+    "momentumFilter": false,
+    "returnForecast": false,
+    "machineLearning": false,
+    "shorting": false,
+    "leverage": false
+  },
+  "portfolio": {
+    "startingCash": 10000,
+    "targetSelectedAssetWeight": 0.15,
+    "maxSinglePositionPct": 0.15,
+    "maxTotalCryptoExposurePct": 0.15,
+    "cashReserveMinimum": 0.85,
+    "rebalanceBetweenMonthlyDecisions": false,
+    "postFrictionExposureCap": true
+  },
+  "costModel": {
+    "feeBpsPerTrade": 60,
+    "slippageBpsPerTrade": 5,
+    "historicalSpreadProxyBpsPerTrade": 5,
+    "totalBpsPerDollarTurnover": 70,
+    "fullEntryExitRoundTripBps": 140,
+    "chargeEveryDollarOfRebalanceTurnover": true,
+    "liquidateAndChargeCostAtEvaluationEnd": true
+  },
+  "development": {
+    "calendarYearFolds": [2022, 2023, 2024, 2025],
+    "comparators": [
+      "cash",
+      "BTC-USD 15% buy-and-hold with identical entry/exit cost",
+      "equal 5% BTC-USD/ETH-USD/SOL-USD buy-and-hold for matched 15% total exposure with identical entry/exit cost",
+      "equal 15% BTC-USD/ETH-USD/SOL-USD buy-and-hold at the live 45% exposure cap"
+    ],
+    "gate": [
+      "candidate net return after frozen costs is positive over 2022-2025",
+      "candidate net return is positive in at least three of four calendar-year folds",
+      "candidate annualized Sharpe exceeds matched-exposure 15% equal-weight buy-and-hold",
+      "candidate maximum drawdown is no worse than matched-exposure 15% equal-weight buy-and-hold",
+      "every selected month has an exact 90-day daily lookback and all turnover is charged at 70 bps per traded dollar"
+    ],
+    "failureRule": "If the development gate fails, Trial 6 is recorded as failed and no formation-window, asset-count, exposure, or threshold rescue is permitted under lowvol-v1."
+  },
+  "retrospectiveDiagnostic": {
+    "allowedOnlyAfterDevelopmentPass": true,
+    "window": "2026-01-01T00:00:00.000Z to 2026-08-01T00:00:00.000Z",
+    "purpose": "diagnostic only; cannot authorize promotion because this period predates the Trial 6 freeze",
+    "mayChangeParameters": false
+  },
+  "prospectivePromotion": {
+    "notBefore": "2027-02-15T00:00:00.000Z",
+    "requirements": [
+      "at least 180 calendar days of post-freeze data beginning no earlier than 2026-08-19",
+      "positive net return after frozen costs",
+      "annualized Sharpe above matched-exposure equal-weight comparator",
+      "maximum drawdown no worse than matched-exposure equal-weight comparator",
+      "no data-provenance, exact-lookback, timestamp, or overwrite gate failure",
+      "report frozen v2 over the same prospective dates before any promotion proposal"
+    ],
+    "automaticPromotion": false
+  },
+  "antiLeakage": {
+    "noOutcomeDrivenRetuning": true,
+    "noUsingRetrospective2026DiagnosticForPromotion": true,
+    "noFinalDataBeforeDevelopmentGate": true,
+    "successorRequiresNewTrialNumber": true
+  }
+}

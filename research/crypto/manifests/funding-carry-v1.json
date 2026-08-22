@@ -1,0 +1,122 @@
+{
+  "experimentId": "funding-carry-v1",
+  "trialNumber": 2,
+  "createdAt": "2026-08-12T16:18:00Z",
+  "status": "FROZEN_DATA_ACQUISITION_PENDING",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "revisionLog": [
+    {
+      "at": "2026-08-12T16:42:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Frozen the full historical robustness window to 2021-05-01 through 2026-03-01 and clarified that the funding payment timestamp coincident with entry is not earned. No result had been observed."
+    },
+    {
+      "at": "2026-08-12T16:55:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Changed spot-price provenance from monthly to checksum-verified daily Binance Vision 8h klines after identifying open Binance public-data issue #475, where some monthly spot archives disagree with daily archives/API. Strategy, dates, costs, sizing, and evaluation rules are unchanged."
+    },
+    {
+      "at": "2026-08-12T17:58:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Clarified timestamp synchronization before any carry P&L was observed. Binance funding archives use calc_time while 8h price archives use exact kline open_time boundaries, and observed Binance-derived funding records can be milliseconds off the scheduled boundary. Raw funding calc_time is therefore mapped to the nearest 8h UTC funding boundary only when absolute skew is <=60 seconds; raw timestamp and skew are preserved and any larger skew, collision, missing scheduled payment, or missing exact price open aborts evaluation. No interpolation or later price is allowed. Strategy, costs, sizing, dates, and funding rates are unchanged."
+    },
+    {
+      "at": "2026-08-12T18:12:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Separated perpetual execution-price and valuation-price roles before any carry P&L was observed. Standard USD-M BTCUSDT contract 8h kline opens are now the frozen entry/exit executable-price proxy to which modeled spread/slippage are applied. USD-M markPrice 8h kline opens remain the source for funding notional, unrealized short P&L, maintenance margin, and gap stress. This avoids treating a non-executable mark price as if it were the traded futures price. Strategy, allocation, costs, dates, funding rates, and no-rebalancing rule are unchanged."
+    },
+    {
+      "at": "2026-08-12T18:18:00Z",
+      "beforeAnyCarryEvaluation": true,
+      "change": "Resolved an internal sizing ambiguity before any carry P&L was observed. The 15% account allocation applies to the spot purchase only; BTC units are determined from that spot execution and the perpetual short uses exactly the same BTC units. There is no separate 15% perpetual-notional target because exact delta-unit matching and exact equal USD notionals cannot both hold when spot and futures prices differ. No leverage or outcome-driven sizing choice was introduced."
+    }
+  ],
+  "strategyFamily": "market-neutral spot/perpetual funding and basis carry",
+  "motivation": "Evaluate a genuinely different, low-turnover return source after the directional ridge robustness failure. This is not a rescue or parameter modification of trial 1.",
+  "dataRequirements": {
+    "venue": "Binance",
+    "symbol": "BTCUSDT",
+    "requiredSeries": [
+      "spot 8h open at entry, every scheduled funding boundary, and exit",
+      "USD-M BTCUSDT contract 8h open as the perpetual execution-price proxy at entry and exit",
+      "USD-M BTCUSDT mark-price 8h open at every scheduled funding boundary for valuation, funding notional, margin, and stress",
+      "realized 8-hour funding rate associated with every payment calc_time"
+    ],
+    "primarySources": {
+      "spot": "checksum-verified Binance Vision DAILY BTCUSDT 8h spot klines; use the exact kline open at each scheduled funding boundary",
+      "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT standard 8h klines; use the exact contract kline open as the entry/exit execution reference before modeled spread/slippage",
+      "perpetualMark": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT 8h markPriceKlines; use the exact mark-price kline open for valuation/funding/margin",
+      "funding": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT fundingRate archives"
+    },
+    "spotDailyReason": "Binance public-data issue #475 reports historical monthly SPOT kline disagreements where daily archives match API/uiKlines. Daily spot archives are therefore frozen as the primary source before any carry result is observed.",
+    "perpetualPriceRoleSeparation": {
+      "executionReference": "standard USD-M contract kline open, with frozen modeled spread/slippage applied only at entry and exit",
+      "markingReference": "USD-M mark-price kline open for unrealized P&L, funding notional, maintenance margin, and stress",
+      "reason": "mark price is a valuation/risk reference and must not be silently treated as the historical executable contract price"
+    },
+    "fundingTimestampNormalization": {
+      "rawField": "calc_time",
+      "scheduledGrid": "00:00, 08:00, and 16:00 UTC / exact 8-hour Unix boundaries",
+      "mappingRule": "map raw calc_time to the nearest 8-hour UTC boundary only when absolute raw-to-boundary skew is <=60,000 milliseconds",
+      "maximumAbsoluteSkewMs": 60000,
+      "preserveRawTimestampAndSkew": true,
+      "collisionRule": "abort if two distinct raw funding observations map to the same scheduled boundary",
+      "priceRuleAfterMapping": "use only exact 8h spot, contract, and mark-price kline opens at that scheduled boundary; never interpolate or use a later price"
+    },
+    "secondaryIntegrityCheck": "Torch-Trade BTCUSDT funding/perpetual/basis datasets sourced from Binance Data Collection; secondary only and never forward-filled into Trial 2",
+    "rejectEvaluationIf": [
+      "a raw funding calc_time is more than 60 seconds from its nearest scheduled 8-hour UTC boundary",
+      "two raw funding observations collide on one scheduled boundary",
+      "spot, standard perpetual-contract, or perpetual mark price is missing at a required scheduled boundary; no forward-looking interpolation is permitted",
+      "funding observations are missing around an open position or the normalized scheduled series is not a complete 8-hour grid",
+      "entry/exit standard contract price or mark prices are unavailable for execution, basis P&L, funding, margin, or stress",
+      "any downloaded archive fails its official Binance .CHECKSUM verification",
+      "the exact synchronized input cannot be hashed"
+    ]
+  },
+  "historicalRobustnessWindow": {
+    "startInclusive": "2021-05-01T00:00:00Z",
+    "endExclusive": "2026-03-01T00:00:00Z",
+    "entryTimestampRule": "use the first normalized scheduled funding boundary at or after startInclusive",
+    "exitTimestampRule": "use the final normalized scheduled funding boundary strictly before endExclusive",
+    "priceTimestampRule": "at each normalized scheduled boundary use exact spot/contract/mark 8h opens only; the contract open is the execution reference at entry/exit and mark open is the valuation reference throughout; never use close/high/low or any later observation",
+    "fundingAtEntry": "not earned; the first synchronized row establishes the position and mark only",
+    "fundingAfterEntry": "accrue only realized funding payments on later normalized scheduled timestamps using the untouched realized funding rate associated with the preserved raw calc_time",
+    "reason": "Use the entire common historical interval motivated before any carry P&L was observed rather than selecting favorable subperiods. Whole-sample funding summary statistics were already visible, so this is robustness/development evidence only."
+  },
+  "candidate": {
+    "position": "long BTC spot and short exactly equal BTC units of BTCUSDT perpetual",
+    "entryRule": "enter once at the beginning of the frozen historical robustness window; no forecast threshold and no funding-sign timing",
+    "exitRule": "exit both legs at the end of the frozen historical robustness window",
+    "rebalancing": "none; keep the original equal BTC units on both legs so first-order BTC delta remains offset",
+    "spotNotionalPctAtEntry": 0.15,
+    "perpetualShortSizingRule": "short exactly the BTC units purchased by the 15%-of-starting-equity spot leg; resulting perpetual USD notional is determined by the contemporaneous contract price and is not independently targeted",
+    "futuresCollateralReservePct": 0.20,
+    "fundingAccounting": "after entry, at each later normalized scheduled funding boundary, short receives positive funding and pays negative funding on BTC units times contemporaneous perpetual mark price times the realized rate; no payment at the entry boundary is credited",
+    "basisAccounting": "open/close the perpetual short against the standard contract execution-price proxy with modeled friction, mark it through time using mark price, and mark the spot leg independently; do not assume perfect price cancellation or convergence"
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 60,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 60,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10,
+    "note": "The same conservative TheOldTrader friction is applied to both legs for the first research pass rather than assuming institutional futures fees or perfect maker fills. Perpetual spread/slippage is applied around the standard contract execution reference, not the mark price."
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "liquidationRule": "fail the strategy at the first scheduled observation where futures collateral plus mark-to-market short P&L plus accumulated funding falls below maintenance margin computed on mark notional",
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "evaluation": {
+    "headlineMetrics": ["netReturn", "annualizedReturn", "Sharpe", "Sortino", "maxDrawdown", "Calmar", "totalFunding", "basisPnL", "fees", "feeDrag", "capitalUtilization", "liquidationOrMarginBreach"],
+    "comparators": ["cash", "BTC spot buy-and-hold at 15% exposure"],
+    "doNotCombinePerformanceWithDirectionalStrategies": true,
+    "historicalHoldoutIntegrity": "Any historical result using the frozen 2021-05-01 through 2026-03-01 window is development/robustness evidence, not pristine validation, because whole-sample funding summary statistics were viewed before this manifest was frozen.",
+    "promotionRequires": "a later untouched forward or independently sealed evaluation in addition to positive net-of-cost historical robustness"
+  },
+  "antiRescueRule": "No funding threshold, sign filter, leverage change, entry date selection, or rebalancing rule may be introduced after seeing this candidate's first result under trial 2. Any such change is a new numbered trial."
+}

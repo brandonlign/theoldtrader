@@ -1,0 +1,120 @@
+name: TheOldTrader Crypto Research v1
+
+on:
+  push:
+    branches: [research/crypto-oos-v1]
+    paths:
+      - 'research/crypto/**'
+      - 'tests/crypto-*.test.js'
+      - 'tests/test_prepare_carry_data.py'
+      - '.github/workflows/crypto-research.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-research-v1
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Run Node deterministic test suite
+        run: npm test
+
+      - name: Run carry-data deterministic tests
+        run: python -m unittest tests/test_prepare_carry_data.py
+
+      - name: Syntax-check research code
+        run: >-
+          node --check research/crypto/run.js &&
+          node --check research/crypto/lib/core.js &&
+          node --check research/crypto/lib/data.js &&
+          node --check research/crypto/lib/metrics.js &&
+          node --check research/crypto/lib/report.js &&
+          node --check research/crypto/lib/v2-backtest.js &&
+          node --check research/crypto/carry-evaluate.js &&
+          node --check research/crypto/carry-report.js &&
+          node --check research/crypto/record-coinbase-microstructure.mjs &&
+          node --check research/crypto/record-coinbase-microstructure-all.mjs &&
+          node --check research/crypto/analyze-coinbase-maker-execution.mjs &&
+          node --check research/crypto/audit-coinbase-execution-integrity.mjs &&
+          node --check research/crypto/validate-coinbase-maker-window.mjs &&
+          python -m py_compile research/crypto/prepare-carry-data.py
+
+  evaluate-primary-coinbase-holdout:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out frozen research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Refuse to overwrite prior final result
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -e research/crypto/results/crypto-oos-v1/summary.json ]; then
+            echo 'Frozen final result already exists; refusing a second primary evaluation.' >&2
+            exit 1
+          fi
+
+      - name: Run frozen OOS evaluation exactly once
+        run: node research/crypto/run.js research/crypto/manifests/crypto-oos-v1.json
+
+      - name: Commit immutable data cache and result bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/data-cache research/crypto/results
+          if git diff --cached --quiet; then
+            echo 'No new research evidence to commit.'
+            exit 0
+          fi
+          git commit -m 'Record frozen crypto-oos-v1 evaluation'
+          git push origin HEAD:research/crypto-oos-v1
+
+      - name: Upload research evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: crypto-oos-v1-evidence
+          path: |
+            research/crypto/results/crypto-oos-v1
+            research/crypto/data-cache
+          if-no-files-found: error

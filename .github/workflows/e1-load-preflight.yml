@@ -1,0 +1,58 @@
+name: E1 Coinbase Recorder Load Preflight
+
+on:
+  push:
+    branches: [research/execution-e1-ops]
+    paths:
+      - ".github/workflows/e1-load-preflight.yml"
+      - "research/crypto/record-coinbase-microstructure.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  load-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Record three public Coinbase streams for five minutes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/e1-preflight
+          node research/crypto/record-coinbase-microstructure.mjs --product=BTC-USD --duration-minutes=5 --output=/tmp/e1-preflight/BTC-USD.ndjson.gz > /tmp/e1-preflight/BTC.log 2>&1 & p1=$!
+          node research/crypto/record-coinbase-microstructure.mjs --product=ETH-USD --duration-minutes=5 --output=/tmp/e1-preflight/ETH-USD.ndjson.gz > /tmp/e1-preflight/ETH.log 2>&1 & p2=$!
+          node research/crypto/record-coinbase-microstructure.mjs --product=SOL-USD --duration-minutes=5 --output=/tmp/e1-preflight/SOL-USD.ndjson.gz > /tmp/e1-preflight/SOL.log 2>&1 & p3=$!
+          wait "$p1" "$p2" "$p3"
+          node - <<'NODE'
+          const fs = require('fs');
+          const products = ['BTC-USD','ETH-USD','SOL-USD'];
+          const rows = products.map(product => {
+            const bytes = fs.statSync(`/tmp/e1-preflight/${product}.ndjson.gz`).size;
+            return {
+              product,
+              fiveMinuteCompressedBytes: bytes,
+              projectedSevenDayCompressedGiBAtSameRate: bytes * (7 * 24 * 60 / 5) / (1024 ** 3)
+            };
+          });
+          const total5m = rows.reduce((s,r)=>s+r.fiveMinuteCompressedBytes,0);
+          console.log(JSON.stringify({
+            preflightOnly: true,
+            alphaEvidence: false,
+            durationMinutes: 5,
+            products: rows,
+            totalFiveMinuteCompressedBytes: total5m,
+            projectedSevenDayCompressedGiBAtSameRate: total5m * (7 * 24 * 60 / 5) / (1024 ** 3)
+          }, null, 2));
+          NODE
+          echo 'Recorder summaries:'
+          tail -n 12 /tmp/e1-preflight/BTC.log
+          tail -n 12 /tmp/e1-preflight/ETH.log
+          tail -n 12 /tmp/e1-preflight/SOL.log

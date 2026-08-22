@@ -1,0 +1,122 @@
+{
+  "experimentId": "bitnomial-carry-v1",
+  "trialNumber": 8,
+  "family": "us-regulated-spot-perpetual-funding-carry",
+  "status": "FROZEN_FORWARD_BEFORE_FIRST_TRIAL8_OBSERVATION",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "scientificMode": "forward-only",
+  "freeze": {
+    "initialFreezeAt": "2026-08-20T00:15:00Z",
+    "finalPreObservationFreezeAt": "2026-08-20T02:08:00Z",
+    "reason": "Trial 7 was an operational no-start because Binance USD-M returned HTTP 451 from both available collection environments. Trial 8 preserves the carry hypothesis using U.S.-accessible Coinbase spot and Bitnomial public first-party data. The originally planned 2026-08-20T02:00:00Z Trial 8 start produced no scientific observation because pre-start connectivity failed before any compact/raw candidate record was written. Product discovery was corrected to funding-first lookup, and the live direct product spec then established the exact machine identity of product_id 5614 as symbol/cqg_symbol PBTCUCZ50, base_symbol BTCUC, type perpetual, contract_size 0.01. Before any candidate observation, the identity validator was corrected to that live first-party schema and the prospective start remained 2026-08-20T03:00:00Z.",
+    "revisionLog": [
+      "Before any Trial 8 observation, the Bitnomial funding URL was corrected to the first-party funding-rate endpoint documented by Bitnomial.",
+      "Before any Trial 8 observation, the broad product-spec list was found to omit the documented/CFTC-listed BTC perpetual during live connectivity. Product discovery was changed to funding history base_symbol=BTCUC -> most recent valid product_id -> direct product spec/data lookup by ID. No economic parameter changed.",
+      "Before any Trial 8 observation, the prospective start moved from 2026-08-20T02:00:00Z to 2026-08-20T03:00:00Z because the original boundary passed with zero scientific observations. Screening/final boundaries moved by the identical one-hour offset.",
+      "Before any Trial 8 observation, the live direct Bitnomial spec for funding-selected product_id 5614 showed symbol=PBTCUCZ50, cqg_symbol=PBTCUCZ50, base_symbol=BTCUC, product_name=Perpetual Bitcoin US Dollar Centi Future, type=perpetual, contract_size=0.01. The source identity rule was corrected from type=future / prose-name matching to the exact machine identity type=perpetual, base_symbol=BTCUC, PBTCUC-prefixed symbol or cqg_symbol, and contract_size=0.01. No economic parameter changed."
+    ],
+    "firstTrial8EconomicResultObserved": false
+  },
+  "hypothesis": "A static BTC cash-and-carry position that buys Coinbase BTC-USD spot and shorts the Bitnomial Bitcoin USD Centi perpetual earns positive net funding carry over 180 days after conservative retail spot costs, Bitnomial exchange/clearing fees, basis movement, stale-price gates, and margin stress.",
+  "venues": {
+    "spotLong": {
+      "venue": "coinbase-exchange",
+      "product": "BTC-USD",
+      "tickerEndpoint": "https://api.exchange.coinbase.com/products/BTC-USD/ticker"
+    },
+    "perpetualShort": {
+      "venue": "bitnomial",
+      "productName": "Bitcoin US Dollar Centi Perpetual Futures",
+      "productCodePrefix": "PBTCUC",
+      "fundingBaseSymbol": "BTCUC",
+      "expectedApiType": "perpetual",
+      "contractSizeBtc": 0.01,
+      "productSpecEndpointPrefix": "https://bitnomial.com/exchange/api/v1/prod/product/spec/",
+      "productDataEndpointPrefix": "https://bitnomial.com/exchange/api/v1/prod/product/data/",
+      "fundingEndpoint": "https://bitnomial.com/exchange/api/v1/funding-rates/"
+    }
+  },
+  "forwardWindow": {
+    "startInclusive": "2026-08-20T03:00:00.000Z",
+    "screeningEndExclusive": "2026-11-18T03:00:00.000Z",
+    "finalEndExclusive": "2027-02-16T03:00:00.000Z",
+    "screeningDurationDays": 90,
+    "finalDurationDays": 180,
+    "primaryCollectionOffsetSecondsAfterUtcHour": 15,
+    "entryExitSelectionRule": "firstValidOfficialObservationAtOrAfterBoundary",
+    "entryExitToleranceMinutes": 10,
+    "minimumHourlyContextCoverage": 0.98,
+    "maximumContextGapMinutes": 130,
+    "maximumBitnomialLastTradeAgeMinutes": 30,
+    "fundingDiscoveryLookaheadMinutes": 70,
+    "earliestEvaluationDelayMinutesAfterBoundary": 70
+  },
+  "portfolio": {
+    "startingEquityUsd": 10000,
+    "targetNotionalPctOfStartingEquityPerLeg": 0.20,
+    "contractSizeBtc": 0.01,
+    "contractCountRule": "floor(targetNotionalUsd / (entryBitnomialPriceUsd * contractSizeBtc)), minimum 1 only when one contract notional is <= 25% of starting equity",
+    "spotBtcQuantityRule": "contractCount * contractSizeBtc",
+    "equalBtcUnits": true,
+    "maximumActualNotionalPctPerLeg": 0.25,
+    "perpetualCollateralReservePctOfStartingEquity": 0.30,
+    "rebalancing": false,
+    "compounding": false,
+    "fundingThreshold": null,
+    "directionSwitching": false,
+    "assetSelection": false,
+    "unusedCapitalRemainsCash": true
+  },
+  "executionModel": {
+    "coinbaseSpotFeeBpsPerOrder": 60,
+    "coinbaseSpotExtraSlippageBpsPerOrder": 10,
+    "bitnomialExchangeClearingFeeUsdPerContractPerSide": 0.10,
+    "bitnomialExtraSlippageBpsPerOrder": 10,
+    "stressCoinbaseSpotAllInBpsPerOrder": 100,
+    "stressBitnomialSlippageBpsPerOrder": 25,
+    "ordersInRoundTrip": 4
+  },
+  "fundingAccounting": {
+    "nativeIntervalHours": 8,
+    "intervalsUtc": ["00:00", "08:00", "16:00"],
+    "shortFundingPnlRule": "For each first-party Bitnomial funding interval whose interval_end satisfies startBoundary < interval_end <= endBoundary, short funding PnL = btcQuantity * mark_price * funding_rate.",
+    "positiveFundingMeaning": "longs pay shorts",
+    "useFundingEventMarkPrice": true,
+    "noRateResampling": true,
+    "noInterpolation": true,
+    "noForwardFill": true
+  },
+  "sourceRules": {
+    "officialFirstPartyDataOnly": true,
+    "preserveRawResponses": true,
+    "sha256EveryRawResponse": true,
+    "coinbasePublicDataOnly": true,
+    "bitnomialPublicDataOnly": true,
+    "noApiKeysRequired": true,
+    "noThirdPartyCandidateData": true,
+    "noOutcomeSelectedSubperiods": true,
+    "bitnomialProductDiscoveryRule": "Query the first-party Bitnomial funding endpoint with base_symbol=BTCUC; select the product_id from the most recent valid funding row; fetch the exact first-party product spec and product data by that product_id; require type=perpetual, base_symbol=BTCUC, symbol or cqg_symbol beginning PBTCUC, contract_size=0.01 BTC, and bind all funding rows to the same product_id. Product prose-name ordering is diagnostic only and is not an identity gate. Ambiguity or mismatch fails before economics.",
+    "bitnomialFundingCompletenessRule": "Every regular 8-hour interval_end strictly after start and at or before end must be present; absent funding intervals fail the data gate rather than being synthesized or forward-filled."
+  },
+  "marginStress": {
+    "researchMaintenanceMarginPctOfPerpetualNotional": 0.15,
+    "adverseBasisShockPct": [0.05, 0.10, 0.20]
+  },
+  "screeningGate": {
+    "afterDays": 90,
+    "promotionAllowed": false
+  },
+  "finalGate": {
+    "afterDays": 180,
+    "automaticLivePromotion": false,
+    "strongestPossibleClassification": "PROMOTION_ELIGIBLE_RESEARCH_ONLY"
+  },
+  "antiLeakage": {
+    "trial7ResultMayTuneTrial8": false,
+    "publishedHistoricalReturnMayScoreTrial8": false,
+    "screeningMayChangeSpecification": false,
+    "noOutcomeDrivenRetuning": true,
+    "failureRule": "After the first Trial 8 candidate observation, any change to venues, direction, BTC quantity rule, costs, collateral, window, funding accounting, stale-price rule, data substitution or stress rules requires a new trial number."
+  }
+}

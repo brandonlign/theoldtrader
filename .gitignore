@@ -7,3 +7,7 @@ coverage/
 data/
 .theoldtrader/
 wrangler.toml
+research/crypto/data-cache/cross-venue-funding-v1-forward.ndjson
+research/crypto/data-cache/cross-venue-funding-v1-forward.raw.ndjson.gz
+research/crypto/data-cache/bitnomial-carry-v1-forward.ndjson
+research/crypto/data-cache/bitnomial-carry-v1-forward.raw.ndjson.gz

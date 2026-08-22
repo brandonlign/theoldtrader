@@ -1,0 +1,58 @@
+{
+  "experimentId": "binance-btc-replication-v1",
+  "generatedAt": "2026-08-12T15:49:39.169Z",
+  "promotionEligible": false,
+  "source": {
+    "file": "BTCUSDT_Corrected_15m.csv",
+    "sha256": "2d1a92c9a9a28c1007f4b705e534252fa937820e82131f2144b4a542947c0e7c",
+    "rows": 253049,
+    "start": "2017-08-17T07:00:00.000Z",
+    "end": "2024-11-04T05:00:00.000Z"
+  },
+  "costModel": {"feeBpsPerSide": 60, "slippageBpsPerSide": 5, "spreadBpsRoundTrip": 10},
+  "roundTripHurdle": 0.014,
+  "samples": 1004,
+  "predictionDays": 854,
+  "holdout": {
+    "start": "2024-05-01T00:00:00.000Z",
+    "end": "2024-11-01T00:00:00.000Z",
+    "ridge24": {"netReturn": 0, "annualizedReturn": 0, "sharpe": 0, "sortino": 0, "maxDrawdown": 0, "closedTrades": 0, "totalFees": 0, "turnoverToAverageEquity": 0, "averageExposure": 0, "endValue": 10000},
+    "frozenV2": {"netReturn": -0.020897351135402586, "annualizedReturn": -0.041245067579417594, "sharpe": -4.141414867462338, "sortino": -2.618043088251896, "maxDrawdown": -0.02252852274301065, "calmar": -1.8307932592790024, "winRate": 0.07142857142857142, "profitFactor": 0.02247632309696011, "expectancyPerTrade": -14.926679382430637, "turnover": 31743.822710293116, "turnoverToAverageEquity": 3.1988358531693772, "totalFees": 190.46293626175864, "feeDrag": 0.019046293626175863, "averageExposure": 0.006202021417654202, "closedTrades": 14, "orderCount": 28, "endValue": 9791.026488645974},
+    "trend30": {"netReturn": -0.0330485133238424, "annualizedReturn": -0.06449236127393487, "sharpe": -1.4502504654791004, "sortino": -1.7287146551789916, "maxDrawdown": -0.06541671986486142, "calmar": -0.9858696890819947, "winRate": 0.2222222222222222, "profitFactor": 0.41101637829225157, "expectancyPerTrade": -36.72057035982468, "turnover": 26047.85377566326, "turnoverToAverageEquity": 2.671320838955708, "totalFees": 156.28712265397962, "feeDrag": 0.015628712265397963, "averageExposure": 0.08243645243457225, "closedTrades": 9, "orderCount": 18, "endValue": 9669.514866761576},
+    "btcBuyHold15": {"netReturn": 0.028442010567332643, "annualizedReturn": 0.05720944300428821, "sharpe": 0.8224058419720127, "sortino": 1.3542269838853567, "maxDrawdown": -0.04343871183406245, "calmar": 1.3170151827436891, "winRate": 1, "expectancyPerTrade": 284.42010567332454, "turnover": 3304.245579148214, "turnoverToAverageEquity": 0.32821264823509133, "totalFees": 19.825473474889286, "feeDrag": 0.0019825473474889286, "averageExposure": 0.15557877312917495, "closedTrades": 1, "orderCount": 2, "endValue": 10284.420105673325},
+    "cash": {"netReturn": 0, "sharpe": 0, "maxDrawdown": 0, "closedTrades": 0, "totalFees": 0, "endValue": 10000}
+  },
+  "development": {
+    "folds": 11,
+    "ridgePositiveFolds": 0,
+    "ridgeMedianSharpe": 0,
+    "foldResults": [
+      {"fold": 1, "start": "2022-06-30", "end": "2022-08-29", "ridgeNet": 0, "ridgeSharpe": 0, "ridgeTrades": 0, "v2Net": -0.018262769952556823, "v2Sharpe": -4.500252119000158, "v2Trades": 10},
+      {"fold": 2, "start": "2022-08-29", "end": "2022-10-28", "ridgeNet": -0.0035992362641974474, "ridgeSharpe": -1.961482397398666, "ridgeTrades": 2, "v2Net": -0.01398961767827478, "v2Sharpe": -3.662946910662765, "v2Trades": 7},
+      {"fold": 3, "start": "2022-10-28", "end": "2022-12-27", "ridgeNet": -0.021166577184721813, "ridgeSharpe": -2.5724058647894665, "ridgeTrades": 1, "v2Net": -0.005469996910242081, "v2Sharpe": -1.616436828928357, "v2Trades": 2},
+      {"fold": 4, "start": "2022-12-27", "end": "2023-02-25", "ridgeNet": 0, "ridgeSharpe": 0, "ridgeTrades": 0, "v2Net": -0.012694054139289035, "v2Sharpe": -4.903332960011775, "v2Trades": 5},
+      {"fold": 5, "start": "2023-02-25", "end": "2023-04-26", "ridgeNet": 0, "ridgeSharpe": 0, "ridgeTrades": 0, "v2Net": 0.010927245748807213, "v2Sharpe": 2.606501024927541, "v2Trades": 5},
+      {"fold": 6, "start": "2023-04-26", "end": "2023-06-25", "ridgeNet": 0, "ridgeSharpe": 0, "ridgeTrades": 0, "v2Net": -0.009713607335486318, "v2Sharpe": -2.010989543460583, "v2Trades": 6},
+      {"fold": 7, "start": "2023-06-25", "end": "2023-08-24", "ridgeNet": -0.0023284951893867145, "ridgeSharpe": -3.4710952010009866, "ridgeTrades": 1, "v2Net": -0.002328468011711826, "v2Sharpe": -3.3862662013685787, "v2Trades": 1},
+      {"fold": 8, "start": "2023-08-24", "end": "2023-10-23", "ridgeNet": 0, "ridgeSharpe": 0, "ridgeTrades": 0, "v2Net": 0, "v2Sharpe": 0, "v2Trades": 0},
+      {"fold": 9, "start": "2023-10-23", "end": "2023-12-22", "ridgeNet": 0, "ridgeSharpe": 0, "ridgeTrades": 0, "v2Net": -0.004416932100302029, "v2Sharpe": -0.9074315800373114, "v2Trades": 6},
+      {"fold": 10, "start": "2023-12-22", "end": "2024-02-20", "ridgeNet": 0, "ridgeSharpe": 0, "ridgeTrades": 0, "v2Net": -0.014519945267417511, "v2Sharpe": -2.8972534196154327, "v2Trades": 6},
+      {"fold": 11, "start": "2024-02-20", "end": "2024-04-20", "ridgeNet": -0.0002828043322228302, "ridgeSharpe": -0.5261793055629823, "ridgeTrades": 1, "v2Net": -0.017790036085591376, "v2Sharpe": -5.017281677741276, "v2Trades": 12}
+    ]
+  },
+  "forecastDiagnostics": {
+    "development": {"observations": 671, "predictionMin": -0.028069727265199587, "predictionMedian": -0.0004021546904787126, "predictionP95": 0.003958110005547159, "predictionP99": 0.009782087624262317, "predictionMax": 0.024304922760128782, "actualMean": 0.0016313432360819918, "actualStd": 0.02559155596880562, "predictionActualCorrelation": -0.08185006073125758, "mae": 0.017980915987734852, "predictionsAboveHurdle": 5},
+    "holdout": {"observations": 183, "predictionMin": -0.006078210656159017, "predictionMedian": 0.0008614095069417471, "predictionP95": 0.0034394326625795777, "predictionP99": 0.007090865367104679, "predictionMax": 0.012583981309387322, "actualMean": 0.0010200952747665207, "actualStd": 0.02413933430032373, "predictionActualCorrelation": -0.119393517997796, "mae": 0.01795429145739777, "predictionsAboveHurdle": 0}
+  },
+  "spreadStress": {
+    "0": {"netReturn": 0, "sharpe": 0, "closedTrades": 0},
+    "10": {"netReturn": 0, "sharpe": 0, "closedTrades": 0},
+    "35": {"netReturn": 0, "sharpe": 0, "closedTrades": 0}
+  },
+  "reportingCorrection": {
+    "appliedAfterFirstRawEvaluation": true,
+    "change": "Metrics are anchored to the fixed $10,000 starting capital so first-entry friction is included.",
+    "strategyDecisionsOrFillsChanged": false
+  },
+  "interpretation": "Non-promotion BTC-only Binance robustness diagnostic. It cannot substitute for or tune crypto-oos-v1."
+}
