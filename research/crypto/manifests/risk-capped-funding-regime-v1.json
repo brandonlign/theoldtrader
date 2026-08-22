@@ -1,0 +1,117 @@
+{
+  "experimentId": "risk-capped-funding-regime-v1",
+  "trialNumber": 22,
+  "frozenAt": "2026-08-22T03:31:00Z",
+  "status": "FROZEN_PRE_DEVELOPMENT",
+  "paperOnly": true,
+  "realMoneyAllowed": false,
+  "strategyFamily": "four-sleeve funding-regime spot-perpetual carry with high collateral and causal risk re-anchoring",
+  "motivation": "Trial 19 provided positive development evidence for a causal funding-regime filter (positive basket return, Sharpe above 1, shallow drawdown, four completed round trips) but failed only the frozen extreme isolated-margin gap-stress gate. Trial 22 prospectively tests whether the same carry idea can retain positive economics while making the margin design structurally robust. It uses a fresh derivative information set, lower venue-native friction already frozen independently in Trial 20, 80% sleeve collateral while active, and causal re-anchoring before notional drift can dominate isolated margin. No Trial 22 LINK/BCH/EOS/UNI funding, perpetual, basis, or carry economics are queried before this freeze.",
+  "assetSelection": {
+    "symbols": ["LINKUSDT", "BCHUSDT", "EOSUSDT", "UNIUSDT"],
+    "rule": "Use four longstanding liquid members of the project's pre-existing historical crypto universe that are not used as derivative/carry test assets in Trials 17-21. Selection is frozen before Trial 22 derivative acquisition and does not use Trial 22 funding or basis outcomes.",
+    "dataPreviouslyObservedAtFreeze": {
+      "spotPriceHistoryMayHaveAppearedInPriorDirectionalResearch": true,
+      "fundingPerpetualExecutionMarkAndTrial22CarryEconomics": false,
+      "interpretation": "Trial 22 is a fresh derivative/carry replication, not a pristine spot-price-path test."
+    }
+  },
+  "portfolio": {
+    "startingEquity": 10000,
+    "sleeves": 4,
+    "sleeveStartingEquity": 2500,
+    "sleeveWeight": 0.25,
+    "spotNotionalPctOfSleeveWhenActive": 0.15,
+    "futuresCollateralReservePctOfSleeveWhenActive": 0.80,
+    "position": "when active, long spot and short exactly equal coin units of the matching Binance USD-M perpetual",
+    "capitalWhenInactive": "cash",
+    "leverage": false,
+    "reanchorSizing": "after a prescribed re-anchor, close both legs and immediately reopen at the same boundary with spot notional equal to 15% and futures collateral equal to 80% of then-current sleeve equity"
+  },
+  "signal": {
+    "lookbackFundingBoundaries": 90,
+    "lookbackDays": 30,
+    "annualizationFactor": 1095,
+    "entryAnnualizedTrailingFundingThreshold": 0.15,
+    "exitAnnualizedTrailingFundingThreshold": 0.05,
+    "minimumStateBoundaries": 90,
+    "minimumStateDays": 30,
+    "causality": "At boundary t the funding-state decision uses exactly the preceding 90 realized funding observations ending at t-1; current-boundary funding is excluded from the signal. A newly entered position receives no funding at its entry boundary. An already-open position receives the current-boundary funding payment before any signal exit or re-anchor executed at that boundary.",
+    "thresholdRationale": "The entry hurdle is frozen from transaction-cost economics under the independently frozen Trial 20 venue-native cost model: 15% annualized funding materially exceeds the approximate combined two-leg round-trip friction over a multi-month opportunity while remaining less selective than Trial 19's 20% hurdle. The 5% exit threshold supplies hysteresis. No LINK/BCH/EOS/UNI funding history informed either threshold."
+  },
+  "riskControl": {
+    "maximumActiveBoundariesBeforeReanchor": 180,
+    "maximumActiveDaysBeforeReanchor": 60,
+    "maximumPerpetualMarkNotionalPctOfCurrentSleeveEquityBeforeReanchor": 0.25,
+    "reanchorAction": "If the funding exit condition is not met but either the 60-day age cap or the 25%-of-current-equity mark-notional cap is reached, close and immediately reopen both legs at that boundary using the frozen 15% spot / 80% collateral sizing. Funding for an already-open position at that boundary is credited before the re-anchor. Re-anchor costs are fully charged.",
+    "realizedMarginOrdering": "The existing position is first tested for realized isolated-margin maintenance at the observed current mark. Only if it remains solvent may the strategy exit or re-anchor. Frozen hypothetical gap stresses are evaluated on the position retained after the boundary decision.",
+    "rationale": "Trial 19 showed that static coin units can make isolated perpetual notional grow relative to a fixed collateral reserve even when the spot hedge keeps total economic exposure close to neutral. High collateral plus deterministic re-anchoring addresses that mechanical margin path rather than changing the carry signal after seeing Trial 22 outcomes."
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 10,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 10,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10,
+    "inheritance": "Directly inherited from already-frozen Trial 20 venue-native research assumptions; Trial 22 outcomes did not inform these values."
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "developmentWindow": {
+    "startInclusive": "2022-01-01T00:00:00Z",
+    "endExclusive": "2026-01-01T00:00:00Z",
+    "derivativeRowsObservedAtFreeze": false
+  },
+  "finalHoldout": {
+    "startInclusive": "2026-01-01T00:00:00Z",
+    "endExclusive": "2026-08-01T00:00:00Z",
+    "oneShot": true,
+    "derivativeRowsObservedAtFreeze": false,
+    "accessRule": "No Trial 22 final derivative/funding row may be acquired unless the frozen development gate passes."
+  },
+  "dataRequirements": {
+    "venue": "Binance",
+    "interval": "8h",
+    "fundingTimestampNormalizationMaximumAbsoluteSkewMs": 60000,
+    "spot": "checksum-verified Binance Vision DAILY spot 8h klines",
+    "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M standard 8h klines",
+    "perpetualMark": "checksum-verified union of MONTHLY and DAILY USD-M 8h markPriceKlines with exact overlap agreement",
+    "funding": "checksum-verified Binance Vision MONTHLY USD-M fundingRate archives",
+    "noInterpolation": true,
+    "rejectAnyMissingBoundary": true
+  },
+  "developmentGate": {
+    "positiveBasketNetReturn": true,
+    "minimumBasketSharpe": 0.80,
+    "maximumAllowedBasketDrawdown": -0.02,
+    "minimumCompletedRoundTrips": 3,
+    "minimumSleevesWithActivity": 2,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForAllSleeves": true,
+    "decision": "Every criterion must pass before final-holdout acquisition. Failure freezes Trial 22 without final access or in-place rescue."
+  },
+  "promotionCriteria": {
+    "positiveFinalBasketNetReturn": true,
+    "minimumFinalBasketSharpe": 0.75,
+    "maximumAllowedFinalBasketDrawdown": -0.02,
+    "minimumFinalCompletedRoundTrips": 1,
+    "minimumFinalSleevesWithActivity": 1,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForAllSleeves": true,
+    "decision": "Every criterion must pass. Passing authorizes a separate paper-baseline promotion proposal only; never real-money trading."
+  },
+  "multipleTesting": {
+    "seriousTrialNumber": 22,
+    "designedAfterObservedTrial19StressFailure": true,
+    "freshDerivativeInformationSet": true,
+    "venueNativeCostModelPredatesTrial22": true,
+    "noPostResultAssetThresholdCollateralOrRiskRuleSubstitution": true
+  },
+  "antiRescueRule": "After the first Trial 22 development economic output, no asset, threshold, lookback, hysteresis, minimum state duration, sizing, collateral, re-anchor rule, date, cost, source rule, entry/exit accounting, stress, or gate may change under Trial 22."
+}
