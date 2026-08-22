@@ -1,0 +1,114 @@
+name: Execute frozen Trial 17 ETH SOL carry development
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/run-trial17-development.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: execute-trial17-alt-carry-development
+  cancel-in-progress: false
+
+jobs:
+  evaluate-development:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Check out frozen Trial 17 branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/alt-carry-basket-v1
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Require frozen pristine development and final slots
+        run: |
+          set -euo pipefail
+          test -f research/crypto/manifests/alt-carry-basket-v1.json
+          test ! -e research/crypto/results/alt-carry-basket-v1-development/summary.json
+          test ! -e research/crypto/results/alt-carry-basket-v1-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/alt-carry-basket-v1.json'))
+          assert m['experimentId']=='alt-carry-basket-v1' and m['trialNumber']==17 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['ETHUSDT','SOLUSDT']
+          assert m['assetSelection']['dataPreviouslyObservedAtFreeze']['fundingPerpetualExecutionMarkAndCarryEconomics'] is False
+          assert m['developmentWindow']['derivativeRowsObservedAtFreeze'] is False
+          assert m['finalHoldout']['derivativeRowsObservedAtFreeze'] is False
+          PY
+      - name: Validate implementation before derivative acquisition
+        run: |
+          set -euo pipefail
+          npm install
+          node --check research/crypto/alt-carry-basket-evaluate.js
+          node --check research/crypto/alt-carry-basket-gate.js
+          python -m py_compile research/crypto/prepare-alt-carry-window.py
+          node --test tests/crypto-carry-evaluate.test.js
+          python -m unittest tests/test_prepare_carry_data.py
+      - name: Acquire untouched ETH development carry data only
+        run: >-
+          python research/crypto/prepare-alt-carry-window.py
+          research/crypto/manifests/alt-carry-basket-v1.json development ETHUSDT
+          /tmp/trial17-eth-dev.csv /tmp/trial17-eth-dev-sources.json
+      - name: Acquire untouched SOL development carry data only
+        run: >-
+          python research/crypto/prepare-alt-carry-window.py
+          research/crypto/manifests/alt-carry-basket-v1.json development SOLUSDT
+          /tmp/trial17-sol-dev.csv /tmp/trial17-sol-dev-sources.json
+      - name: Verify exact development source coverage before economics
+        run: |
+          python - <<'PY'
+          import csv,json
+          from datetime import datetime,timezone
+          for symbol,prefix in [('ETHUSDT','eth'),('SOLUSDT','sol')]:
+              s=json.load(open(f'/tmp/trial17-{prefix}-dev-sources.json')); c=s['coverage']
+              assert s['experimentId']=='alt-carry-basket-v1' and s['trialNumber']==17 and s['mode']=='development' and s['symbol']==symbol
+              assert s['economicResultCalculated'] is False
+              assert c['expectedBoundaryRows']==4383 and c['synchronizedRows']==4383
+              assert c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+              with open(f'/tmp/trial17-{prefix}-dev.csv',newline='') as f: rows=list(csv.DictReader(f))
+              assert len(rows)==4383
+              parse=lambda v: datetime.fromisoformat(v.replace('Z','+00:00')).astimezone(timezone.utc)
+              assert parse(rows[0]['timestamp'])==datetime(2022,1,1,0,0,tzinfo=timezone.utc)
+              assert parse(rows[-1]['timestamp'])==datetime(2025,12,31,16,0,tzinfo=timezone.utc)
+          print('Trial 17 exact ETH/SOL development source coverage verified before economics.')
+          PY
+      - name: Observe frozen Trial 17 development once
+        run: >-
+          node research/crypto/alt-carry-basket-evaluate.js
+          research/crypto/manifests/alt-carry-basket-v1.json development
+          /tmp/trial17-eth-dev.csv /tmp/trial17-sol-dev.csv
+          research/crypto/results/alt-carry-basket-v1-development/summary.json
+      - name: Apply pre-frozen Trial 17 development gate
+        run: >-
+          node research/crypto/alt-carry-basket-gate.js
+          research/crypto/manifests/alt-carry-basket-v1.json development
+          research/crypto/results/alt-carry-basket-v1-development/summary.json
+          /tmp/trial17-eth-dev-sources.json /tmp/trial17-sol-dev-sources.json
+          research/crypto/results/alt-carry-basket-v1-development/gate.json
+      - name: Preserve full source provenance
+        run: |
+          set -euo pipefail
+          cp /tmp/trial17-eth-dev-sources.json research/crypto/results/alt-carry-basket-v1-development/eth-sources.json
+          cp /tmp/trial17-sol-dev-sources.json research/crypto/results/alt-carry-basket-v1-development/sol-sources.json
+      - name: Commit immutable Trial 17 development evidence
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- research/crypto/results/alt-carry-basket-v1-development
+          git commit -m 'Observe Trial 17 ETH SOL carry development'
+          git push origin HEAD:research/alt-carry-basket-v1
+      - name: Upload immutable Trial 17 development evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: alt-carry-basket-v1-development
+          path: research/crypto/results/alt-carry-basket-v1-development
+          if-no-files-found: error
