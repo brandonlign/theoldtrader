@@ -1,0 +1,171 @@
+name: Execute Trial 22 deterministic driver
+
+on:
+  push:
+    branches: [research/risk-capped-funding-regime-v1]
+    paths:
+      - '.github/workflows/run-trial22-pr-driver.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/run-trial22-pr-driver.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trial22-deterministic-driver
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/risk-capped-funding-regime-v1
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+
+      - name: Preflight frozen Trial 22 before derivative acquisition
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/risk-capped-funding-regime-v1-development/summary.json
+          test ! -e research/crypto/results/risk-capped-funding-regime-v1-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/risk-capped-funding-regime-v1.json'))
+          assert m['experimentId']=='risk-capped-funding-regime-v1' and m['trialNumber']==22 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['LINKUSDT','BCHUSDT','EOSUSDT','UNIUSDT']
+          assert m['assetSelection']['dataPreviouslyObservedAtFreeze']['fundingPerpetualExecutionMarkAndTrial22CarryEconomics'] is False
+          assert m['developmentWindow']['derivativeRowsObservedAtFreeze'] is False and m['finalHoldout']['derivativeRowsObservedAtFreeze'] is False
+          assert m['portfolio']['futuresCollateralReservePctOfSleeveWhenActive']==0.80
+          assert m['signal']['entryAnnualizedTrailingFundingThreshold']==0.15 and m['signal']['exitAnnualizedTrailingFundingThreshold']==0.05
+          assert m['riskControl']['maximumActiveBoundariesBeforeReanchor']==180
+          assert m['riskControl']['maximumPerpetualMarkNotionalPctOfCurrentSleeveEquityBeforeReanchor']==0.25
+          PY
+          node --check research/crypto/risk-capped-funding-regime-evaluate.js
+          node --check research/crypto/risk-capped-funding-regime-gate.js
+          python -m py_compile research/crypto/prepare-risk-capped-funding-regime-window.py research/crypto/lib/carry_source_union.py
+          node --test tests/risk-capped-funding-regime.test.js
+          python -m unittest tests/test_prepare_carry_data.py
+
+      - name: Acquire all untouched development source unions
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t22-dev
+          for pair in LINKUSDT:link BCHUSDT:bch EOSUSDT:eos UNIUSDT:uni; do
+            symbol=${pair%%:*}; prefix=${pair##*:}
+            python research/crypto/prepare-risk-capped-funding-regime-window.py \
+              research/crypto/manifests/risk-capped-funding-regime-v1.json development "$symbol" \
+              "/tmp/t22-dev/$prefix.csv" "/tmp/t22-dev/$prefix-sources.json"
+          done
+
+      - name: Verify all development sources before economics
+        run: |
+          python - <<'PY'
+          import json
+          for symbol,prefix in [('LINKUSDT','link'),('BCHUSDT','bch'),('EOSUSDT','eos'),('UNIUSDT','uni')]:
+              s=json.load(open(f'/tmp/t22-dev/{prefix}-sources.json')); c=s['coverage']
+              assert s['experimentId']=='risk-capped-funding-regime-v1' and s['trialNumber']==22 and s['mode']=='development' and s['symbol']==symbol
+              assert s['economicResultCalculated'] is False
+              assert c['expectedBoundaryRows']==c['synchronizedRows']
+              assert c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+
+      - name: Observe frozen Trial 22 development exactly once
+        run: >-
+          node research/crypto/risk-capped-funding-regime-evaluate.js
+          research/crypto/manifests/risk-capped-funding-regime-v1.json development
+          /tmp/t22-dev/link.csv /tmp/t22-dev/bch.csv /tmp/t22-dev/eos.csv /tmp/t22-dev/uni.csv
+          research/crypto/results/risk-capped-funding-regime-v1-development/summary.json
+
+      - name: Apply frozen development gate and preserve evidence
+        id: devgate
+        run: |
+          set -euo pipefail
+          node research/crypto/risk-capped-funding-regime-gate.js \
+            research/crypto/manifests/risk-capped-funding-regime-v1.json development \
+            research/crypto/results/risk-capped-funding-regime-v1-development/summary.json \
+            /tmp/t22-dev/link-sources.json /tmp/t22-dev/bch-sources.json /tmp/t22-dev/eos-sources.json /tmp/t22-dev/uni-sources.json \
+            research/crypto/results/risk-capped-funding-regime-v1-development/gate.json
+          cp /tmp/t22-dev/*-sources.json research/crypto/results/risk-capped-funding-regime-v1-development/
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          g=json.load(open('research/crypto/results/risk-capped-funding-regime-v1-development/gate.json'))
+          print('pass=' + ('true' if g['developmentGatePass'] else 'false'))
+          PY
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/risk-capped-funding-regime-v1-development
+          git commit -m 'Observe Trial 22 risk-capped funding development'
+          git push origin HEAD:research/risk-capped-funding-regime-v1
+
+      - name: Stop cleanly when development gate fails
+        if: steps.devgate.outputs.pass != 'true'
+        run: echo 'Frozen Trial 22 development gate failed; final holdout remains sealed.'
+
+      - name: Acquire untouched one-shot final source unions
+        if: steps.devgate.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/t22-final
+          for pair in LINKUSDT:link BCHUSDT:bch EOSUSDT:eos UNIUSDT:uni; do
+            symbol=${pair%%:*}; prefix=${pair##*:}
+            python research/crypto/prepare-risk-capped-funding-regime-window.py \
+              research/crypto/manifests/risk-capped-funding-regime-v1.json final "$symbol" \
+              "/tmp/t22-final/$prefix.csv" "/tmp/t22-final/$prefix-sources.json" --confirm-final YES
+          done
+
+      - name: Verify final coverage before economics
+        if: steps.devgate.outputs.pass == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          for symbol,prefix in [('LINKUSDT','link'),('BCHUSDT','bch'),('EOSUSDT','eos'),('UNIUSDT','uni')]:
+              s=json.load(open(f'/tmp/t22-final/{prefix}-sources.json')); c=s['coverage']
+              assert s['experimentId']=='risk-capped-funding-regime-v1' and s['trialNumber']==22 and s['mode']=='final' and s['symbol']==symbol
+              assert s['economicResultCalculated'] is False
+              assert c['expectedBoundaryRows']==c['synchronizedRows'] and c['overlapMismatchCount']==0
+              assert c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+
+      - name: Observe frozen Trial 22 final exactly once
+        if: steps.devgate.outputs.pass == 'true'
+        run: >-
+          node research/crypto/risk-capped-funding-regime-evaluate.js
+          research/crypto/manifests/risk-capped-funding-regime-v1.json final
+          /tmp/t22-final/link.csv /tmp/t22-final/bch.csv /tmp/t22-final/eos.csv /tmp/t22-final/uni.csv
+          research/crypto/results/risk-capped-funding-regime-v1-final/summary.json
+          --confirm-final YES
+
+      - name: Apply frozen promotion gate and commit immutable final evidence
+        if: steps.devgate.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          node research/crypto/risk-capped-funding-regime-gate.js \
+            research/crypto/manifests/risk-capped-funding-regime-v1.json final \
+            research/crypto/results/risk-capped-funding-regime-v1-final/summary.json \
+            /tmp/t22-final/link-sources.json /tmp/t22-final/bch-sources.json /tmp/t22-final/eos-sources.json /tmp/t22-final/uni-sources.json \
+            research/crypto/results/risk-capped-funding-regime-v1-final/promotion.json
+          cp /tmp/t22-final/*-sources.json research/crypto/results/risk-capped-funding-regime-v1-final/
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          g=json.load(open('research/crypto/results/risk-capped-funding-regime-v1-final/promotion.json'))
+          if g.get('promotionEligible'):
+              s=json.load(open('research/crypto/results/risk-capped-funding-regime-v1-final/summary.json'))
+              Path('research/crypto/results/risk-capped-funding-regime-v1-final/PROMOTED.md').write_text(
+                  '# Trial 22 paper-baseline promotion\n\nComplete pre-frozen one-shot final gate passed. Real-money trading remains forbidden.\n\n'
+                  f"Final net return: {s['basket']['netReturn']:.6%}\n\nFinal Sharpe: {s['basket']['sharpe']:.4f}\n\n"
+                  f"Final max drawdown: {s['basket']['maxDrawdown']:.6%}\n\nCompleted round trips: {s['completedRoundTrips']}\n")
+          PY
+          git pull --ff-only origin research/risk-capped-funding-regime-v1
+          git add research/crypto/results/risk-capped-funding-regime-v1-final
+          git commit -m 'Observe Trial 22 risk-capped funding final'
+          git push origin HEAD:research/risk-capped-funding-regime-v1
