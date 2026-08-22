@@ -1,0 +1,131 @@
+name: Execute frozen Trial 17 ETH carry
+
+on:
+  pull_request:
+    branches: [research/funding-carry-eth-v1]
+    paths:
+      - 'research/crypto/TRIAL17_RUN_TRIGGER.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: execute-trial17-eth-carry
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - name: Check out frozen Trial 17 branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/funding-carry-eth-v1
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Require frozen Trial 17 slot
+        run: |
+          set -euo pipefail
+          test -f research/crypto/manifests/funding-carry-eth-v1.json
+          test ! -e research/crypto/results/funding-carry-eth-v1/summary.json
+          test ! -e research/crypto/results/funding-carry-eth-v1/promotion.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/funding-carry-eth-v1.json'))
+          assert m['experimentId']=='funding-carry-eth-v1' and m['trialNumber']==17
+          assert m['status']=='FROZEN_PRE_EVALUATION'
+          assert m['evaluationWindow']['ethCarryEconomicsObservedAtFreeze'] is False
+          assert m['candidate']['symbol']=='ETHUSDT'
+          assert m['candidate']['futuresCollateralReservePct']==0.50
+          assert m['evaluationWindow']['startInclusive']=='2021-05-01T00:00:00Z'
+          assert m['evaluationWindow']['endExclusive']=='2026-03-01T00:00:00Z'
+          print('Trial 17 freeze verified before ETH carry acquisition.')
+          PY
+
+      - name: Validate implementation before ETH economics
+        run: |
+          set -euo pipefail
+          python -m py_compile research/crypto/prepare-eth-carry-source-union.py
+          node --check research/crypto/carry-eth-evaluate.js
+          node --check research/crypto/carry-eth-promotion-check.js
+          node --check research/crypto/carry-evaluate.js
+
+      - name: Acquire checksum-verified ETH source union
+        run: >-
+          python research/crypto/prepare-eth-carry-source-union.py
+          /tmp/trial17-eth.csv
+          /tmp/trial17-eth-sources.json
+
+      - name: Verify exact ETH source coverage before economics
+        run: |
+          python - <<'PY'
+          import json
+          s=json.load(open('/tmp/trial17-eth-sources.json'))
+          c=s['coverage']
+          assert s['experimentId']=='funding-carry-eth-v1' and s['trialNumber']==17 and s['symbol']=='ETHUSDT'
+          assert c['synchronizedRows']==c['expectedBoundaryRows']
+          assert c['overlapMismatchCount']==0
+          assert c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          print('Trial 17 ETH exact source-union gate passed:', c)
+          PY
+
+      - name: Observe frozen Trial 17 ETH result once
+        run: >-
+          node research/crypto/carry-eth-evaluate.js
+          research/crypto/manifests/funding-carry-eth-v1.json
+          /tmp/trial17-eth.csv
+          research/crypto/results/funding-carry-eth-v1/summary.json
+          --confirm-evaluation YES
+
+      - name: Preserve compact Trial 17 provenance
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          src=Path('/tmp/trial17-eth-sources.json')
+          s=json.loads(src.read_text())
+          out=Path('research/crypto/results/funding-carry-eth-v1/provenance.json')
+          p={
+            'experimentId':'funding-carry-eth-v1','trialNumber':17,'symbol':'ETHUSDT',
+            'generatedAt':s['generatedAt'],'frozenAt':s['frozenAt'],'window':s['window'],
+            'inputSha256':s['inputSha256'],'coverage':s['coverage'],
+            'sourceManifestSha256':hashlib.sha256(src.read_bytes()).hexdigest(),
+            'sourceFileCount':len(s['sourceFiles'])
+          }
+          out.parent.mkdir(parents=True,exist_ok=True)
+          out.write_text(json.dumps(p,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Apply pre-frozen Trial 17 promotion gate
+        run: >-
+          node research/crypto/carry-eth-promotion-check.js
+          research/crypto/manifests/funding-carry-eth-v1.json
+          research/crypto/results/funding-carry-eth-v1/summary.json
+          /tmp/trial17-eth-sources.json
+          research/crypto/results/funding-carry-eth-v1/promotion.json
+
+      - name: Commit immutable Trial 17 evidence
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- research/crypto/results/funding-carry-eth-v1
+          git commit -m 'Observe Trial 17 ETH carry replication'
+          git push origin HEAD:research/funding-carry-eth-v1
+
+      - name: Upload immutable Trial 17 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-carry-eth-v1-evidence
+          path: research/crypto/results/funding-carry-eth-v1
+          if-no-files-found: error
