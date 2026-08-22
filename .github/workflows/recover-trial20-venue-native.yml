@@ -37,7 +37,7 @@ jobs:
           node --check research/crypto/venue-native-carry-evaluate.js
           node --check research/crypto/venue-native-carry-gate.js
           python -m py_compile research/crypto/prepare-venue-native-carry-window.py
-          python -m unittest tests/test_prepare_carry_data.py
+          python tests/test_prepare_carry_data.py
       - name: Acquire development sources
         run: |
           python research/crypto/prepare-venue-native-carry-window.py research/crypto/manifests/venue-native-carry-v1.json development LTCUSDT /tmp/t20-ltc-dev.csv /tmp/t20-ltc-dev-src.json
