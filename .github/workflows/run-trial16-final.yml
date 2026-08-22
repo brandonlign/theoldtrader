@@ -1,5 +1,6 @@
 name: Execute frozen Trial 16 collateralized carry final
 
+# Operational retrigger only; Trial 16 scientific freeze is unchanged.
 on:
   workflow_dispatch:
   push:
