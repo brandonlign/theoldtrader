@@ -14,28 +14,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Dispatch and capture frozen Trial 27
+      - name: Dispatch and capture frozen Trial 28
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -uo pipefail
-          gh workflow run run-trial27-eventtime-crossvenue.yml --repo "$GITHUB_REPOSITORY" --ref main
+          gh workflow run run-trial28-collateral-rebalanced.yml --repo "$GITHUB_REPOSITORY" --ref main
           sleep 4
-          id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial27-eventtime-crossvenue.yml --limit 1 --json databaseId --jq '.[0].databaseId // 0')
-          echo "Trial 27 run id: $id"
+          id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial28-collateral-rebalanced.yml --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+          echo "Trial 28 run id: $id"
           if [ "$id" = 0 ]; then exit 2; fi
           gh run watch "$id" --repo "$GITHUB_REPOSITORY" --interval 10 || true
-          gh run view "$id" --repo "$GITHUB_REPOSITORY" --json status,conclusion,jobs > /tmp/t27-status.json || true
-          gh run view "$id" --repo "$GITHUB_REPOSITORY" --log > /tmp/t27.log 2>&1 || true
-          git fetch origin research/event-time-crossvenue-spread-v1
-          git checkout -B research/event-time-crossvenue-spread-v1 origin/research/event-time-crossvenue-spread-v1
-          mkdir -p research/crypto/results/event-time-crossvenue-spread-v1-ops
-          cp /tmp/t27-status.json research/crypto/results/event-time-crossvenue-spread-v1-ops/latest-run-status.json
-          tail -n 500 /tmp/t27.log > research/crypto/results/event-time-crossvenue-spread-v1-ops/latest-run-tail.txt
-          printf '%s\n' "$id" > research/crypto/results/event-time-crossvenue-spread-v1-ops/latest-run-id.txt
+          gh run view "$id" --repo "$GITHUB_REPOSITORY" --json status,conclusion,jobs > /tmp/t28-status.json || true
+          gh run view "$id" --repo "$GITHUB_REPOSITORY" --log > /tmp/t28.log 2>&1 || true
+          git fetch origin research/collateral-rebalanced-crossvenue-v1
+          git checkout -B research/collateral-rebalanced-crossvenue-v1 origin/research/collateral-rebalanced-crossvenue-v1
+          mkdir -p research/crypto/results/collateral-rebalanced-crossvenue-v1-ops
+          cp /tmp/t28-status.json research/crypto/results/collateral-rebalanced-crossvenue-v1-ops/latest-run-status.json
+          tail -n 600 /tmp/t28.log > research/crypto/results/collateral-rebalanced-crossvenue-v1-ops/latest-run-tail.txt
+          printf '%s\n' "$id" > research/crypto/results/collateral-rebalanced-crossvenue-v1-ops/latest-run-id.txt
           git config user.name theoldtrader-research-bot
           git config user.email actions@users.noreply.github.com
-          git add research/crypto/results/event-time-crossvenue-spread-v1-ops
-          git commit -m 'Ops: capture Trial 27 execution status' || true
-          git pull --rebase origin research/event-time-crossvenue-spread-v1 || true
-          git push origin HEAD:research/event-time-crossvenue-spread-v1
+          git add research/crypto/results/collateral-rebalanced-crossvenue-v1-ops
+          git commit -m 'Ops: capture Trial 28 execution status' || true
+          git pull --rebase origin research/collateral-rebalanced-crossvenue-v1 || true
+          git push origin HEAD:research/collateral-rebalanced-crossvenue-v1
