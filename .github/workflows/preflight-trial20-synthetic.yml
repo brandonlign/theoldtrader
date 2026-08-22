@@ -1,0 +1,47 @@
+name: Synthetic preflight Trial 20
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/preflight-trial20-synthetic.yml']
+permissions: {contents: read}
+jobs:
+  synthetic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/venue-native-carry-v1}
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - name: Generate exact synthetic development inputs
+        run: |
+          python - <<'PY'
+          from datetime import datetime,timedelta,timezone
+          from pathlib import Path
+          start=datetime(2022,1,1,tzinfo=timezone.utc); end=datetime(2026,1,1,tzinfo=timezone.utc)
+          header='timestamp,raw_funding_timestamp,funding_timestamp_skew_ms,spot_price,perp_exec_price,perp_mark_price,funding_rate\n'
+          rows=[]; t=start
+          while t<end:
+            iso=t.isoformat(timespec='milliseconds').replace('+00:00','Z')
+            rows.append(f'{iso},{iso},0,100,100,100,0.0001')
+            t+=timedelta(hours=8)
+          assert len(rows)==4383
+          for f in ['/tmp/ltc.csv','/tmp/trx.csv']:
+            Path(f).write_text(header+'\n'.join(rows)+'\n')
+          PY
+      - name: Run Trial 20 synthetic evaluator
+        run: |
+          node --check research/crypto/venue-native-carry-evaluate.js
+          node research/crypto/venue-native-carry-evaluate.js research/crypto/manifests/venue-native-carry-v1.json development /tmp/ltc.csv /tmp/trx.csv /tmp/summary.json
+          python - <<'PY'
+          import json
+          s=json.load(open('/tmp/summary.json'))
+          assert s['trialNumber']==20 and s['mode']=='development'
+          assert s['basket']['netReturn']>0.04, s['basket']
+          assert s['basket']['sharpe']>1, s['basket']
+          assert s['basket']['maxDrawdown']>-0.015, s['basket']
+          for symbol in ['LTCUSDT','TRXUSDT']:
+            r=s['sleeves'][symbol]
+            assert r['margin']['breached'] is False
+            assert all(x['breached'] is False for x in r['margin']['gapStress'].values())
+          print(json.dumps({'basket':s['basket'],'LTC':s['sleeves']['LTCUSDT']['strategies']['fundingCarry'],'TRX':s['sleeves']['TRXUSDT']['strategies']['fundingCarry']},indent=2))
+          PY
