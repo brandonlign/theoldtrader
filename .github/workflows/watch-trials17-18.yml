@@ -1,0 +1,28 @@
+name: Watch corrected Trials 17 and 18
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/watch-trials17-18.yml']
+permissions:
+  actions: write
+  contents: read
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch and watch combined recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          before=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow recover-trials17-18-development.yml --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+          gh workflow run recover-trials17-18-development.yml --repo "$GITHUB_REPOSITORY" --ref main
+          id=0
+          for i in $(seq 1 30); do
+            sleep 2
+            id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow recover-trials17-18-development.yml --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+            if [ "$id" != "0" ] && [ "$id" != "$before" ]; then break; fi
+          done
+          test "$id" != "0" && test "$id" != "$before"
+          echo "Trials 17/18 recovery run: $id"
+          gh run watch "$id" --repo "$GITHUB_REPOSITORY" --exit-status --interval 5
