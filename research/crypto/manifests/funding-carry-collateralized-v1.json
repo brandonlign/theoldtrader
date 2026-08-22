@@ -1,0 +1,72 @@
+{
+  "experimentId": "funding-carry-collateralized-v1",
+  "trialNumber": 16,
+  "frozenAt": "2026-08-22T02:22:00Z",
+  "status": "FROZEN_PRE_FINAL",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "strategyFamily": "fully collateralized BTC spot/perpetual funding and basis carry",
+  "selectionDisclosure": "Trial 16 is a new numbered successor selected after Trial 2U historical source-replication evidence. Trial 2U showed positive carry but failed its frozen +25/+50/+100 percent adverse-perpetual-mark collateral stresses. Trial 16 changes only the futures collateral reserve from 20% to 50% of starting equity; 50% was fixed before any post-2026-03-01 funding, perpetual execution, mark-price, basis, or carry P&L was acquired or observed. All trade economics otherwise remain inherited from Trial 2/2U.",
+  "developmentEvidence": {
+    "source": "research/crypto/TRIAL2U_RESULT.md",
+    "window": ["2021-05-01T00:00:00Z", "2026-03-01T00:00:00Z"],
+    "observedNetReturn": 0.055388,
+    "observedAnnualizedReturn": 0.011213,
+    "observedSharpe": 6.22,
+    "observedMaxDrawdown": -0.00234,
+    "limitation": "20% futures collateral failed the frozen +25%, +50%, and +100% adverse-perpetual-mark stresses."
+  },
+  "candidate": {
+    "position": "long BTC spot and short exactly equal BTC units of Binance USD-M BTCUSDT perpetual",
+    "entryRule": "enter once at the first exact 8-hour funding boundary in the frozen confirmation window; no forecast, funding-sign filter, or timing optimization",
+    "exitRule": "exit both legs at the final exact 8-hour funding boundary strictly before the frozen end",
+    "rebalancing": "none",
+    "spotNotionalPctAtEntry": 0.15,
+    "perpetualShortSizingRule": "short exactly the BTC units purchased by the 15%-of-starting-equity spot leg",
+    "futuresCollateralReservePct": 0.50,
+    "fundingAccounting": "entry-boundary funding is excluded; later realized funding is accrued on equal BTC units times contemporaneous mark price; short receives positive funding and pays negative funding",
+    "basisAccounting": "standard perpetual contract opens are execution references; mark-price opens are valuation/funding/margin references"
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 60,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 60,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "confirmationWindow": {
+    "startInclusive": "2026-03-01T00:00:00Z",
+    "endExclusive": "2026-08-01T00:00:00Z",
+    "oneShot": true,
+    "economicRowsObservedAtFreeze": false,
+    "reason": "This interval begins exactly where the previously observed Trial 2U historical window ended and was not used in Trial 2/2U carry economics."
+  },
+  "dataRequirements": {
+    "venue": "Binance",
+    "symbol": "BTCUSDT",
+    "fundingTimestampNormalization": {"maximumAbsoluteSkewMs": 60000},
+    "spot": "checksum-verified Binance Vision DAILY BTCUSDT 8h spot klines",
+    "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT standard 8h klines",
+    "perpetualMark": "checksum-verified union of MONTHLY and DAILY USD-M BTCUSDT 8h markPriceKlines; overlap must agree exactly and every boundary must be covered",
+    "funding": "checksum-verified Binance Vision MONTHLY USD-M BTCUSDT fundingRate archives",
+    "noInterpolation": true,
+    "rejectOnAnyMissingBoundary": true
+  },
+  "comparators": ["cash", "15%-exposure BTC spot buy-and-hold"],
+  "promotionCriteria": {
+    "positiveNetReturn": true,
+    "minimumSharpe": 1.0,
+    "maximumAllowedDrawdown": -0.01,
+    "realizedMarginBreachAllowed": false,
+    "allFrozenGapStressesMustPass": true,
+    "sourceUnionMustHaveZeroOverlapMismatchesAndZeroMissingBoundaries": true,
+    "interpretation": "Every criterion must pass. Passing authorizes a separate paper-baseline promotion proposal only; never real-money trading. Failure freezes Trial 16 with no in-place rescue."
+  },
+  "antiRescueRule": "After the first confirmation-window economic output, no collateral, sizing, dates, costs, source rule, funding filter, entry/exit rule, or promotion threshold may change under Trial 16."
+}
