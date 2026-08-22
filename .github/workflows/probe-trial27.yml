@@ -1,0 +1,30 @@
+name: Probe Trial 27 status
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/probe-trial27.yml']
+permissions:
+  actions: read
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Capture latest Trial 27 status without changing experiment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial27-eventtime-crossvenue.yml --limit 1 --json databaseId,status,conclusion,createdAt,updatedAt > /tmp/probe.json
+          git fetch origin research/event-time-crossvenue-spread-v1
+          git checkout -B research/event-time-crossvenue-spread-v1 origin/research/event-time-crossvenue-spread-v1
+          mkdir -p research/crypto/results/event-time-crossvenue-spread-v1-ops
+          cp /tmp/probe.json research/crypto/results/event-time-crossvenue-spread-v1-ops/probe.json
+          git config user.name theoldtrader-research-bot
+          git config user.email actions@users.noreply.github.com
+          git add research/crypto/results/event-time-crossvenue-spread-v1-ops/probe.json
+          git commit -m 'Ops: probe Trial 27 status' || true
+          git push origin HEAD:research/event-time-crossvenue-spread-v1
