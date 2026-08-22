@@ -1,0 +1,44 @@
+name: Preflight Trials 19 and 20
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/preflight-trials19-20.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  trial19:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/funding-regime-carry-v1}
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: |
+          npm install
+          node --check research/crypto/funding-regime-carry-evaluate.js
+          node --check research/crypto/funding-regime-carry-gate.js
+          python -m py_compile research/crypto/prepare-funding-regime-carry-window.py
+          node --test tests/funding-regime-carry.test.js
+          node --test tests/crypto-carry-evaluate.test.js
+          python -m unittest tests/test_prepare_carry_data.py
+  trial20:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/venue-native-carry-v1}
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: |
+          npm install
+          node --check research/crypto/venue-native-carry-evaluate.js
+          node --check research/crypto/venue-native-carry-gate.js
+          python -m py_compile research/crypto/prepare-venue-native-carry-window.py
+          node --test tests/crypto-carry-evaluate.test.js
+          python -m unittest tests/test_prepare_carry_data.py
