@@ -1,0 +1,75 @@
+{
+  "experimentId": "liquidity-core-v1",
+  "trialNumber": 15,
+  "createdAt": "2026-08-22T02:08:00Z",
+  "status": "FROZEN_PRE_FINAL",
+  "paperOnly": true,
+  "realMoneyAllowed": false,
+  "strategyFamily": "historically formed large-liquidity crypto core",
+  "selectionDisclosure": "Trial 15 is a new numbered candidate selected only after Trial 14 development was observed. The candidate is exactly the already-reported Trial 14 formationLiquidityTop3StaticBuyHold comparator; no Trial 15 final-holdout row has been observed at freeze time. The untouched 2026-01-01 through 2026-08-01 holdout is the one-shot confirmation set.",
+  "developmentEvidence": {
+    "source": "research/crypto/results/cross-sectional-identity-clean-v1-development/summary.json",
+    "candidateField": "comparators.formationLiquidityTop3StaticBuyHold",
+    "observedNetReturn": 0.4673084917014416,
+    "observedSharpe": 0.7995326468412787,
+    "observedMaxDrawdown": -0.25108003309893123,
+    "observedTotalFees": 26.942059768168896,
+    "period": ["2024-01-01T00:00:00Z", "2026-01-01T00:00:00Z"]
+  },
+  "universe": {
+    "source": "research/crypto/universes/cross-sectional-identity-clean-v1-universe.json",
+    "formationInformationEndExclusive": "2023-01-01T00:00:00Z",
+    "identityStableOnly": true,
+    "ranking": "descending median 2022 daily USDT quote volume with the already-frozen identity-stability exclusion rule",
+    "selectedCount": 3,
+    "selectedSymbols": ["BTCUSDT", "ETHUSDT", "BNBUSDT"],
+    "selectionMustEqualFirstThreeFrozenRankingRows": true
+  },
+  "portfolio": {
+    "startingCash": 10000,
+    "entry": "single entry at the first available Binance UTC daily open at or after the evaluation start",
+    "targetWeightPerAsset": 0.15,
+    "maxTotalCryptoExposurePctAtEntry": 0.45,
+    "longOnly": true,
+    "rebalance": "none",
+    "leverage": false,
+    "unallocatedCapital": "cash",
+    "valuation": "daily close after entry; ending positions remain open and are marked at the last valid pre-boundary close"
+  },
+  "costModel": {
+    "feeBpsPerSide": 60,
+    "slippageBpsPerSide": 5,
+    "spreadBpsRoundTrip": 10,
+    "note": "Use the same conservative inherited TheOldTrader spot execution assumptions as Trial 14. The single-entry evaluator uses the inherited simulator exactly; no maker-cost assumption is introduced."
+  },
+  "finalHoldout": {
+    "startInclusive": "2026-01-01T00:00:00Z",
+    "endExclusive": "2026-08-01T00:00:00Z",
+    "oneShot": true,
+    "finalRowsObservedAtFreeze": false,
+    "dataSource": "checksum-verified Binance Vision daily spot archives through the frozen identity-clean adapter",
+    "noInterpolation": true
+  },
+  "comparators": [
+    "cash",
+    "15%-exposure BTC buy-and-hold",
+    "45%-total equal-weight BTC/ETH/SOL buy-and-hold"
+  ],
+  "promotionCriteria": {
+    "required": [
+      "positive final-holdout net return",
+      "positive final-holdout Sharpe",
+      "final-holdout Sharpe greater than the 15%-exposure BTC buy-and-hold comparator",
+      "final-holdout maximum drawdown no worse than -35%",
+      "no one selected asset contributes more than 70% of positive marked portfolio contribution across development plus final",
+      "no data-integrity exception, identity instability, out-of-universe substitution, interpolation, or post-2022 ranking change"
+    ],
+    "decision": "Every required criterion must pass. Failure freezes Trial 15 as a failed trial and does not authorize a parameter rescue. Passing authorizes a separate paper-baseline promotion only, never real-money trading."
+  },
+  "multipleTesting": {
+    "seriousAlphaPortfolioTrialNumber": 15,
+    "selectionFromPriorDevelopmentAcknowledged": true,
+    "finalHoldoutRemainsConfirmatory": true,
+    "noPostFinalRescueUnderSameTrial": true
+  }
+}
