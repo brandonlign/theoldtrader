@@ -1,0 +1,112 @@
+name: Execute frozen Trial 16 collateralized carry final
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/run-trial16-final.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: execute-trial16-collateralized-carry-final-main
+  cancel-in-progress: false
+
+jobs:
+  evaluate-final:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - name: Check out frozen Trial 16 branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/funding-carry-collateralized-v1
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Require frozen final slot
+        run: |
+          set -euo pipefail
+          test -f research/crypto/manifests/funding-carry-collateralized-v1.json
+          test ! -e research/crypto/results/funding-carry-collateralized-v1-final/summary.json
+          test ! -e research/crypto/results/funding-carry-collateralized-v1-final/promotion.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/funding-carry-collateralized-v1.json'))
+          assert m['experimentId']=='funding-carry-collateralized-v1' and m['trialNumber']==16
+          assert m['status']=='FROZEN_PRE_FINAL' and m['confirmationWindow']['economicRowsObservedAtFreeze'] is False
+          assert m['candidate']['futuresCollateralReservePct']==0.50
+          assert m['confirmationWindow']['startInclusive']=='2026-03-01T00:00:00Z'
+          assert m['confirmationWindow']['endExclusive']=='2026-08-01T00:00:00Z'
+          PY
+      - name: Validate implementation before first economic access
+        run: |
+          set -euo pipefail
+          npm install
+          node --check research/crypto/carry-collateralized-evaluate.js
+          node --check research/crypto/carry-collateralized-promotion-check.js
+          python -m py_compile research/crypto/prepare-carry-collateralized-final.py
+          node --test tests/crypto-carry-evaluate.test.js
+          python -m unittest tests/test_prepare_carry_data.py
+      - name: Acquire sealed Trial 16 source-union confirmation data
+        run: >-
+          python research/crypto/prepare-carry-collateralized-final.py
+          /tmp/trial16.csv
+          /tmp/trial16-sources.json
+          --confirm-final YES
+      - name: Verify exact source coverage before economics
+        run: |
+          python - <<'PY'
+          import csv,json
+          s=json.load(open('/tmp/trial16-sources.json')); c=s['coverage']
+          assert s['experimentId']=='funding-carry-collateralized-v1' and s['trialNumber']==16
+          assert s['economicResultCalculated'] is False
+          assert c['expectedBoundaryRows']==459 and c['synchronizedRows']==459
+          assert c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          with open('/tmp/trial16.csv',newline='') as f: rows=list(csv.DictReader(f))
+          assert len(rows)==459
+          assert rows[0]['timestamp']=='2026-03-01T00:00:00.000Z'
+          assert rows[-1]['timestamp']=='2026-07-31T16:00:00.000Z'
+          PY
+      - name: Observe frozen Trial 16 final once
+        run: >-
+          node research/crypto/carry-collateralized-evaluate.js
+          research/crypto/manifests/funding-carry-collateralized-v1.json
+          /tmp/trial16.csv
+          research/crypto/results/funding-carry-collateralized-v1-final/summary.json
+          --confirm-final YES
+      - name: Preserve compact Trial 16 provenance
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          src=Path('/tmp/trial16-sources.json'); s=json.loads(src.read_text())
+          out=Path('research/crypto/results/funding-carry-collateralized-v1-final/provenance.json'); out.parent.mkdir(parents=True,exist_ok=True)
+          p={'experimentId':'funding-carry-collateralized-v1','trialNumber':16,'mode':'final','confirmationWindow':s['confirmationWindow'],'synchronizedSha256':s['synchronizedSha256'],'coverage':s['coverage'],'sourceManifestSha256':hashlib.sha256(src.read_bytes()).hexdigest(),'sourceCount':len(s['sources'])}
+          out.write_text(json.dumps(p,indent=2,sort_keys=True)+'\n')
+          PY
+      - name: Apply pre-frozen Trial 16 promotion gate
+        run: >-
+          node research/crypto/carry-collateralized-promotion-check.js
+          research/crypto/manifests/funding-carry-collateralized-v1.json
+          research/crypto/results/funding-carry-collateralized-v1-final/summary.json
+          /tmp/trial16-sources.json
+          research/crypto/results/funding-carry-collateralized-v1-final/promotion.json
+      - name: Commit immutable Trial 16 evidence
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- research/crypto/results/funding-carry-collateralized-v1-final/summary.json research/crypto/results/funding-carry-collateralized-v1-final/provenance.json research/crypto/results/funding-carry-collateralized-v1-final/promotion.json
+          git commit -m 'Observe Trial 16 collateralized carry final'
+          git push origin HEAD:research/funding-carry-collateralized-v1
+      - name: Upload immutable Trial 16 evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-carry-collateralized-v1-final
+          path: research/crypto/results/funding-carry-collateralized-v1-final
+          if-no-files-found: error
