@@ -1,0 +1,84 @@
+{
+  "experimentId": "funding-carry-collateralized-v1",
+  "trialNumber": 16,
+  "generatedAt": "2026-08-22T02:24:32.825Z",
+  "promotionEligible": false,
+  "promotionScope": "none",
+  "realMoneyAllowed": false,
+  "checks": {
+    "positiveNetReturn": {
+      "pass": false,
+      "observed": -0.0030541856563213177
+    },
+    "minimumSharpe": {
+      "pass": false,
+      "observed": -1.6357372858637662,
+      "threshold": 1
+    },
+    "maximumDrawdown": {
+      "pass": true,
+      "observed": -0.0030541856563213177,
+      "threshold": -0.01
+    },
+    "noRealizedMarginBreach": {
+      "pass": true,
+      "observed": {
+        "breached": false,
+        "strategyValidWithoutHistoricalMarginBreach": true,
+        "firstBreach": null,
+        "gapStress": {
+          "1": {
+            "breached": false,
+            "minimumExcessMargin": 2629.594945585336
+          },
+          "0.25": {
+            "breached": false,
+            "minimumExcessMargin": 4077.56735565329
+          },
+          "0.5": {
+            "breached": false,
+            "minimumExcessMargin": 3594.9098856306387
+          }
+        }
+      }
+    },
+    "allFrozenGapStressesPass": {
+      "pass": true,
+      "gaps": {
+        "1": {
+          "pass": true,
+          "breached": false,
+          "minimumExcessMargin": 2629.594945585336
+        },
+        "0.25": {
+          "pass": true,
+          "breached": false,
+          "minimumExcessMargin": 4077.56735565329
+        },
+        "0.5": {
+          "pass": true,
+          "breached": false,
+          "minimumExcessMargin": 3594.9098856306387
+        }
+      }
+    },
+    "exactSourceUnion": {
+      "pass": true,
+      "coverage": {
+        "dailyMarkArchivesMissing": 0,
+        "dailyMarkRows": 459,
+        "expectedBoundaryRows": 459,
+        "missingMarkRows": 0,
+        "missingPerpRows": 0,
+        "missingSpotRows": 0,
+        "monthlyMarkRows": 456,
+        "overlapMismatchCount": 0,
+        "overlapRows": 456,
+        "synchronizedRows": 459,
+        "unionRows": 459
+      }
+    }
+  },
+  "rule": "Every criterion must pass. Passing authorizes a separate paper-baseline promotion proposal only; never real-money trading. Failure freezes Trial 16 with no in-place rescue.",
+  "antiRescueRule": "After the first confirmation-window economic output, no collateral, sizing, dates, costs, source rule, funding filter, entry/exit rule, or promotion threshold may change under Trial 16."
+}

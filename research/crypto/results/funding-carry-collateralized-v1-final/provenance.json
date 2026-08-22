@@ -1,0 +1,28 @@
+{
+  "confirmationWindow": {
+    "economicRowsObservedAtFreeze": false,
+    "endExclusive": "2026-08-01T00:00:00Z",
+    "oneShot": true,
+    "reason": "This interval begins exactly where the previously observed Trial 2U historical window ended and was not used in Trial 2/2U carry economics.",
+    "startInclusive": "2026-03-01T00:00:00Z"
+  },
+  "coverage": {
+    "dailyMarkArchivesMissing": 0,
+    "dailyMarkRows": 459,
+    "expectedBoundaryRows": 459,
+    "missingMarkRows": 0,
+    "missingPerpRows": 0,
+    "missingSpotRows": 0,
+    "monthlyMarkRows": 456,
+    "overlapMismatchCount": 0,
+    "overlapRows": 456,
+    "synchronizedRows": 459,
+    "unionRows": 459
+  },
+  "experimentId": "funding-carry-collateralized-v1",
+  "mode": "final",
+  "sourceCount": 321,
+  "sourceManifestSha256": "5a0dda56f9393306086f56d677a439c8b226884e504c68244f47a895d1f0e569",
+  "synchronizedSha256": "4223b8cf4ff9892f2a039b266a797b8175d857d843e56d51205492f85ee9ff24",
+  "trialNumber": 16
+}
