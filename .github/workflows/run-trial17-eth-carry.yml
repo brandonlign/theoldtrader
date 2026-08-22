@@ -1,6 +1,10 @@
 name: Execute frozen Trial 17 ETH carry
 
 on:
+  push:
+    branches: [research/funding-carry-eth-v1]
+    paths:
+      - '.github/workflows/run-trial17-eth-carry.yml'
   pull_request:
     branches: [research/funding-carry-eth-v1]
     paths:
