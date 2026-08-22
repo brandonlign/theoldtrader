@@ -1,0 +1,31 @@
+{
+  "experimentId": "proactive-alt-basket-crossvenue-v1",
+  "trialNumber": 32,
+  "mode": "final",
+  "checks": {
+    "positive": true,
+    "annualizedReturn": false,
+    "sharpe": true,
+    "drawdown": true,
+    "margin": true,
+    "stress": true,
+    "activity": true
+  },
+  "promotionEligible": false,
+  "promotionScope": "none",
+  "basket": {
+    "netReturn": 0.007346372298304704,
+    "annualizedReturn": 0.01271059463137636,
+    "sharpe": 2.3867085472747043,
+    "maxDrawdown": -0.00182604616269888,
+    "startValue": 10000,
+    "endValue": 10073.463722983048,
+    "elapsedDays": 211.66666666666666,
+    "assetsWithActivity": 4,
+    "anyMarginBreach": false,
+    "allGapStressPass": true,
+    "totalModeledCosts": 46.20716670029173
+  },
+  "realMoneyAllowed": false,
+  "antiRescueRule": "After the first Trial 32 development economic output, no scientific parameter, asset, notional, stress buffer, collateral target, transfer cost, clock rule, or gate may change under Trial 32."
+}

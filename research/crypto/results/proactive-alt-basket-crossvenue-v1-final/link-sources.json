@@ -1,0 +1,250 @@
+{
+  "coin": "LINK",
+  "economicResultCalculated": false,
+  "expectedRows": 636,
+  "experimentId": "proactive-alt-basket-crossvenue-v1",
+  "generatedAt": "2026-08-22T05:53:47.060558Z",
+  "hyperliquidSettlementCountDistribution": {
+    "7": 5,
+    "8": 626,
+    "9": 5
+  },
+  "mode": "final",
+  "rows": 636,
+  "sha256": "ac436e2ace6106b39cfd54e6896eaf5298c3053d53d90a27dfeef8dcbf879054",
+  "sources": [
+    {
+      "bytes": 5155,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2025-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-12",
+      "sha256": "83e96f6d920a3aec936623ec8d2800509cec558926d3ba7d71101420f64fb656",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5145,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-01",
+      "sha256": "df4b512f093556c660a21697b76291d1cb81499f34a3e35efca2fa90bbf4c414",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4635,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-02",
+      "sha256": "728a069a7d6c18a6d90475b219200bd4ebb7ebd6c492611da7dbcc276dd31e20",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5041,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-03",
+      "sha256": "26139cc3fb6861bb76c5f103687c201043d70a05f742524162f1dbaa17e0f6b8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4850,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-04",
+      "sha256": "157ae687842966dc53cbcd15415f1c84ae2ddf237a48db7aa4d6a60c19149a21",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5062,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-05",
+      "sha256": "0d2040548614dbe6300c840fc26d76383172bd26f41929a6ad5770c54534d39e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4871,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-06",
+      "sha256": "dd4af0320278ae51fffeef84533013644256d81af5a3875be991f0b95ef2288a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4969,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2026-07",
+      "sha256": "050d1949a7d3b012a043908c92d2743c43ac64431aa3c10de2b2099ca5a0a155",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LINKUSDT/8h/LINKUSDT-8h-2026-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 922,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-01",
+      "sha256": "01e4199765b3954d6a110f498ba4dfc015b0e7f92e4b6985cbec9a56b752d66e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 914,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-02",
+      "sha256": "1db75bdf9189111e79c0c4e9df854bb716c14c9609462c054c8046d1e03542f0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 961,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-03",
+      "sha256": "f9f7bf447ea91651ae9a5f28feb1275c97445d912a958cb8f999847996411262",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 928,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-04",
+      "sha256": "ff4c11fa47f8a0268f4194e51712a3bc4bb5672d3b1f54860e5d929114a4bf20",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 933,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-05",
+      "sha256": "06536cdd66211e1a25629a54d489493aaab6b3613b9d2207a65af44a3826da1b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 964,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-06",
+      "sha256": "33654b89221e8e9c544632cdee76e38c3eedf40aa2c1536ead56e849781e8d07",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 911,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2026-07",
+      "sha256": "42f06dfc2f6ab34dda1a7ae739d978b11b05384e098be9d556abf9015414ba9f",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LINKUSDT/LINKUSDT-fundingRate-2026-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1785542399999,
+      "interval": "8h",
+      "kind": "candleSnapshot",
+      "rows": 637,
+      "startTime": 1767196800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1768924799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1767196800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1770652799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1768924800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1772380799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1770652800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1774108799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1772380800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1775836799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1774108800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1777564799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1775836800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1779292799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1777564800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1781020799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1779292800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1782748799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1781020800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1784476799999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1782748800000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LINK",
+      "endTime": 1785542399999,
+      "kind": "fundingHistory",
+      "rows": 296,
+      "startTime": 1784476800000,
+      "venue": "Hyperliquid"
+    }
+  ],
+  "trialNumber": 32
+}
