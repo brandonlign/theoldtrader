@@ -1,0 +1,31 @@
+{
+  "experimentId": "proactive-stress-buffer-crossvenue-v1",
+  "trialNumber": 30,
+  "mode": "development",
+  "checks": {
+    "positive": true,
+    "annualizedReturn": true,
+    "sharpe": true,
+    "drawdown": true,
+    "margin": true,
+    "stress": true,
+    "activity": true
+  },
+  "developmentGatePass": true,
+  "finalAccessAuthorizedByGate": true,
+  "basket": {
+    "netReturn": 0.15242999750789643,
+    "annualizedReturn": 0.07349555367694971,
+    "sharpe": 5.6227151136210445,
+    "maxDrawdown": -0.0029261127284566646,
+    "startValue": 10000,
+    "endValue": 11524.299975078964,
+    "elapsedDays": 730.6666666666666,
+    "assetsWithActivity": 2,
+    "anyMarginBreach": false,
+    "allGapStressPass": true,
+    "totalModeledCosts": 121.88512346004859
+  },
+  "realMoneyAllowed": false,
+  "antiRescueRule": "After the first Trial 30 development economic output, no scientific parameter, asset, notional, stress buffer, collateral target, transfer cost, clock rule, or gate may change under Trial 30."
+}

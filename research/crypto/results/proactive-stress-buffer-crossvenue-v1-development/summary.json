@@ -1,0 +1,73 @@
+{
+  "experimentId": "proactive-stress-buffer-crossvenue-v1",
+  "trialNumber": 30,
+  "mode": "development",
+  "generatedAt": "2026-08-22T05:37:18.106012Z",
+  "basket": {
+    "netReturn": 0.15242999750789643,
+    "annualizedReturn": 0.07349555367694971,
+    "sharpe": 5.6227151136210445,
+    "maxDrawdown": -0.0029261127284566646,
+    "startValue": 10000,
+    "endValue": 11524.299975078964,
+    "elapsedDays": 730.6666666666666,
+    "assetsWithActivity": 2,
+    "anyMarginBreach": false,
+    "allGapStressPass": true,
+    "totalModeledCosts": 121.88512346004859
+  },
+  "sleeves": {
+    "BTC": {
+      "netReturn": 0.17141657005725075,
+      "annualizedReturn": 0.08230046460241769,
+      "sharpe": 5.08532546996099,
+      "maxDrawdown": -0.006030039143265498,
+      "startValue": 5000,
+      "endValue": 5857.082850286253,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": true,
+      "active": true,
+      "proactiveCollateralRebalances": 73,
+      "riskTriggeredReanchors": 1,
+      "grossCollateralTransferred": 21119.15511664727,
+      "transferCosts": 10.559577558323639,
+      "tradingCosts": 60.53499245916575,
+      "totalModeledCosts": 71.09457001748939,
+      "minimumPreTransferStressExcessPctOfMaxLegNotional": -0.0029488110554195656,
+      "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.048875085410618156,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    },
+    "ETH": {
+      "netReturn": 0.13344342495854233,
+      "annualizedReturn": 0.0646177908117056,
+      "sharpe": 3.943138801848452,
+      "maxDrawdown": -0.003902280579916262,
+      "startValue": 5000,
+      "endValue": 5667.217124792712,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": true,
+      "active": true,
+      "proactiveCollateralRebalances": 228,
+      "riskTriggeredReanchors": 0,
+      "grossCollateralTransferred": 49680.96898578495,
+      "transferCosts": 24.840484492892458,
+      "tradingCosts": 25.95006894966675,
+      "totalModeledCosts": 50.79055344255921,
+      "minimumPreTransferStressExcessPctOfMaxLegNotional": 0.019544883513537024,
+      "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.06707636452751989,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    }
+  },
+  "implementation": "proactive-stress-buffer-collateral-v1",
+  "realMoneyAllowed": false
+}
