@@ -1,0 +1,123 @@
+{
+  "experimentId": "proactive-alt-basket-b-v1",
+  "trialNumber": 33,
+  "mode": "development",
+  "generatedAt": "2026-08-22T05:59:19.403199Z",
+  "basket": {
+    "netReturn": 0.0933430934683599,
+    "annualizedReturn": 0.04561983424345817,
+    "sharpe": 3.681197477982482,
+    "maxDrawdown": -0.005354208126466586,
+    "startValue": 10000,
+    "endValue": 10933.430934683598,
+    "elapsedDays": 730.6666666666666,
+    "assetsWithActivity": 4,
+    "anyMarginBreach": false,
+    "allGapStressPass": true,
+    "totalModeledCosts": 205.3631142670346
+  },
+  "sleeves": {
+    "XRP": {
+      "netReturn": 0.05960924635860865,
+      "annualizedReturn": 0.029366432335196757,
+      "sharpe": 1.515385567745011,
+      "maxDrawdown": -0.01055547899283571,
+      "startValue": 2500,
+      "endValue": 2649.0231158965216,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": true,
+      "active": true,
+      "proactiveCollateralRebalances": 65,
+      "riskTriggeredReanchors": 3,
+      "grossCollateralTransferred": 15119.368164125312,
+      "transferCosts": 7.559684082062657,
+      "tradingCosts": 67.11250639291772,
+      "totalModeledCosts": 74.67219047498038,
+      "minimumPreTransferStressExcessPctOfMaxLegNotional": -0.09265283575438472,
+      "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.031812041867733315,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    },
+    "ADA": {
+      "netReturn": 0.029743048812519213,
+      "annualizedReturn": 0.01475916574893743,
+      "sharpe": 0.799608049662406,
+      "maxDrawdown": -0.029719658598057808,
+      "startValue": 2500,
+      "endValue": 2574.357622031298,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": true,
+      "active": true,
+      "proactiveCollateralRebalances": 27,
+      "riskTriggeredReanchors": 1,
+      "grossCollateralTransferred": 10519.70586151909,
+      "transferCosts": 5.2598529307595445,
+      "tradingCosts": 28.330499039309068,
+      "totalModeledCosts": 33.59035197006861,
+      "minimumPreTransferStressExcessPctOfMaxLegNotional": -0.06072932020286051,
+      "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.030850137900289728,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    },
+    "BNB": {
+      "netReturn": 0.1532006686905596,
+      "annualizedReturn": 0.07385435425961573,
+      "sharpe": 3.465584773656235,
+      "maxDrawdown": -0.009308401808053701,
+      "startValue": 2500,
+      "endValue": 2883.001671726399,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": true,
+      "active": true,
+      "proactiveCollateralRebalances": 150,
+      "riskTriggeredReanchors": 2,
+      "grossCollateralTransferred": 15258.662962054754,
+      "transferCosts": 7.629331481027379,
+      "tradingCosts": 52.60653706886841,
+      "totalModeledCosts": 60.23586854989579,
+      "minimumPreTransferStressExcessPctOfMaxLegNotional": 0.015621699994901926,
+      "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.04533793899247558,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    },
+    "LTC": {
+      "netReturn": 0.13081941001175146,
+      "annualizedReturn": 0.06338501887694692,
+      "sharpe": 2.9118995037175495,
+      "maxDrawdown": -0.005994777894939296,
+      "startValue": 2500,
+      "endValue": 2827.0485250293787,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": true,
+      "active": true,
+      "proactiveCollateralRebalances": 51,
+      "riskTriggeredReanchors": 1,
+      "grossCollateralTransferred": 12753.518921712808,
+      "transferCosts": 6.3767594608564035,
+      "tradingCosts": 30.487943811233407,
+      "totalModeledCosts": 36.86470327208981,
+      "minimumPreTransferStressExcessPctOfMaxLegNotional": -0.02778458096682956,
+      "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.04404600461026776,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    }
+  },
+  "implementation": "proactive-alt-basket-b-90pct-v1",
+  "realMoneyAllowed": false
+}

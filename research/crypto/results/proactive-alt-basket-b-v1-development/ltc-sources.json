@@ -1,0 +1,764 @@
+{
+  "coin": "LTC",
+  "economicResultCalculated": false,
+  "expectedRows": 2193,
+  "experimentId": "proactive-alt-basket-b-v1",
+  "generatedAt": "2026-08-22T05:59:19.261189Z",
+  "hyperliquidSettlementCountDistribution": {
+    "7": 21,
+    "8": 2152,
+    "9": 20
+  },
+  "mode": "development",
+  "rows": 2193,
+  "sha256": "a8415af30dbd4dbd6235457c7e8fc24dca1cb027978c41f09243991c436e7e85",
+  "sources": [
+    {
+      "bytes": 5065,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2023-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2023-12",
+      "sha256": "4df8500e13722b3ac1ee076efcd32a4d0f0f2b9772c48fa3485a9aec2a690104",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2023-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5081,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-01",
+      "sha256": "bae1caffe8e28ad55c3a63805d26be143d33dff870487df95d8f08146aa99e88",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4721,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-02",
+      "sha256": "b5a40067b4dadd4cf33514044f1649e7e320b4bb5130f7d11a865529dc813f31",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5244,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-03",
+      "sha256": "8cf9d6e2aa7c0f611d93728490ff4876c582c2401c7e45c4f4aa0f718ddd9078",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5032,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-04",
+      "sha256": "2a37e8d9039032a4f5350c4fb8d305bc46e323cb4a3dfd2e6a374ecb4fd7a0f4",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5034,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-05",
+      "sha256": "45ef7df8a3b1323322ec21d1fe4b533ff1eacdb827d3157c94a21fb339cd33a7",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4850,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-06",
+      "sha256": "d37f44946e1c833b45ac6fd519596440b998bdc180b8b3dc3e1c00d5f296a154",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5005,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-07",
+      "sha256": "ab100709bce467e1cef16143992e2c3280a3473fe1ebbed804547dbbac084ec9",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5038,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-08",
+      "sha256": "af09e3ae15613716a28bfdcb53e875549776c95d51866411133e0b470db3c44c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4830,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-09",
+      "sha256": "29020e0691fa78b3dc1608fe11b9b3edd7f01c1ca85d357e6be7399eebf654e7",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4974,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-10",
+      "sha256": "3a65e20dae8504c2ced67ba06b7de2bacd6be1e14eb39383695e7a6218935ba3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5036,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-11",
+      "sha256": "8050e447af58622edb1fa4f7175f8a58d109d739b018f9b58f064326b8fcb814",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5302,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-12",
+      "sha256": "7d2bfe8505da7823aacd280604459145ab5507948242392ac22b34168b0cf327",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5248,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-01",
+      "sha256": "d4466b3db2c29bdd418ce9a0ec2309e13d0614f83c047acfc8541064a2d2b3b3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4836,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-02",
+      "sha256": "aea922a38123ef0f2ae177ec60f78dd0640f421c3baad345185994d151dc2dbc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5195,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-03",
+      "sha256": "62f62a9f39783cce6d70bc3768a5ce108a96607d1f8f02e015a64f0cc28f097b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4960,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-04",
+      "sha256": "c9d0fe3dd4229e7cba22a740733875ad6fb66660bafc7c25c4d6a4e57bb3bce8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5168,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-05",
+      "sha256": "67b1360a95f83ffb06b005fd188d4c095bf99600adb6dbbd58239340cffe504a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4886,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-06",
+      "sha256": "cf241d350c820791c06ffe4d6774bb32168e4e915d2a6d33e7b3021f71337704",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5202,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-07",
+      "sha256": "45856f4e082dae724d1848d34c4368a278970a226d5483f64b8d7f20401252d0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5219,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-08",
+      "sha256": "c1c09d06bc080ca3096ad9f53cbd0fab7e3037d813412ef8e894b24fbfdbdfd1",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4962,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-09",
+      "sha256": "88cbdf2045ea23e8c1b3457a7c456bdf4a09c21d507850fdc1d51603606e031c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5203,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-10",
+      "sha256": "319fea7d03f4becd3c9f39d814624e155c4f5a9627f40f1152382547b4dbafbb",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5050,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-11",
+      "sha256": "b72305b7cc4695e2fa68fe7b48b64692ff5052250d78829a4335dd21595dd42b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5044,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-12",
+      "sha256": "5f6e464a2a318090db23c789f4f9042e4e29573f4bf45bf3c1f4cd4538159635",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/LTCUSDT/8h/LTCUSDT-8h-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 669,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-01",
+      "sha256": "563b3ac2db75623a64a097c38c38ee0fedb0503fca5abdc768c1c6c2929cef0d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 756,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-02",
+      "sha256": "7710a9586b750eeb54c2df13a5b7e4179dd278e1c7e85be7f94f0dd6b0927a54",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 944,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-03",
+      "sha256": "b27b515d32e4fb842f929714b6c764f09d03f8794dedf2f7cec3976b5cfdb986",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 815,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-04",
+      "sha256": "e5b8ec9f7271e6e9ee7026dc25d7cdb9af020aff1b84ca55806ce6111f94dc6a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 748,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-05",
+      "sha256": "f4c1b77749352ca73babf231758f9d113228f4a336b1264e285a31ca5c2fb815",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 746,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-06",
+      "sha256": "aa4e0d8e5ce40f0ba78946d4149dfbdcee249deb9266704edf8d5baff9d0cbe9",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 873,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-07",
+      "sha256": "d5838bf2de1bcfa03e9dc22a580a40a946b3dc6ee0a14bc2318dc9aa190d9cfc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 918,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-08",
+      "sha256": "dc4fa08df4e5d16d554a0c7af13730bfeb4890f7736c47774799c87154318014",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 872,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-09",
+      "sha256": "31042156b111a01cbc07aa0760a1fc8abcba1104fd581c6e6c60f7d768adc96d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 765,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-10",
+      "sha256": "59cfe0decf8b9b1e1a8904c847302e0d86e8b56cef938ac47514a1c232f889dd",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 765,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-11",
+      "sha256": "436568f53dc359d271647f03ae9de8eadf66e3610472dc0c4858466bd77779ee",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 794,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-12",
+      "sha256": "2f3a1b448ee44168eff55ce2f1c613822726084dc625347f5fde5d45f7d08dc2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 756,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-01",
+      "sha256": "0ba4ae7a317bf2d4d708cdcfabfca13332c9e87ca2875b89e968ab6368234cfb",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 804,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-02",
+      "sha256": "8c30729e7412ed01cb0dc5237432f47e6316fbe50465d4a6d95360db04e6c8f6",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 914,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-03",
+      "sha256": "d4b7be682d103815845bd1e6d8d3f7b420577ed55b91a0471ae70581cd7317b6",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 892,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-04",
+      "sha256": "e84071807012cee4af78727a72862e87bfa8afe7993c478a531674358fe15aec",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 880,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-05",
+      "sha256": "ade502ee0d0be2a666ec94f8361525808b7b911fa9e576a27bce326e06b4edf6",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 909,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-06",
+      "sha256": "9159d2d6e16e41b82f77f51f0005038d6d718a3b6222604a5209a2ce92e0ad1c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 813,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-07",
+      "sha256": "942cd83f944849728142ce40a74581a59f0652d68d5606a5d073c8c82c552abd",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 878,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-08",
+      "sha256": "442ef6b2ac4fd75879f1d9e0dbf7b8c73223778d79049fe557e57b5e3ec3d599",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 876,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-09",
+      "sha256": "d894fe4b8535b1abd3726a19affb4bc51bcd5414a427c371a88bdd3140d47939",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 922,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-10",
+      "sha256": "a350099f02341e7feda8bf5c1b89e704234883656147a7643dd1e0d61e72b250",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 963,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-11",
+      "sha256": "39c5faa4155fd1685fa7cce6889a25b243ac84b4d6851224f41902a4e93d0eb5",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 970,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-12",
+      "sha256": "19b12c1ea4d4e179a99eecdff14bafa61197d2c8aee20928735ea95fa385e919",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/LTCUSDT/LTCUSDT-fundingRate-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1767225599999,
+      "interval": "8h",
+      "kind": "candleSnapshot",
+      "rows": 2194,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1705766399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1707494399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1705766400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1709222399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1707494400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1710950399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1709222400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1712678399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1710950400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1714406399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1712678400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1716134399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1714406400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1717862399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1716134400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1719590399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1717862400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1721318399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1719590400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1723046399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1721318400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1724774399999,
+      "kind": "fundingHistory",
+      "rows": 479,
+      "startTime": 1723046400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1726502399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1724774400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1728230399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1726502400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1729958399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1728230400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1731686399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1729958400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1733414399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1731686400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1735142399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1733414400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1736870399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1735142400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1738598399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1736870400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1740326399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1738598400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1742054399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1740326400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1743782399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1742054400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1745510399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1743782400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1747238399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1745510400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1748966399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1747238400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1750694399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1748966400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1752422399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1750694400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1754150399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1752422400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1755878399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1754150400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1757606399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1755878400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1759334399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1757606400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1761062399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1759334400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1762790399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1761062400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1764518399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1762790400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1766246399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1764518400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "LTC",
+      "endTime": 1767225599999,
+      "kind": "fundingHistory",
+      "rows": 272,
+      "startTime": 1766246400000,
+      "venue": "Hyperliquid"
+    }
+  ],
+  "trialNumber": 33
+}

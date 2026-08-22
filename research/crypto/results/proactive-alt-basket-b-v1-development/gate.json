@@ -1,0 +1,31 @@
+{
+  "experimentId": "proactive-alt-basket-b-v1",
+  "trialNumber": 33,
+  "mode": "development",
+  "checks": {
+    "positive": true,
+    "annualizedReturn": false,
+    "sharpe": true,
+    "drawdown": true,
+    "margin": true,
+    "stress": true,
+    "activity": true
+  },
+  "developmentGatePass": false,
+  "finalAccessAuthorizedByGate": false,
+  "basket": {
+    "netReturn": 0.0933430934683599,
+    "annualizedReturn": 0.04561983424345817,
+    "sharpe": 3.681197477982482,
+    "maxDrawdown": -0.005354208126466586,
+    "startValue": 10000,
+    "endValue": 10933.430934683598,
+    "elapsedDays": 730.6666666666666,
+    "assetsWithActivity": 4,
+    "anyMarginBreach": false,
+    "allGapStressPass": true,
+    "totalModeledCosts": 205.3631142670346
+  },
+  "realMoneyAllowed": false,
+  "antiRescueRule": "After the first Trial 33 development economic output, no scientific parameter, asset, notional, stress buffer, collateral target, transfer cost, clock rule, or gate may change under Trial 33."
+}
