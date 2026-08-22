@@ -1,0 +1,42 @@
+{
+  "experimentId": "source-qualified-risk-capped-carry-v1",
+  "trialNumber": 23,
+  "mode": "final",
+  "generatedAt": "2026-08-22T03:49:11.480Z",
+  "checks": {
+    "positiveFinalBasketNetReturn": {
+      "pass": false,
+      "observed": 0
+    },
+    "minimumFinalBasketSharpe": {
+      "pass": false,
+      "observed": 0,
+      "threshold": 0.75
+    },
+    "maximumAllowedFinalBasketDrawdown": {
+      "pass": true,
+      "observed": 0,
+      "threshold": -0.02
+    },
+    "minimumFinalCompletedRoundTrips": {
+      "pass": false,
+      "observed": 0,
+      "threshold": 1
+    },
+    "minimumFinalSleevesWithActivity": {
+      "pass": false,
+      "observed": 0,
+      "threshold": 1
+    },
+    "allFrozenRiskChecks": {
+      "pass": true
+    },
+    "exactSourceUnionForBothSleeves": {
+      "pass": true
+    }
+  },
+  "promotionEligible": false,
+  "promotionScope": "none",
+  "realMoneyAllowed": false,
+  "antiRescueRule": "No scientific parameter may change after first Trial 23 development economic output."
+}
