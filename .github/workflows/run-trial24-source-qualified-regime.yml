@@ -1,0 +1,130 @@
+name: Execute frozen Trial 24 source-qualified regime
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/run-trial24-source-qualified-regime.yml']
+  workflow_dispatch:
+permissions: {contents: write}
+concurrency:
+  group: trial24-source-qualified-regime
+  cancel-in-progress: false
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: research/source-qualified-regime-v2, fetch-depth: 1}
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Preflight frozen Trial 24
+        run: |
+          set -euo pipefail
+          test ! -e research/crypto/results/source-qualified-regime-v2-development/summary.json
+          test ! -e research/crypto/results/source-qualified-regime-v2-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/source-qualified-regime-v2.json'))
+          assert m['experimentId']=='source-qualified-regime-v2' and m['trialNumber']==24 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['ETHUSDT','BNBUSDT']
+          assert m['assetSelection']['economicValuesUsedForSelection'] is False
+          assert m['developmentWindow']['economicOutputObservedAtFreeze'] is False
+          assert m['finalHoldout']['derivativeRowsObservedAtFreeze'] is False
+          assert m['portfolio']['futuresCollateralReservePctOfSleeveWhenActive']==0.80
+          assert m['signal']['entryAnnualizedTrailingFundingThreshold']==0.10
+          assert m['signal']['exitAnnualizedTrailingFundingThreshold']==0.03
+          assert m['riskControl']['maximumActiveBoundariesBeforeReanchor']==180
+          assert m['riskControl']['maximumPerpetualMarkNotionalPctOfCurrentSleeveEquityBeforeReanchor']==0.25
+          PY
+          node --check research/crypto/source-qualified-regime-v2-evaluate.js
+          node --check research/crypto/source-qualified-regime-v2-gate.js
+          node --check research/crypto/source-qualified-risk-capped-evaluate.js
+          python -m py_compile research/crypto/prepare-source-qualified-regime-v2-window.py research/crypto/lib/carry_source_union.py
+          python tests/test_prepare_carry_data.py
+      - name: Acquire exact development sources
+        run: |
+          set -euo pipefail
+          python research/crypto/prepare-source-qualified-regime-v2-window.py research/crypto/manifests/source-qualified-regime-v2.json development ETHUSDT /tmp/t24-eth.csv /tmp/t24-eth-src.json
+          python research/crypto/prepare-source-qualified-regime-v2-window.py research/crypto/manifests/source-qualified-regime-v2.json development BNBUSDT /tmp/t24-bnb.csv /tmp/t24-bnb-src.json
+      - name: Verify development sources before economics
+        run: |
+          python - <<'PY'
+          import json
+          for s,p in [('ETHUSDT','eth'),('BNBUSDT','bnb')]:
+            x=json.load(open(f'/tmp/t24-{p}-src.json')); c=x['coverage']
+            assert x['experimentId']=='source-qualified-regime-v2' and x['trialNumber']==24 and x['mode']=='development' and x['symbol']==s and x['economicResultCalculated'] is False
+            assert c['expectedBoundaryRows']==c['synchronizedRows'] and c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+      - name: Observe frozen development once
+        run: >-
+          node research/crypto/source-qualified-regime-v2-evaluate.js
+          research/crypto/manifests/source-qualified-regime-v2.json development
+          /tmp/t24-eth.csv /tmp/t24-bnb.csv
+          research/crypto/results/source-qualified-regime-v2-development/summary.json
+      - name: Apply frozen development gate
+        id: dev
+        run: |
+          set -euo pipefail
+          node research/crypto/source-qualified-regime-v2-gate.js \
+            research/crypto/manifests/source-qualified-regime-v2.json development \
+            research/crypto/results/source-qualified-regime-v2-development/summary.json \
+            /tmp/t24-eth-src.json /tmp/t24-bnb-src.json \
+            research/crypto/results/source-qualified-regime-v2-development/gate.json
+          cp /tmp/t24-eth-src.json research/crypto/results/source-qualified-regime-v2-development/eth-sources.json
+          cp /tmp/t24-bnb-src.json research/crypto/results/source-qualified-regime-v2-development/bnb-sources.json
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          print('pass=' + ('true' if json.load(open('research/crypto/results/source-qualified-regime-v2-development/gate.json'))['developmentGatePass'] else 'false'))
+          PY
+          git config user.name 'theoldtrader-research-bot'; git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/source-qualified-regime-v2-development
+          git commit -m 'Observe Trial 24 source-qualified regime development'
+          git push origin HEAD:research/source-qualified-regime-v2
+      - name: Acquire exact final sources
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          python research/crypto/prepare-source-qualified-regime-v2-window.py research/crypto/manifests/source-qualified-regime-v2.json final ETHUSDT /tmp/t24-eth-final.csv /tmp/t24-eth-final-src.json --confirm-final YES
+          python research/crypto/prepare-source-qualified-regime-v2-window.py research/crypto/manifests/source-qualified-regime-v2.json final BNBUSDT /tmp/t24-bnb-final.csv /tmp/t24-bnb-final-src.json --confirm-final YES
+      - name: Verify final sources before economics
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          python - <<'PY'
+          import json
+          for s,p in [('ETHUSDT','eth'),('BNBUSDT','bnb')]:
+            x=json.load(open(f'/tmp/t24-{p}-final-src.json')); c=x['coverage']
+            assert x['mode']=='final' and x['symbol']==s and x['economicResultCalculated'] is False
+            assert c['expectedBoundaryRows']==c['synchronizedRows'] and c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          PY
+      - name: Observe frozen final once
+        if: steps.dev.outputs.pass == 'true'
+        run: >-
+          node research/crypto/source-qualified-regime-v2-evaluate.js
+          research/crypto/manifests/source-qualified-regime-v2.json final
+          /tmp/t24-eth-final.csv /tmp/t24-bnb-final.csv
+          research/crypto/results/source-qualified-regime-v2-final/summary.json --confirm-final YES
+      - name: Apply frozen promotion gate and commit final evidence
+        if: steps.dev.outputs.pass == 'true'
+        run: |
+          set -euo pipefail
+          node research/crypto/source-qualified-regime-v2-gate.js \
+            research/crypto/manifests/source-qualified-regime-v2.json final \
+            research/crypto/results/source-qualified-regime-v2-final/summary.json \
+            /tmp/t24-eth-final-src.json /tmp/t24-bnb-final-src.json \
+            research/crypto/results/source-qualified-regime-v2-final/promotion.json
+          cp /tmp/t24-eth-final-src.json research/crypto/results/source-qualified-regime-v2-final/eth-sources.json
+          cp /tmp/t24-bnb-final-src.json research/crypto/results/source-qualified-regime-v2-final/bnb-sources.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          g=json.load(open('research/crypto/results/source-qualified-regime-v2-final/promotion.json'))
+          if g.get('promotionEligible'):
+            s=json.load(open('research/crypto/results/source-qualified-regime-v2-final/summary.json'))
+            Path('research/crypto/results/source-qualified-regime-v2-final/PROMOTED.md').write_text('# Trial 24 paper-baseline promotion\n\nComplete pre-frozen one-shot final gate passed. Real-money trading remains forbidden.\n\nFinal net return: %.6f%%\n\nFinal Sharpe: %.4f\n\nFinal max drawdown: %.6f%%\n' % (100*s['basket']['netReturn'],s['basket']['sharpe'],100*s['basket']['maxDrawdown']))
+          PY
+          git pull --ff-only origin research/source-qualified-regime-v2
+          git add research/crypto/results/source-qualified-regime-v2-final
+          git commit -m 'Observe Trial 24 source-qualified regime final'
+          git push origin HEAD:research/source-qualified-regime-v2
