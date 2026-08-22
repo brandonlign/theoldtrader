@@ -1,0 +1,47 @@
+name: Watch corrected Trials 19 and 20
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/watch-trials19-20.yml']
+permissions:
+  actions: write
+  contents: read
+jobs:
+  trial19:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch and watch Trial 19 recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          before=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow recover-trial19-funding-regime.yml --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+          gh workflow run recover-trial19-funding-regime.yml --repo "$GITHUB_REPOSITORY" --ref main
+          id=0
+          for i in $(seq 1 30); do
+            sleep 2
+            id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow recover-trial19-funding-regime.yml --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+            if [ "$id" != "0" ] && [ "$id" != "$before" ]; then break; fi
+          done
+          test "$id" != "0" && test "$id" != "$before"
+          echo "Trial 19 recovery run: $id"
+          gh run watch "$id" --repo "$GITHUB_REPOSITORY" --exit-status --interval 5
+  trial20:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch and watch Trial 20 recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          before=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow recover-trial20-venue-native.yml --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+          gh workflow run recover-trial20-venue-native.yml --repo "$GITHUB_REPOSITORY" --ref main
+          id=0
+          for i in $(seq 1 30); do
+            sleep 2
+            id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow recover-trial20-venue-native.yml --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+            if [ "$id" != "0" ] && [ "$id" != "$before" ]; then break; fi
+          done
+          test "$id" != "0" && test "$id" != "$before"
+          echo "Trial 20 recovery run: $id"
+          gh run watch "$id" --repo "$GITHUB_REPOSITORY" --exit-status --interval 5
