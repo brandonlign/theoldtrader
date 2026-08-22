@@ -1,0 +1,69 @@
+{
+  "experimentId": "collateral-rebalanced-crossvenue-v1",
+  "trialNumber": 28,
+  "mode": "development",
+  "generatedAt": "2026-08-22T05:27:55.063360Z",
+  "basket": {
+    "netReturn": 0.007792675250520853,
+    "annualizedReturn": 0.0038878875740506746,
+    "sharpe": 0.27737764778708685,
+    "maxDrawdown": -0.02508694697331393,
+    "startValue": 10000,
+    "endValue": 10077.92675250521,
+    "elapsedDays": 730.6666666666666,
+    "assetsWithActivity": 2,
+    "anyMarginBreach": false,
+    "allGapStressPass": false,
+    "totalModeledCosts": 1189.6690151473226
+  },
+  "sleeves": {
+    "BTC": {
+      "netReturn": 0.025405039445877575,
+      "annualizedReturn": 0.01261995414009709,
+      "sharpe": 0.6866534836382773,
+      "maxDrawdown": -0.019320509906005423,
+      "startValue": 5000,
+      "endValue": 5127.025197229388,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": false,
+      "active": true,
+      "collateralRebalances": 104,
+      "positionReanchors": 24,
+      "grossCollateralTransferred": 19065.89330465778,
+      "transferCosts": 9.532946652328897,
+      "tradingCosts": 590.6136316900094,
+      "totalModeledCosts": 600.1465783423382,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    },
+    "ETH": {
+      "netReturn": -0.009819688944835758,
+      "annualizedReturn": -0.0049208373619087364,
+      "sharpe": -0.17995961346591333,
+      "maxDrawdown": -0.031343377820691076,
+      "startValue": 5000,
+      "endValue": 4950.901555275821,
+      "elapsedDays": 730.6666666666666,
+      "marginBreach": null,
+      "allGapStressPass": false,
+      "active": true,
+      "collateralRebalances": 104,
+      "positionReanchors": 24,
+      "grossCollateralTransferred": 29126.087250283224,
+      "transferCosts": 14.56304362514161,
+      "tradingCosts": 574.9593931798427,
+      "totalModeledCosts": 589.5224368049843,
+      "settlementCountDistribution": {
+        "7": 21,
+        "8": 2152,
+        "9": 20
+      }
+    }
+  },
+  "implementation": "weekly-collateral-rebalance-monthly-notional-reanchor-v1",
+  "realMoneyAllowed": false
+}

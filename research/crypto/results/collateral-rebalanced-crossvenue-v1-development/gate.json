@@ -1,0 +1,31 @@
+{
+  "experimentId": "collateral-rebalanced-crossvenue-v1",
+  "trialNumber": 28,
+  "mode": "development",
+  "checks": {
+    "positive": true,
+    "annualizedReturn": false,
+    "sharpe": false,
+    "drawdown": true,
+    "margin": true,
+    "stress": false,
+    "activity": true
+  },
+  "developmentGatePass": false,
+  "finalAccessAuthorizedByGate": false,
+  "basket": {
+    "netReturn": 0.007792675250520853,
+    "annualizedReturn": 0.0038878875740506746,
+    "sharpe": 0.27737764778708685,
+    "maxDrawdown": -0.02508694697331393,
+    "startValue": 10000,
+    "endValue": 10077.92675250521,
+    "elapsedDays": 730.6666666666666,
+    "assetsWithActivity": 2,
+    "anyMarginBreach": false,
+    "allGapStressPass": false,
+    "totalModeledCosts": 1189.6690151473226
+  },
+  "realMoneyAllowed": false,
+  "antiRescueRule": "After the first Trial 28 development economic output, no scientific parameter, asset, notional, collateral target, transfer cadence, re-anchor cadence, cost, clock rule, or gate may change under Trial 28."
+}
