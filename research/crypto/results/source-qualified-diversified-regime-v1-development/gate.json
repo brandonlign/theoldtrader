@@ -1,0 +1,43 @@
+{
+  "experimentId": "source-qualified-diversified-regime-v1",
+  "trialNumber": 25,
+  "mode": "development",
+  "generatedAt": "2026-08-22T04:01:44.034Z",
+  "checks": {
+    "positiveBasketNetReturn": {
+      "pass": true,
+      "observed": 0.013777240441428473
+    },
+    "minimumBasketSharpe": {
+      "pass": true,
+      "observed": 2.5896993213808708,
+      "threshold": 0.8
+    },
+    "maximumAllowedBasketDrawdown": {
+      "pass": true,
+      "observed": -0.001285189389324648,
+      "threshold": -0.02
+    },
+    "minimumCompletedRoundTrips": {
+      "pass": true,
+      "observed": 40,
+      "threshold": 4
+    },
+    "minimumSleevesWithActivity": {
+      "pass": true,
+      "observed": 4,
+      "threshold": 2
+    },
+    "allFrozenRiskChecks": {
+      "pass": true
+    },
+    "exactSourceUnionForAllSleeves": {
+      "pass": true
+    }
+  },
+  "developmentGatePass": true,
+  "finalAccessAuthorizedByGate": true,
+  "promotionScope": "none",
+  "realMoneyAllowed": false,
+  "antiRescueRule": "After first Trial 25 development economic output, no scientific parameter or gate may change under Trial 25."
+}
