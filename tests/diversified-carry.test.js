@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+const repo=process.cwd(),manifest=path.join(repo,'research/crypto/manifests/diversified-carry-v1.json'),evaluator=path.join(repo,'research/crypto/diversified-carry-evaluate.js'),start=Date.parse('2022-01-01T00:00:00Z'),end=Date.parse('2026-01-01T00:00:00Z'),step=28800000,symbols=['AVAXUSDT','DOTUSDT','ATOMUSDT','ETCUSDT','FILUSDT','NEARUSDT'];
+function write(file){const rows=['timestamp,raw_funding_timestamp,funding_timestamp_skew_ms,spot_price,perp_exec_price,perp_mark_price,funding_rate'];for(let t=start;t<end;t+=step){const iso=new Date(t).toISOString();rows.push(`${iso},${iso},0,100,100,100,0.0001`);}assert.equal(rows.length-1,4383);fs.writeFileSync(file,rows.join('\n')+'\n');}
+test('Trial 21 six-sleeve evaluator preserves positive flat-price funding carry and frozen tail stress',()=>{const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'trial21-'));try{const args=[evaluator,manifest,'development',path.join(tmp,'summary.json')];for(const s of symbols){const f=path.join(tmp,`${s}.csv`);write(f);args.push(`${s}=${f}`);}const run=spawnSync(process.execPath,args,{encoding:'utf8'});assert.equal(run.status,0,`${run.stdout}\n${run.stderr}`);const r=JSON.parse(fs.readFileSync(path.join(tmp,'summary.json'),'utf8'));assert.equal(r.trialNumber,21);assert.equal(r.positiveSleeveCount,6);assert.ok(r.basket.netReturn>0.04,r.basket);assert.ok(r.basket.sharpe>1,r.basket);assert.ok(r.basket.maxDrawdown>-0.015,r.basket);for(const s of symbols){assert.equal(r.sleeves[s].margin.breached,false);assert.ok(Object.values(r.sleeves[s].margin.gapStress).every(x=>x.breached===false));}}finally{fs.rmSync(tmp,{recursive:true,force:true});}});
