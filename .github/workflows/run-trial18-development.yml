@@ -1,0 +1,91 @@
+name: Execute frozen Trial 18 BNB XRP carry development
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/run-trial18-development.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: execute-trial18-alt-carry-development
+  cancel-in-progress: false
+
+jobs:
+  evaluate-development:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Check out frozen Trial 18 branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/alt-carry-basket-v2
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Require frozen pristine development and final slots
+        run: |
+          set -euo pipefail
+          test -f research/crypto/manifests/alt-carry-basket-v2.json
+          test ! -e research/crypto/results/alt-carry-basket-v2-development/summary.json
+          test ! -e research/crypto/results/alt-carry-basket-v2-final/summary.json
+          python - <<'PY'
+          import json
+          m=json.load(open('research/crypto/manifests/alt-carry-basket-v2.json'))
+          assert m['experimentId']=='alt-carry-basket-v2' and m['trialNumber']==18 and m['status']=='FROZEN_PRE_DEVELOPMENT'
+          assert m['assetSelection']['symbols']==['BNBUSDT','XRPUSDT']
+          assert m['assetSelection']['dataPreviouslyObservedAtFreeze']['fundingPerpetualExecutionMarkAndCarryEconomics'] is False
+          assert m['developmentWindow']['derivativeRowsObservedAtFreeze'] is False
+          assert m['finalHoldout']['derivativeRowsObservedAtFreeze'] is False
+          PY
+      - name: Validate implementation before derivative acquisition
+        run: |
+          set -euo pipefail
+          npm install
+          node --check research/crypto/alt-carry-basket-v2-evaluate.js
+          node --check research/crypto/alt-carry-basket-v2-gate.js
+          python -m py_compile research/crypto/prepare-alt-carry-v2-window.py
+          node --test tests/crypto-carry-evaluate.test.js
+          python -m unittest tests/test_prepare_carry_data.py
+      - name: Acquire untouched BNB development carry data only
+        run: python research/crypto/prepare-alt-carry-v2-window.py research/crypto/manifests/alt-carry-basket-v2.json development BNBUSDT /tmp/trial18-bnb-dev.csv /tmp/trial18-bnb-dev-sources.json
+      - name: Acquire untouched XRP development carry data only
+        run: python research/crypto/prepare-alt-carry-v2-window.py research/crypto/manifests/alt-carry-basket-v2.json development XRPUSDT /tmp/trial18-xrp-dev.csv /tmp/trial18-xrp-dev-sources.json
+      - name: Verify exact development source coverage before economics
+        run: |
+          python - <<'PY'
+          import json
+          for symbol,prefix in [('BNBUSDT','bnb'),('XRPUSDT','xrp')]:
+              s=json.load(open(f'/tmp/trial18-{prefix}-dev-sources.json')); c=s['coverage']
+              assert s['experimentId']=='alt-carry-basket-v2' and s['trialNumber']==18 and s['mode']=='development' and s['symbol']==symbol
+              assert s['economicResultCalculated'] is False
+              assert c['expectedBoundaryRows']==4383 and c['synchronizedRows']==4383
+              assert c['overlapMismatchCount']==0 and c['missingSpotRows']==0 and c['missingPerpRows']==0 and c['missingMarkRows']==0
+          print('Trial 18 exact BNB/XRP development source coverage verified before economics.')
+          PY
+      - name: Observe frozen Trial 18 development once
+        run: node research/crypto/alt-carry-basket-v2-evaluate.js research/crypto/manifests/alt-carry-basket-v2.json development /tmp/trial18-bnb-dev.csv /tmp/trial18-xrp-dev.csv research/crypto/results/alt-carry-basket-v2-development/summary.json
+      - name: Apply pre-frozen Trial 18 development gate
+        run: node research/crypto/alt-carry-basket-v2-gate.js research/crypto/manifests/alt-carry-basket-v2.json development research/crypto/results/alt-carry-basket-v2-development/summary.json /tmp/trial18-bnb-dev-sources.json /tmp/trial18-xrp-dev-sources.json research/crypto/results/alt-carry-basket-v2-development/gate.json
+      - name: Preserve full source provenance
+        run: |
+          cp /tmp/trial18-bnb-dev-sources.json research/crypto/results/alt-carry-basket-v2-development/bnb-sources.json
+          cp /tmp/trial18-xrp-dev-sources.json research/crypto/results/alt-carry-basket-v2-development/xrp-sources.json
+      - name: Commit immutable Trial 18 development evidence
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -- research/crypto/results/alt-carry-basket-v2-development
+          git commit -m 'Observe Trial 18 BNB XRP carry development'
+          git push origin HEAD:research/alt-carry-basket-v2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alt-carry-basket-v2-development
+          path: research/crypto/results/alt-carry-basket-v2-development
+          if-no-files-found: error
