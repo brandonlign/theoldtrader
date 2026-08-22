@@ -1,0 +1,16 @@
+{
+  "coreTrial3CompatibleDatasetCanonicalJsonSha256": "08c61d8ef72a0e0fd0e0bd6f6bf4e0087d2829641b0444ce1ffe180f2e92f12d",
+  "datasetCanonicalJsonSha256": "70a2994f56df94dc33fcbaaadcd1671098a5a6b76b88e8b1cf4aeffd17006da9",
+  "experimentId": "cross-sectional-identity-clean-v1",
+  "finalHoldoutRowsAcquired": 0,
+  "firstObservationSourceCount": 30,
+  "formationSourceManifestSha256": "51f69e8b3ad0d8e150c785582322a53cedb23622b06484d1c33d195fa8a629af",
+  "identityExcludedSymbols": [
+    "LUNAUSDT"
+  ],
+  "mode": "development",
+  "sourceArchiveCount": 1119,
+  "sourceManifestSha256": "27522c6b9853e2e984faf5c737e85dab97a366afa73761c7e4596a8071ca530c",
+  "trialNumber": 14,
+  "universeMembershipSha256": "c6a1b7d38bf7388bb0d9f032809bad47adcb6627e48fffaf54195c61a526dfcc"
+}

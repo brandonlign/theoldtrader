@@ -1,0 +1,11 @@
+{
+  "checks": {
+    "candidateNetReturnGreaterThanCash": true,
+    "medianDevelopmentFoldSharpeStrictlyPositive": true,
+    "noDataIntegrityException": true,
+    "positiveReturnFoldsStrictMajority": false
+  },
+  "frozenBeforeDevelopment": true,
+  "pass": false,
+  "rule": "Failure locks Trial 14 without opening the 2026 final holdout; passing permits only a separately protected one-shot final evaluation."
+}
