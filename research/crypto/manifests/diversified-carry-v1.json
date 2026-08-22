@@ -1,0 +1,96 @@
+{
+  "experimentId": "diversified-carry-v1",
+  "trialNumber": 21,
+  "frozenAt": "2026-08-22T03:09:50Z",
+  "status": "FROZEN_PRE_DEVELOPMENT",
+  "paperOnly": true,
+  "realMoneyAllowed": false,
+  "strategyFamily": "six-sleeve diversified spot-perpetual funding and basis carry with venue-native conservative friction",
+  "motivation": "Freeze a broader cross-asset replication of the simple fully collateralized carry mechanism before observing Trial 20 real LTC/TRX economics. Diversification is specified prospectively to test whether funding carry is a broad cross-asset premium rather than an artifact of one or two symbols. The fee model is inherited unchanged from the already-frozen Trial 20 venue-native assumption, not selected from Trial 21 outcomes.",
+  "assetSelection": {
+    "symbols": ["AVAXUSDT", "DOTUSDT", "ATOMUSDT", "ETCUSDT", "FILUSDT", "NEARUSDT"],
+    "rule": "Select six longstanding liquid members of the previously frozen identity-clean 2022 liquidity universe that are not used by Trials 17-20 and whose Trial 21 funding/perpetual/basis histories have not been queried before freeze. Preserve the listed order; no post-result substitution is allowed.",
+    "sourceUniverse": "Trial 14 frozen identity-clean membership",
+    "dataPreviouslyObservedAtFreeze": {
+      "spotPriceHistoryMayHaveAppearedInPriorDirectionalResearch": true,
+      "fundingPerpetualExecutionMarkAndTrial21CarryEconomics": false
+    }
+  },
+  "portfolio": {
+    "startingEquity": 12000,
+    "sleeves": 6,
+    "sleeveStartingEquity": 2000,
+    "sleeveWeight": 0.16666666666666666,
+    "spotNotionalPctOfSleeveAtEntry": 0.15,
+    "futuresCollateralReservePctOfSleeve": 0.50,
+    "entryRule": "Enter every sleeve once at the first exact 8-hour funding boundary in the evaluation window; no funding-sign, basis-sign, or price forecast filter.",
+    "exitRule": "Exit every sleeve at the final exact 8-hour funding boundary strictly before window end.",
+    "position": "long spot and short exactly equal coin units of the matching Binance USD-M perpetual",
+    "rebalancing": "none",
+    "leverage": false
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 10,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 10,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10,
+    "inheritance": "Frozen before Trial 21 data by direct inheritance from Trial 20; no Trial 21 outcome informed these values."
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "developmentWindow": {
+    "startInclusive": "2022-01-01T00:00:00Z",
+    "endExclusive": "2026-01-01T00:00:00Z",
+    "derivativeRowsObservedAtFreeze": false
+  },
+  "finalHoldout": {
+    "startInclusive": "2026-01-01T00:00:00Z",
+    "endExclusive": "2026-08-01T00:00:00Z",
+    "oneShot": true,
+    "derivativeRowsObservedAtFreeze": false,
+    "accessRule": "No Trial 21 final derivative/funding row may be acquired unless the frozen development gate passes."
+  },
+  "dataRequirements": {
+    "venue": "Binance",
+    "interval": "8h",
+    "fundingTimestampNormalizationMaximumAbsoluteSkewMs": 60000,
+    "spot": "checksum-verified Binance Vision DAILY spot 8h klines",
+    "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M standard 8h klines",
+    "perpetualMark": "checksum-verified union of MONTHLY and DAILY USD-M 8h markPriceKlines; exact overlap agreement required",
+    "funding": "checksum-verified Binance Vision MONTHLY USD-M fundingRate archives",
+    "noInterpolation": true,
+    "rejectAnyMissingBoundary": true
+  },
+  "developmentGate": {
+    "positiveBasketNetReturn": true,
+    "minimumBasketSharpe": 1.0,
+    "maximumAllowedBasketDrawdown": -0.015,
+    "minimumPositiveSleeves": 4,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForAllSleeves": true,
+    "decision": "Every criterion must pass before final-holdout acquisition. Failure freezes Trial 21 without final access or in-place rescue."
+  },
+  "promotionCriteria": {
+    "positiveFinalBasketNetReturn": true,
+    "minimumFinalBasketSharpe": 1.0,
+    "maximumAllowedFinalBasketDrawdown": -0.015,
+    "minimumPositiveFinalSleeves": 4,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForAllSleeves": true,
+    "decision": "Every criterion must pass. Passing authorizes a separate paper-baseline promotion proposal only; never real-money trading."
+  },
+  "multipleTesting": {
+    "seriousTrialNumber": 21,
+    "frozenBeforeTrial20RealOutcomeObserved": true,
+    "newDerivativeInformationSet": true,
+    "noPostResultAssetCostOrWeightSubstitution": true
+  },
+  "antiRescueRule": "After the first Trial 21 development economic output, no asset, sleeve weight, collateral, sizing, date, cost, source rule, entry/exit rule, development gate, final gate, or stress may change under Trial 21."
+}
