@@ -1,0 +1,17 @@
+{
+  "coreTrial3CompatibleDatasetCanonicalJsonSha256": "185667a0061de3d9d755e2d9a77b0a3e1cbeb55fc5d810bf0bc0db7d432ebf40",
+  "datasetCanonicalJsonSha256": "a208c558f5089952f98148ddc5380ce2bdee9aa4fda7ed81e87c74e4705d4730",
+  "experimentId": "liquidity-core-v1",
+  "finalHoldoutEndExclusive": "2026-08-01T00:00:00Z",
+  "finalHoldoutStart": "2026-01-01T00:00:00Z",
+  "firstObservationSourceCount": 30,
+  "formationSourceManifestSha256": "51f69e8b3ad0d8e150c785582322a53cedb23622b06484d1c33d195fa8a629af",
+  "identityExcludedSymbols": [
+    "LUNAUSDT"
+  ],
+  "mode": "final",
+  "sourceArchiveCount": 1301,
+  "sourceManifestSha256": "03d3278dfadf10bfdfa35e5c1a4d0e0ead213b04da0c6f4a88cf43955fcb9f0a",
+  "trialNumber": 15,
+  "universeMembershipSha256": "c6a1b7d38bf7388bb0d9f032809bad47adcb6627e48fffaf54195c61a526dfcc"
+}

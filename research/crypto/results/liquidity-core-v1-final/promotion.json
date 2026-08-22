@@ -1,0 +1,47 @@
+{
+  "experimentId": "liquidity-core-v1",
+  "trialNumber": 15,
+  "generatedAt": "2026-08-22T02:13:55.168Z",
+  "promotionEligible": false,
+  "promotionScope": "none",
+  "realMoneyAllowed": false,
+  "checks": {
+    "positiveFinalNetReturn": {
+      "pass": false,
+      "observed": -0.14916355632973533
+    },
+    "positiveFinalSharpe": {
+      "pass": false,
+      "observed": -1.3626955765707696
+    },
+    "finalSharpeAbove15PctBtc": {
+      "pass": false,
+      "observedCandidate": -1.3626955765707696,
+      "observedBtc15Pct": -1.267708723215644
+    },
+    "maxDrawdownNoWorseThan35Pct": {
+      "pass": true,
+      "observed": -0.21464130176979623,
+      "threshold": -0.35
+    },
+    "noSingleAssetAbove70PctPositiveMarkedContribution": {
+      "pass": true,
+      "combinedMarkedContributionByAsset": {
+        "BTCUSDT": 1160.876929572074,
+        "ETHUSDT": -127.00866865410785,
+        "BNBUSDT": 2147.581092799094
+      },
+      "totalPositiveMarkedContribution": 3308.458022371168,
+      "largestPositiveAsset": "BNBUSDT",
+      "largestPositiveShare": 0.6491184347141649,
+      "threshold": 0.7,
+      "scope": "Trial 14 development comparator plus Trial 15 final marked contribution"
+    },
+    "noIntegrityOrUniverseException": {
+      "pass": true,
+      "status": "workflow_enforced",
+      "reason": "Frozen historical ranking, identity-clean membership, checksummed acquisition, no-interpolation rule, final boundary, selected-symbol identity, and overwrite protection are hard workflow/evaluator gates."
+    }
+  },
+  "rule": "Every criterion was frozen before Trial 15 final access. Failure freezes Trial 15 without rescue; passing authorizes only a separate paper-baseline promotion."
+}
