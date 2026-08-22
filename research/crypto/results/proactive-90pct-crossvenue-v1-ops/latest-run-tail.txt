@@ -1,0 +1,518 @@
+execute	Set up job	﻿2026-08-22T05:37:50.5235941Z Current runner version: '2.336.0'
+execute	Set up job	2026-08-22T05:37:50.5263307Z ##[group]Runner Image Provisioner
+execute	Set up job	2026-08-22T05:37:50.5264226Z Hosted Compute Agent
+execute	Set up job	2026-08-22T05:37:50.5264868Z Version: 20260729.566
+execute	Set up job	2026-08-22T05:37:50.5265597Z Commit: cf7153fe6e25b664e8693c24944bf2b00355d109
+execute	Set up job	2026-08-22T05:37:50.5266375Z Build Date: 2026-07-29T19:17:02Z
+execute	Set up job	2026-08-22T05:37:50.5267163Z Worker ID: {889b948b-2333-44b6-ad64-d996a4c17dbb}
+execute	Set up job	2026-08-22T05:37:50.5268153Z Azure Region: eastus
+execute	Set up job	2026-08-22T05:37:50.5268792Z ##[endgroup]
+execute	Set up job	2026-08-22T05:37:50.5270392Z ##[group]Operating System
+execute	Set up job	2026-08-22T05:37:50.5271115Z Ubuntu
+execute	Set up job	2026-08-22T05:37:50.5271652Z 24.04.4
+execute	Set up job	2026-08-22T05:37:50.5272392Z LTS
+execute	Set up job	2026-08-22T05:37:50.5273232Z ##[endgroup]
+execute	Set up job	2026-08-22T05:37:50.5273925Z ##[group]Runner Image
+execute	Set up job	2026-08-22T05:37:50.5274646Z Image: ubuntu-24.04
+execute	Set up job	2026-08-22T05:37:50.5275284Z Version: 20260816.277.1
+execute	Set up job	2026-08-22T05:37:50.5276409Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260816.277/images/ubuntu/Ubuntu2404-Readme.md
+execute	Set up job	2026-08-22T05:37:50.5278851Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260816.277
+execute	Set up job	2026-08-22T05:37:50.5279914Z ##[endgroup]
+execute	Set up job	2026-08-22T05:37:50.5281098Z ##[group]GITHUB_TOKEN Permissions
+execute	Set up job	2026-08-22T05:37:50.5283330Z Contents: write
+execute	Set up job	2026-08-22T05:37:50.5284172Z Metadata: read
+execute	Set up job	2026-08-22T05:37:50.5284805Z ##[endgroup]
+execute	Set up job	2026-08-22T05:37:50.5287531Z Secret source: Actions
+execute	Set up job	2026-08-22T05:37:50.5289515Z Prepare workflow directory
+execute	Set up job	2026-08-22T05:37:50.5633152Z Prepare all required actions
+execute	Set up job	2026-08-22T05:37:50.5684276Z Getting action download info
+execute	Set up job	2026-08-22T05:37:50.7670476Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+execute	Set up job	2026-08-22T05:37:50.9132204Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+execute	Set up job	2026-08-22T05:37:51.0946154Z Complete job name: execute
+execute	Run actions/checkout@v4	﻿2026-08-22T05:37:51.1742517Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1751623Z ##[group]Run actions/checkout@v4
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1752401Z with:
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1752907Z   ref: research/proactive-90pct-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1753523Z   fetch-depth: 1
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1754014Z   repository: brandonlign/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1758355Z   token: ***
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1758840Z   ssh-strict: true
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1759294Z   ssh-user: git
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1759747Z   persist-credentials: true
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1760264Z   clean: true
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1760719Z   sparse-checkout-cone-mode: true
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1761263Z   fetch-tags: false
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1761719Z   show-progress: true
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1762213Z   lfs: false
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1762641Z   submodules: false
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1763103Z   set-safe-directory: true
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1763631Z   allow-unsafe-pr-checkout: false
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.1764416Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2754922Z Syncing repository: brandonlign/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2757672Z ##[group]Getting Git version info
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2759115Z Working directory is '/home/runner/work/theoldtrader/theoldtrader'
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2760284Z [command]/usr/bin/git version
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2873995Z git version 2.55.0
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2911116Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2918946Z Temporarily overriding HOME='/home/runner/work/_temp/b77bdfc3-d347-4215-a9ee-d0af8882108f' before making global git config changes
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2920664Z Adding repository directory to the temporary git global config as a safe directory
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2926377Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/theoldtrader/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2982981Z Deleting the contents of '/home/runner/work/theoldtrader/theoldtrader'
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2987726Z ##[group]Initializing the repository
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.2994035Z [command]/usr/bin/git init /home/runner/work/theoldtrader/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3105189Z hint: Using 'master' as the name for the initial branch. This default branch name
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3106732Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3108052Z hint: to use in all of your new repositories, which will suppress this warning,
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3108991Z hint: call:
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3109482Z hint:
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3110098Z hint: 	git config --global init.defaultBranch <name>
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3110865Z hint:
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3111588Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3112596Z hint: 'development'. The just-created branch can be renamed via this command:
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3113394Z hint:
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3113874Z hint: 	git branch -m <name>
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3114384Z hint:
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3115062Z hint: Disable this message with "git config set advice.defaultBranchName false"
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3120915Z Initialized empty Git repository in /home/runner/work/theoldtrader/theoldtrader/.git/
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3133274Z [command]/usr/bin/git remote add origin https://github.com/brandonlign/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3180361Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3181291Z ##[group]Disabling automatic garbage collection
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3185232Z [command]/usr/bin/git config --local gc.auto 0
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3215144Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3215985Z ##[group]Setting up auth
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3222927Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3269928Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3656382Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3696311Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3925175Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.3963758Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.4221960Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.4261732Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.4271698Z ##[group]Fetching the repository
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.4274660Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +refs/heads/research/proactive-90pct-crossvenue-v1*:refs/remotes/origin/research/proactive-90pct-crossvenue-v1* +refs/tags/research/proactive-90pct-crossvenue-v1*:refs/tags/research/proactive-90pct-crossvenue-v1*
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7591227Z From https://github.com/brandonlign/theoldtrader
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7593373Z  * [new branch]      research/proactive-90pct-crossvenue-v1 -> origin/research/proactive-90pct-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7597558Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7599202Z ##[group]Determining the checkout info
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7607393Z [command]/usr/bin/git branch --list --remote origin/research/proactive-90pct-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7638394Z   origin/research/proactive-90pct-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7643709Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7649042Z [command]/usr/bin/git sparse-checkout disable
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7706181Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7741466Z ##[group]Checking out the ref
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7745942Z [command]/usr/bin/git checkout --progress --force -B research/proactive-90pct-crossvenue-v1 refs/remotes/origin/research/proactive-90pct-crossvenue-v1
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7885081Z Switched to a new branch 'research/proactive-90pct-crossvenue-v1'
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7890413Z branch 'research/proactive-90pct-crossvenue-v1' set up to track 'origin/research/proactive-90pct-crossvenue-v1'.
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7897352Z ##[endgroup]
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.7943872Z [command]/usr/bin/git log -1 --format=%H
+execute	Run actions/checkout@v4	2026-08-22T05:37:51.8056252Z 7eb36be89d35f26e36d7798bfc8eeb3bb3833451
+execute	Run actions/setup-python@v5	﻿2026-08-22T05:37:51.8283229Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8286211Z ##[group]Run actions/setup-python@v5
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8286808Z with:
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8287254Z   python-version: 3.12
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8287791Z   check-latest: false
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8292418Z   token: ***
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8292936Z   update-environment: true
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8293483Z   allow-prereleases: false
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8294004Z   freethreaded: false
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.8294486Z ##[endgroup]
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.9629188Z ##[group]Installed versions
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.9719847Z (node:2308) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.9722411Z (Use `node --trace-deprecation ...` to show where the warning was created)
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.9724064Z Successfully set up CPython (3.12.14)
+execute	Run actions/setup-python@v5	2026-08-22T05:37:51.9725708Z ##[endgroup]
+execute	Preflight frozen Trial 31	﻿2026-08-22T05:37:51.9989358Z ##[group]Run set -euo pipefail
+execute	Preflight frozen Trial 31	2026-08-22T05:37:51.9990203Z ^[[36;1mset -euo pipefail^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:51.9991187Z ^[[36;1mtest ! -e research/crypto/results/proactive-90pct-crossvenue-v1-development/summary.json^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:51.9992484Z ^[[36;1mtest ! -e research/crypto/results/proactive-90pct-crossvenue-v1-final/summary.json^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:51.9993423Z ^[[36;1mpython - <<'PY'^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:51.9993942Z ^[[36;1mimport json^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:51.9995020Z ^[[36;1mm=json.load(open('research/crypto/manifests/proactive-90pct-crossvenue-v1.json'))^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:51.9997348Z ^[[36;1massert m['trialNumber']==31 and m['status']=='FROZEN_PRE_DEVELOPMENT' and m['realMoneyAllowed'] is False^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:51.9999630Z ^[[36;1massert m['capital']['initialNotionalPctOfSleevePerLeg']==0.90^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0001105Z ^[[36;1massert m['literatureTarget']['initialVenueLeverage']==2.0^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0002963Z ^[[36;1massert m['multipleTesting']['trial30EconomicOutputObservedBeforeFreeze'] is False^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0004195Z ^[[36;1mPY^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0005296Z ^[[36;1mpython -m py_compile research/crypto/trial31_proactive_90.py^[[0m
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0082950Z shell: /usr/bin/bash -e {0}
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0083663Z env:
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0084253Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0085225Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0086135Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0086937Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0087780Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0089669Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Preflight frozen Trial 31	2026-08-22T05:37:52.0090445Z ##[endgroup]
+execute	Acquire development sources without economics	﻿2026-08-22T05:37:52.1265171Z ##[group]Run set -euo pipefail
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1266232Z ^[[36;1mset -euo pipefail^[[0m
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1267146Z ^[[36;1mmkdir -p /tmp/t31-dev^[[0m
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1270396Z ^[[36;1mpython research/crypto/trial31_proactive_90.py prepare research/crypto/manifests/proactive-90pct-crossvenue-v1.json development BTC /tmp/t31-dev/btc.csv /tmp/t31-dev/btc-sources.json^[[0m
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1275101Z ^[[36;1mpython research/crypto/trial31_proactive_90.py prepare research/crypto/manifests/proactive-90pct-crossvenue-v1.json development ETH /tmp/t31-dev/eth.csv /tmp/t31-dev/eth-sources.json^[[0m
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1318938Z shell: /usr/bin/bash -e {0}
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1319840Z env:
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1320769Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1322466Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1323987Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1325370Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1326821Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1328309Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Acquire development sources without economics	2026-08-22T05:37:52.1329375Z ##[endgroup]
+execute	Acquire development sources without economics	2026-08-22T05:40:05.5516936Z {
+execute	Acquire development sources without economics	2026-08-22T05:40:05.5523248Z   "coin": "BTC",
+execute	Acquire development sources without economics	2026-08-22T05:40:05.5523901Z   "mode": "development",
+execute	Acquire development sources without economics	2026-08-22T05:40:05.5524330Z   "rows": 2193,
+execute	Acquire development sources without economics	2026-08-22T05:40:05.5524994Z   "sha256": "b403c2d9c99b6ace261fb4b1802cd715d2e81bf8abbead08d811c58a5f33642f",
+execute	Acquire development sources without economics	2026-08-22T05:40:05.5525838Z   "economicsCalculated": false
+execute	Acquire development sources without economics	2026-08-22T05:40:05.5526194Z }
+execute	Acquire development sources without economics	2026-08-22T05:42:17.9581723Z {
+execute	Acquire development sources without economics	2026-08-22T05:42:17.9586093Z   "coin": "ETH",
+execute	Acquire development sources without economics	2026-08-22T05:42:17.9586495Z   "mode": "development",
+execute	Acquire development sources without economics	2026-08-22T05:42:17.9586866Z   "rows": 2193,
+execute	Acquire development sources without economics	2026-08-22T05:42:17.9587405Z   "sha256": "16a2158993874fd50e7a10abc72a620332145ef6851886a86c1bd1a0973ab60e",
+execute	Acquire development sources without economics	2026-08-22T05:42:17.9588379Z   "economicsCalculated": false
+execute	Acquire development sources without economics	2026-08-22T05:42:17.9588759Z }
+execute	Observe frozen development exactly once	﻿2026-08-22T05:42:17.9731345Z ##[group]Run set -euo pipefail
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9731730Z ^[[36;1mset -euo pipefail^[[0m
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9732773Z ^[[36;1mpython research/crypto/trial31_proactive_90.py evaluate research/crypto/manifests/proactive-90pct-crossvenue-v1.json development /tmp/t31-dev/btc.csv,/tmp/t31-dev/eth.csv research/crypto/results/proactive-90pct-crossvenue-v1-development/summary.json^[[0m
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9735096Z ^[[36;1mpython research/crypto/trial31_proactive_90.py gate research/crypto/manifests/proactive-90pct-crossvenue-v1.json development research/crypto/results/proactive-90pct-crossvenue-v1-development/summary.json research/crypto/results/proactive-90pct-crossvenue-v1-development/gate.json^[[0m
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9736558Z ^[[36;1mcp /tmp/t31-dev/*-sources.json research/crypto/results/proactive-90pct-crossvenue-v1-development/^[[0m
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9776247Z shell: /usr/bin/bash -e {0}
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9776512Z env:
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9776783Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9777289Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9777745Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9778411Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9778810Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9779209Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Observe frozen development exactly once	2026-08-22T05:42:17.9779547Z ##[endgroup]
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0827000Z {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0827813Z   "experimentId": "proactive-90pct-crossvenue-v1",
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0828892Z   "trialNumber": 31,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0829248Z   "mode": "development",
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0829626Z   "generatedAt": "2026-08-22T05:42:18.081768Z",
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0830041Z   "basket": {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0830342Z     "netReturn": 0.15557762976678569,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0830744Z     "annualizedReturn": 0.07496023890408132,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0831149Z     "sharpe": 5.470730131077766,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0831585Z     "maxDrawdown": -0.003962978760135183,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0831987Z     "startValue": 10000,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0832408Z     "endValue": 11555.776297667857,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0832786Z     "elapsedDays": 730.6666666666666,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0833176Z     "assetsWithActivity": 2,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0833541Z     "anyMarginBreach": false,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0833934Z     "allGapStressPass": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0834687Z     "totalModeledCosts": 171.11364258266696
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0835080Z   },
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0835337Z   "sleeves": {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0835610Z     "BTC": {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0835900Z       "netReturn": 0.2130419612707104,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0836304Z       "annualizedReturn": 0.10135758203957068,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0836744Z       "sharpe": 5.102658952348486,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0837118Z       "maxDrawdown": -0.00658317237052064,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0837507Z       "startValue": 5000,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0837842Z       "endValue": 6065.209806353552,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0838521Z       "elapsedDays": 730.6666666666666,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0838919Z       "marginBreach": null,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0839281Z       "allGapStressPass": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0839635Z       "active": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0839946Z       "proactiveCollateralRebalances": 545,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0840261Z       "riskTriggeredReanchors": 1,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0840580Z       "grossCollateralTransferred": 60912.80716805261,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0840909Z       "transferCosts": 30.45640358402633,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0841186Z       "tradingCosts": 70.71311825550616,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0841473Z       "totalModeledCosts": 101.16952183953249,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0841921Z       "minimumPreTransferStressExcessPctOfMaxLegNotional": 0.010621493561159292,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0842552Z       "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.048345087077872884,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0843016Z       "settlementCountDistribution": {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0843283Z         "7": 21,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0843685Z         "8": 2152,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0843888Z         "9": 20
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0844075Z       }
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0844250Z     },
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0844444Z     "ETH": {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0844734Z       "netReturn": 0.09811329826286119,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0845021Z       "annualizedReturn": 0.047897826610776795,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0845312Z       "sharpe": 3.3517047186510696,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0845580Z       "maxDrawdown": -0.00774530680020713,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0845868Z       "startValue": 5000,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0846110Z       "endValue": 5490.5664913143055,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0846372Z       "elapsedDays": 730.6666666666666,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0846640Z       "marginBreach": null,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0846888Z       "allGapStressPass": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0847133Z       "active": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0847383Z       "proactiveCollateralRebalances": 51,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0847690Z       "riskTriggeredReanchors": 1,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0848168Z       "grossCollateralTransferred": 18263.090456398146,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0848511Z       "transferCosts": 9.131545228199073,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0848801Z       "tradingCosts": 60.81257551493539,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0849085Z       "totalModeledCosts": 69.94412074313446,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0849538Z       "minimumPreTransferStressExcessPctOfMaxLegNotional": -0.0033020747016500136,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0850132Z       "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.04795640169402901,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0850582Z       "settlementCountDistribution": {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0850841Z         "7": 21,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0851034Z         "8": 2152,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0851225Z         "9": 20
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0851414Z       }
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0851587Z     }
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0851767Z   },
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0852033Z   "implementation": "proactive-stress-buffer-90pct-v1",
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0852379Z   "realMoneyAllowed": false
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.0852602Z }
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1486767Z {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1487197Z   "experimentId": "proactive-90pct-crossvenue-v1",
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1487671Z   "trialNumber": 31,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1488284Z   "mode": "development",
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1488618Z   "checks": {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1488905Z     "positive": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1489235Z     "annualizedReturn": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1489582Z     "sharpe": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1489882Z     "drawdown": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1490181Z     "margin": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1490675Z     "stress": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1490971Z     "activity": true
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1491255Z   },
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1491541Z   "developmentGatePass": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1491938Z   "finalAccessAuthorizedByGate": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1492326Z   "basket": {
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1492619Z     "netReturn": 0.15557762976678569,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1493011Z     "annualizedReturn": 0.07496023890408132,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1493410Z     "sharpe": 5.470730131077766,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1493808Z     "maxDrawdown": -0.003962978760135183,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1494205Z     "startValue": 10000,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1494532Z     "endValue": 11555.776297667857,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1494903Z     "elapsedDays": 730.6666666666666,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1495280Z     "assetsWithActivity": 2,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1495637Z     "anyMarginBreach": false,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1495994Z     "allGapStressPass": true,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1496360Z     "totalModeledCosts": 171.11364258266696
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1496741Z   },
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1497012Z   "realMoneyAllowed": false,
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1498580Z   "antiRescueRule": "After the first Trial 31 development economic output, no scientific parameter, asset, notional, stress buffer, collateral target, transfer cost, clock rule, or gate may change under Trial 31."
+execute	Observe frozen development exactly once	2026-08-22T05:42:18.1499859Z }
+execute	Commit immutable development evidence	﻿2026-08-22T05:42:18.1611063Z ##[group]Run set -euo pipefail
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1611413Z ^[[36;1mset -euo pipefail^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1611739Z ^[[36;1mgit config user.name theoldtrader-research-bot^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1612165Z ^[[36;1mgit config user.email actions@users.noreply.github.com^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1612677Z ^[[36;1mgit add research/crypto/results/proactive-90pct-crossvenue-v1-development^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1613225Z ^[[36;1mgit commit -m 'Observe Trial 31 proactive 90pct development'^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1613704Z ^[[36;1mgit pull --rebase origin research/proactive-90pct-crossvenue-v1^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1614184Z ^[[36;1mgit push origin HEAD:research/proactive-90pct-crossvenue-v1^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1614589Z ^[[36;1mpython - <<'PY' >> "$GITHUB_OUTPUT"^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1614871Z ^[[36;1mimport json^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1615557Z ^[[36;1mprint('pass=' + ('true' if json.load(open('research/crypto/results/proactive-90pct-crossvenue-v1-development/gate.json'))['developmentGatePass'] else 'false'))^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1616333Z ^[[36;1mPY^[[0m
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1655015Z shell: /usr/bin/bash -e {0}
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1655274Z env:
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1655540Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1655988Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1656432Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1656822Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1657204Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1657591Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1658143Z ##[endgroup]
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1859896Z [research/proactive-90pct-crossvenue-v1 fd60ccf] Observe Trial 31 proactive 90pct development
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1860887Z  4 files changed, 1632 insertions(+)
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1861811Z  create mode 100644 research/crypto/results/proactive-90pct-crossvenue-v1-development/btc-sources.json
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1862726Z  create mode 100644 research/crypto/results/proactive-90pct-crossvenue-v1-development/eth-sources.json
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1863559Z  create mode 100644 research/crypto/results/proactive-90pct-crossvenue-v1-development/gate.json
+execute	Commit immutable development evidence	2026-08-22T05:42:18.1864374Z  create mode 100644 research/crypto/results/proactive-90pct-crossvenue-v1-development/summary.json
+execute	Commit immutable development evidence	2026-08-22T05:42:18.3978234Z From https://github.com/brandonlign/theoldtrader
+execute	Commit immutable development evidence	2026-08-22T05:42:18.3979133Z  * branch            research/proactive-90pct-crossvenue-v1 -> FETCH_HEAD
+execute	Commit immutable development evidence	2026-08-22T05:42:18.4057561Z Current branch research/proactive-90pct-crossvenue-v1 is up to date.
+execute	Commit immutable development evidence	2026-08-22T05:42:19.3419849Z To https://github.com/brandonlign/theoldtrader
+execute	Commit immutable development evidence	2026-08-22T05:42:19.3420872Z    7eb36be..fd60ccf  HEAD -> research/proactive-90pct-crossvenue-v1
+execute	Acquire untouched final sources	﻿2026-08-22T05:42:19.3720312Z ##[group]Run set -euo pipefail
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3720637Z ^[[36;1mset -euo pipefail^[[0m
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3720884Z ^[[36;1mmkdir -p /tmp/t31-final^[[0m
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3721722Z ^[[36;1mpython research/crypto/trial31_proactive_90.py prepare research/crypto/manifests/proactive-90pct-crossvenue-v1.json final BTC /tmp/t31-final/btc.csv /tmp/t31-final/btc-sources.json^[[0m
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3723084Z ^[[36;1mpython research/crypto/trial31_proactive_90.py prepare research/crypto/manifests/proactive-90pct-crossvenue-v1.json final ETH /tmp/t31-final/eth.csv /tmp/t31-final/eth-sources.json^[[0m
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3761081Z shell: /usr/bin/bash -e {0}
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3761327Z env:
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3761592Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3762045Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3762483Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3762872Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3763300Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3763700Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Acquire untouched final sources	2026-08-22T05:42:19.3764025Z ##[endgroup]
+execute	Acquire untouched final sources	2026-08-22T05:43:00.9781990Z {
+execute	Acquire untouched final sources	2026-08-22T05:43:00.9782663Z   "coin": "BTC",
+execute	Acquire untouched final sources	2026-08-22T05:43:00.9783540Z   "mode": "final",
+execute	Acquire untouched final sources	2026-08-22T05:43:00.9783975Z   "rows": 636,
+execute	Acquire untouched final sources	2026-08-22T05:43:00.9784747Z   "sha256": "3ebdcf15ad1886477a1e53b33b2f09f304dde384e165c2f81f8c790e435fb109",
+execute	Acquire untouched final sources	2026-08-22T05:43:00.9785678Z   "economicsCalculated": false
+execute	Acquire untouched final sources	2026-08-22T05:43:00.9786123Z }
+execute	Acquire untouched final sources	2026-08-22T05:43:42.0954505Z {
+execute	Acquire untouched final sources	2026-08-22T05:43:42.0955001Z   "coin": "ETH",
+execute	Acquire untouched final sources	2026-08-22T05:43:42.0955380Z   "mode": "final",
+execute	Acquire untouched final sources	2026-08-22T05:43:42.0955680Z   "rows": 636,
+execute	Acquire untouched final sources	2026-08-22T05:43:42.0956150Z   "sha256": "5e6b98871bbb3b95bed6a87c9ad570889d903788b3e95ad40a630245e4936f6a",
+execute	Acquire untouched final sources	2026-08-22T05:43:42.0956713Z   "economicsCalculated": false
+execute	Acquire untouched final sources	2026-08-22T05:43:42.0957020Z }
+execute	Observe one-shot frozen final	﻿2026-08-22T05:43:42.1093108Z ##[group]Run set -euo pipefail
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1093430Z ^[[36;1mset -euo pipefail^[[0m
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1094423Z ^[[36;1mpython research/crypto/trial31_proactive_90.py evaluate research/crypto/manifests/proactive-90pct-crossvenue-v1.json final /tmp/t31-final/btc.csv,/tmp/t31-final/eth.csv research/crypto/results/proactive-90pct-crossvenue-v1-final/summary.json^[[0m
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1097496Z ^[[36;1mpython research/crypto/trial31_proactive_90.py gate research/crypto/manifests/proactive-90pct-crossvenue-v1.json final research/crypto/results/proactive-90pct-crossvenue-v1-final/summary.json research/crypto/results/proactive-90pct-crossvenue-v1-final/gate.json^[[0m
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1100080Z ^[[36;1mcp /tmp/t31-final/*-sources.json research/crypto/results/proactive-90pct-crossvenue-v1-final/^[[0m
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1142251Z shell: /usr/bin/bash -e {0}
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1142504Z env:
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1142770Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1143246Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1143724Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1144127Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1144518Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1144916Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1145234Z ##[endgroup]
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1965442Z {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1966226Z   "experimentId": "proactive-90pct-crossvenue-v1",
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1966958Z   "trialNumber": 31,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1967433Z   "mode": "final",
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1968194Z   "generatedAt": "2026-08-22T05:43:42.195859Z",
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1968867Z   "basket": {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1969769Z     "netReturn": 0.007124707643395123,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1970430Z     "annualizedReturn": 0.012326086032116823,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1971052Z     "sharpe": 3.488839140216975,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1971622Z     "maxDrawdown": -0.0021385056392364543,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1972230Z     "startValue": 10000,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1972803Z     "endValue": 10071.247076433952,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1973423Z     "elapsedDays": 211.66666666666666,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1974071Z     "assetsWithActivity": 2,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1974627Z     "anyMarginBreach": false,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1975160Z     "allGapStressPass": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1975700Z     "totalModeledCosts": 46.950288761317054
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1976347Z   },
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1976796Z   "sleeves": {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1977232Z     "BTC": {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1977699Z       "netReturn": 0.004508641637298139,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1978630Z       "annualizedReturn": 0.007792790134818484,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1979298Z       "sharpe": 2.1250316480831972,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1980012Z       "maxDrawdown": -0.0021997215894316025,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1980668Z       "startValue": 5000,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1981230Z       "endValue": 5022.543208186491,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1981803Z       "elapsedDays": 211.66666666666666,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1982420Z       "marginBreach": null,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1983088Z       "allGapStressPass": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1983683Z       "active": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1984233Z       "proactiveCollateralRebalances": 1,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1984863Z       "riskTriggeredReanchors": 0,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1985502Z       "grossCollateralTransferred": 1061.4426554869742,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1986238Z       "transferCosts": 0.5307213277434871,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1986880Z       "tradingCosts": 23.16048543656079,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1987480Z       "totalModeledCosts": 23.691206764304276,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1988644Z       "minimumPreTransferStressExcessPctOfMaxLegNotional": 0.09264852558723854,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1989933Z       "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.10579669970386456,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1990923Z       "settlementCountDistribution": {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1991500Z         "7": 5,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1991982Z         "8": 626,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1992835Z         "9": 5
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1993329Z       }
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1993750Z     },
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1994160Z     "ETH": {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1994608Z       "netReturn": 0.00974077364949233,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1995191Z       "annualizedReturn": 0.016867934187139166,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1995813Z       "sharpe": 3.8408388570915304,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1996433Z       "maxDrawdown": -0.002077599435717059,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1997056Z       "startValue": 5000,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1997571Z       "endValue": 5048.703868247461,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1998437Z       "elapsedDays": 211.66666666666666,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1999013Z       "marginBreach": null,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.1999588Z       "allGapStressPass": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2000189Z       "active": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2000755Z       "proactiveCollateralRebalances": 3,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2001387Z       "riskTriggeredReanchors": 0,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2002019Z       "grossCollateralTransferred": 2598.4547856249005,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2002753Z       "transferCosts": 1.2992273928124503,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2003393Z       "tradingCosts": 21.959854604200324,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2004020Z       "totalModeledCosts": 23.259081997012775,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2004907Z       "minimumPreTransferStressExcessPctOfMaxLegNotional": 0.07104759942482622,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2006100Z       "minimumPostTransferStressExcessPctOfMaxLegNotional": 0.10233537335420047,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2007122Z       "settlementCountDistribution": {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2007710Z         "7": 5,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2008411Z         "8": 626,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2008849Z         "9": 5
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2009298Z       }
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2009739Z     }
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2010182Z   },
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2011007Z   "implementation": "proactive-stress-buffer-90pct-v1",
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2011712Z   "realMoneyAllowed": false
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2012216Z }
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2857712Z {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2858474Z   "experimentId": "proactive-90pct-crossvenue-v1",
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2859089Z   "trialNumber": 31,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2859438Z   "mode": "final",
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2859757Z   "checks": {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2860067Z     "positive": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2860433Z     "annualizedReturn": false,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2860804Z     "sharpe": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2861124Z     "drawdown": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2861458Z     "margin": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2861767Z     "stress": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2862088Z     "activity": true
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2862404Z   },
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2862706Z   "promotionEligible": false,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2863134Z   "promotionScope": "none",
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2863530Z   "basket": {
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2863876Z     "netReturn": 0.007124707643395123,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2864363Z     "annualizedReturn": 0.012326086032116823,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2864842Z     "sharpe": 3.488839140216975,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2865277Z     "maxDrawdown": -0.0021385056392364543,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2865744Z     "startValue": 10000,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2866146Z     "endValue": 10071.247076433952,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2866586Z     "elapsedDays": 211.66666666666666,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2867043Z     "assetsWithActivity": 2,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2867456Z     "anyMarginBreach": false,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2868046Z     "allGapStressPass": true,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2868484Z     "totalModeledCosts": 46.950288761317054
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2868915Z   },
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2869234Z   "realMoneyAllowed": false,
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2870697Z   "antiRescueRule": "After the first Trial 31 development economic output, no scientific parameter, asset, notional, stress buffer, collateral target, transfer cost, clock rule, or gate may change under Trial 31."
+execute	Observe one-shot frozen final	2026-08-22T05:43:42.2872215Z }
+execute	Commit immutable final evidence	﻿2026-08-22T05:43:42.2994547Z ##[group]Run set -euo pipefail
+execute	Commit immutable final evidence	2026-08-22T05:43:42.2994874Z ^[[36;1mset -euo pipefail^[[0m
+execute	Commit immutable final evidence	2026-08-22T05:43:42.2995182Z ^[[36;1mgit config user.name theoldtrader-research-bot^[[0m
+execute	Commit immutable final evidence	2026-08-22T05:43:42.2995588Z ^[[36;1mgit config user.email actions@users.noreply.github.com^[[0m
+execute	Commit immutable final evidence	2026-08-22T05:43:42.2996063Z ^[[36;1mgit add research/crypto/results/proactive-90pct-crossvenue-v1-final^[[0m
+execute	Commit immutable final evidence	2026-08-22T05:43:42.2996524Z ^[[36;1mgit commit -m 'Observe Trial 31 one-shot final'^[[0m
+execute	Commit immutable final evidence	2026-08-22T05:43:42.2996945Z ^[[36;1mgit pull --rebase origin research/proactive-90pct-crossvenue-v1^[[0m
+execute	Commit immutable final evidence	2026-08-22T05:43:42.2997409Z ^[[36;1mgit push origin HEAD:research/proactive-90pct-crossvenue-v1^[[0m
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3034826Z shell: /usr/bin/bash -e {0}
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3035075Z env:
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3035332Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3035769Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3036215Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3036650Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3037033Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3037417Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3037731Z ##[endgroup]
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3203253Z [research/proactive-90pct-crossvenue-v1 1f7dec2] Observe Trial 31 one-shot final
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3204309Z  4 files changed, 604 insertions(+)
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3205399Z  create mode 100644 research/crypto/results/proactive-90pct-crossvenue-v1-final/btc-sources.json
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3206923Z  create mode 100644 research/crypto/results/proactive-90pct-crossvenue-v1-final/eth-sources.json
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3208616Z  create mode 100644 research/crypto/results/proactive-90pct-crossvenue-v1-final/gate.json
+execute	Commit immutable final evidence	2026-08-22T05:43:42.3210072Z  create mode 100644 research/crypto/results/proactive-90pct-crossvenue-v1-final/summary.json
+execute	Commit immutable final evidence	2026-08-22T05:43:42.5091616Z From https://github.com/brandonlign/theoldtrader
+execute	Commit immutable final evidence	2026-08-22T05:43:42.5092270Z  * branch            research/proactive-90pct-crossvenue-v1 -> FETCH_HEAD
+execute	Commit immutable final evidence	2026-08-22T05:43:42.5150276Z Current branch research/proactive-90pct-crossvenue-v1 is up to date.
+execute	Commit immutable final evidence	2026-08-22T05:43:43.3387565Z To https://github.com/brandonlign/theoldtrader
+execute	Commit immutable final evidence	2026-08-22T05:43:43.3388376Z    fd60ccf..1f7dec2  HEAD -> research/proactive-90pct-crossvenue-v1
+execute	Post Run actions/setup-python@v5	﻿2026-08-22T05:43:43.3518458Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+execute	Post Run actions/setup-python@v5	2026-08-22T05:43:43.3519756Z Post job cleanup.
+execute	Post Run actions/setup-python@v5	2026-08-22T05:43:43.4703329Z (node:2541) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+execute	Post Run actions/setup-python@v5	2026-08-22T05:43:43.4704421Z (Use `node --trace-deprecation ...` to show where the warning was created)
+execute	Post Run actions/checkout@v4	﻿2026-08-22T05:43:43.4910496Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.4911794Z Post job cleanup.
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.5798683Z [command]/usr/bin/git version
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.5841678Z git version 2.55.0
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.5885212Z Temporarily overriding HOME='/home/runner/work/_temp/1e812d5b-54ec-49cc-806e-b7f69ff72dd7' before making global git config changes
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.5886293Z Adding repository directory to the temporary git global config as a safe directory
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.5891627Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/theoldtrader/theoldtrader
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.5932925Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.5968856Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.6218368Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.6250707Z http.https://github.com/.extraheader
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.6263169Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.6299163Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.6574917Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+execute	Post Run actions/checkout@v4	2026-08-22T05:43:43.6616954Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+execute	Complete job	﻿2026-08-22T05:43:43.7002849Z Cleaning up orphan processes
+execute	Complete job	2026-08-22T05:43:43.7282868Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
