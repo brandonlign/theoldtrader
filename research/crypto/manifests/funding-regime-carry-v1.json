@@ -1,0 +1,106 @@
+{
+  "experimentId": "funding-regime-carry-v1",
+  "trialNumber": 19,
+  "frozenAt": "2026-08-22T02:49:00Z",
+  "status": "FROZEN_PRE_DEVELOPMENT",
+  "paperOnly": true,
+  "realMoneyAllowed": false,
+  "strategyFamily": "causal funding-regime spot-perpetual carry with hysteresis",
+  "motivation": "Unconditional BTC carry earned funding historically but Trial 16 showed that a fully collateralized always-on hedge can still lose when realized funding does not cover retail friction. Trial 19 prospectively tests a causal regime filter on two new derivative information sets rather than changing Trial 16 in place.",
+  "assetSelection": {
+    "symbols": ["ADAUSDT", "DOGEUSDT"],
+    "rule": "ADA and DOGE are fixed as two longstanding, liquid non-BTC/ETH/SOL/BNB/XRP majors already represented in the project's historical crypto universe. Selection is based on pre-existing major-asset status, not on Trial 19 funding, basis, perpetual, or carry outcomes.",
+    "dataPreviouslyObservedAtFreeze": {
+      "spotPriceHistoryMayHaveAppearedInOtherDirectionalResearch": true,
+      "fundingPerpetualExecutionMarkAndTrial19CarryEconomics": false,
+      "interpretation": "This is a fresh derivative/carry replication, not a pristine spot-price-path test."
+    }
+  },
+  "portfolio": {
+    "startingEquity": 10000,
+    "sleeves": 2,
+    "sleeveWeights": {"ADAUSDT": 0.5, "DOGEUSDT": 0.5},
+    "sleeveStartingEquity": 5000,
+    "spotNotionalPctOfSleeveWhenActive": 0.15,
+    "futuresCollateralReservePctOfSleeveWhenActive": 0.50,
+    "position": "when active, long spot and short exactly equal coin units of the matching Binance USD-M perpetual",
+    "rebalancingWhileActive": "none; coin units are fixed from entry until exit",
+    "capitalWhenInactive": "cash",
+    "leverage": false
+  },
+  "signal": {
+    "lookbackFundingBoundaries": 90,
+    "lookbackDays": 30,
+    "annualizationFactor": 1095,
+    "entryAnnualizedTrailingFundingThreshold": 0.20,
+    "exitAnnualizedTrailingFundingThreshold": 0.08,
+    "minimumStateBoundaries": 90,
+    "minimumStateDays": 30,
+    "causality": "At boundary t the state decision uses exactly the preceding 90 realized funding observations ending at t-1; the current boundary funding rate is excluded from the signal. A newly entered position receives no funding at its entry boundary. An already-open position receives the current boundary payment before an exit executed at that boundary.",
+    "hysteresis": "inactive to active only at or above 20% annualized trailing funding; active to inactive only at or below 8%, subject to a 30-day minimum state duration",
+    "thresholdRationale": "Thresholds are frozen from transaction-cost economics and persistence logic, not ADA/DOGE outcomes: the entry hurdle is materially above the approximately 2.8% two-leg round-trip notional friction when translated to a multi-month carry opportunity; the lower exit threshold supplies hysteresis and avoids churn."
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 60,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 60,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "developmentWindow": {
+    "startInclusive": "2022-01-01T00:00:00Z",
+    "endExclusive": "2026-01-01T00:00:00Z",
+    "derivativeRowsObservedAtFreeze": false
+  },
+  "finalHoldout": {
+    "startInclusive": "2026-01-01T00:00:00Z",
+    "endExclusive": "2026-08-01T00:00:00Z",
+    "oneShot": true,
+    "derivativeRowsObservedAtFreeze": false,
+    "accessRule": "No Trial 19 final derivative/funding row may be acquired unless the frozen development gate passes."
+  },
+  "dataRequirements": {
+    "venue": "Binance",
+    "interval": "8h",
+    "fundingTimestampNormalizationMaximumAbsoluteSkewMs": 60000,
+    "spot": "checksum-verified Binance Vision DAILY spot 8h klines",
+    "perpetualExecution": "checksum-verified Binance Vision MONTHLY USD-M standard 8h klines",
+    "perpetualMark": "checksum-verified union of MONTHLY and DAILY USD-M 8h markPriceKlines with exact overlap agreement",
+    "funding": "checksum-verified Binance Vision MONTHLY USD-M fundingRate archives",
+    "noInterpolation": true,
+    "rejectAnyMissingBoundary": true
+  },
+  "developmentGate": {
+    "positiveBasketNetReturn": true,
+    "minimumBasketSharpe": 0.75,
+    "maximumAllowedBasketDrawdown": -0.025,
+    "minimumCompletedRoundTrips": 2,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForBothSleeves": true,
+    "decision": "Every criterion must pass before final-holdout acquisition. Failure freezes Trial 19 without final access or in-place rescue."
+  },
+  "promotionCriteria": {
+    "positiveFinalBasketNetReturn": true,
+    "minimumFinalBasketSharpe": 0.75,
+    "maximumAllowedFinalBasketDrawdown": -0.025,
+    "minimumFinalCompletedRoundTrips": 1,
+    "noSleeveRealizedMarginBreach": true,
+    "allSleevesAllFrozenGapStressesPass": true,
+    "exactSourceUnionForBothSleeves": true,
+    "decision": "Every criterion must pass. Passing authorizes a separate paper-baseline promotion proposal only; never real-money trading."
+  },
+  "multipleTesting": {
+    "seriousTrialNumber": 19,
+    "selectedAfterObservedTrial16Failure": true,
+    "newInformationSet": "ADAUSDT and DOGEUSDT funding/perpetual/basis histories not queried for Trial 19 before freeze",
+    "noPostResultThresholdOrAssetSubstitution": true
+  },
+  "antiRescueRule": "After the first Trial 19 development economic output, no asset, threshold, lookback, hysteresis, minimum state duration, sizing, collateral, date, cost, source rule, entry/exit accounting, or gate may change under Trial 19."
+}
