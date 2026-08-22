@@ -5,14 +5,37 @@ on:
     paths: ['.github/workflows/retrigger-carry-recovery.yml']
 permissions:
   actions: write
-  contents: read
+  contents: write
 jobs:
   dispatch:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
-      - name: Dispatch corrected frozen trials
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Dispatch and capture frozen Trial 26
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           gh workflow run run-trial26-crossvenue.yml --repo "$GITHUB_REPOSITORY" --ref main
+          sleep 3
+          id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial26-crossvenue.yml --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+          echo "Trial 26 run id: $id"
+          if [ "$id" = 0 ]; then exit 2; fi
+          gh run watch "$id" --repo "$GITHUB_REPOSITORY" --interval 10 || true
+          gh run view "$id" --repo "$GITHUB_REPOSITORY" --json status,conclusion,jobs > /tmp/t26-status.json || true
+          gh run view "$id" --repo "$GITHUB_REPOSITORY" --log > /tmp/t26.log 2>&1 || true
+          git fetch origin research/cross-venue-funding-spread-v1
+          git checkout -B research/cross-venue-funding-spread-v1 origin/research/cross-venue-funding-spread-v1
+          mkdir -p research/crypto/results/cross-venue-funding-spread-v1-ops
+          cp /tmp/t26-status.json research/crypto/results/cross-venue-funding-spread-v1-ops/latest-run-status.json
+          tail -n 300 /tmp/t26.log > research/crypto/results/cross-venue-funding-spread-v1-ops/latest-run-tail.log
+          printf '%s\n' "$id" > research/crypto/results/cross-venue-funding-spread-v1-ops/latest-run-id.txt
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add research/crypto/results/cross-venue-funding-spread-v1-ops
+          git commit -m 'Ops: capture Trial 26 execution status' || true
+          git pull --rebase origin research/cross-venue-funding-spread-v1 || true
+          git push origin HEAD:research/cross-venue-funding-spread-v1
