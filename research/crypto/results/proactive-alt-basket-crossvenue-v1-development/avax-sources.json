@@ -1,0 +1,764 @@
+{
+  "coin": "AVAX",
+  "economicResultCalculated": false,
+  "expectedRows": 2193,
+  "experimentId": "proactive-alt-basket-crossvenue-v1",
+  "generatedAt": "2026-08-22T05:48:39.686714Z",
+  "hyperliquidSettlementCountDistribution": {
+    "7": 21,
+    "8": 2152,
+    "9": 20
+  },
+  "mode": "development",
+  "rows": 2193,
+  "sha256": "90571125d06d669b47aed335806c29eb03eaac1c195fd4b1b58c3c41229f5366",
+  "sources": [
+    {
+      "bytes": 4956,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2023-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2023-12",
+      "sha256": "9448b18b342e1793e7017228bcf6aa0280b6a7b9fbf23d55369e27db89080e1b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2023-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4855,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-01",
+      "sha256": "ce32243e65f36f8bb2e141266614881c0781d703724eb604615b40dd33d10f24",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4538,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-02",
+      "sha256": "d015a5b6b4a9c7cd31cec2c91800cb648b4ae2a233fb392d126ae239a0c6f0cc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4940,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-03",
+      "sha256": "12357cbdcb5b8318bef7872b4c4b022ce381179a177b28baf8f169d444a0fcc2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4685,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-04",
+      "sha256": "f4374e4185eccee6551e4a53b13862b75259fc994587b98e8c229e7827ce6ccb",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4775,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-05",
+      "sha256": "5e67c48e4996d2567eaa8cfc4d6e14c9af4a521653e8b0f36d02da6b36221db5",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4619,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-06",
+      "sha256": "afd9a3a9d06632abc6b632c543dfaf2baf1bd0c41c197a5dde6b8d4c1017ae02",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4760,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-07",
+      "sha256": "d40c61055a01d470f6610874e5e280c969544dbefe0663447f411c759fea1b80",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4748,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-08",
+      "sha256": "5650dc2d4594951995b0d0915c0d38317126827abceb779ec6774c8ed6d13a84",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4575,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-09",
+      "sha256": "911a6015ecc415477881753dfd6362ec3efb5800c1819316a46593a84f27f31a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4692,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-10",
+      "sha256": "36b49f19824c003b33cd9ebfd107d16925eb0a583b039176440a880d0ef50017",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4718,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-11",
+      "sha256": "7ffbca7586f1808dda039a9580058c487f8cf020dc2d27047fdaa7623a5d050e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4905,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-12",
+      "sha256": "6d85dcb79a3e414e8f7826d7a95ff639dc95536261e39fb9d73c33423d7523dc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4826,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-01",
+      "sha256": "3d625334b759691f2a2b12a4d0ccec192f6874a6349eb7907246872ef13747d2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4363,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-02",
+      "sha256": "cd966239351172d474d25ad0220f70529e4dc395fe8df0c04a31d7d018ac232e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4795,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-03",
+      "sha256": "59e0b3dbc8d3999f085f1f6d53ff31dc8d7fdd2c22be94c1a5732d7d0a8b7f8c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4642,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-04",
+      "sha256": "d416646cea6ff3a3ea2ebeb2879c378d0cd01ba6cbc9a335f33fb3472bcd2334",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4806,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-05",
+      "sha256": "47354d82efa202e5d83195ddcbd8a7d9ce861e74c3a6923861986c43677ec412",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4608,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-06",
+      "sha256": "172c27dc2c75d5ca968745be9aade6f159a538740659ec3afea931cda872a9d3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4806,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-07",
+      "sha256": "15607c4ef271d106c181c4cfefbc95917232791aca6bf14dc2d52199b2820867",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4819,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-08",
+      "sha256": "71d949cfd8c154c384911796dd415fb3525b4cfccfa50ad000bbb502fc695d0c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4769,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-09",
+      "sha256": "9180bd9ee2746471b6f1ed15e29a24f01e7def95c8fa8b472b42578aa9fb9948",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4817,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-10",
+      "sha256": "112844cbaa3684ad5cf1ce6fa2fd00c713bb6aa9c9269bbc1754363000b88c24",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4646,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-11",
+      "sha256": "1634a9faad2adcbd6f6c4c44deeeb2f98e43008964320ed2d27bad3c029081a2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4710,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-12",
+      "sha256": "7941bdfda8a8593762bb42fb1d8ccb8f008597d6aa7a0e07f893ae8c75fcfcb6",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/AVAXUSDT/8h/AVAXUSDT-8h-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 697,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-01",
+      "sha256": "9a9c5d6c643d591204c1b37597afca3e7b1a6fd5c70f8d831bec3ea3ea14b0f2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 772,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-02",
+      "sha256": "4395c18fb722657ec4e8ea1cb83f7f786ce5e71ae455bc5cde9c06534a43d302",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 934,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-03",
+      "sha256": "87b586d989e3eda60955d088b110ae83cb6a01b6639c81219e21da05f5624ae0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 887,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-04",
+      "sha256": "e0f5b786406efe3fd4b28f00d446facf672af97bf6787dd9606e6bdedcd25239",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 786,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-05",
+      "sha256": "c070f7da85f78c24e3fb544507ee0064ed53e266401d04c4334c32e59c9be5af",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 804,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-06",
+      "sha256": "4feaa04c2c4cb1e7f77625314b5a262553aae5574fe93d939ad05b48fd9cbe55",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 890,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-07",
+      "sha256": "bd1f1ca09e79480a742aed2853bef9b7975a59623fe3b73ab32dd98c18b31b27",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 960,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-08",
+      "sha256": "c54b41381b4b87a8e773df0315ab89ca7a2428044604021d5b08ad4bcafa1eb2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 902,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-09",
+      "sha256": "728d3a29cddc13ecbd903ebcc592aaee0bb932629a9caeb4e87f630ae3cdae52",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 910,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-10",
+      "sha256": "e000acd59ff7e1d89349e760ba9f3dd0051593d5671f038a5f14db69371566e0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 793,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-11",
+      "sha256": "13428ba99baf9f615cbe2a56b0902e0db329652a42ab192c6814d2339126a102",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 849,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-12",
+      "sha256": "1cf56f943081eb35215b0334f280b81e58f551a37346ea0563e7fc4afbca2db2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 765,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-01",
+      "sha256": "141b34b255a63e4a8c398df4d5a020e7a27b6ba1eba49b54c783cae27e308b8c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 867,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-02",
+      "sha256": "86f4c9d7d39f199e55718ac2bbb388401851c989e8dc000450e6586dd245a3f8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 955,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-03",
+      "sha256": "cb0107d6ec4a78fbf5e70501a3089ecfe2fea1eb8284fed7d32d3b4ef8e6a719",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 917,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-04",
+      "sha256": "116af3098e0221ae14893cf2ab26a7845aa8e4ceb5e4ba390d169b5e75907928",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 929,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-05",
+      "sha256": "ca460af4a1a1fb71ccb2a0236f2221be914294f9940113434bdbf3967cf0a454",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 939,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-06",
+      "sha256": "dd24aae0ead63e998dcd4d5f2e84431c4792074d87e95d8f7449c4a13af05394",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 834,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-07",
+      "sha256": "848d31809445344af44b459d37f1624e34251e2f31a80d1c2b3c43874c4cb65d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 862,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-08",
+      "sha256": "20e641197556b32c5ac4ec06e7c85880bea387b4eb75efa38778f1baabb32003",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 829,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-09",
+      "sha256": "f73dd93bbfa3ff9d35c57058e3a52239d370a3605a753dfb9d3a73cffe053834",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 939,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-10",
+      "sha256": "698b7e7898459b19d18a36d95dc8580d15c9fdfcf6e414fc4f645efd0a55e197",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 980,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-11",
+      "sha256": "10dc01e52485b8ab471ad284a4c26c548c4caf2c1e08881425dad490c7db8bd5",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 978,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-12",
+      "sha256": "033b66574531d243a67760a6679de6b181c1b0e7abcd9484f4f6fceab6074845",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/AVAXUSDT/AVAXUSDT-fundingRate-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1767225599999,
+      "interval": "8h",
+      "kind": "candleSnapshot",
+      "rows": 2194,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1705766399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1707494399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1705766400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1709222399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1707494400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1710950399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1709222400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1712678399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1710950400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1714406399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1712678400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1716134399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1714406400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1717862399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1716134400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1719590399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1717862400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1721318399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1719590400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1723046399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1721318400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1724774399999,
+      "kind": "fundingHistory",
+      "rows": 479,
+      "startTime": 1723046400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1726502399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1724774400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1728230399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1726502400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1729958399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1728230400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1731686399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1729958400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1733414399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1731686400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1735142399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1733414400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1736870399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1735142400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1738598399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1736870400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1740326399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1738598400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1742054399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1740326400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1743782399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1742054400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1745510399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1743782400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1747238399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1745510400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1748966399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1747238400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1750694399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1748966400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1752422399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1750694400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1754150399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1752422400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1755878399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1754150400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1757606399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1755878400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1759334399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1757606400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1761062399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1759334400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1762790399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1761062400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1764518399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1762790400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1766246399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1764518400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "AVAX",
+      "endTime": 1767225599999,
+      "kind": "fundingHistory",
+      "rows": 272,
+      "startTime": 1766246400000,
+      "venue": "Hyperliquid"
+    }
+  ],
+  "trialNumber": 32
+}

@@ -1,0 +1,764 @@
+{
+  "coin": "SOL",
+  "economicResultCalculated": false,
+  "expectedRows": 2193,
+  "experimentId": "proactive-alt-basket-crossvenue-v1",
+  "generatedAt": "2026-08-22T05:43:49.598756Z",
+  "hyperliquidSettlementCountDistribution": {
+    "7": 21,
+    "8": 2152,
+    "9": 20
+  },
+  "mode": "development",
+  "rows": 2193,
+  "sha256": "32224d2d2205bf51f70411747175613cddda913fe7dbc46d95d173e8fea2fc2e",
+  "sources": [
+    {
+      "bytes": 5095,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2023-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2023-12",
+      "sha256": "b70d054cb7b484ca1bfa893695da3bb8347166bedde7c038ef66474b9017f0c3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2023-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5064,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-01",
+      "sha256": "a5a826fd35f5f4add00a4be7602e48c75767b4db3212890334d388a6fe709d98",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4743,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-02",
+      "sha256": "d3e4ef627f6f02e7092863c76e51243158165549f0729ef39a8017933950077e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5182,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-03",
+      "sha256": "a830b1b07df0579c8d96afdc80c6f64e1f3f6e8651ba5849472223e103583f8d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4994,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-04",
+      "sha256": "90715ccc07e8e41b96a521a73b797a562ff3794c25a991a44610cebba1e5c531",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5125,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-05",
+      "sha256": "830ff83ae67fdb00120d938331885ccde3fe11fa9f050ac1d624ecbe4eacb3da",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4898,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-06",
+      "sha256": "a234d6d81e7c0beba10f828e6383827637f370aa9a5a42fa043c2e520314015e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5094,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-07",
+      "sha256": "cc42c999e4bf1dd0055fa1672b5530dc2a65ed8bfc9fcf503576178894c065e7",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5115,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-08",
+      "sha256": "2305c4e7d8700e3d571a6c5cc1cd57512f730d4e258ca19df43d7a2d4f40e30b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4893,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-09",
+      "sha256": "72643c844fa9cfa401e7f67b6f69106b8a1df6c5b6be3c42bca2cbd31c7fd4fa",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5004,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-10",
+      "sha256": "ba3a0aaafdff56e2478bda786b8ac2e4589bbc95075a95023291693baa1d3f97",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4873,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-11",
+      "sha256": "077aaa9e72c484c8016965dba0cfa628cd9719d4c7a2d2f7c30311b8c5bde5a3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4991,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-12",
+      "sha256": "3ee51cc3bad7544a875fdbb7dfc86f1fa2b5a8e8ae421557e8ac3d154d11d644",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5037,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-01",
+      "sha256": "17b7b1930cb8e7c93ab05675b92edf00add3fa76254405e2f8654fc1c5fc357d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4566,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-02",
+      "sha256": "38e8db1abe249bcfa2662cee2dd9ccbfa61b719cc7a95359ae1976dbb538ddbc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4956,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-03",
+      "sha256": "7be13c73984d4eeb683ffb6c5473842546f0e5ee72c36dcd19b536640d2c59cd",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5182,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-04",
+      "sha256": "e5e1f74940422e3f3cda1122574c395d9a8da70002cbde313368f1fe17c40cb8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5489,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-05",
+      "sha256": "4ef5ece3e9c15c5e10ab6304962ce1b389cda9f7fb26719dd9f7e92cd5657719",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5313,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-06",
+      "sha256": "43fc3d9b3e8cec598752b80994db33abc8ab053f2736423bd8ccb20fb2f3870a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5527,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-07",
+      "sha256": "ee0d89f52299f9704417066d5163816e62f23a5bef252e8bcb8484378f52c6cb",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5551,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-08",
+      "sha256": "b952ba8b5ca7cafb4d096abba6a98f807ef84c04ec78463023dc59dd3e4564d8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5400,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-09",
+      "sha256": "be2bcd28b0fe0939e23735458c78feb31da9b6f3e47cd909500a2c78e8b816a8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5559,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-10",
+      "sha256": "d1eeed459f10bcd07f4a83d69ff0c26b9b5c0bbdbb635cab98fcc1dab021974e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5347,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-11",
+      "sha256": "87a4933a8d924629964ae668ac87b445ad41f7ad2446e0cbfa055485c446942b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5385,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-12",
+      "sha256": "daa656865b6574aca84bdba3ada914996042500af185a0df35c72febe9a42513",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/8h/SOLUSDT-8h-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 697,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-01",
+      "sha256": "6b514b6c2bb67ff04df97d747efb9c6e4bb1bb27e889f1dc51a42ab1419a3d24",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 802,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-02",
+      "sha256": "7ccaf8d60ddf07e03eba0589ec4f75abfc2a842217722aaefe996ee1bc095706",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 946,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-03",
+      "sha256": "ff3041b6119af926fc55fc722332240037f1aee9b3a2db25f9cb801ba8e2992c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 869,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-04",
+      "sha256": "591e7c4993e59b60966213efd938f48420cd9b63db815240ffc070ec40470e53",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 810,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-05",
+      "sha256": "cdd788722e8b85fd6c9d992e7c1c767be87afc91db5b8c07751f898b373cbf29",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 803,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-06",
+      "sha256": "8da6c97d67718422a5df9a0d50e37849521fb54de87cbb3b3397e441439dfcc9",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 850,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-07",
+      "sha256": "2585a0db933c70b62c87cac509de42ac09b98d370238c0d8c68249a20bd2b9a3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 940,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-08",
+      "sha256": "ef076200aab768d33f71449957f6cd9c96c0da696708a5f561b97e7a0995e8d2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 880,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-09",
+      "sha256": "7666e4d3e6ea6dd28011c508cf01421007521e98e96ea551f809836441b43ca0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 839,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-10",
+      "sha256": "dbece64e8c5bc69c487cc03c00f6a4d4da2cad9152c73860386fcdc7d2ec9d05",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 790,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-11",
+      "sha256": "f53a9b637d695a251200e48929a573b4bf04cc2d99d5a3a09fe7bdca622918aa",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 893,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-12",
+      "sha256": "bae83020ac2ccfa6dd8d1362d373a92b4d5a7e396cef52e78dc2e7d81e63f621",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 916,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-01",
+      "sha256": "314888152c16bc2d846f9aaa9ea3ebeec7c67d235ef2671f1a5e6fe0a8b4dbf2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 872,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-02",
+      "sha256": "eeade74c1ca2a6dc9d78ba0d7a1ff145c323be72cfa2c09fcef9edab88baef9f",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 938,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-03",
+      "sha256": "3f77a33779c946da6f3082d14fb9a5497e7e4a4e3fff4d68967e6ddf96cf99ea",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 920,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-04",
+      "sha256": "6cd3fb27bae9313e15734d7214f4a83dc37a7a199cfc12c23f7777a5e27f7fd7",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 940,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-05",
+      "sha256": "eb03fd0d0b31eef9ee05544ea8dcce097a807d3475f67d0a5f0859c487c5f5c3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 939,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-06",
+      "sha256": "4ccee0a6fd67cb775be49d124b9eb038f26acd09426fcb9aaf9d3de74cf3a24e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 876,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-07",
+      "sha256": "66ce38d1a8bc4bdd53af29d8ea5c72493ed48fe9894ee5e9ff4600ccec864c4f",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 917,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-08",
+      "sha256": "fe9efc3abe1e4be2a2fa9a4008e6957856387f6783a06b97cac3ee271746915f",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 947,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-09",
+      "sha256": "f953315124d20dab98ba710d108103fb4cf054d1535787fd76d35d6b9c18e534",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 976,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-10",
+      "sha256": "d80c5be7660a950ad673a0e82488877c6ca0eb81f084d4c844320f892ad2c020",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 963,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-11",
+      "sha256": "5134fdf4319d629473f8cff1e66dc74180844ae2846ab41a8128466ab3682c2f",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 957,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-12",
+      "sha256": "01db13c460b0190736e1da019c7fcd7ea0abbf3b047e16d3aa8a9e9acec3101f",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1767225599999,
+      "interval": "8h",
+      "kind": "candleSnapshot",
+      "rows": 2194,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1705766399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1707494399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1705766400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1709222399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1707494400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1710950399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1709222400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1712678399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1710950400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1714406399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1712678400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1716134399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1714406400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1717862399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1716134400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1719590399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1717862400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1721318399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1719590400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1723046399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1721318400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1724774399999,
+      "kind": "fundingHistory",
+      "rows": 479,
+      "startTime": 1723046400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1726502399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1724774400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1728230399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1726502400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1729958399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1728230400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1731686399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1729958400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1733414399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1731686400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1735142399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1733414400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1736870399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1735142400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1738598399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1736870400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1740326399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1738598400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1742054399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1740326400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1743782399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1742054400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1745510399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1743782400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1747238399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1745510400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1748966399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1747238400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1750694399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1748966400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1752422399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1750694400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1754150399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1752422400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1755878399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1754150400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1757606399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1755878400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1759334399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1757606400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1761062399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1759334400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1762790399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1761062400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1764518399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1762790400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1766246399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1764518400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "SOL",
+      "endTime": 1767225599999,
+      "kind": "fundingHistory",
+      "rows": 272,
+      "startTime": 1766246400000,
+      "venue": "Hyperliquid"
+    }
+  ],
+  "trialNumber": 32
+}

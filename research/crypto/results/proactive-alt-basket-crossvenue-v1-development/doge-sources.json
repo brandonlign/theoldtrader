@@ -1,0 +1,764 @@
+{
+  "coin": "DOGE",
+  "economicResultCalculated": false,
+  "expectedRows": 2193,
+  "experimentId": "proactive-alt-basket-crossvenue-v1",
+  "generatedAt": "2026-08-22T05:46:12.310160Z",
+  "hyperliquidSettlementCountDistribution": {
+    "7": 21,
+    "8": 2152,
+    "9": 20
+  },
+  "mode": "development",
+  "rows": 2193,
+  "sha256": "d908f6dc9efab3b7b88ce8119c91aeb0ba2f2228405741a21d22ee906880c298",
+  "sources": [
+    {
+      "bytes": 5279,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2023-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2023-12",
+      "sha256": "4db30ce2da738008e99bab11a59bf30e82c83226f21bea31b0bf1143386f02c4",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2023-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5225,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-01",
+      "sha256": "aef736410f3d3b120a6e97534ccd6325d36d0687962b7d3f7ae252e0a51fd28d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4864,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-02",
+      "sha256": "496bb6a8661c861110f70b6a3aace38355a0bcb010c8bb98bdccdd2d7be0ffab",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5536,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-03",
+      "sha256": "bc78ea023acb7b29ec387ad7d345e7c7454f1ff68d10124020ccc1f932815fb4",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5303,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-04",
+      "sha256": "0035ee77d1931b33d57aeb7e24ee1b51d82aab63adec6720cc39ace3d1a6e9c7",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5425,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-05",
+      "sha256": "8e3d91a647e2e553487f0bb31dc7a11a43d76c476125e2061cf2cb7942eb73dd",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5101,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-06",
+      "sha256": "78240dd07c4e75a40c01bf0c59572ff04756bc7ce60d9b9bdde04bd4ee09ed79",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5302,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-07",
+      "sha256": "d45ffc9597e1633bb583ce008a18771aad38f5fc66c9884dfceec6a80a17f0c0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5260,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-08",
+      "sha256": "310d6795d9b230ecc8f2db64b0c64f26f43d1ce192e6e8adac22a6d328ae1968",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5064,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-09",
+      "sha256": "c07852d3c13438ba8267287953b8d87ad02180585f96018f59f139ba1c332a1a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5366,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-10",
+      "sha256": "58196ca1676bb17a8be6db451f1a7c4c877af6e22a37ccccdde237bd3a6038d9",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5461,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-11",
+      "sha256": "fefcb36403496ffb1c23ddb0fa77bf29e52d27ca3092e7e080d0dc7339e6eb14",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5536,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2024-12",
+      "sha256": "a4aa03de411e3b055cfdbe1dab4c9de54183eb504af9d9b60b473dc16061468b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5506,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-01.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-01",
+      "sha256": "56dffe35287d3c69fbf2feddbeb59b0c213219baf8a97d7b6f819837d03aae9a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 4956,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-02.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-02",
+      "sha256": "a8c5ccfb1f2b87efc320c4cd1acd4dc18548d573892cf6cf14088aec5a66ffc4",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5407,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-03.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-03",
+      "sha256": "f6bc7f455951c6f8fa1cf531a0ccf4f2fa1bf28cdc75d66f981cf68bc7679b95",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5206,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-04.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-04",
+      "sha256": "f9765d9e4bedc42d1ca593a7c5b4b7f9818b338bba41a336534ff89ae1030c95",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5461,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-05.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-05",
+      "sha256": "21a3db4c7fb135b0f48c6a71e06298a5d5ef9f1697637917cbda21a268fca08d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5185,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-06.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-06",
+      "sha256": "989a0652db2a5d67f65299d4144bc54d7e6321aeddc8e683d28fbe3fc92a8d32",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5509,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-07.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-07",
+      "sha256": "227d2a646c46568d9c89fb87a1a76fc61802af97e369b224dd8bc7afcfdcb548",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5446,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-08.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-08",
+      "sha256": "8d1ff3d3c50db0526c89f87c06892fb09a1b2130ca6dd4bf7d29b20a55c1e4e8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5324,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-09.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-09",
+      "sha256": "c17e5f09e50f6b79ea472c771f0f5c68f24e5be0f3d181c27c20b09779fb0184",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5480,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-10.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-10",
+      "sha256": "1f3e31387bd63bd790a5c69795e546a3c22a437a11b3b47dcb54c7894943a88c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5248,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-11.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-11",
+      "sha256": "8ea4a0684ed45a9a83d52f1416e9df4e6267be132b9ec97c53d78277afc444e5",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 5301,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-12.zip.CHECKSUM",
+      "kind": "kline",
+      "period": "2025-12",
+      "sha256": "7900a2c19eba9e7f11d70ebb1d2ddb90a2c3ebcce090f01e5b2d8368b72e248d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/DOGEUSDT/8h/DOGEUSDT-8h-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 670,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-01",
+      "sha256": "08193c8953cef5f0366877b66391483f4076c5927d433af5fbcbb680b407767c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 764,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-02",
+      "sha256": "769f0fe177bd531b65ab9a0e15d4b3814deb241e27806f8decfd45735456a823",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 942,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-03",
+      "sha256": "7c8400239b28b1e96439b229bb483cd7de8637bf58f321547f46ceee160dae61",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 904,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-04",
+      "sha256": "b09c688e8f524d879b901f1cba4a15836180af254868b22feabb324268b521cf",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 786,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-05",
+      "sha256": "5df5a4bb6733899a885591106626242a3aab4b5ada077b62dd44ac27d14a9e7c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 785,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-06",
+      "sha256": "c6ba303e7c28db0a2bf2f8121482c7b8813793b860d2ef22ecd08dcd95e8185e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 816,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-07",
+      "sha256": "4e9db7b8df1c75627ce56d4010fa84a93fce0162112a93696e98da5138d0f380",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 935,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-08",
+      "sha256": "7b44b34f863c02066dfbcf3d343e746ea84058a5d76a94d64c256b78358b89ac",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 862,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-09",
+      "sha256": "92bc33954530f8d7bcf13a41d736a9480f4082cd1220d976d4a01bdbb52452b4",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 763,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-10",
+      "sha256": "c038f18bf93552ca8432d04482839ab50d5b6e903c1b63083c335d479236ba22",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 798,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-11",
+      "sha256": "45d7e6671e7bb1efc2ed557fd7139135468d0bea7dbc7906fe0c8b727c2777a0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 897,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2024-12",
+      "sha256": "5b94b4960510e5e217048ee5268038d60a6dbcf45755063790f9c35602231983",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2024-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 871,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-01.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-01",
+      "sha256": "be2ccf953a2fa5e84f49be601917340ba1b220b7ca42566f4066173633c80107",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-01.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 872,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-02.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-02",
+      "sha256": "fa3a34848d0a10af64b9e534bf9209ac317fe0da05378d622dc9d406ca88f69d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-02.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 958,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-03.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-03",
+      "sha256": "3d9ac62d34961c5bd7b2e2b9f33abef0bcb295fdfae421bd38abab67598b2482",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-03.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 895,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-04.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-04",
+      "sha256": "ef81cc81573c727ba251f68e73593322ccf16db7055de77856b4dd5cd1e7cfc8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-04.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 912,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-05.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-05",
+      "sha256": "408322bd25a392d3fb10b66ebf214e2d7c0426456bfa1d3dab79da804a511188",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-05.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 945,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-06.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-06",
+      "sha256": "5a18b464cd2d6a6e106c497a5e265327762cff0ee86ebcf8fd20e0150d5a67a5",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-06.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 827,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-07.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-07",
+      "sha256": "e56f1173899b2be5b35e14cdd61d6549dfed04bd2eacc1673285fbc067affe11",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-07.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 892,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-08.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-08",
+      "sha256": "c73e14c91a6e44f2a7a4795c845f54f0c82fac1529dd0852c66c52175d76ff53",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-08.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 882,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-09.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-09",
+      "sha256": "1105b391de748f50048b5590f6a5265fcb2a6354ec8a6ac3ba79b5ca734aa9cc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-09.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 944,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-10.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-10",
+      "sha256": "6217d0bc8ab8abe35dd0c56d18cc008e8a8e36adef2be37ed9ccbf3c91c71d0a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-10.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 967,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-11.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-11",
+      "sha256": "ea4b56653bb13210c5fbdeceb668f632b15a8fe6e7676d1afcbbcb5a019d92f4",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-11.zip",
+      "venue": "Binance"
+    },
+    {
+      "bytes": 990,
+      "checksumUrl": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-12.zip.CHECKSUM",
+      "kind": "funding",
+      "period": "2025-12",
+      "sha256": "8e84dea86eb7fe0cb7b2f9278f0df0479b68ae10ac9b6ade872372888769f874",
+      "url": "https://data.binance.vision/data/futures/um/monthly/fundingRate/DOGEUSDT/DOGEUSDT-fundingRate-2025-12.zip",
+      "venue": "Binance"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1767225599999,
+      "interval": "8h",
+      "kind": "candleSnapshot",
+      "rows": 2194,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1705766399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1704038400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1707494399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1705766400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1709222399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1707494400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1710950399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1709222400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1712678399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1710950400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1714406399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1712678400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1716134399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1714406400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1717862399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1716134400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1719590399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1717862400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1721318399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1719590400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1723046399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1721318400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1724774399999,
+      "kind": "fundingHistory",
+      "rows": 479,
+      "startTime": 1723046400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1726502399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1724774400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1728230399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1726502400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1729958399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1728230400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1731686399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1729958400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1733414399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1731686400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1735142399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1733414400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1736870399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1735142400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1738598399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1736870400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1740326399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1738598400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1742054399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1740326400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1743782399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1742054400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1745510399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1743782400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1747238399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1745510400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1748966399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1747238400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1750694399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1748966400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1752422399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1750694400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1754150399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1752422400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1755878399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1754150400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1757606399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1755878400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1759334399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1757606400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1761062399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1759334400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1762790399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1761062400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1764518399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1762790400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1766246399999,
+      "kind": "fundingHistory",
+      "rows": 480,
+      "startTime": 1764518400000,
+      "venue": "Hyperliquid"
+    },
+    {
+      "coin": "DOGE",
+      "endTime": 1767225599999,
+      "kind": "fundingHistory",
+      "rows": 272,
+      "startTime": 1766246400000,
+      "venue": "Hyperliquid"
+    }
+  ],
+  "trialNumber": 32
+}
