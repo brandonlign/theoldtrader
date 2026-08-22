@@ -4,16 +4,12 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [research/cross-sectional-identity-clean-v1]
-  push:
-    branches: [research/cross-sectional-identity-clean-v1]
-    paths:
-      - '.github/workflows/run-trial15-final.yml'
 
 permissions:
   contents: write
 
 concurrency:
-  group: execute-trial15-liquidity-core-final
+  group: execute-trial15-liquidity-core-final-pr2
   cancel-in-progress: false
 
 jobs:
