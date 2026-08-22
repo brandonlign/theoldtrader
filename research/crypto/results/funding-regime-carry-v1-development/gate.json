@@ -1,0 +1,42 @@
+{
+  "experimentId": "funding-regime-carry-v1",
+  "trialNumber": 19,
+  "mode": "development",
+  "generatedAt": "2026-08-22T03:14:43.763Z",
+  "developmentGatePass": false,
+  "finalAccessAuthorizedByGate": false,
+  "promotionScope": "none",
+  "realMoneyAllowed": false,
+  "checks": {
+    "positiveBasketNetReturn": {
+      "pass": true,
+      "observed": 0.009475822703317371
+    },
+    "minimumBasketSharpe": {
+      "pass": true,
+      "observed": 1.283871225152499,
+      "threshold": 0.75
+    },
+    "maximumAllowedBasketDrawdown": {
+      "pass": true,
+      "observed": -0.004311405187834794,
+      "threshold": -0.025
+    },
+    "minimumCompletedRoundTrips": {
+      "pass": true,
+      "observed": 4,
+      "threshold": 2
+    },
+    "noSleeveRealizedMarginBreach": {
+      "pass": true
+    },
+    "allSleevesAllFrozenGapStressesPass": {
+      "pass": false
+    },
+    "exactSourceUnionForBothSleeves": {
+      "pass": true
+    }
+  },
+  "rule": "Every criterion must pass before final-holdout acquisition. Failure freezes Trial 19 without final access or in-place rescue.",
+  "antiRescueRule": "After the first Trial 19 development economic output, no asset, threshold, lookback, hysteresis, minimum state duration, sizing, collateral, date, cost, source rule, entry/exit accounting, or gate may change under Trial 19."
+}
