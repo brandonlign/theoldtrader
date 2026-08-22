@@ -1,4 +1,4 @@
-name: Watch running Trials 20 and 22
+name: Watch running Trials 20 22 and 23
 on:
   pull_request:
     branches: [main]
@@ -10,12 +10,12 @@ jobs:
   watch:
     runs-on: ubuntu-latest
     steps:
-      - name: Watch latest Trial 20 and Trial 22 executions
+      - name: Watch latest Trial 20 22 and 23 executions
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -uo pipefail
-          for workflow in recover-trial20-venue-native.yml run-trial22-now.yml; do
+          for workflow in recover-trial20-venue-native.yml run-trial22-now.yml run-trial23-source-qualified.yml; do
             id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" --limit 1 --json databaseId --jq '.[0].databaseId // 0')
             echo "$workflow latest run: $id"
             if [ "$id" != 0 ]; then
