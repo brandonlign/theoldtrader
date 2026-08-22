@@ -1,0 +1,22 @@
+{
+  "experimentId":"source-qualified-diversified-regime-v1",
+  "trialNumber":25,
+  "frozenAt":"2026-08-22T03:53:00Z",
+  "status":"FROZEN_PRE_DEVELOPMENT",
+  "paperOnly":true,
+  "realMoneyAllowed":false,
+  "strategyFamily":"four-sleeve source-qualified causal funding-regime carry with high collateral and deterministic re-anchoring",
+  "assetSelection":{"symbols":["AVAXUSDT","DOTUSDT","ATOMUSDT","ETCUSDT"],"rule":"Use exactly the four Trial 21 assets whose exact source acquisition succeeded before FILUSDT source incompleteness stopped that pre-economic trial. No Trial 21 carry economics were evaluated.","economicValuesUsedForSelection":false,"sourceQualificationObservedBeforeFreeze":true},
+  "portfolio":{"startingEquity":10000,"sleeves":4,"sleeveStartingEquity":2500,"sleeveWeight":0.25,"spotNotionalPctOfSleeveWhenActive":0.15,"futuresCollateralReservePctOfSleeveWhenActive":0.80,"capitalWhenInactive":"cash","leverage":false},
+  "signal":{"lookbackFundingBoundaries":90,"lookbackDays":30,"annualizationFactor":1095,"entryAnnualizedTrailingFundingThreshold":0.10,"exitAnnualizedTrailingFundingThreshold":0.03,"minimumStateBoundaries":90,"minimumStateDays":30,"causality":"Use only prior 90 realized funding rates through t-1. Current-boundary funding is excluded from the state signal; an existing position receives it before exit/re-anchor, while a new entry receives none."},
+  "riskControl":{"maximumActiveBoundariesBeforeReanchor":180,"maximumActiveDaysBeforeReanchor":60,"maximumPerpetualMarkNotionalPctOfCurrentSleeveEquityBeforeReanchor":0.25,"reanchorAction":"Close and immediately reopen at full modeled costs after 180 active boundaries or when mark notional reaches 25% of current sleeve equity, unless funding exit triggers first."},
+  "costModel":{"spotFeeBpsPerSide":10,"spotSlippageBpsPerSide":5,"spotSpreadBpsRoundTrip":10,"perpetualFeeBpsPerSide":10,"perpetualSlippageBpsPerSide":5,"perpetualSpreadBpsRoundTrip":10},
+  "marginStress":{"maintenanceMarginPctOfPerpetualNotional":0.05,"additionalGapStressPct":[0.25,0.50,1.00]},
+  "developmentWindow":{"startInclusive":"2022-01-01T00:00:00Z","endExclusive":"2026-01-01T00:00:00Z","economicOutputObservedAtFreeze":false},
+  "finalHoldout":{"startInclusive":"2026-01-01T00:00:00Z","endExclusive":"2026-08-01T00:00:00Z","oneShot":true,"derivativeRowsObservedAtFreeze":false},
+  "dataRequirements":{"fundingTimestampNormalizationMaximumAbsoluteSkewMs":60000,"noInterpolation":true,"rejectAnyMissingBoundary":true},
+  "developmentGate":{"minimumBasketSharpe":0.80,"maximumAllowedBasketDrawdown":-0.02,"minimumCompletedRoundTrips":4,"minimumSleevesWithActivity":2},
+  "promotionCriteria":{"minimumFinalBasketSharpe":0.75,"maximumAllowedFinalBasketDrawdown":-0.02,"minimumFinalCompletedRoundTrips":1,"minimumFinalSleevesWithActivity":1},
+  "multipleTesting":{"seriousTrialNumber":25,"frozenBeforeTrial24EconomicOutputWasObserved":true,"sourceAvailabilityUsedForSelection":true,"economicOutcomesUsedForSelection":false},
+  "antiRescueRule":"After first Trial 25 development economic output, no scientific parameter or gate may change under Trial 25."
+}
