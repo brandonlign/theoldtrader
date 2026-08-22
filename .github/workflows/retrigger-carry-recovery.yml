@@ -1,0 +1,19 @@
+name: Retrigger corrected carry recovery
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/retrigger-carry-recovery.yml']
+permissions:
+  actions: write
+  contents: read
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch corrected frozen trials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh workflow run recover-trial19-funding-regime.yml --repo "$GITHUB_REPOSITORY" --ref main
+          gh workflow run recover-trial20-venue-native.yml --repo "$GITHUB_REPOSITORY" --ref main
