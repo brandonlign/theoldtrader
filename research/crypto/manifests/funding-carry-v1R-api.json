@@ -1,0 +1,77 @@
+{
+  "experimentId": "funding-carry-v1R-api",
+  "replicationOf": "funding-carry-v1",
+  "trialNumber": "2R",
+  "createdAt": "2026-08-12T18:43:00Z",
+  "status": "FROZEN_BEFORE_FIRST_API_REPLICATION_EVALUATION",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "promotionEligible": false,
+  "purpose": "Exact-family official-source replication of frozen Trial 2 using Binance public REST history because GitHub Actions billing currently prevents the checksum-archive primary evaluation. This replication cannot substitute for or rescue the primary archive protocol.",
+  "dataRequirements": {
+    "venue": "Binance",
+    "symbol": "BTCUSDT",
+    "primarySources": {
+      "spot": "GET https://api.binance.com/api/v3/klines, symbol=BTCUSDT, interval=8h",
+      "perpetualExecution": "GET https://fapi.binance.com/fapi/v1/klines, symbol=BTCUSDT, interval=8h",
+      "perpetualMark": "GET https://fapi.binance.com/fapi/v1/markPriceKlines, symbol=BTCUSDT, interval=8h",
+      "funding": "GET https://fapi.binance.com/fapi/v1/fundingRate, symbol=BTCUSDT"
+    },
+    "paginationRule": "request explicit startTime/endTime pages, retain raw response bytes and SHA-256 per page, deduplicate only exact duplicate timestamps, and require the final normalized scheduled grid to match the frozen window exactly",
+    "fundingTimestampNormalization": {
+      "rawField": "fundingTime",
+      "scheduledGrid": "00:00, 08:00, and 16:00 UTC / exact 8-hour Unix boundaries",
+      "mappingRule": "map raw fundingTime to the nearest 8-hour UTC boundary only when absolute raw-to-boundary skew is <=60,000 milliseconds",
+      "maximumAbsoluteSkewMs": 60000,
+      "preserveRawTimestampAndSkew": true,
+      "collisionRule": "abort if two distinct raw funding observations map to the same scheduled boundary",
+      "priceRuleAfterMapping": "use only exact 8h spot, standard perpetual-contract, and mark-price kline opens at that scheduled boundary; never interpolate or use a later price"
+    },
+    "rejectEvaluationIf": [
+      "any REST page fails or cannot be hashed",
+      "a raw fundingTime is more than 60 seconds from its nearest scheduled 8-hour UTC boundary",
+      "two funding observations collide on one scheduled boundary",
+      "the final scheduled funding grid is not exactly 5,295 rows from 2021-05-01T00:00:00Z through 2026-02-28T16:00:00Z",
+      "spot, standard perpetual-contract, or mark-price open is missing at any scheduled boundary",
+      "any interpolation or forward-fill would be required"
+    ]
+  },
+  "historicalRobustnessWindow": {
+    "startInclusive": "2021-05-01T00:00:00Z",
+    "endExclusive": "2026-03-01T00:00:00Z",
+    "entryTimestampRule": "use the first normalized scheduled funding boundary at or after startInclusive",
+    "exitTimestampRule": "use the final normalized scheduled funding boundary strictly before endExclusive",
+    "fundingAtEntry": "not earned",
+    "fundingAfterEntry": "accrue only realized funding payments on later normalized scheduled timestamps using contemporaneous mark notional"
+  },
+  "candidate": {
+    "position": "long BTC spot and short exactly equal BTC units of BTCUSDT perpetual",
+    "entryRule": "enter once at the beginning of the frozen historical robustness window",
+    "exitRule": "exit both legs at the end of the frozen historical robustness window",
+    "rebalancing": "none",
+    "spotNotionalPctAtEntry": 0.15,
+    "perpetualShortSizingRule": "short exactly the BTC units purchased by the 15%-of-starting-equity spot leg",
+    "futuresCollateralReservePct": 0.20,
+    "fundingAccounting": "skip entry payment; later short receives positive funding and pays negative funding on BTC units times contemporaneous mark price times realized funding rate",
+    "basisAccounting": "standard contract open is entry/exit execution reference; mark price is valuation/funding/margin reference"
+  },
+  "costModel": {
+    "spotFeeBpsPerSide": 60,
+    "spotSlippageBpsPerSide": 5,
+    "spotSpreadBpsRoundTrip": 10,
+    "perpetualFeeBpsPerSide": 60,
+    "perpetualSlippageBpsPerSide": 5,
+    "perpetualSpreadBpsRoundTrip": 10
+  },
+  "marginStress": {
+    "maintenanceMarginPctOfPerpetualNotional": 0.05,
+    "maintenanceMarginIsResearchStressAssumptionNotExchangeTierClaim": true,
+    "additionalGapStressPct": [0.25, 0.50, 1.00]
+  },
+  "evaluation": {
+    "comparators": ["cash", "BTC spot buy-and-hold at 15% exposure"],
+    "historicalHoldoutIntegrity": "Official REST replication evidence only, not pristine validation and not promotion eligible. Whole-sample funding summary statistics were already visible before Trial 2 and this replication were frozen.",
+    "promotionRequires": "never promote from this replication; the primary archive Trial 2 plus a later untouched forward or independently sealed evaluation remain required"
+  },
+  "antiRescueRule": "No funding threshold, sign filter, leverage/allocation change, entry date selection, rebalancing, or data-gap fill may be introduced after observing this replication. Any changed economic candidate is a new numbered trial."
+}

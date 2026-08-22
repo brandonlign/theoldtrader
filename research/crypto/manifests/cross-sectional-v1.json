@@ -1,0 +1,146 @@
+{
+  "experimentId": "cross-sectional-v1",
+  "trialNumber": 3,
+  "createdAt": "2026-08-12T19:12:00Z",
+  "status": "FROZEN_UNIVERSE_FORMATION_PENDING",
+  "paperOnly": true,
+  "livePromotionAllowed": false,
+  "strategyFamily": "low-turnover cross-sectional spot expected-return selection",
+  "motivation": "Test whether cross-asset information and a broader historically formed liquid universe produce economically useful edge that is absent from BTC/ETH/SOL directional candle forecasting. This is independent of the observed carry replication and does not modify Trial 1 or Trial 2.",
+  "venue": "Binance spot",
+  "dataSource": "checksum-verified Binance Vision public spot archives",
+  "universeFormation": {
+    "informationWindow": {
+      "startInclusive": "2022-01-01T00:00:00Z",
+      "endExclusive": "2023-01-01T00:00:00Z"
+    },
+    "postFormationDataFirewall": "No 2023-or-later price/return data may be downloaded or inspected for Trial 3 until the formed universe membership and source hashes are committed on the research branch.",
+    "candidatePrefixes": "enumerate every historical symbol prefix under data/spot/monthly/klines/ from the official Binance public-data bucket; do not begin from the current exchangeInfo symbol list",
+    "quoteAsset": "USDT",
+    "excludeBaseAssets": [
+      "USDT", "USDC", "BUSD", "TUSD", "USDP", "DAI", "UST", "USTC", "FDUSD", "EUR", "GBP", "AUD", "BRL", "TRY", "RUB", "UAH", "NGN", "BIDR", "IDRT", "BVND"
+    ],
+    "excludeBaseSuffixes": ["UP", "DOWN", "BULL", "BEAR"],
+    "minimumValidDailyBarsIn2022": 180,
+    "mustHaveBarOnOrAfter": "2022-12-30T00:00:00Z",
+    "liquidityMeasure": "median daily quote-asset volume across all valid 2022 one-day bars",
+    "membershipRule": "rank eligible symbols descending by the frozen liquidity measure and select exactly the first 30; ties break lexicographically by symbol",
+    "membershipSize": 30,
+    "membershipBecomesImmutableAfterFormation": true,
+    "sourceIntegrity": "each 2022 monthly 1d ZIP used in formation must match its adjacent official .CHECKSUM; missing monthly files are allowed and simply contribute no bars, but no bar may be interpolated",
+    "formationOutput": "research/crypto/universes/cross-sectional-v1-universe.json"
+  },
+  "historicalData": {
+    "frequency": "1d",
+    "featureLookbackStart": "2022-10-01T00:00:00Z",
+    "developmentStart": "2023-01-01T00:00:00Z",
+    "developmentEndExclusive": "2026-01-01T00:00:00Z",
+    "finalHoldoutStart": "2026-01-01T00:00:00Z",
+    "finalHoldoutEndExclusive": "2026-08-01T00:00:00Z",
+    "membership": "the immutable 30-symbol 2022 formation output only; never add later listings even if they become large",
+    "delistingAndMissingDataRule": "an asset with insufficient current history is ineligible. If an already-held asset loses tradeable daily data before a scheduled rebalance, record a forced data/delisting exit using its final observed close before the gap with the frozen sell friction, then keep it ineligible until data resumes. Never replace it with an out-of-universe asset.",
+    "noInterpolation": true
+  },
+  "decisionSchedule": {
+    "frequency": "monthly",
+    "decisionTime": "first available Binance UTC daily open of each calendar month",
+    "featureCutoff": "strictly before the rebalance open; features use daily observations through the previous available UTC day only",
+    "holdingPeriod": "until the next scheduled monthly rebalance unless forced exit by the frozen missing-data rule",
+    "label": "log return from the current rebalance open to the next monthly rebalance open, before trading costs",
+    "overlap": "monthly labels are non-overlapping by construction",
+    "embargo": "one complete monthly rebalance interval between the latest training label and a test/rebalance prediction"
+  },
+  "features": [
+    {
+      "name": "momentum_30d",
+      "definition": "log close return over the prior 30 calendar-day-equivalent daily bars, ending before the rebalance day"
+    },
+    {
+      "name": "momentum_90d",
+      "definition": "log close return over the prior 90 daily bars, ending before the rebalance day"
+    },
+    {
+      "name": "realized_vol_30d",
+      "definition": "sample standard deviation of prior 30 daily log returns"
+    },
+    {
+      "name": "log_median_quote_volume_30d",
+      "definition": "natural log of median daily quote-asset volume over the prior 30 daily bars"
+    },
+    {
+      "name": "amihud_illiquidity_30d",
+      "definition": "mean absolute daily simple return divided by quote-asset volume over the prior 30 daily bars"
+    },
+    {
+      "name": "asset_age_log_days",
+      "definition": "natural log of one plus the number of days since the asset's first observed Binance daily bar, using only history available at the rebalance"
+    }
+  ],
+  "crossSectionTransform": "at each rebalance, winsorize each feature to the 5th/95th percentiles across eligible frozen-universe assets and z-score across that same cross-section; no future dates enter the transform",
+  "model": {
+    "type": "pooled ridge regression",
+    "target": "next monthly gross log return",
+    "ridgeLambda": 10,
+    "training": "expanding monthly pooled panel using only labels whose next-rebalance endpoint occurs before the embargoed prediction month",
+    "minimumTrainingMonths": 12,
+    "minimumEligibleAssetsPerRebalance": 10,
+    "reason": "use a low-capacity regularized baseline before tree or neural cross-sectional models; the feature set is intentionally small and economically distinct"
+  },
+  "portfolio": {
+    "startingCash": 10000,
+    "longOnly": true,
+    "maxSelectedAssets": 3,
+    "targetWeightPerSelectedAsset": 0.15,
+    "maxSinglePositionPct": 0.15,
+    "maxTotalCryptoExposurePct": 0.45,
+    "cashReservePct": 0.25,
+    "selectionRule": "at each monthly rebalance rank eligible assets by predicted next-month gross return; hold at most the top three whose predicted gross return exceeds that asset's frozen modeled round-trip cost; unallocated capital remains cash",
+    "turnoverRule": "trade only at monthly rebalances or frozen forced exits; unchanged selected assets are resized toward 15% only at rebalance and all buys/sells pay frozen costs"
+  },
+  "costModel": {
+    "feeBpsPerSide": 60,
+    "slippageBpsPerSide": 5,
+    "spreadBpsRoundTrip": 10,
+    "roundTripCostBps": 140,
+    "note": "Use the same deliberately conservative TheOldTrader retail friction as prior directional research; do not assume maker execution until E1 independently supports an execution-policy successor."
+  },
+  "developmentEvaluation": {
+    "walkForwardTestMonths": 6,
+    "folds": "expanding chronological folds across 2024-01-01 through 2025-12-31 after the 12-month minimum training history",
+    "candidateModelMayNotBeChangedFromFinalHoldout": true,
+    "reportFoldConsistency": true
+  },
+  "finalEvaluation": {
+    "holdoutMayBeEvaluatedOncePerFrozenSpecification": true,
+    "comparators": [
+      "cash",
+      "15%-exposure BTC buy-and-hold",
+      "45%-total equal-weight BTC/ETH/SOL buy-and-hold",
+      "same-universe 90-day momentum rank top-three monthly baseline with identical position caps/costs",
+      "same-universe equal-weight top-three-by-2022-liquidity static buy-and-hold at 45% total exposure",
+      "frozen TheOldTrader v2 on BTC/ETH/SOL as a separately labeled directional benchmark where compatible historical data are available"
+    ],
+    "requiredMetrics": [
+      "netReturn", "annualizedReturn", "Sharpe", "Sortino", "maxDrawdown", "Calmar", "winRate", "profitFactor", "expectancyPerClosedPosition", "turnover", "totalFees", "feeDrag", "averageExposure", "numberOfTrades", "forcedExits", "performanceByRegime", "perFoldPerformance", "coefficientStability", "perAssetContribution"
+    ]
+  },
+  "promotionCriteria": {
+    "required": [
+      "positive final-holdout net return",
+      "final-holdout Sharpe positive and greater than the same-universe 90-day momentum baseline",
+      "development walk-forward median candidate Sharpe positive",
+      "positive net return in a majority of development folds",
+      "candidate total fee drag lower than frozen v2 benchmark when that benchmark is available on the same holdout",
+      "no single asset contributes more than 60% of positive realized portfolio profit",
+      "at least 10 completed portfolio position exits across development plus final holdout so the result is not one lucky holding",
+      "no data-integrity exception, out-of-universe substitution, or post-formation membership change"
+    ],
+    "note": "Failure of any required criterion blocks promotion. Any change to formation rule, universe size, feature set, ridge lambda, selection count, cost gate, rebalance frequency, dates, or position sizing after final-holdout observation is a new numbered trial."
+  },
+  "multipleTesting": {
+    "alphaTrialNumber": 3,
+    "seriousAlphaCandidateSpecificationsThroughThisTrial": 3,
+    "replicationsDoNotReduceTrialCount": true,
+    "selectionAdjustment": "report raw Sharpe plus multiple-testing-aware interpretation; compute Deflated Sharpe Ratio when enough independently evaluated alpha candidates exist for a meaningful estimate"
+  }
+}

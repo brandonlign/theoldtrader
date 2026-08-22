@@ -1,0 +1,65 @@
+{
+  "auditId": "cross-sectional-v1-development-integrity-audit-1",
+  "generatedAt": "2026-08-20T18:49:07.759Z",
+  "paperOnly": true,
+  "promotionEvidence": false,
+  "finalHoldoutRowsAcquired": 0,
+  "observedDevelopmentDatasetSha256": "70fef58f47c63f8d6dc45c7c3c439531cfac317851168a2ef2e736b500c1d00d",
+  "reacquiredDevelopmentDatasetSha256": "70fef58f47c63f8d6dc45c7c3c439531cfac317851168a2ef2e736b500c1d00d",
+  "exactDatasetReproduction": true,
+  "githubActions": {
+    "runId": 32405162429,
+    "artifactId": 9420012953,
+    "artifactName": "cross-sectional-v1-development-integrity-audit-1",
+    "artifactSha256": "345fda5439f7e5006c718c43a5716cb08fa1b334a7e4ebc7068825c2f947c78b"
+  },
+  "panelRows": 1036,
+  "targetRows": 1006,
+  "labelContinuity": {
+    "gapBridgingTargetRows": 0,
+    "affectedSymbols": [],
+    "rows": []
+  },
+  "selectedHoldingContinuity": {
+    "selectedIntervalsWithGaps": 0,
+    "rows": []
+  },
+  "eligibleCrossSection": {
+    "minimumAssets": 27,
+    "medianLikeSortedMiddle": 30,
+    "maximumAssets": 30,
+    "decisionDates": 36
+  },
+  "selectionFrequency": [
+    {"symbol":"BTCUSDT","selectedMonths":21},
+    {"symbol":"ETHUSDT","selectedMonths":20},
+    {"symbol":"BNBUSDT","selectedMonths":7},
+    {"symbol":"XRPUSDT","selectedMonths":7},
+    {"symbol":"SOLUSDT","selectedMonths":6},
+    {"symbol":"DOGEUSDT","selectedMonths":2},
+    {"symbol":"TRXUSDT","selectedMonths":2},
+    {"symbol":"ADAUSDT","selectedMonths":1},
+    {"symbol":"AVAXUSDT","selectedMonths":1},
+    {"symbol":"LTCUSDT","selectedMonths":1},
+    {"symbol":"OPUSDT","selectedMonths":1}
+  ],
+  "realizedPositiveProfitConcentration": {
+    "totalPositive": 9138.155009287313,
+    "largestAsset": "XRPUSDT",
+    "largestValue": 3880.560824826834,
+    "largestShare": 0.42465473838897816
+  },
+  "totalPositiveContributionConcentration": {
+    "totalPositive": 8463.52637235791,
+    "largestAsset": "XRPUSDT",
+    "largestValue": 3880.560824826834,
+    "largestShare": 0.4585040152413116
+  },
+  "mechanicalDecomposition": {
+    "note": "Arithmetic attribution only, not a counterfactual re-simulation. The largest observed asset contribution is subtracted while every other contribution is held fixed.",
+    "largestObservedPositiveContributionAsset": "XRPUSDT",
+    "observedNetReturn": 0.8374340811735155,
+    "netReturnAfterSubtractingLargestContribution": 0.44937799869083206
+  },
+  "conclusion": "Exact development dataset reproduced. No training target bridges an interior daily-data gap and no actually selected holding interval contains a daily-data gap. The separate LUNA ticker/underlying-identity issue remains unresolved and is not tested by this continuity audit."
+}

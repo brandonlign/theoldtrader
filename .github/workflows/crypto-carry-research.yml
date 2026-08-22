@@ -1,0 +1,95 @@
+name: TheOldTrader Crypto Carry Research v1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-carry-research-v1
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out frozen research branch
+        uses: actions/checkout@v4
+        with:
+          ref: research/crypto-oos-v1
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refuse to overwrite an observed carry result
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f research/crypto/results/funding-carry-v1/summary.json ]; then
+            echo 'Frozen carry result already exists; refusing to re-evaluate trial 2.'
+            exit 1
+          fi
+
+      - name: Static and deterministic carry checks
+        run: |
+          python -m py_compile research/crypto/prepare-carry-data.py
+          node --check research/crypto/carry-evaluate.js
+          node --check research/crypto/carry-report.js
+          python -m unittest tests/test_prepare_carry_data.py
+          node --test tests/crypto-carry-evaluate.test.js
+
+      - name: Download, checksum, and exactly synchronize official Binance data
+        run: >-
+          python research/crypto/prepare-carry-data.py
+          research/crypto/manifests/funding-carry-v1.json
+          research/crypto/data-cache/funding-carry-v1-synchronized.csv
+          research/crypto/data-cache/funding-carry-v1-sources.json
+
+      - name: Evaluate frozen carry specification once
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p research/crypto/results/funding-carry-v1
+          node research/crypto/carry-evaluate.js \
+            research/crypto/manifests/funding-carry-v1.json \
+            research/crypto/data-cache/funding-carry-v1-synchronized.csv \
+            > research/crypto/results/funding-carry-v1/summary.json
+
+      - name: Build frozen carry tables and plots
+        run: >-
+          node research/crypto/carry-report.js
+          research/crypto/results/funding-carry-v1/summary.json
+          research/crypto/results/funding-carry-v1
+
+      - name: Commit immutable carry data provenance and complete result bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'theoldtrader-research-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add \
+            research/crypto/data-cache/funding-carry-v1-synchronized.csv \
+            research/crypto/data-cache/funding-carry-v1-sources.json \
+            research/crypto/results/funding-carry-v1
+          git commit -m 'Record frozen funding-carry-v1 robustness evaluation'
+          git push origin HEAD:research/crypto-oos-v1
+
+      - name: Upload frozen carry evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: funding-carry-v1-evidence
+          path: |
+            research/crypto/data-cache/funding-carry-v1-synchronized.csv
+            research/crypto/data-cache/funding-carry-v1-sources.json
+            research/crypto/results/funding-carry-v1
+          if-no-files-found: error
