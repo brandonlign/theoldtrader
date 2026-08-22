@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Preflight frozen Trial 26
+      - name: Preflight frozen Trial 26 implementation
         run: |
           set -euo pipefail
           test ! -e research/crypto/results/cross-venue-funding-spread-v1-development/summary.json
