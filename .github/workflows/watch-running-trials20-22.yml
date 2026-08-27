@@ -10,7 +10,7 @@ jobs:
   watch:
     runs-on: ubuntu-latest
     steps:
-      - name: Watch latest carry experiment executions
+      - name: Watch dispatched carry execution through Trial 26
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
