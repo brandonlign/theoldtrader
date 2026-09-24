@@ -1,0 +1,25 @@
+{
+  "experimentId": "cme-bff-ibit-carry-v1",
+  "trialNumber": 13,
+  "manifestSha256": "9f4222cac1d6e5b2c9d91b32b72a1aaafead5ff4441d4d07a8780270acc6220d",
+  "state": "MARK",
+  "targetDate": "2026-09-23",
+  "recordedAt": "2026-09-24T06:09:19.357Z",
+  "openExpiry": "2026-09-25",
+  "sourceProvenance": {
+    "cme": {
+      "url": "https://www.cmegroup.com/CmeWS/mvc/Settlements/Futures/Settlements/10878/FUT?tradeDate=09%2F23%2F2026&strategy=DEFAULT&pageSize=100",
+      "sha256": "3078b69495b3ee6d0d7186017e62c1bf52312759dab226ec2dd16003946049e3",
+      "reportType": "Final",
+      "tradeDate": "2026-09-23",
+      "officialEmpty": false
+    }
+  },
+  "mark": {
+    "expiryDate": "2026-09-25",
+    "month": "SEP 26 25",
+    "settle": 84535,
+    "volume": "87",
+    "openInterest": "58"
+  }
+}
