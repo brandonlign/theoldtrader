@@ -1,0 +1,28 @@
+name: Watch frozen Trial 21
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/watch-trial21.yml']
+permissions:
+  actions: write
+  contents: read
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch and watch Trial 21
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          before=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial21-diversified-carry.yml --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+          gh workflow run run-trial21-diversified-carry.yml --repo "$GITHUB_REPOSITORY" --ref main
+          id=0
+          for i in $(seq 1 30); do
+            sleep 2
+            id=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow run-trial21-diversified-carry.yml --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')
+            if [ "$id" != "0" ] && [ "$id" != "$before" ]; then break; fi
+          done
+          test "$id" != "0" && test "$id" != "$before"
+          echo "Trial 21 run: $id"
+          gh run watch "$id" --repo "$GITHUB_REPOSITORY" --exit-status --interval 5
