@@ -1,0 +1,57 @@
+{
+  "experimentId": "cme-bff-ibit-carry-v1",
+  "trialNumber": 13,
+  "manifestSha256": "9f4222cac1d6e5b2c9d91b32b72a1aaafead5ff4441d4d07a8780270acc6220d",
+  "targetDate": "2026-09-25",
+  "recordedAt": "2026-09-26T09:19:54.353Z",
+  "sourceProvenance": {
+    "blackrock": {
+      "url": "https://www.ishares.com/us/products/333011/ishares-bitcoin-trust-etf",
+      "sha256": "028e33057d67b8bc36c856859abc1dec2f225b70a77bab01d3688b94eb2463b7",
+      "asOfDate": "2026-09-25"
+    },
+    "cme": {
+      "url": "https://www.cmegroup.com/CmeWS/mvc/Settlements/Futures/Settlements/10878/FUT?tradeDate=09%2F25%2F2026&strategy=DEFAULT&pageSize=100",
+      "sha256": "c75ad250fdd3771abe53e51fea0d37a4064551e6566462f7e5e97d5e2475320d",
+      "reportType": "Final",
+      "tradeDate": "2026-09-25"
+    }
+  },
+  "ibit": {
+    "closingPrice": 47.57,
+    "closingPriceAsOfDate": "2026-09-25",
+    "basketBitcoinAmount": 22.64,
+    "basketBitcoinAmountAsOfDate": "2026-09-25",
+    "basketAmountUsd": 1901784.64,
+    "basketAmountAsOfDate": "2026-09-25",
+    "benchmarkIndexUsdPerBtc": 84001.08833922261,
+    "benchmarkConfirmed": true,
+    "exchangeConfirmed": true
+  },
+  "cme": {
+    "current": {
+      "expiryDate": "2026-09-25",
+      "month": "SEP 26 25",
+      "settle": 83985.14,
+      "volume": "21",
+      "openInterest": "21",
+      "terminationDate": "2026-09-25"
+    },
+    "next": {
+      "expiryDate": "2026-10-02",
+      "month": "OCT 26 02",
+      "settle": 84120,
+      "volume": "13",
+      "openInterest": "1"
+    }
+  },
+  "frozenHypotheticalExecution": {
+    "initialIbitShares": null,
+    "primaryIbitEntryPrice": null,
+    "stressIbitEntryPrice": null,
+    "primaryBffShortEntryPrice": 84070,
+    "stressBffShortEntryPrice": 84020,
+    "rawBffNextSettlement": 84120,
+    "officialBenchmarkIndexUsdPerBtc": 84001.08833922261
+  }
+}
